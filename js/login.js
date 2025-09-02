@@ -39,7 +39,6 @@ async function loginFun(e) {
 		return;
 	}
 
-	// Show loading state
 	Swal.fire({
 		title: "Logging in...",
 		text: "Please wait while we verify your credentials.",
@@ -51,7 +50,6 @@ async function loginFun(e) {
 
 	const formdata = new FormData(loginForm);
 
-	// Debug: Log what's being sent
 	console.log("Form data being sent:");
 	for (let [key, value] of formdata.entries()) {
 		console.log(key + ": " + value);
@@ -81,7 +79,6 @@ async function loginFun(e) {
 		}
 
 		if (data.status === "success") {
-			// Check user type and redirect accordingly
 			if (data.user_type === "super_admin") {
 				Swal.fire({
 					icon: "success",
@@ -107,12 +104,10 @@ async function loginFun(e) {
 					text: data.message,
 					confirmButtonText: "Continue",
 				}).then(() => {
-					// Redirect to user home page
 					window.location.href = "../views/users/home.php";
 				});
 			}
 		} else if (data.status === "already_logged_in") {
-			// Handle already logged in case
 			if (data.user_type === "super_admin") {
 				window.location.href = "../views/super_admin/home.php";
 			} else if (data.user_type === "admin") {

@@ -24,6 +24,7 @@ if (!isset($_SESSION['admin_id'])) {
 		<table>
 			<thead>
 				<tr>
+					<th><input type="checkbox" id="selectAll" onchange="toggleAllLogs()"> Select All</th>
 					<th>Log ID</th>
 					<th>User ID</th>
 					<th>User Type</th>
@@ -36,11 +37,15 @@ if (!isset($_SESSION['admin_id'])) {
 		<tbody id="activityLogs">
 		</tbody>
 		</table>
-
+		
+		<div style="margin: 10px 0;">
+			<button onclick="deleteSelectedLogs()" style="background-color: red; color: white; padding: 8px 16px; border: none; cursor: pointer; border-radius: 4px;">Delete Selected Logs</button>
+		</div>
 
 		<table>
 			<thead>
 				<tr>
+					<th><input type="checkbox" id="selectAllUsers" onchange="toggleAllUsers()"> Select All</th>
 					<th>User ID</th>
 					<th>First Name</th>
 					<th>Last Name</th>
@@ -57,10 +62,15 @@ if (!isset($_SESSION['admin_id'])) {
 					<th>Edit</th>
 					<th>Delete</th>
 				</tr>
+				
 			</thead>
 			<tbody id="users">
 			</tbody>
 		</table>
+		
+		<div style="margin: 10px 0;">
+			<button onclick="deleteSelectedUsers()" style="background-color: red; color: white; padding: 8px 16px; border: none; cursor: pointer; border-radius: 4px;">Delete Selected Users</button>
+		</div>
 
 		<form id="editUserForm" method="post" style="display: none;">
 
@@ -74,6 +84,7 @@ if (!isset($_SESSION['admin_id'])) {
 			const tbody = document.querySelector('#activityLogs');
 			for (const log of data) {
 				tbody.innerHTML += `<tr>
+					<td><input type="checkbox" class="log-checkbox" value="${log.log_id}"></td>
 					<td>${log.log_id}</td>
 					<td>${log.user_id}</td>
 					<td>${log.user_type}</td>
@@ -86,6 +97,58 @@ if (!isset($_SESSION['admin_id'])) {
 		}
 		getActivityLogs();
 
+		function toggleAllLogs() {
+			const selectAll = document.getElementById('selectAll');
+			const checkboxes = document.querySelectorAll('.log-checkbox');
+			checkboxes.forEach(checkbox => {
+				checkbox.checked = selectAll.checked;
+			});
+		}
+
+		async function deleteSelectedLogs() {
+			const selectedBoxes = document.querySelectorAll('.log-checkbox:checked');
+			
+			if (selectedBoxes.length === 0) {
+				alert('Please select at least one log to delete');
+				return;
+			}
+			
+			if (!confirm(`Are you sure you want to delete ${selectedBoxes.length} selected log(s)?`)) {
+				return;
+			}
+			
+			try {
+				// Delete each selected log
+				for (const checkbox of selectedBoxes) {
+					const formData = new FormData();
+					formData.append('log_id', checkbox.value);
+					await fetch('../../php/admin/delete_log.php', {
+						method: 'POST',
+						body: formData
+					});
+				}
+				
+				alert(`${selectedBoxes.length} log(s) deleted successfully`);
+				location.reload();
+				
+			} catch (error) {
+				console.error('Error deleting logs:', error);
+				alert('Failed to delete logs. Please try again.');
+			}
+		}
+
+		// Toggle all user checkboxes
+		function toggleAllUsers() {
+			const selectAll = document.getElementById('selectAllUsers');
+			const checkboxes = document.querySelectorAll('.user-checkbox');
+			checkboxes.forEach(checkbox => {
+				checkbox.checked = selectAll.checked;
+			});
+		}
+
+		// Delete selected users
+		
+
 		async function getUsers() {
 			const response = await fetch('../../php/admin/show_users.php');
 			const data = await response.json();
@@ -93,8 +156,8 @@ if (!isset($_SESSION['admin_id'])) {
 			const tbody = document.querySelector('#users');
 			for (const user of data) {
 				tbody.innerHTML += `<tr>
-
-					<td>${user.user_id}</td>
+					<td><input type="checkbox" class="user-checkbox" value="${user.user_id}"></td>
+					<td><input type="hidden" id="user_id" name="user_id" value="${user.user_id}"></td>
 					<td>${user.fname}</td>
 					<td>${user.lname}</td>
 					<td>${user.email}</td>
@@ -216,6 +279,7 @@ if (!isset($_SESSION['admin_id'])) {
 			try {
 				const formData = new FormData();
 				formData.append('user_id', user_id);
+				
 				const response = await fetch('../../php/admin/delete_user.php', {
 					method: 'POST',
 					body: formData
@@ -234,8 +298,38 @@ if (!isset($_SESSION['admin_id'])) {
 				alert('Failed to delete user. Please try again.');
 			}
 		}
-		
-		
+		async function deleteSelectedUsers() {
+			const selectedBoxes = document.querySelectorAll('.user-checkbox:checked');
+			
+			if (selectedBoxes.length === 0) {
+				alert('Please select at least one user to delete');
+				return;
+			}
+			
+			if (!confirm(`Are you sure you want to delete ${selectedBoxes.length} selected user(s)?`)) {
+				return;
+			}
+			
+			try {
+				// Delete each selected user
+				for (const checkbox of selectedBoxes) {
+					const formData = new FormData();
+					formData.append('user_id', checkbox.value);
+					await fetch('../../php/admin/delete_user.php', {
+						method: 'POST',
+						body: formData
+					});
+				}
+				
+				alert(`${selectedBoxes.length} user(s) deleted successfully`);
+				location.reload();
+				
+			} catch (error) {
+				console.error('Error deleting users:', error);
+				alert('Failed to delete users. Please try again.');
+			}
+		}
+
 
 	</script>
 </html>
