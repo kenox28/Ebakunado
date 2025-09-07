@@ -45,6 +45,79 @@ try {
     
     $stmt->close();
 
+    // Check if role was changed to bhw or midwife
+    if ($role === 'bhw' || $role === 'midwife') {
+        // Get the updated user data
+        $get_user_sql = "SELECT * FROM users WHERE user_id = ?";
+        $get_user_stmt = $connect->prepare($get_user_sql);
+        $get_user_stmt->bind_param("s", $user_id);
+        $get_user_stmt->execute();
+        $user_result = $get_user_stmt->get_result();
+        $user_data = $user_result->fetch_assoc();
+        $get_user_stmt->close();
+        
+        if ($user_data) {
+            if ($role === 'bhw') {
+                // Check if user already exists in bhw table
+                $check_bhw = "SELECT * FROM bhw WHERE bhw_id = ?";
+                $check_stmt = $connect->prepare($check_bhw);
+                $check_stmt->bind_param("s", $user_id);
+                $check_stmt->execute();
+                $bhw_exists = $check_stmt->get_result()->num_rows > 0;
+                $check_stmt->close();
+                
+                if (!$bhw_exists) {
+                    // Insert into bhw table
+                    $insert_bhw = "INSERT INTO bhw (bhw_id, fname, lname, email, pass, phone_number, salt, profileImg, gender, bdate, permissions, role, created_at, updated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'view', 'bhw', NOW(), NOW())";
+                    $bhw_stmt = $connect->prepare($insert_bhw);
+                    $bhw_stmt->bind_param("ssssssssss", 
+                        $user_data['user_id'], 
+                        $user_data['fname'], 
+                        $user_data['lname'], 
+                        $user_data['email'], 
+                        $user_data['passw'], 
+                        $user_data['phone_number'], 
+                        $user_data['salt'], 
+                        $user_data['profileImg'], 
+                        $user_data['gender'], 
+                        $user_data['bdate']
+                    );
+                    $bhw_stmt->execute();
+                    $bhw_stmt->close();
+                }
+            } 
+            elseif ($role === 'midwife') {
+                // Check if user already exists in midwives table
+                $check_midwife = "SELECT * FROM midwives WHERE midwife_id = ?";
+                $check_stmt = $connect->prepare($check_midwife);
+                $check_stmt->bind_param("s", $user_id);
+                $check_stmt->execute();
+                $midwife_exists = $check_stmt->get_result()->num_rows > 0;
+                $check_stmt->close();
+                
+                if (!$midwife_exists) {
+                    // Insert into midwives table
+                    $insert_midwife = "INSERT INTO midwives (midwife_id, fname, lname, email, pass, phone_number, salt, profileImg, gender, bdate, permissions, Approve, role, created_at, updated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'view', 0, 'midwife', NOW(), NOW())";
+                    $midwife_stmt = $connect->prepare($insert_midwife);
+                    $midwife_stmt->bind_param("ssssssssss", 
+                        $user_data['user_id'], 
+                        $user_data['fname'], 
+                        $user_data['lname'], 
+                        $user_data['email'], 
+                        $user_data['passw'], 
+                        $user_data['phone_number'], 
+                        $user_data['salt'], 
+                        $user_data['profileImg'], 
+                        $user_data['gender'], 
+                        $user_data['bdate']
+                    );
+                    $midwife_stmt->execute();
+                    $midwife_stmt->close();
+                }
+            }
+        }
+    }
+
     // Log the update activity
     $ip = $_SERVER['REMOTE_ADDR'];
     $admin_type = isset($_SESSION['super_admin_id']) ? 'super_admin' : 'admin';

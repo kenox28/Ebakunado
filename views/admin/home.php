@@ -14,17 +14,244 @@ if (!isset($_SESSION['admin_id'])) {
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>admin home</title>
+		<title>Admin Dashboard</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-size: 12px;
+			}
+
+			body {
+				font-family: Arial, sans-serif;
+				line-height: 1.6;
+				padding: 20px;
+				background-color: #f5f5f5;
+			}
+
+			.header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 20px;
+				margin-bottom: 30px;
+				background: white;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			}
+
+			.welcome-text {
+				font-size: 18px;
+				font-weight: bold;
+			}
+
+			.logout-link {
+				text-decoration: none;
+				padding: 8px 16px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				transition: all 0.3s ease;
+			}
+
+			.logout-link:hover {
+				background-color: #f0f0f0;
+			}
+
+			.section {
+				margin-bottom: 40px;
+				background: white;
+				border-radius: 8px;
+				padding: 20px;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			}
+
+			.section h2 {
+				margin-bottom: 20px;
+				padding-bottom: 10px;
+				border-bottom: 2px solid #eee;
+				font-size: 24px;
+			}
+
+			.section h3 {
+				margin-bottom: 15px;
+				font-size: 20px;
+			}
+
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-bottom: 20px;
+			}
+
+			table th,
+			table td {
+				padding: 12px;
+				text-align: left;
+				border-bottom: 1px solid #ddd;
+			}
+
+			table th {
+				background-color: #f8f9fa;
+				font-weight: bold;
+				position: sticky;
+				top: 0;
+			}
+
+			table tr:hover {
+				background-color: #f5f5f5;
+			}
+
+			.btn {
+				padding: 8px 16px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				cursor: pointer;
+				text-decoration: none;
+				display: inline-block;
+				margin: 2px;
+				transition: all 0.3s ease;
+			}
+
+			.btn:hover {
+				background-color: #f0f0f0;
+			}
+
+			.btn-danger {
+				border-color: #dc3545;
+			}
+
+			.btn-danger:hover {
+				background-color: #f8d7da;
+			}
+
+			.btn-primary {
+				border-color: #007bff;
+			}
+
+			.btn-primary:hover {
+				background-color: #cce7ff;
+			}
+
+			.form-container {
+				background: #f8f9fa;
+				padding: 20px;
+				border-radius: 8px;
+				margin: 20px 0;
+				border: 1px solid #ddd;
+			}
+
+			.form-group {
+				margin-bottom: 15px;
+			}
+
+			.form-group label {
+				display: block;
+				margin-bottom: 5px;
+				font-weight: bold;
+			}
+
+			.form-group input,
+			.form-group select {
+				width: 100%;
+				padding: 8px 12px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				font-size: 14px;
+			}
+
+			.form-group input[type="radio"] {
+				width: auto;
+				margin-right: 8px;
+			}
+
+			.radio-group {
+				display: flex;
+				gap: 20px;
+				flex-wrap: wrap;
+			}
+
+			.radio-item {
+				display: flex;
+				align-items: center;
+			}
+
+			.actions {
+				margin: 20px 0;
+			}
+
+			.search-container {
+				display: flex;
+				gap: 10px;
+				margin-bottom: 20px;
+				align-items: center;
+			}
+
+			.search-input {
+				flex: 1;
+				padding: 8px 12px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				font-size: 14px;
+			}
+
+			.search-input:focus {
+				outline: none;
+				border-color: #007bff;
+			}
+
+			.table-container {
+				overflow-x: auto;
+			}
+
+			.checkbox-column {
+				width: 50px;
+			}
+
+			.action-column {
+				width: 80px;
+			}
+
+			@media (max-width: 768px) {
+				body {
+					padding: 10px;
+				}
+				
+				.header {
+					flex-direction: column;
+					gap: 10px;
+				}
+				
+				.radio-group {
+					flex-direction: column;
+					gap: 10px;
+				}
+				
+				table th,
+				table td {
+					padding: 8px;
+					font-size: 12px;
+				}
+			}
+		</style>
 	</head>
 	<body>
-		<!-- <h1>admin home</h1> -->
-		<div style="text-align: right; padding: 10px;">
-			<a href="../../php/admin/logout.php" style="color: red; text-decoration: none; font-weight: bold;">Logout</a>
+		<div class="header">
+			<div class="welcome-text">Admin Dashboard</div>
+			<a href="../../php/admin/logout.php" class="logout-link">Logout</a>
 		</div>
-		<table>
+
+		<div class="section">
+			<h2>Activity Logs</h2>
+			<div class="search-container">
+				<input type="text" id="searchLogs" placeholder="Search activity logs..." class="search-input">
+				<button onclick="clearSearch('searchLogs', 'activityLogs')" class="btn">Clear</button>
+			</div>
+			<div class="table-container">
+				<table>
 			<thead>
 				<tr>
-					<th><input type="checkbox" id="selectAll" onchange="toggleAllLogs()"> Select All</th>
+					<th class="checkbox-column"><input type="checkbox" id="selectAll" onchange="toggleAllLogs()"> Select All</th>
 					<th>Log ID</th>
 					<th>User ID</th>
 					<th>User Type</th>
@@ -34,18 +261,27 @@ if (!isset($_SESSION['admin_id'])) {
 					<th>Created At</th>
 				</tr>
 			</thead>
-		<tbody id="activityLogs">
-		</tbody>
-		</table>
-		
-		<div style="margin: 10px 0;">
-			<button onclick="deleteSelectedLogs()" style="background-color: red; color: white; padding: 8px 16px; border: none; cursor: pointer; border-radius: 4px;">Delete Selected Logs</button>
+			<tbody id="activityLogs">
+			</tbody>
+			</table>
+			</div>
+			
+			<div class="actions">
+				<button onclick="deleteSelectedLogs()" class="btn btn-danger">Delete Selected Logs</button>
+			</div>
 		</div>
 
-		<table>
+		<div class="section">
+			<h2>Users Management</h2>
+			<div class="search-container">
+				<input type="text" id="searchUsers" placeholder="Search users..." class="search-input">
+				<button onclick="clearSearch('searchUsers', 'users')" class="btn">Clear</button>
+			</div>
+			<div class="table-container">
+				<table>
 			<thead>
 				<tr>
-					<th><input type="checkbox" id="selectAllUsers" onchange="toggleAllUsers()"> Select All</th>
+					<th class="checkbox-column"><input type="checkbox" id="selectAllUsers" onchange="toggleAllUsers()"> Select All</th>
 					<th>User ID</th>
 					<th>First Name</th>
 					<th>Last Name</th>
@@ -59,277 +295,108 @@ if (!isset($_SESSION['admin_id'])) {
 					<th>Created At</th>
 					<th>Updated At</th>
 					<th>Role</th>
-					<th>Edit</th>
-					<th>Delete</th>
+					<th class="action-column">Edit</th>
+					<th class="action-column">Delete</th>
 				</tr>
 				
 			</thead>
 			<tbody id="users">
 			</tbody>
-		</table>
-		
-		<div style="margin: 10px 0;">
-			<button onclick="deleteSelectedUsers()" style="background-color: red; color: white; padding: 8px 16px; border: none; cursor: pointer; border-radius: 4px;">Delete Selected Users</button>
+			</table>
+			</div>
+			
+			<div class="actions">
+				<button onclick="deleteSelectedUsers()" class="btn btn-danger">Delete Selected Users</button>
+			</div>
+
+			<form id="editUserForm" method="post" class="form-container" style="display: none;">
+			</form>
 		</div>
 
-		<form id="editUserForm" method="post" style="display: none;">
+		<div class="section">
+			<h2>Barangay Health Workers (BHW)</h2>
+			<div class="search-container">
+				<input type="text" id="searchBhw" placeholder="Search BHW..." class="search-input">
+				<button onclick="clearSearch('searchBhw', 'bhwTable')" class="btn">Clear</button>
+			</div>
+			<div class="table-container">
+				<table>
+			<thead>
+				<tr>
+					<th class="checkbox-column"><input type="checkbox" id="selectAllBhw" onchange="toggleAllBhw()"> Select All</th>
+					<th>BHW ID</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Email</th>
+					<th>Phone Number</th>
+					<th>Profile Image</th>
+					<th>Gender</th>
+					<th>Birth Date</th>
+					<th>Permissions</th>
+					<th>Last Active</th>
+					<th>Created At</th>
+					<th>Updated</th>
+					<th>Role</th>
+					<th class="action-column">Edit</th>
+					<th class="action-column">Delete</th>
+				</tr>
+			</thead>
+			<tbody id="bhwTable">
+			</tbody>
+			</table>
+			</div>
+			
+			<div class="actions">
+				<button onclick="deleteSelectedBhw()" class="btn btn-danger">Delete Selected BHW</button>
+			</div>
 
-		</form>
+			<form id="editBhwForm" method="post" class="form-container" style="display: none;">
+			</form>
+		</div>
+
+		<div class="section">
+			<h2>Midwives</h2>
+			<div class="search-container">
+				<input type="text" id="searchMidwives" placeholder="Search midwives..." class="search-input">
+				<button onclick="clearSearch('searchMidwives', 'midwivesTable')" class="btn">Clear</button>
+			</div>
+			<div class="table-container">
+				<table>
+			<thead>
+				<tr>
+					<th class="checkbox-column"><input type="checkbox" id="selectAllMidwives" onchange="toggleAllMidwives()"> Select All</th>
+					<th>Midwife ID</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Email</th>
+					<th>Phone Number</th>
+					<th>Profile Image</th>
+					<th>Gender</th>
+					<th>Birth Date</th>
+					<th>Permissions</th>
+					<th>Approve</th>
+					<th>Last Active</th>
+					<th>Created At</th>
+					<th>Updated</th>
+					<th>Role</th>
+					<th class="action-column">Edit</th>
+					<th class="action-column">Delete</th>
+				</tr>
+			</thead>
+			<tbody id="midwivesTable">
+			</tbody>
+			</table>
+			</div>
+			
+			<div class="actions">
+				<button onclick="deleteSelectedMidwives()" class="btn btn-danger">Delete Selected Midwives</button>
+			</div>
+
+			<form id="editMidwifeForm" method="post" class="form-container" style="display: none;">
+			</form>
+		</div>
 	</body>
-	<script>
-		async function getActivityLogs() {
-			const response = await fetch('../../php/admin/show_activitylog.php');
-			const data = await response.json();
-			console.log(data);
-			const tbody = document.querySelector('#activityLogs');
-			for (const log of data) {
-				tbody.innerHTML += `<tr>
-					<td><input type="checkbox" class="log-checkbox" value="${log.log_id}"></td>
-					<td>${log.log_id}</td>
-					<td>${log.user_id}</td>
-					<td>${log.user_type}</td>
-					<td>${log.action_type}</td>
-					<td>${log.description}</td>
-					<td>${log.ip_address}</td>
-					<td>${log.created_at}</td>
-				</tr>`;
-			}
-		}
-		getActivityLogs();
-
-		function toggleAllLogs() {
-			const selectAll = document.getElementById('selectAll');
-			const checkboxes = document.querySelectorAll('.log-checkbox');
-			checkboxes.forEach(checkbox => {
-				checkbox.checked = selectAll.checked;
-			});
-		}
-
-		async function deleteSelectedLogs() {
-			const selectedBoxes = document.querySelectorAll('.log-checkbox:checked');
-			
-			if (selectedBoxes.length === 0) {
-				alert('Please select at least one log to delete');
-				return;
-			}
-			
-			if (!confirm(`Are you sure you want to delete ${selectedBoxes.length} selected log(s)?`)) {
-				return;
-			}
-			
-			try {
-				// Delete each selected log
-				for (const checkbox of selectedBoxes) {
-					const formData = new FormData();
-					formData.append('log_id', checkbox.value);
-					await fetch('../../php/admin/delete_log.php', {
-						method: 'POST',
-						body: formData
-					});
-				}
-				
-				alert(`${selectedBoxes.length} log(s) deleted successfully`);
-				location.reload();
-				
-			} catch (error) {
-				console.error('Error deleting logs:', error);
-				alert('Failed to delete logs. Please try again.');
-			}
-		}
-
-		// Toggle all user checkboxes
-		function toggleAllUsers() {
-			const selectAll = document.getElementById('selectAllUsers');
-			const checkboxes = document.querySelectorAll('.user-checkbox');
-			checkboxes.forEach(checkbox => {
-				checkbox.checked = selectAll.checked;
-			});
-		}
-
-		// Delete selected users
+	<script src="../../js/admin/home.js"></script>
 		
-
-		async function getUsers() {
-			const response = await fetch('../../php/admin/show_users.php');
-			const data = await response.json();
-			console.log(data);
-			const tbody = document.querySelector('#users');
-			for (const user of data) {
-				tbody.innerHTML += `<tr>
-					<td><input type="checkbox" class="user-checkbox" value="${user.user_id}"></td>
-					<td><input type="hidden" id="user_id" name="user_id" value="${user.user_id}"></td>
-					<td>${user.fname}</td>
-					<td>${user.lname}</td>
-					<td>${user.email}</td>
-					<td>${user.phone_number}</td>
-					<td>${user.profileImg}</td>
-					<td>${user.failed_attempts}</td>
-					<td>${user.lockout_time}</td>
-					<td>${user.gender}</td>
-					<td>${user.bdate}</td>
-					<td>${user.created_at}</td>
-					<td>${user.updated}</td>
-					<td>${user.role}</td>
-					<td><button onclick="editUser('${user.user_id}')">Edit</button></td>
-					<td><button onclick="deleteUser('${user.user_id}')">Delete</button></td>
-				</tr>`;
-			}
-		}
-		getUsers();
-
-		async function editUser(user_id) {
-			try {
-				const formData = new FormData();
-				formData.append('user_id', user_id);
-				const response = await fetch('../../php/admin/edit_user.php', {
-					method: 'POST',
-					body: formData
-				});
-				
-				if (!response.ok) {
-					throw new Error(`HTTP error! status: ${response.status}`);
-				}
-				
-				const data = await response.json();
-				console.log(data);
-				
-				if (data.status && data.status === 'error') {
-					alert('Error: ' + data.message);
-					return;
-				}
-				
-				const form = document.querySelector('#editUserForm');
-				form.innerHTML = `
-					<input type="hidden" id="user_id" name="user_id" value="${data.user_id || ''}">
-					
-					<input type="text" id="fname" name="fname" placeholder="First Name" value="${data.fname || ''}" required>
-					
-					<input type="text" id="lname" name="lname" placeholder="Last Name" value="${data.lname || ''}" required>
-					
-					<input type="email" id="email" name="email" placeholder="Email" value="${data.email || ''}" required>
-					
-					<input type="text" id="phone_number" name="phone_number" placeholder="Phone Number" value="${data.phone_number || ''}" required>
-					
-					<div>
-						<input type="radio" id="role_user" name="role" value="user" ${(data.role === 'user' || !data.role) ? 'checked' : ''}>
-						<label for="role_user">User</label>
-						
-						<input type="radio" id="role_bhw" name="role" value="bhw" ${data.role === 'bhw' ? 'checked' : ''}>
-						<label for="role_bhw">BHW (Barangay Health Worker)</label>
-						
-						<input type="radio" id="role_midwife" name="role" value="midwife" ${data.role === 'midwife' ? 'checked' : ''}>
-						<label for="role_midwife">Midwife</label>
-					</div>
-					<br>
-					<button type="button" onclick="saveUser()">Save</button>
-					<button type="button" onclick="cancelEdit()">Cancel</button>
-				`;
-				form.style.display = 'block';
-			} catch (error) {
-				console.error('Error fetching user data:', error);
-				alert('Failed to load user data. Please try again.');
-			}
-		}
-
-
-
-		async function saveUser() {
-			try {
-				const formData = new FormData();
-				formData.append('user_id', document.getElementById('user_id').value);
-				formData.append('fname', document.getElementById('fname').value);
-				formData.append('lname', document.getElementById('lname').value);
-				formData.append('email', document.getElementById('email').value);
-				formData.append('phone_number', document.getElementById('phone_number').value);
-				
-				// Get selected radio button value
-				const selectedRole = document.querySelector('input[name="role"]:checked').value;
-				formData.append('role', selectedRole);
-				
-				const response = await fetch('../../php/admin/save_user.php', {
-					method: 'POST',
-					body: formData
-				});
-				
-				const data = await response.json();
-				
-				if (data.status === 'success') {
-					alert('User updated successfully');
-					cancelEdit();
-					location.reload(); // Refresh the page to update the table
-				} else {
-					alert('Error: ' + data.message);
-				}
-			} catch (error) {
-				console.error('Error saving user:', error);
-				alert('Failed to save user. Please try again.');
-			}
-		}
-		
-		function cancelEdit() {
-			const form = document.querySelector('#editUserForm');
-			form.style.display = 'none';
-		}
-		
-		async function deleteUser(user_id) {
-			if (!confirm('Are you sure you want to delete this user?')) {
-				return;
-			}
-			
-			try {
-				const formData = new FormData();
-				formData.append('user_id', user_id);
-				
-				const response = await fetch('../../php/admin/delete_user.php', {
-					method: 'POST',
-					body: formData
-				});
-				
-				const data = await response.json();
-				
-				if (data.status === 'success') {
-					alert('User deleted successfully');
-					location.reload(); // Refresh the page to update the table
-				} else {
-					alert('Error: ' + data.message);
-				}
-			} catch (error) {
-				console.error('Error deleting user:', error);
-				alert('Failed to delete user. Please try again.');
-			}
-		}
-		async function deleteSelectedUsers() {
-			const selectedBoxes = document.querySelectorAll('.user-checkbox:checked');
-			
-			if (selectedBoxes.length === 0) {
-				alert('Please select at least one user to delete');
-				return;
-			}
-			
-			if (!confirm(`Are you sure you want to delete ${selectedBoxes.length} selected user(s)?`)) {
-				return;
-			}
-			
-			try {
-				// Delete each selected user
-				for (const checkbox of selectedBoxes) {
-					const formData = new FormData();
-					formData.append('user_id', checkbox.value);
-					await fetch('../../php/admin/delete_user.php', {
-						method: 'POST',
-						body: formData
-					});
-				}
-				
-				alert(`${selectedBoxes.length} user(s) deleted successfully`);
-				location.reload();
-				
-			} catch (error) {
-				console.error('Error deleting users:', error);
-				alert('Failed to delete users. Please try again.');
-			}
-		}
-
-
 	</script>
 </html>

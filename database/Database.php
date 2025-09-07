@@ -64,16 +64,17 @@ $midwives = "CREATE TABLE IF NOT EXISTS midwives (
     lname VARCHAR(50),
     email VARCHAR(50),
     pass VARCHAR(50),
+    phone_number VARCHAR(20),
+    salt VARCHAR(64),
     profileImg VARCHAR(255),
     gender VARCHAR(255),
     bdate VARCHAR(255),
-    license_number VARCHAR(255),
-    specialization VARCHAR(255),
     permissions VARCHAR(255) DEFAULT 'view',
     Approve BOOLEAN DEFAULT 0,
     last_active DATETIME DEFAULT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    role VARCHAR(255) 
 )";
 
 $bhw = "CREATE TABLE IF NOT EXISTS bhw (
@@ -83,14 +84,16 @@ $bhw = "CREATE TABLE IF NOT EXISTS bhw (
     lname VARCHAR(50),
     email VARCHAR(50),
     pass VARCHAR(50),
+    phone_number VARCHAR(20),
+    salt VARCHAR(64),
     profileImg VARCHAR(255),
     gender VARCHAR(255),
     bdate VARCHAR(255),
-    barangay VARCHAR(255),
     permissions VARCHAR(255) DEFAULT 'view',
     last_active DATETIME DEFAULT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    role VARCHAR(255) 
 )";
 
 

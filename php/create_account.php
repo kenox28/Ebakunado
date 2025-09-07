@@ -46,10 +46,10 @@ $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
 $number = filter_var($_POST['number'], FILTER_SANITIZE_NUMBER_INT);
 $password = $_POST['password'];
 $confirm_password = $_POST['confirm_password'];
-$fname = isset($_POST['fname']) ? filter_var($_POST['fname'], FILTER_SANITIZE_STRING) : '';
-$lname = isset($_POST['lname']) ? filter_var($_POST['lname'], FILTER_SANITIZE_STRING) : '';
-$gender = isset($_POST['gender']) ? filter_var($_POST['gender'], FILTER_SANITIZE_STRING) : '';
-$bdate = isset($_POST['bdate']) ? filter_var($_POST['bdate'], FILTER_SANITIZE_STRING) : '';
+$fname = isset($_POST['fname']) ? filter_var($_POST['fname'], FILTER_SANITIZE_ADD_SLASHES) : '';
+$lname = isset($_POST['lname']) ? filter_var($_POST['lname'], FILTER_SANITIZE_ADD_SLASHES) : '';
+$gender = isset($_POST['gender']) ? filter_var($_POST['gender'], FILTER_SANITIZE_ADD_SLASHES) : '';
+$bdate = isset($_POST['bdate']) ? filter_var($_POST['bdate'], FILTER_SANITIZE_ADD_SLASHES) : '';
 
 // Additional input validation
 if (empty($email) || empty($number) || empty($password) || empty($confirm_password)) {
