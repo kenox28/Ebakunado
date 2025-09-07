@@ -80,7 +80,7 @@ async function getUsers() {
 	for (const user of data) {
 		tbody.innerHTML += `<tr>
             <td><input type="checkbox" class="user-checkbox" value="${user.user_id}"></td>
-            <td><input type="hidden" id="user_id" name="user_id" value="${user.user_id}"></td>
+            <td>${user.user_id}</td>
             <td>${user.fname}</td>
             <td>${user.lname}</td>
             <td>${user.email}</td>
@@ -124,34 +124,34 @@ async function editUser(user_id) {
 		const form = document.querySelector("#editUserForm");
 		form.innerHTML = `
             <h3>Edit User</h3>
-            <input type="hidden" id="user_id" name="user_id" value="${
+            <input type="hidden" id="edit_user_id" name="user_id" value="${
 							data.user_id || ""
 						}">
             
             <div class="form-group">
-                <label for="fname">First Name</label>
-                <input type="text" id="fname" name="fname" placeholder="First Name" value="${
+                <label for="edit_user_fname">First Name</label>
+                <input type="text" id="edit_user_fname" name="fname" placeholder="First Name" value="${
 									data.fname || ""
 								}" required>
             </div>
             
             <div class="form-group">
-                <label for="lname">Last Name</label>
-                <input type="text" id="lname" name="lname" placeholder="Last Name" value="${
+                <label for="edit_user_lname">Last Name</label>
+                <input type="text" id="edit_user_lname" name="lname" placeholder="Last Name" value="${
 									data.lname || ""
 								}" required>
             </div>
             
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Email" value="${
+                <label for="edit_user_email">Email</label>
+                <input type="email" id="edit_user_email" name="email" placeholder="Email" value="${
 									data.email || ""
 								}" required>
             </div>
             
             <div class="form-group">
-                <label for="phone_number">Phone Number</label>
-                <input type="text" id="phone_number" name="phone_number" placeholder="Phone Number" value="${
+                <label for="edit_user_phone">Phone Number</label>
+                <input type="text" id="edit_user_phone" name="phone_number" placeholder="Phone Number" value="${
 									data.phone_number || ""
 								}" required>
             </div>
@@ -160,22 +160,22 @@ async function editUser(user_id) {
                 <label>Role</label>
                 <div class="radio-group">
                     <div class="radio-item">
-                        <input type="radio" id="role_user" name="role" value="user" ${
+                        <input type="radio" id="edit_user_role_user" name="role" value="user" ${
 													data.role === "user" || !data.role ? "checked" : ""
 												}>
-                        <label for="role_user">User</label>
+                        <label for="edit_user_role_user">User</label>
                     </div>
                     <div class="radio-item">
-                        <input type="radio" id="role_bhw" name="role" value="bhw" ${
+                        <input type="radio" id="edit_user_role_bhw" name="role" value="bhw" ${
 													data.role === "bhw" ? "checked" : ""
 												}>
-                        <label for="role_bhw">BHW (Barangay Health Worker)</label>
+                        <label for="edit_user_role_bhw">BHW (Barangay Health Worker)</label>
                     </div>
                     <div class="radio-item">
-                        <input type="radio" id="role_midwife" name="role" value="midwife" ${
+                        <input type="radio" id="edit_user_role_midwife" name="role" value="midwife" ${
 													data.role === "midwife" ? "checked" : ""
 												}>
-                        <label for="role_midwife">Midwife</label>
+                        <label for="edit_user_role_midwife">Midwife</label>
                     </div>
                 </div>
             </div>
@@ -195,18 +195,18 @@ async function editUser(user_id) {
 async function saveUser() {
 	try {
 		const formData = new FormData();
-		formData.append("user_id", document.getElementById("user_id").value);
-		formData.append("fname", document.getElementById("fname").value);
-		formData.append("lname", document.getElementById("lname").value);
-		formData.append("email", document.getElementById("email").value);
+		formData.append("user_id", document.getElementById("edit_user_id").value);
+		formData.append("fname", document.getElementById("edit_user_fname").value);
+		formData.append("lname", document.getElementById("edit_user_lname").value);
+		formData.append("email", document.getElementById("edit_user_email").value);
 		formData.append(
 			"phone_number",
-			document.getElementById("phone_number").value
+			document.getElementById("edit_user_phone").value
 		);
 
 		// Get selected radio button value
 		const selectedRole = document.querySelector(
-			'input[name="role"]:checked'
+			'#editUserForm input[name="role"]:checked'
 		).value;
 		formData.append("role", selectedRole);
 
@@ -534,41 +534,41 @@ async function editBhw(bhw_id) {
 		const form = document.querySelector("#editBhwForm");
 		form.innerHTML = `
             <h3>Edit BHW</h3>
-            <input type="hidden" id="bhw_id" name="bhw_id" value="${
+            <input type="hidden" id="edit_bhw_id" name="bhw_id" value="${
 							data.bhw_id || ""
 						}">
             
             <div class="form-group">
-                <label for="bhw_fname">First Name</label>
-                <input type="text" id="bhw_fname" name="fname" placeholder="First Name" value="${
+                <label for="edit_bhw_fname">First Name</label>
+                <input type="text" id="edit_bhw_fname" name="fname" placeholder="First Name" value="${
 									data.fname || ""
 								}" required>
             </div>
             
             <div class="form-group">
-                <label for="bhw_lname">Last Name</label>
-                <input type="text" id="bhw_lname" name="lname" placeholder="Last Name" value="${
+                <label for="edit_bhw_lname">Last Name</label>
+                <input type="text" id="edit_bhw_lname" name="lname" placeholder="Last Name" value="${
 									data.lname || ""
 								}" required>
             </div>
             
             <div class="form-group">
-                <label for="bhw_email">Email</label>
-                <input type="email" id="bhw_email" name="email" placeholder="Email" value="${
+                <label for="edit_bhw_email">Email</label>
+                <input type="email" id="edit_bhw_email" name="email" placeholder="Email" value="${
 									data.email || ""
 								}" required>
             </div>
             
             <div class="form-group">
-                <label for="bhw_phone_number">Phone Number</label>
-                <input type="text" id="bhw_phone_number" name="phone_number" placeholder="Phone Number" value="${
+                <label for="edit_bhw_phone">Phone Number</label>
+                <input type="text" id="edit_bhw_phone" name="phone_number" placeholder="Phone Number" value="${
 									data.phone_number || ""
 								}" required>
             </div>
             
             <div class="form-group">
-                <label for="bhw_gender">Gender</label>
-                <select id="bhw_gender" name="gender">
+                <label for="edit_bhw_gender">Gender</label>
+                <select id="edit_bhw_gender" name="gender">
                     <option value="">Select Gender</option>
                     <option value="male" ${
 											data.gender === "male" ? "selected" : ""
@@ -580,8 +580,8 @@ async function editBhw(bhw_id) {
             </div>
             
             <div class="form-group">
-                <label for="bhw_bdate">Birth Date</label>
-                <input type="date" id="bhw_bdate" name="bdate" value="${
+                <label for="edit_bhw_bdate">Birth Date</label>
+                <input type="date" id="edit_bhw_bdate" name="bdate" value="${
 									data.bdate || ""
 								}">
             </div>
@@ -590,24 +590,24 @@ async function editBhw(bhw_id) {
                 <label>Permissions</label>
                 <div class="radio-group">
                     <div class="radio-item">
-                        <input type="radio" id="bhw_perm_view" name="permissions" value="view" ${
+                        <input type="radio" id="edit_bhw_perm_view" name="permissions" value="view" ${
 													data.permissions === "view" || !data.permissions
 														? "checked"
 														: ""
 												}>
-                        <label for="bhw_perm_view">View Only</label>
+                        <label for="edit_bhw_perm_view">View Only</label>
                     </div>
                     <div class="radio-item">
-                        <input type="radio" id="bhw_perm_edit" name="permissions" value="edit" ${
+                        <input type="radio" id="edit_bhw_perm_edit" name="permissions" value="edit" ${
 													data.permissions === "edit" ? "checked" : ""
 												}>
-                        <label for="bhw_perm_edit">Edit</label>
+                        <label for="edit_bhw_perm_edit">Edit</label>
                     </div>
                     <div class="radio-item">
-                        <input type="radio" id="bhw_perm_admin" name="permissions" value="admin" ${
+                        <input type="radio" id="edit_bhw_perm_admin" name="permissions" value="admin" ${
 													data.permissions === "admin" ? "checked" : ""
 												}>
-                        <label for="bhw_perm_admin">Admin</label>
+                        <label for="edit_bhw_perm_admin">Admin</label>
                     </div>
                 </div>
             </div>
@@ -649,41 +649,41 @@ async function editMidwife(midwife_id) {
 		const form = document.querySelector("#editMidwifeForm");
 		form.innerHTML = `
             <h3>Edit Midwife</h3>
-            <input type="hidden" id="midwife_id" name="midwife_id" value="${
+            <input type="hidden" id="edit_midwife_id" name="midwife_id" value="${
 							data.midwife_id || ""
 						}">
             
             <div class="form-group">
-                <label for="midwife_fname">First Name</label>
-                <input type="text" id="midwife_fname" name="fname" placeholder="First Name" value="${
+                <label for="edit_midwife_fname">First Name</label>
+                <input type="text" id="edit_midwife_fname" name="fname" placeholder="First Name" value="${
 									data.fname || ""
 								}" required>
             </div>
             
             <div class="form-group">
-                <label for="midwife_lname">Last Name</label>
-                <input type="text" id="midwife_lname" name="lname" placeholder="Last Name" value="${
+                <label for="edit_midwife_lname">Last Name</label>
+                <input type="text" id="edit_midwife_lname" name="lname" placeholder="Last Name" value="${
 									data.lname || ""
 								}" required>
             </div>
             
             <div class="form-group">
-                <label for="midwife_email">Email</label>
-                <input type="email" id="midwife_email" name="email" placeholder="Email" value="${
+                <label for="edit_midwife_email">Email</label>
+                <input type="email" id="edit_midwife_email" name="email" placeholder="Email" value="${
 									data.email || ""
 								}" required>
             </div>
             
             <div class="form-group">
-                <label for="midwife_phone_number">Phone Number</label>
-                <input type="text" id="midwife_phone_number" name="phone_number" placeholder="Phone Number" value="${
+                <label for="edit_midwife_phone">Phone Number</label>
+                <input type="text" id="edit_midwife_phone" name="phone_number" placeholder="Phone Number" value="${
 									data.phone_number || ""
 								}" required>
             </div>
             
             <div class="form-group">
-                <label for="midwife_gender">Gender</label>
-                <select id="midwife_gender" name="gender">
+                <label for="edit_midwife_gender">Gender</label>
+                <select id="edit_midwife_gender" name="gender">
                     <option value="">Select Gender</option>
                     <option value="male" ${
 											data.gender === "male" ? "selected" : ""
@@ -695,8 +695,8 @@ async function editMidwife(midwife_id) {
             </div>
             
             <div class="form-group">
-                <label for="midwife_bdate">Birth Date</label>
-                <input type="date" id="midwife_bdate" name="bdate" value="${
+                <label for="edit_midwife_bdate">Birth Date</label>
+                <input type="date" id="edit_midwife_bdate" name="bdate" value="${
 									data.bdate || ""
 								}">
             </div>
@@ -705,24 +705,24 @@ async function editMidwife(midwife_id) {
                 <label>Permissions</label>
                 <div class="radio-group">
                     <div class="radio-item">
-                        <input type="radio" id="midwife_perm_view" name="permissions" value="view" ${
+                        <input type="radio" id="edit_midwife_perm_view" name="permissions" value="view" ${
 													data.permissions === "view" || !data.permissions
 														? "checked"
 														: ""
 												}>
-                        <label for="midwife_perm_view">View Only</label>
+                        <label for="edit_midwife_perm_view">View Only</label>
                     </div>
                     <div class="radio-item">
-                        <input type="radio" id="midwife_perm_edit" name="permissions" value="edit" ${
+                        <input type="radio" id="edit_midwife_perm_edit" name="permissions" value="edit" ${
 													data.permissions === "edit" ? "checked" : ""
 												}>
-                        <label for="midwife_perm_edit">Edit</label>
+                        <label for="edit_midwife_perm_edit">Edit</label>
                     </div>
                     <div class="radio-item">
-                        <input type="radio" id="midwife_perm_admin" name="permissions" value="admin" ${
+                        <input type="radio" id="edit_midwife_perm_admin" name="permissions" value="admin" ${
 													data.permissions === "admin" ? "checked" : ""
 												}>
-                        <label for="midwife_perm_admin">Admin</label>
+                        <label for="edit_midwife_perm_admin">Admin</label>
                     </div>
                 </div>
             </div>
@@ -731,16 +731,16 @@ async function editMidwife(midwife_id) {
                 <label>Approval Status</label>
                 <div class="radio-group">
                     <div class="radio-item">
-                        <input type="radio" id="midwife_approve_yes" name="approve" value="1" ${
+                        <input type="radio" id="edit_midwife_approve_yes" name="approve" value="1" ${
 													data.Approve == 1 ? "checked" : ""
 												}>
-                        <label for="midwife_approve_yes">Approved</label>
+                        <label for="edit_midwife_approve_yes">Approved</label>
                     </div>
                     <div class="radio-item">
-                        <input type="radio" id="midwife_approve_no" name="approve" value="0" ${
+                        <input type="radio" id="edit_midwife_approve_no" name="approve" value="0" ${
 													data.Approve == 0 ? "checked" : ""
 												}>
-                        <label for="midwife_approve_no">Not Approved</label>
+                        <label for="edit_midwife_approve_no">Not Approved</label>
                     </div>
                 </div>
             </div>
@@ -761,20 +761,20 @@ async function editMidwife(midwife_id) {
 async function saveBhw() {
 	try {
 		const formData = new FormData();
-		formData.append("bhw_id", document.getElementById("bhw_id").value);
-		formData.append("fname", document.getElementById("bhw_fname").value);
-		formData.append("lname", document.getElementById("bhw_lname").value);
-		formData.append("email", document.getElementById("bhw_email").value);
+		formData.append("bhw_id", document.getElementById("edit_bhw_id").value);
+		formData.append("fname", document.getElementById("edit_bhw_fname").value);
+		formData.append("lname", document.getElementById("edit_bhw_lname").value);
+		formData.append("email", document.getElementById("edit_bhw_email").value);
 		formData.append(
 			"phone_number",
-			document.getElementById("bhw_phone_number").value
+			document.getElementById("edit_bhw_phone").value
 		);
-		formData.append("gender", document.getElementById("bhw_gender").value);
-		formData.append("bdate", document.getElementById("bhw_bdate").value);
+		formData.append("gender", document.getElementById("edit_bhw_gender").value);
+		formData.append("bdate", document.getElementById("edit_bhw_bdate").value);
 
 		// Get selected permission radio button value
 		const selectedPermission = document.querySelector(
-			'input[name="permissions"]:checked'
+			'#editBhwForm input[name="permissions"]:checked'
 		).value;
 		formData.append("permissions", selectedPermission);
 
@@ -801,26 +801,44 @@ async function saveBhw() {
 async function saveMidwife() {
 	try {
 		const formData = new FormData();
-		formData.append("midwife_id", document.getElementById("midwife_id").value);
-		formData.append("fname", document.getElementById("midwife_fname").value);
-		formData.append("lname", document.getElementById("midwife_lname").value);
-		formData.append("email", document.getElementById("midwife_email").value);
+		formData.append(
+			"midwife_id",
+			document.getElementById("edit_midwife_id").value
+		);
+		formData.append(
+			"fname",
+			document.getElementById("edit_midwife_fname").value
+		);
+		formData.append(
+			"lname",
+			document.getElementById("edit_midwife_lname").value
+		);
+		formData.append(
+			"email",
+			document.getElementById("edit_midwife_email").value
+		);
 		formData.append(
 			"phone_number",
-			document.getElementById("midwife_phone_number").value
+			document.getElementById("edit_midwife_phone").value
 		);
-		formData.append("gender", document.getElementById("midwife_gender").value);
-		formData.append("bdate", document.getElementById("midwife_bdate").value);
+		formData.append(
+			"gender",
+			document.getElementById("edit_midwife_gender").value
+		);
+		formData.append(
+			"bdate",
+			document.getElementById("edit_midwife_bdate").value
+		);
 
 		// Get selected permission radio button value
 		const selectedPermission = document.querySelector(
-			'input[name="permissions"]:checked'
+			'#editMidwifeForm input[name="permissions"]:checked'
 		).value;
 		formData.append("permissions", selectedPermission);
 
 		// Get selected approve radio button value
 		const selectedApprove = document.querySelector(
-			'input[name="approve"]:checked'
+			'#editMidwifeForm input[name="approve"]:checked'
 		).value;
 		formData.append("approve", selectedApprove);
 

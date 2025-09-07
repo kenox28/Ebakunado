@@ -79,6 +79,7 @@ async function loginFun(e) {
 		}
 
 		if (data.status === "success") {
+			console.log("Login success - user_type:", data.user_type);
 			if (data.user_type === "super_admin") {
 				Swal.fire({
 					icon: "success",
@@ -86,6 +87,7 @@ async function loginFun(e) {
 					text: data.message,
 					confirmButtonText: "Continue",
 				}).then(() => {
+					console.log("Redirecting to super_admin home");
 					window.location.href = "../views/super_admin/home.php";
 				});
 			} else if (data.user_type === "admin") {
@@ -95,24 +97,59 @@ async function loginFun(e) {
 					text: data.message,
 					confirmButtonText: "Continue",
 				}).then(() => {
+					console.log("Redirecting to admin home");
 					window.location.href = "../views/admin/home.php";
 				});
+			} else if (data.user_type === "bhw") {
+				console.log("BHW login successful, showing SweetAlert");
+				Swal.fire({
+					icon: "success",
+					title: "Welcome BHW!",
+					text: data.message,
+					confirmButtonText: "Continue",
+				}).then(() => {
+					console.log("Redirecting to BHW home");
+					window.location.href = "../views/bhw/home.php";
+				});
+			} else if (data.user_type === "midwife") {
+				console.log("Midwife login successful, showing SweetAlert");
+				Swal.fire({
+					icon: "success",
+					title: "Welcome Midwife!",
+					text: data.message,
+					confirmButtonText: "Continue",
+				}).then(() => {
+					console.log("Redirecting to midwives home");
+					window.location.href = "../views/midwives/home.php";
+				});
 			} else {
+				console.log("User login successful, showing SweetAlert");
 				Swal.fire({
 					icon: "success",
 					title: "Welcome back!",
 					text: data.message,
 					confirmButtonText: "Continue",
 				}).then(() => {
+					console.log("Redirecting to users home");
 					window.location.href = "../views/users/home.php";
 				});
 			}
 		} else if (data.status === "already_logged_in") {
+			console.log("Already logged in - user_type:", data.user_type);
 			if (data.user_type === "super_admin") {
+				console.log("Redirecting already logged in super_admin");
 				window.location.href = "../views/super_admin/home.php";
 			} else if (data.user_type === "admin") {
+				console.log("Redirecting already logged in admin");
 				window.location.href = "../views/admin/home.php";
+			} else if (data.user_type === "bhw") {
+				console.log("Redirecting already logged in BHW");
+				window.location.href = "../views/bhw/home.php";
+			} else if (data.user_type === "midwife") {
+				console.log("Redirecting already logged in midwife");
+				window.location.href = "../views/midwives/home.php";
 			} else {
+				console.log("Redirecting already logged in user");
 				window.location.href = "../views/users/home.php";
 			}
 		} else {

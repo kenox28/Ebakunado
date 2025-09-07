@@ -34,5 +34,5 @@ session_start();
 			</div>
 		</div>
 	</body>
-	<script src="../js/login.js"></script>
+	<script src="../js/login.js?v=1.0.1"></script>
 </html> 

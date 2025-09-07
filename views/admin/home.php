@@ -248,7 +248,7 @@ if (!isset($_SESSION['admin_id'])) {
 				<button onclick="clearSearch('searchLogs', 'activityLogs')" class="btn">Clear</button>
 			</div>
 			<div class="table-container">
-				<table>
+		<table>
 			<thead>
 				<tr>
 					<th class="checkbox-column"><input type="checkbox" id="selectAll" onchange="toggleAllLogs()"> Select All</th>
@@ -261,11 +261,11 @@ if (!isset($_SESSION['admin_id'])) {
 					<th>Created At</th>
 				</tr>
 			</thead>
-			<tbody id="activityLogs">
-			</tbody>
-			</table>
+		<tbody id="activityLogs">
+		</tbody>
+		</table>
 			</div>
-			
+		
 			<div class="actions">
 				<button onclick="deleteSelectedLogs()" class="btn btn-danger">Delete Selected Logs</button>
 			</div>
@@ -278,7 +278,7 @@ if (!isset($_SESSION['admin_id'])) {
 				<button onclick="clearSearch('searchUsers', 'users')" class="btn">Clear</button>
 			</div>
 			<div class="table-container">
-				<table>
+		<table>
 			<thead>
 				<tr>
 					<th class="checkbox-column"><input type="checkbox" id="selectAllUsers" onchange="toggleAllUsers()"> Select All</th>
@@ -302,13 +302,13 @@ if (!isset($_SESSION['admin_id'])) {
 			</thead>
 			<tbody id="users">
 			</tbody>
-			</table>
+		</table>
 			</div>
 			
 			<div class="actions">
 				<button onclick="deleteSelectedUsers()" class="btn btn-danger">Delete Selected Users</button>
 			</div>
-
+		
 			<form id="editUserForm" method="post" class="form-container" style="display: none;">
 			</form>
 		</div>
@@ -394,9 +394,9 @@ if (!isset($_SESSION['admin_id'])) {
 
 			<form id="editMidwifeForm" method="post" class="form-container" style="display: none;">
 			</form>
-		</div>
+					</div>
 	</body>
 	<script src="../../js/admin/home.js"></script>
-		
+
 	</script>
 </html>
