@@ -67,6 +67,37 @@ session_start();
 			.required {
 				color: #dc3545;
 			}
+			.otp-btn {
+				background: #28a745;
+				color: white;
+				padding: 12px 20px;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				font-size: 14px;
+				white-space: nowrap;
+				transition: background-color 0.3s;
+			}
+			.otp-btn:hover:not(:disabled) {
+				background: #218838;
+			}
+			.otp-btn:disabled {
+				background: #6c757d;
+				cursor: not-allowed;
+			}
+			.verified {
+				background: #17a2b8 !important;
+			}
+			.error-message {
+				color: #dc3545;
+				font-size: 14px;
+				margin-top: 5px;
+			}
+			.success-message {
+				color: #28a745;
+				font-size: 14px;
+				margin-top: 5px;
+			}
 		</style>
 	</head>
 	<body>
@@ -112,7 +143,7 @@ session_start();
 						type="tel"
 						name="number"
 						id="number"
-						placeholder="Enter phone number"
+						placeholder="Enter phone number (09xxxxxxxxx)"
 						required />
 				</div>
 
@@ -127,8 +158,31 @@ session_start();
 				</div>
 
 				<div class="form-group">
-					<label for="bdate">Birth Date</label>
-					<input type="date" id="bdate" name="bdate" />
+					<label for="province">Province</label>
+					<select id="province" name="province" onchange="loadCities()" required>
+						<option value="">Select Province</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="city_municipality">City/Municipality</label>
+					<select id="city_municipality" name="city_municipality" onchange="loadBarangays()" required>
+						<option value="">Select City/Municipality</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="barangay">Barangay</label>
+					<select id="barangay" name="barangay" onchange="loadPuroks()" required>
+						<option value="">Select Barangay</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="purok">Purok</label>
+					<select id="purok" name="purok" required>
+						<option value="">Select Purok</option>
+					</select>
 				</div>
 
 				<div class="form-group">
@@ -155,5 +209,5 @@ session_start();
 			</form>
 		</div>
 	</body>
-	<script src="../js/create_account.js"></script>
+	<script src="../js/create_account.js?v=1.0.0"></script>
 </html> 

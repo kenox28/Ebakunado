@@ -49,7 +49,31 @@ $confirm_password = $_POST['confirm_password'];
 $fname = isset($_POST['fname']) ? filter_var($_POST['fname'], FILTER_SANITIZE_ADD_SLASHES) : '';
 $lname = isset($_POST['lname']) ? filter_var($_POST['lname'], FILTER_SANITIZE_ADD_SLASHES) : '';
 $gender = isset($_POST['gender']) ? filter_var($_POST['gender'], FILTER_SANITIZE_ADD_SLASHES) : '';
-$bdate = isset($_POST['bdate']) ? filter_var($_POST['bdate'], FILTER_SANITIZE_ADD_SLASHES) : '';
+$province = isset($_POST['province']) ? filter_var($_POST['province'], FILTER_SANITIZE_ADD_SLASHES) : '';
+$city_municipality = isset($_POST['city_municipality']) ? filter_var($_POST['city_municipality'], FILTER_SANITIZE_ADD_SLASHES) : '';
+$barangay = isset($_POST['barangay']) ? filter_var($_POST['barangay'], FILTER_SANITIZE_ADD_SLASHES) : '';
+$purok = isset($_POST['purok']) ? filter_var($_POST['purok'], FILTER_SANITIZE_ADD_SLASHES) : '';
+
+// Combine place information into a single place field
+$place = trim("$province, $city_municipality, $barangay, $purok");
+
+// Check if OTP was verified
+if (!isset($_SESSION['otp_verified']) || $_SESSION['otp_verified'] !== true) {
+    echo json_encode([
+        "status" => "failed",
+        "message" => "Phone number verification required. Please verify your phone number with OTP."
+    ]);
+    exit();
+}
+
+// Check if the phone number matches the verified one
+if (!isset($_SESSION['verified_phone']) || $_SESSION['verified_phone'] !== $number && $_SESSION['verified_phone'] !== '+63' . substr($number, 1)) {
+    echo json_encode([
+        "status" => "failed",
+        "message" => "Phone number doesn't match the verified number."
+    ]);
+    exit();
+}
 
 // Additional input validation
 if (empty($email) || empty($number) || empty($password) || empty($confirm_password)) {
@@ -199,11 +223,11 @@ try {
 }
 
 // Insert user with prepared statement for SQL injection prevention
-$sql = "INSERT INTO users (user_id, fname, lname, email, phone_number, passw, salt, profileImg, failed_attempts, lockout_time, gender, bdate, created_at, updated, role) 
+$sql = "INSERT INTO users (user_id, fname, lname, email, phone_number, passw, salt, profileImg, failed_attempts, lockout_time, gender, place, created_at, updated, role) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, NULL, ?, ?, NOW(), NOW(), 'user')";
 
 $stmt = $connect->prepare($sql);
-$stmt->bind_param("ssssssssss", $userid, $fname, $lname, $email, $number, $hashed_password, $salt, $img, $gender, $bdate);
+$stmt->bind_param("ssssssssss", $userid, $fname, $lname, $email, $number, $hashed_password, $salt, $img, $gender, $place);
 
 if ($stmt->execute()) {
     // Update rate limiting
@@ -218,6 +242,10 @@ if ($stmt->execute()) {
     $log_stmt->bind_param("ss", $userid, $ip);
     $log_stmt->execute();
     $log_stmt->close();
+    
+    // Clear OTP verification session data
+    unset($_SESSION['otp_verified']);
+    unset($_SESSION['verified_phone']);
     
     echo json_encode(["status" => "success", "message" => "Successfully created account"]);
 } else {

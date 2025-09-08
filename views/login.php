@@ -30,9 +30,22 @@ session_start();
 			
 			<div class="links">
 				<a href="create_account.php">Create Account</a>
+				<a href="#" id="forgotPasswordLink">Forgot Password?</a>
 				<a href="landing_page.php">Back to Home</a>
+			</div>
+			
+			<!-- Forgot Password Form (Hidden by default) -->
+			<div id="forgotPasswordForm" style="display: none;">
+				<h2>Forgot Password</h2>
+				<form id="ForgotPasswordForm">
+					<div class="form-group">
+						<input type="text" name="email_phone" id="email_phone" placeholder="Enter email or phone number" required />
+					</div>
+					<button type="submit" class="submit-btn">Send OTP</button>
+					<button type="button" id="cancelForgotPassword" class="cancel-btn">Cancel</button>
+				</form>
 			</div>
 		</div>
 	</body>
-	<script src="../js/login.js?v=1.0.1"></script>
+	<script src="../js/login.js?v=1.0.2"></script>
 </html> 

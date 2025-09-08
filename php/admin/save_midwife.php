@@ -22,7 +22,7 @@ $phone_number = $_POST['phone_number'] ?? '';
 $permissions = $_POST['permissions'] ?? '';
 $approve = $_POST['approve'] ?? '0';
 $gender = $_POST['gender'] ?? '';
-$bdate = $_POST['bdate'] ?? '';
+$place = $_POST['place'] ?? '';
 
 if(empty($midwife_id) || empty($fname) || empty($lname) || empty($email) || empty($phone_number)) {
     echo json_encode(array('status' => 'error', 'message' => 'Midwife ID, first name, last name, email, and phone number are required'));
@@ -30,9 +30,9 @@ if(empty($midwife_id) || empty($fname) || empty($lname) || empty($email) || empt
 }
 
 try {
-    $sql = "UPDATE midwives SET fname = ?, lname = ?, email = ?, phone_number = ?, permissions = ?, Approve = ?, gender = ?, bdate = ?, updated = NOW() WHERE midwife_id = ?";
+    $sql = "UPDATE midwives SET fname = ?, lname = ?, email = ?, phone_number = ?, permissions = ?, Approve = ?, gender = ?, place = ?, updated = NOW() WHERE midwife_id = ?";
     $stmt = $connect->prepare($sql);
-    $stmt->bind_param("sssssssss", $fname, $lname, $email, $phone_number, $permissions, $approve, $gender, $bdate, $midwife_id);
+    $stmt->bind_param("sssssssss", $fname, $lname, $email, $phone_number, $permissions, $approve, $gender, $place, $midwife_id);
     $result = $stmt->execute();
     
     if (!$result) {

@@ -7,15 +7,7 @@ if (function_exists('initializeDatabase')) {
     initializeDatabase($connect);
 }
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
-// Debug: Log session state
-error_log("Session state - user_id: " . (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'not set'));
-error_log("Session state - admin_id: " . (isset($_SESSION['admin_id']) ? $_SESSION['admin_id'] : 'not set'));
-error_log("Session state - super_admin_id: " . (isset($_SESSION['super_admin_id']) ? $_SESSION['super_admin_id'] : 'not set'));
-error_log("Session state - bhw_id: " . (isset($_SESSION['bhw_id']) ? $_SESSION['bhw_id'] : 'not set'));
-error_log("Session state - midwife_id: " . (isset($_SESSION['midwife_id']) ? $_SESSION['midwife_id'] : 'not set'));
 
 // Check if user is already logged in
 if (isset($_SESSION['super_admin_id'])) {
@@ -116,129 +108,111 @@ try {
             $stmt->close();
         }
         
-        // If not found in admin tables, check users table and redirect based on role
+        // If not found in admin tables, check each table directly (since users now exist in only one table)
         if (!$user_found) {
-            error_log("DEBUG: Checking Users table for email: " . $email_or_phone);
-            $sql = "SELECT user_id as id, fname, lname, email, phone_number, passw, salt, role FROM users WHERE email = ?";
-            $stmt = $connect->prepare($sql);
-            $stmt->bind_param("s", $email_or_phone);
-            $stmt->execute();
-            $result = $stmt->get_result();
+            // First check BHW table
+            $bhw_sql = "SELECT bhw_id as id, fname, lname, email, phone_number, pass, salt, permissions, role FROM bhw WHERE email = ?";
+            $bhw_stmt = $connect->prepare($bhw_sql);
+            $bhw_stmt->bind_param("s", $email_or_phone);
+            $bhw_stmt->execute();
+            $bhw_result = $bhw_stmt->get_result();
             
-            error_log("DEBUG: Found in Users table: " . ($result->num_rows > 0 ? 'YES' : 'NO'));
-            if ($result->num_rows > 0) {
-                $user_data = $result->fetch_assoc();
-                $user_role = $user_data['role'];
-                error_log("DEBUG: User role from users table: " . $user_role);
-                
-                // Check role and get credentials from appropriate table
-                if ($user_role === 'bhw') {
-                    error_log("DEBUG: Role is BHW, checking BHW table for credentials");
-                    $bhw_sql = "SELECT bhw_id as id, fname, lname, email, phone_number, pass, salt, permissions, role FROM bhw WHERE bhw_id = ?";
-                    $bhw_stmt = $connect->prepare($bhw_sql);
-                    $bhw_stmt->bind_param("s", $user_data['id']);
-                    $bhw_stmt->execute();
-                    $bhw_result = $bhw_stmt->get_result();
-                    
-                    if ($bhw_result->num_rows > 0) {
-                        $user_data = $bhw_result->fetch_assoc(); // Override with BHW data
-                        $user_type = 'bhw';
-                        $user_found = true;
-                        error_log("DEBUG: BHW credentials found, setting user_type to 'bhw'");
-                    } else {
-                        error_log("DEBUG: BHW credentials not found in BHW table");
-                    }
-                    $bhw_stmt->close();
-                } elseif ($user_role === 'midwife') {
-                    error_log("DEBUG: Role is Midwife, checking Midwives table for credentials");
-                    $midwife_sql = "SELECT midwife_id as id, fname, lname, email, phone_number, pass, salt, permissions, Approve, role FROM midwives WHERE midwife_id = ?";
-                    $midwife_stmt = $connect->prepare($midwife_sql);
-                    $midwife_stmt->bind_param("s", $user_data['id']);
-                    $midwife_stmt->execute();
-                    $midwife_result = $midwife_stmt->get_result();
-                    
-                    if ($midwife_result->num_rows > 0) {
-                        $user_data = $midwife_result->fetch_assoc(); // Override with Midwife data
-                        $user_type = 'midwife';
-                        $user_found = true;
-                        error_log("DEBUG: Midwife credentials found, setting user_type to 'midwife'");
-                    } else {
-                        error_log("DEBUG: Midwife credentials not found in Midwives table");
-                    }
-                    $midwife_stmt->close();
-                } else {
-                    // Regular user
-                    $user_type = 'user';
-                    $user_found = true;
-                    error_log("DEBUG: Regular user, setting user_type to 'user'");
-                }
+            if ($bhw_result->num_rows > 0) {
+                $user_data = $bhw_result->fetch_assoc();
+                $user_type = 'bhw';
+                $user_found = true;
+                error_log("DEBUG: Found BHW user: " . $user_data['email']);
             }
-            $stmt->close();
-        }
-    } else {
-        // Phone number login - check users table first and redirect based on role
-        error_log("DEBUG: Checking Users table for phone: " . $email_or_phone);
-        $sql = "SELECT user_id as id, fname, lname, email, phone_number, passw, salt, role FROM users WHERE phone_number = ?";
-        $stmt = $connect->prepare($sql);
-        $stmt->bind_param("s", $email_or_phone);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        error_log("DEBUG: Found in Users table: " . ($result->num_rows > 0 ? 'YES' : 'NO'));
-        if ($result->num_rows > 0) {
-            $user_data = $result->fetch_assoc();
-            $user_role = $user_data['role'];
-            error_log("DEBUG: User role from users table: " . $user_role);
+            $bhw_stmt->close();
             
-            // Check role and get credentials from appropriate table
-            if ($user_role === 'bhw') {
-                error_log("DEBUG: Role is BHW, checking BHW table for credentials");
-                $bhw_sql = "SELECT bhw_id as id, fname, lname, email, phone_number, pass, salt, permissions, role FROM bhw WHERE bhw_id = ?";
-                $bhw_stmt = $connect->prepare($bhw_sql);
-                $bhw_stmt->bind_param("s", $user_data['id']);
-                $bhw_stmt->execute();
-                $bhw_result = $bhw_stmt->get_result();
-                
-                if ($bhw_result->num_rows > 0) {
-                    $user_data = $bhw_result->fetch_assoc(); // Override with BHW data
-                    $user_type = 'bhw';
-                    $user_found = true;
-                    error_log("DEBUG: BHW credentials found, setting user_type to 'bhw'");
-                } else {
-                    error_log("DEBUG: BHW credentials not found in BHW table");
-                }
-                $bhw_stmt->close();
-            } elseif ($user_role === 'midwife') {
-                error_log("DEBUG: Role is Midwife, checking Midwives table for credentials");
-                $midwife_sql = "SELECT midwife_id as id, fname, lname, email, phone_number, pass, salt, permissions, Approve, role FROM midwives WHERE midwife_id = ?";
+            // If not found in BHW, check Midwives table
+            if (!$user_found) {
+                $midwife_sql = "SELECT midwife_id as id, fname, lname, email, phone_number, pass, salt, permissions, Approve, role FROM midwives WHERE email = ?";
                 $midwife_stmt = $connect->prepare($midwife_sql);
-                $midwife_stmt->bind_param("s", $user_data['id']);
+                $midwife_stmt->bind_param("s", $email_or_phone);
                 $midwife_stmt->execute();
                 $midwife_result = $midwife_stmt->get_result();
                 
                 if ($midwife_result->num_rows > 0) {
-                    $user_data = $midwife_result->fetch_assoc(); // Override with Midwife data
+                    $user_data = $midwife_result->fetch_assoc();
                     $user_type = 'midwife';
                     $user_found = true;
-                    error_log("DEBUG: Midwife credentials found, setting user_type to 'midwife'");
-                } else {
-                    error_log("DEBUG: Midwife credentials not found in Midwives table");
+                    error_log("DEBUG: Found Midwife user: " . $user_data['email'] . ", approval status: " . $user_data['Approve']);
                 }
                 $midwife_stmt->close();
-            } else {
-                // Regular user
-                $user_type = 'user';
-                $user_found = true;
-                error_log("DEBUG: Regular user, setting user_type to 'user'");
+            }
+            
+            // If not found in BHW or Midwives, check Users table
+            if (!$user_found) {
+                $user_sql = "SELECT user_id as id, fname, lname, email, phone_number, passw, salt, role FROM users WHERE email = ?";
+                $user_stmt = $connect->prepare($user_sql);
+                $user_stmt->bind_param("s", $email_or_phone);
+                $user_stmt->execute();
+                $user_result = $user_stmt->get_result();
+                
+                if ($user_result->num_rows > 0) {
+                    $user_data = $user_result->fetch_assoc();
+                    $user_type = 'user';
+                    $user_found = true;
+                    error_log("DEBUG: Found regular user: " . $user_data['email']);
+                }
+                $user_stmt->close();
             }
         }
-        $stmt->close();
+    } else {
+        // Phone number login - check each table directly (since users now exist in only one table)
+        // First check BHW table
+        $bhw_sql = "SELECT bhw_id as id, fname, lname, email, phone_number, pass, salt, permissions, role FROM bhw WHERE phone_number = ?";
+        $bhw_stmt = $connect->prepare($bhw_sql);
+        $bhw_stmt->bind_param("s", $email_or_phone);
+        $bhw_stmt->execute();
+        $bhw_result = $bhw_stmt->get_result();
+        
+        if ($bhw_result->num_rows > 0) {
+            $user_data = $bhw_result->fetch_assoc();
+            $user_type = 'bhw';
+            $user_found = true;
+            error_log("DEBUG: Found BHW user by phone: " . $user_data['phone_number']);
+        }
+        $bhw_stmt->close();
+        
+        // If not found in BHW, check Midwives table
+        if (!$user_found) {
+            $midwife_sql = "SELECT midwife_id as id, fname, lname, email, phone_number, pass, salt, permissions, Approve, role FROM midwives WHERE phone_number = ?";
+            $midwife_stmt = $connect->prepare($midwife_sql);
+            $midwife_stmt->bind_param("s", $email_or_phone);
+            $midwife_stmt->execute();
+            $midwife_result = $midwife_stmt->get_result();
+            
+            if ($midwife_result->num_rows > 0) {
+                $user_data = $midwife_result->fetch_assoc();
+                $user_type = 'midwife';
+                $user_found = true;
+                error_log("DEBUG: Found Midwife user by phone: " . $user_data['phone_number'] . ", approval status: " . $user_data['Approve']);
+            }
+            $midwife_stmt->close();
+        }
+        
+        // If not found in BHW or Midwives, check Users table
+        if (!$user_found) {
+            $user_sql = "SELECT user_id as id, fname, lname, email, phone_number, passw, salt, role FROM users WHERE phone_number = ?";
+            $user_stmt = $connect->prepare($user_sql);
+            $user_stmt->bind_param("s", $email_or_phone);
+            $user_stmt->execute();
+            $user_result = $user_stmt->get_result();
+            
+            if ($user_result->num_rows > 0) {
+                $user_data = $user_result->fetch_assoc();
+                $user_type = 'user';
+                $user_found = true;
+                error_log("DEBUG: Found regular user by phone: " . $user_data['phone_number']);
+            }
+            $user_stmt->close();
+        }
     }
     
-    // Debug: Log what was found
-    error_log("User found: " . ($user_found ? 'YES' : 'NO'));
-    error_log("User type: " . ($user_type ? $user_type : 'NONE'));
-    
+
+
     if (!$user_found) {
         echo json_encode([
             "status" => "failed",
@@ -252,22 +226,46 @@ try {
     
     if ($user_type === 'super_admin' || $user_type === 'admin') {
         // Admin and super admin use MD5
+        error_log("Admin login attempt - Email: $email_or_phone, User type: $user_type");
+        error_log("Admin data - ID: " . $user_data['admin_id'] . ", Email: " . $user_data['email']);
         $password_valid = (md5($password) === $user_data['pass']);
         error_log("MD5 password check - Input: " . md5($password) . ", Stored: " . $user_data['pass'] . ", Valid: " . ($password_valid ? 'YES' : 'NO'));
+        
+        // If MD5 doesn't work, also check if password is stored as plain text (for debugging)
+        if (!$password_valid && $password === $user_data['pass']) {
+            $password_valid = true;
+            error_log("Plain text password match found for admin");
+        }
     } elseif ($user_type === 'bhw' || $user_type === 'midwife') {
         // BHW and Midwives use password_verify with salt (same as users)
-        $stored_salt = $user_data['salt'];
+        $stored_salt = $user_data['salt'] ?? '';
         $stored_hash = $user_data['pass']; // Note: BHW/Midwives use 'pass' column
-        $password_with_salt = $password . $stored_salt;
-        $password_valid = password_verify($password_with_salt, $stored_hash);
-        error_log("BHW/Midwife password verify check - Valid: " . ($password_valid ? 'YES' : 'NO'));
+        error_log("BHW/Midwife login - Salt: '$stored_salt', Hash length: " . strlen($stored_hash));
+        
+        if (!empty($stored_salt)) {
+            $password_with_salt = $password . $stored_salt;
+            $password_valid = password_verify($password_with_salt, $stored_hash);
+            error_log("BHW/Midwife password verify check - Valid: " . ($password_valid ? 'YES' : 'NO'));
+        } else {
+            // Fallback: check if password is stored as plain text or MD5
+            $password_valid = ($password === $stored_hash) || (md5($password) === $stored_hash);
+            error_log("BHW/Midwife fallback password check - Valid: " . ($password_valid ? 'YES' : 'NO'));
+        }
     } else {
         // Regular users use password_verify with salt
-        $stored_salt = $user_data['salt'];
+        $stored_salt = $user_data['salt'] ?? '';
         $stored_hash = $user_data['passw']; // Note: Users use 'passw' column
-        $password_with_salt = $password . $stored_salt;
-        $password_valid = password_verify($password_with_salt, $stored_hash);
-        error_log("User password verify check - Valid: " . ($password_valid ? 'YES' : 'NO'));
+        error_log("User login - Salt: '$stored_salt', Hash length: " . strlen($stored_hash));
+        
+        if (!empty($stored_salt)) {
+            $password_with_salt = $password . $stored_salt;
+            $password_valid = password_verify($password_with_salt, $stored_hash);
+            error_log("User password verify check - Valid: " . ($password_valid ? 'YES' : 'NO'));
+        } else {
+            // Fallback: check if password is stored as plain text or MD5
+            $password_valid = ($password === $stored_hash) || (md5($password) === $stored_hash);
+            error_log("User fallback password check - Valid: " . ($password_valid ? 'YES' : 'NO'));
+        }
     }
     
     if ($password_valid) {
@@ -344,14 +342,7 @@ try {
         $log_stmt->execute();
         $log_stmt->close();
         
-        error_log("Login successful for user type: " . $user_type);
-        
-        // DEBUG: Check what we're about to send
-        error_log("DEBUG: About to send response - user_type: " . $user_type);
-        error_log("DEBUG: Session bhw_id: " . (isset($_SESSION['bhw_id']) ? $_SESSION['bhw_id'] : 'not set'));
-        error_log("DEBUG: Session midwife_id: " . (isset($_SESSION['midwife_id']) ? $_SESSION['midwife_id'] : 'not set'));
-        error_log("DEBUG: Session user_type: " . (isset($_SESSION['user_type']) ? $_SESSION['user_type'] : 'not set'));
-        
+
         echo json_encode([
             "status" => "success",
             "message" => "Login successful",

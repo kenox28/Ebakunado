@@ -291,7 +291,7 @@ if (!isset($_SESSION['admin_id'])) {
 					<th>Failed Attempts</th>
 					<th>Lockout Time</th>
 					<th>Gender</th>
-					<th>Birth Date</th>
+					<th>Place</th>
 					<th>Created At</th>
 					<th>Updated At</th>
 					<th>Role</th>
@@ -331,7 +331,7 @@ if (!isset($_SESSION['admin_id'])) {
 					<th>Phone Number</th>
 					<th>Profile Image</th>
 					<th>Gender</th>
-					<th>Birth Date</th>
+					<th>Place</th>
 					<th>Permissions</th>
 					<th>Last Active</th>
 					<th>Created At</th>
@@ -372,7 +372,7 @@ if (!isset($_SESSION['admin_id'])) {
 					<th>Phone Number</th>
 					<th>Profile Image</th>
 					<th>Gender</th>
-					<th>Birth Date</th>
+					<th>Place</th>
 					<th>Permissions</th>
 					<th>Approve</th>
 					<th>Last Active</th>
@@ -392,9 +392,66 @@ if (!isset($_SESSION['admin_id'])) {
 				<button onclick="deleteSelectedMidwives()" class="btn btn-danger">Delete Selected Midwives</button>
 			</div>
 
-			<form id="editMidwifeForm" method="post" class="form-container" style="display: none;">
-			</form>
-					</div>
+		<form id="editMidwifeForm" method="post" class="form-container" style="display: none;">
+		</form>
+	</div>
+
+	<div class="section">
+		<h2>Location Management</h2>
+		<div class="search-container">
+			<input type="text" id="searchLocations" placeholder="Search locations..." class="search-input">
+			<button type="button" onclick="clearSearch('searchLocations', 'locationsTableBody')" class="btn btn-secondary">Clear</button>
+		</div>
+		
+		<button type="button" onclick="showAddLocationForm()" class="btn btn-primary" style="margin: 10px 0;">Add New Location</button>
+		
+		<div class="table-container">
+			<table>
+				<thead>
+					<tr>
+						<th><input type="checkbox" id="selectAllLocations" onchange="toggleAllLocations()"></th>
+						<th>Province</th>
+						<th>City/Municipality</th>
+						<th>Barangay</th>
+						<th>Purok</th>
+						<th>Created</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody id="locationsTableBody">
+					<!-- Location data will be populated here -->
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="action-buttons">
+			<button type="button" onclick="deleteSelectedLocations()" class="btn btn-danger">Delete Selected</button>
+		</div>
+
+		<form id="addLocationForm" method="post" class="form-container" style="display: none;">
+			<h3>Add New Location</h3>
+			<div class="form-group">
+				<label for="add_province">Province:</label>
+				<input type="text" id="add_province" name="province" required>
+			</div>
+			<div class="form-group">
+				<label for="add_city_municipality">City/Municipality:</label>
+				<input type="text" id="add_city_municipality" name="city_municipality" required>
+			</div>
+			<div class="form-group">
+				<label for="add_barangay">Barangay:</label>
+				<input type="text" id="add_barangay" name="barangay" required>
+			</div>
+			<div class="form-group">
+				<label for="add_purok">Purok:</label>
+				<input type="text" id="add_purok" name="purok" required>
+			</div>
+			<div class="form-group">
+				<button type="button" onclick="saveLocation()" class="btn btn-primary">Save Location</button>
+				<button type="button" onclick="cancelAddLocation()" class="btn btn-secondary">Cancel</button>
+			</div>
+		</form>
+	</div>
 	</body>
 	<script src="../../js/admin/home.js"></script>
 

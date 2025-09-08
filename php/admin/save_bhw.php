@@ -21,7 +21,7 @@ $email = $_POST['email'] ?? '';
 $phone_number = $_POST['phone_number'] ?? '';
 $permissions = $_POST['permissions'] ?? '';
 $gender = $_POST['gender'] ?? '';
-$bdate = $_POST['bdate'] ?? '';
+$place = $_POST['place'] ?? '';
 
 if(empty($bhw_id) || empty($fname) || empty($lname) || empty($email) || empty($phone_number)) {
     echo json_encode(array('status' => 'error', 'message' => 'BHW ID, first name, last name, email, and phone number are required'));
@@ -29,9 +29,9 @@ if(empty($bhw_id) || empty($fname) || empty($lname) || empty($email) || empty($p
 }
 
 try {
-    $sql = "UPDATE bhw SET fname = ?, lname = ?, email = ?, phone_number = ?, permissions = ?, gender = ?, bdate = ?, updated = NOW() WHERE bhw_id = ?";
+    $sql = "UPDATE bhw SET fname = ?, lname = ?, email = ?, phone_number = ?, permissions = ?, gender = ?, place = ?, updated = NOW() WHERE bhw_id = ?";
     $stmt = $connect->prepare($sql);
-    $stmt->bind_param("ssssssss", $fname, $lname, $email, $phone_number, $permissions, $gender, $bdate, $bhw_id);
+    $stmt->bind_param("ssssssss", $fname, $lname, $email, $phone_number, $permissions, $gender, $place, $bhw_id);
     $result = $stmt->execute();
     
     if (!$result) {

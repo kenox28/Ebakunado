@@ -51,7 +51,7 @@ $users = "CREATE TABLE IF NOT EXISTS users (
     failed_attempts INT DEFAULT 0,
     lockout_time DATETIME DEFAULT NULL,
     gender VARCHAR(255),
-    bdate VARCHAR(255),
+    place  VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     role VARCHAR(255) DEFAULT 'user'
@@ -68,7 +68,7 @@ $midwives = "CREATE TABLE IF NOT EXISTS midwives (
     salt VARCHAR(64),
     profileImg VARCHAR(255),
     gender VARCHAR(255),
-    bdate VARCHAR(255),
+    place  VARCHAR(255),
     permissions VARCHAR(255) DEFAULT 'view',
     Approve BOOLEAN DEFAULT 0,
     last_active DATETIME DEFAULT NULL,
@@ -88,7 +88,7 @@ $bhw = "CREATE TABLE IF NOT EXISTS bhw (
     salt VARCHAR(64),
     profileImg VARCHAR(255),
     gender VARCHAR(255),
-    bdate VARCHAR(255),
+    place VARCHAR(255),
     permissions VARCHAR(255) DEFAULT 'view',
     last_active DATETIME DEFAULT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -96,7 +96,15 @@ $bhw = "CREATE TABLE IF NOT EXISTS bhw (
     role VARCHAR(255) 
 )";
 
-
+$locations = "CREATE TABLE IF NOT EXISTS locations (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    province VARCHAR(100) NOT NULL,
+    city_municipality VARCHAR(100) NOT NULL,
+    barangay VARCHAR(100) NOT NULL,
+    purok VARCHAR(100) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)";
 
 $immunization_records = "CREATE TABLE IF NOT EXISTS immunization_records(
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -159,6 +167,7 @@ function initializeDatabase($connect) {
     mysqli_query($connect, $GLOBALS['users']);
     mysqli_query($connect, $GLOBALS['midwives']);
     mysqli_query($connect, $GLOBALS['bhw']);
+    mysqli_query($connect, $GLOBALS['locations']);
     mysqli_query($connect, $GLOBALS['immunization_records']);
     mysqli_query($connect, $GLOBALS['admin']);
     mysqli_query($connect, $GLOBALS['super_admin']);

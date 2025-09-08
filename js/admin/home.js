@@ -89,7 +89,7 @@ async function getUsers() {
             <td>${user.failed_attempts}</td>
             <td>${user.lockout_time}</td>
             <td>${user.gender}</td>
-            <td>${user.bdate}</td>
+            <td>${user.place}</td>
             <td>${user.created_at}</td>
             <td>${user.updated}</td>
             <td>${user.role}</td>
@@ -188,7 +188,11 @@ async function editUser(user_id) {
 		form.style.display = "block";
 	} catch (error) {
 		console.error("Error fetching user data:", error);
-		alert("Failed to load user data. Please try again.");
+		alert(
+			"Failed to load user data. Error: " +
+				error.message +
+				"\nCheck browser console for more details."
+		);
 	}
 }
 
@@ -316,7 +320,7 @@ async function getBhw() {
             <td>${bhw.phone_number}</td>
             <td>${bhw.profileImg || ""}</td>
             <td>${bhw.gender || ""}</td>
-            <td>${bhw.bdate || ""}</td>
+            <td>${bhw.place || ""}</td>
             <td>${bhw.permissions}</td>
             <td>${bhw.last_active || ""}</td>
             <td>${bhw.created_at}</td>
@@ -350,7 +354,7 @@ async function getMidwives() {
             <td>${midwife.phone_number}</td>
             <td>${midwife.profileImg || ""}</td>
             <td>${midwife.gender || ""}</td>
-            <td>${midwife.bdate || ""}</td>
+            <td>${midwife.place || ""}</td>
             <td>${midwife.permissions}</td>
             <td>${midwife.Approve ? "Yes" : "No"}</td>
             <td>${midwife.last_active || ""}</td>
@@ -580,10 +584,31 @@ async function editBhw(bhw_id) {
             </div>
             
             <div class="form-group">
-                <label for="edit_bhw_bdate">Birth Date</label>
-                <input type="date" id="edit_bhw_bdate" name="bdate" value="${
-									data.bdate || ""
-								}">
+                <label for="edit_bhw_province">Province</label>
+                <select id="edit_bhw_province" name="province" onchange="loadBhwCities()" required>
+                    <option value="">Select Province</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="edit_bhw_city_municipality">City/Municipality</label>
+                <select id="edit_bhw_city_municipality" name="city_municipality" onchange="loadBhwBarangays()" required>
+                    <option value="">Select City/Municipality</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="edit_bhw_barangay">Barangay</label>
+                <select id="edit_bhw_barangay" name="barangay" onchange="loadBhwPuroks()" required>
+                    <option value="">Select Barangay</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="edit_bhw_purok">Purok</label>
+                <select id="edit_bhw_purok" name="purok" required>
+                    <option value="">Select Purok</option>
+                </select>
             </div>
             
             <div class="form-group">
@@ -618,6 +643,9 @@ async function editBhw(bhw_id) {
             </div>
         `;
 		form.style.display = "block";
+
+		// Load cascading dropdowns with current place data
+		await loadBhwProvinces(data.place || "");
 	} catch (error) {
 		console.error("Error fetching BHW data:", error);
 		alert("Failed to load BHW data. Please try again.");
@@ -695,10 +723,31 @@ async function editMidwife(midwife_id) {
             </div>
             
             <div class="form-group">
-                <label for="edit_midwife_bdate">Birth Date</label>
-                <input type="date" id="edit_midwife_bdate" name="bdate" value="${
-									data.bdate || ""
-								}">
+                <label for="edit_midwife_province">Province</label>
+                <select id="edit_midwife_province" name="province" onchange="loadMidwifeCities()" required>
+                    <option value="">Select Province</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="edit_midwife_city_municipality">City/Municipality</label>
+                <select id="edit_midwife_city_municipality" name="city_municipality" onchange="loadMidwifeBarangays()" required>
+                    <option value="">Select City/Municipality</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="edit_midwife_barangay">Barangay</label>
+                <select id="edit_midwife_barangay" name="barangay" onchange="loadMidwifePuroks()" required>
+                    <option value="">Select Barangay</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="edit_midwife_purok">Purok</label>
+                <select id="edit_midwife_purok" name="purok" required>
+                    <option value="">Select Purok</option>
+                </select>
             </div>
             
             <div class="form-group">
@@ -751,6 +800,9 @@ async function editMidwife(midwife_id) {
             </div>
         `;
 		form.style.display = "block";
+
+		// Load cascading dropdowns with current place data
+		await loadMidwifeProvinces(data.place || "");
 	} catch (error) {
 		console.error("Error fetching Midwife data:", error);
 		alert("Failed to load Midwife data. Please try again.");
@@ -770,7 +822,14 @@ async function saveBhw() {
 			document.getElementById("edit_bhw_phone").value
 		);
 		formData.append("gender", document.getElementById("edit_bhw_gender").value);
-		formData.append("bdate", document.getElementById("edit_bhw_bdate").value);
+
+		// Combine place information
+		const province = document.getElementById("edit_bhw_province").value;
+		const city = document.getElementById("edit_bhw_city_municipality").value;
+		const barangay = document.getElementById("edit_bhw_barangay").value;
+		const purok = document.getElementById("edit_bhw_purok").value;
+		const place = `${province}, ${city}, ${barangay}, ${purok}`;
+		formData.append("place", place);
 
 		// Get selected permission radio button value
 		const selectedPermission = document.querySelector(
@@ -825,10 +884,16 @@ async function saveMidwife() {
 			"gender",
 			document.getElementById("edit_midwife_gender").value
 		);
-		formData.append(
-			"bdate",
-			document.getElementById("edit_midwife_bdate").value
-		);
+
+		// Combine place information
+		const province = document.getElementById("edit_midwife_province").value;
+		const city = document.getElementById(
+			"edit_midwife_city_municipality"
+		).value;
+		const barangay = document.getElementById("edit_midwife_barangay").value;
+		const purok = document.getElementById("edit_midwife_purok").value;
+		const place = `${province}, ${city}, ${barangay}, ${purok}`;
+		formData.append("place", place);
 
 		// Get selected permission radio button value
 		const selectedPermission = document.querySelector(
@@ -876,6 +941,7 @@ function cancelEditMidwife() {
 // Initialize all tables
 getBhw();
 getMidwives();
+getLocations();
 
 // Search functionality
 function setupSearchListeners() {
@@ -899,6 +965,13 @@ function setupSearchListeners() {
 		.getElementById("searchMidwives")
 		.addEventListener("input", function () {
 			filterTable("searchMidwives", "midwivesTable");
+		});
+
+	// Locations search
+	document
+		.getElementById("searchLocations")
+		.addEventListener("input", function () {
+			filterTable("searchLocations", "locationsTableBody");
 		});
 }
 
@@ -939,3 +1012,429 @@ function clearSearch(searchInputId, tableBodyId) {
 document.addEventListener("DOMContentLoaded", function () {
 	setupSearchListeners();
 });
+
+// Location Management Functions
+async function getLocations() {
+	try {
+		const response = await fetch("../../php/admin/show_locations.php");
+		const data = await response.json();
+		console.log(data);
+		const tbody = document.querySelector("#locationsTableBody");
+		tbody.innerHTML = ""; // Clear existing content
+
+		for (const location of data) {
+			tbody.innerHTML += `<tr>
+				<td><input type="checkbox" class="location-checkbox" value="${location.id}"></td>
+				<td>${location.province}</td>
+				<td>${location.city_municipality}</td>
+				<td>${location.barangay}</td>
+				<td>${location.purok}</td>
+				<td>${location.created_at}</td>
+				<td>
+					<button onclick="deleteLocation(${location.id})" class="btn btn-danger btn-sm">Delete</button>
+				</td>
+			</tr>`;
+		}
+	} catch (error) {
+		console.error("Error fetching locations:", error);
+	}
+}
+
+function toggleAllLocations() {
+	const selectAll = document.getElementById("selectAllLocations");
+	const checkboxes = document.querySelectorAll(".location-checkbox");
+	checkboxes.forEach((checkbox) => {
+		checkbox.checked = selectAll.checked;
+	});
+}
+
+function showAddLocationForm() {
+	const form = document.getElementById("addLocationForm");
+	form.style.display = "block";
+}
+
+function cancelAddLocation() {
+	const form = document.getElementById("addLocationForm");
+	form.style.display = "none";
+	// Clear form fields
+	document.getElementById("add_province").value = "";
+	document.getElementById("add_city_municipality").value = "";
+	document.getElementById("add_barangay").value = "";
+	document.getElementById("add_purok").value = "";
+}
+
+async function saveLocation() {
+	const formData = new FormData();
+	formData.append("province", document.getElementById("add_province").value);
+	formData.append(
+		"city_municipality",
+		document.getElementById("add_city_municipality").value
+	);
+	formData.append("barangay", document.getElementById("add_barangay").value);
+	formData.append("purok", document.getElementById("add_purok").value);
+
+	try {
+		const response = await fetch("../../php/admin/add_location.php", {
+			method: "POST",
+			body: formData,
+		});
+
+		const data = await response.json();
+
+		if (data.status === "success") {
+			alert("Location added successfully");
+			cancelAddLocation();
+			getLocations(); // Refresh the table
+		} else {
+			alert("Error: " + data.message);
+		}
+	} catch (error) {
+		console.error("Error adding location:", error);
+		alert("Failed to add location. Please try again.");
+	}
+}
+
+async function deleteLocation(locationId) {
+	if (!confirm("Are you sure you want to delete this location?")) {
+		return;
+	}
+
+	const formData = new FormData();
+	formData.append("location_id", locationId);
+
+	try {
+		const response = await fetch("../../php/admin/delete_location.php", {
+			method: "POST",
+			body: formData,
+		});
+
+		const data = await response.json();
+
+		if (data.status === "success") {
+			alert("Location deleted successfully");
+			getLocations(); // Refresh the table
+		} else {
+			alert("Error: " + data.message);
+		}
+	} catch (error) {
+		console.error("Error deleting location:", error);
+		alert("Failed to delete location. Please try again.");
+	}
+}
+
+async function deleteSelectedLocations() {
+	const selectedBoxes = document.querySelectorAll(".location-checkbox:checked");
+
+	if (selectedBoxes.length === 0) {
+		alert("Please select at least one location to delete.");
+		return;
+	}
+
+	if (
+		!confirm(
+			`Are you sure you want to delete ${selectedBoxes.length} location(s)?`
+		)
+	) {
+		return;
+	}
+
+	try {
+		for (const checkbox of selectedBoxes) {
+			const locationId = checkbox.value;
+			const formData = new FormData();
+			formData.append("location_id", locationId);
+
+			const response = await fetch("../../php/admin/delete_location.php", {
+				method: "POST",
+				body: formData,
+			});
+
+			const data = await response.json();
+			if (data.status !== "success") {
+				console.error(`Failed to delete location ${locationId}:`, data.message);
+			}
+		}
+
+		alert(`${selectedBoxes.length} location(s) deleted successfully`);
+		getLocations();
+	} catch (error) {
+		console.error("Error deleting locations:", error);
+		alert("Failed to delete locations. Please try again.");
+	}
+}
+
+// Cascading dropdown functions for BHW edit form
+async function loadBhwProvinces(currentPlace = "") {
+	try {
+		const response = await fetch(
+			"../../php/admin/get_places.php?type=provinces"
+		);
+		const provinces = await response.json();
+
+		const provinceSelect = document.getElementById("edit_bhw_province");
+		provinceSelect.innerHTML = '<option value="">Select Province</option>';
+
+		const [currentProvince] = currentPlace.split(", ");
+
+		provinces.forEach((province) => {
+			const option = document.createElement("option");
+			option.value = province;
+			option.textContent = province;
+			if (province === currentProvince) option.selected = true;
+			provinceSelect.appendChild(option);
+		});
+
+		if (currentProvince) {
+			await loadBhwCities(currentPlace);
+		}
+	} catch (error) {
+		console.error("Error loading provinces:", error);
+	}
+}
+
+async function loadBhwCities(currentPlace = "") {
+	const province = document.getElementById("edit_bhw_province").value;
+	const citySelect = document.getElementById("edit_bhw_city_municipality");
+	const barangaySelect = document.getElementById("edit_bhw_barangay");
+	const purokSelect = document.getElementById("edit_bhw_purok");
+
+	citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+	barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+	purokSelect.innerHTML = '<option value="">Select Purok</option>';
+
+	if (!province) return;
+
+	try {
+		const response = await fetch(
+			`../../php/admin/get_places.php?type=cities&province=${encodeURIComponent(
+				province
+			)}`
+		);
+		const cities = await response.json();
+
+		const [, currentCity] = currentPlace.split(", ");
+
+		cities.forEach((city) => {
+			const option = document.createElement("option");
+			option.value = city;
+			option.textContent = city;
+			if (city === currentCity) option.selected = true;
+			citySelect.appendChild(option);
+		});
+
+		if (currentCity) {
+			await loadBhwBarangays(currentPlace);
+		}
+	} catch (error) {
+		console.error("Error loading cities:", error);
+	}
+}
+
+async function loadBhwBarangays(currentPlace = "") {
+	const province = document.getElementById("edit_bhw_province").value;
+	const city = document.getElementById("edit_bhw_city_municipality").value;
+	const barangaySelect = document.getElementById("edit_bhw_barangay");
+	const purokSelect = document.getElementById("edit_bhw_purok");
+
+	barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+	purokSelect.innerHTML = '<option value="">Select Purok</option>';
+
+	if (!province || !city) return;
+
+	try {
+		const response = await fetch(
+			`../../php/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+				province
+			)}&city_municipality=${encodeURIComponent(city)}`
+		);
+		const barangays = await response.json();
+
+		const [, , currentBarangay] = currentPlace.split(", ");
+
+		barangays.forEach((barangay) => {
+			const option = document.createElement("option");
+			option.value = barangay;
+			option.textContent = barangay;
+			if (barangay === currentBarangay) option.selected = true;
+			barangaySelect.appendChild(option);
+		});
+
+		if (currentBarangay) {
+			await loadBhwPuroks(currentPlace);
+		}
+	} catch (error) {
+		console.error("Error loading barangays:", error);
+	}
+}
+
+async function loadBhwPuroks(currentPlace = "") {
+	const province = document.getElementById("edit_bhw_province").value;
+	const city = document.getElementById("edit_bhw_city_municipality").value;
+	const barangay = document.getElementById("edit_bhw_barangay").value;
+	const purokSelect = document.getElementById("edit_bhw_purok");
+
+	purokSelect.innerHTML = '<option value="">Select Purok</option>';
+
+	if (!province || !city || !barangay) return;
+
+	try {
+		const response = await fetch(
+			`../../php/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+				province
+			)}&city_municipality=${encodeURIComponent(
+				city
+			)}&barangay=${encodeURIComponent(barangay)}`
+		);
+		const puroks = await response.json();
+
+		const [, , , currentPurok] = currentPlace.split(", ");
+
+		puroks.forEach((purok) => {
+			const option = document.createElement("option");
+			option.value = purok;
+			option.textContent = purok;
+			if (purok === currentPurok) option.selected = true;
+			purokSelect.appendChild(option);
+		});
+	} catch (error) {
+		console.error("Error loading puroks:", error);
+	}
+}
+
+// Cascading dropdown functions for Midwife edit form
+async function loadMidwifeProvinces(currentPlace = "") {
+	try {
+		const response = await fetch(
+			"../../php/admin/get_places.php?type=provinces"
+		);
+		const provinces = await response.json();
+
+		const provinceSelect = document.getElementById("edit_midwife_province");
+		provinceSelect.innerHTML = '<option value="">Select Province</option>';
+
+		const [currentProvince] = currentPlace.split(", ");
+
+		provinces.forEach((province) => {
+			const option = document.createElement("option");
+			option.value = province;
+			option.textContent = province;
+			if (province === currentProvince) option.selected = true;
+			provinceSelect.appendChild(option);
+		});
+
+		if (currentProvince) {
+			await loadMidwifeCities(currentPlace);
+		}
+	} catch (error) {
+		console.error("Error loading provinces:", error);
+	}
+}
+
+async function loadMidwifeCities(currentPlace = "") {
+	const province = document.getElementById("edit_midwife_province").value;
+	const citySelect = document.getElementById("edit_midwife_city_municipality");
+	const barangaySelect = document.getElementById("edit_midwife_barangay");
+	const purokSelect = document.getElementById("edit_midwife_purok");
+
+	citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+	barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+	purokSelect.innerHTML = '<option value="">Select Purok</option>';
+
+	if (!province) return;
+
+	try {
+		const response = await fetch(
+			`../../php/admin/get_places.php?type=cities&province=${encodeURIComponent(
+				province
+			)}`
+		);
+		const cities = await response.json();
+
+		const [, currentCity] = currentPlace.split(", ");
+
+		cities.forEach((city) => {
+			const option = document.createElement("option");
+			option.value = city;
+			option.textContent = city;
+			if (city === currentCity) option.selected = true;
+			citySelect.appendChild(option);
+		});
+
+		if (currentCity) {
+			await loadMidwifeBarangays(currentPlace);
+		}
+	} catch (error) {
+		console.error("Error loading cities:", error);
+	}
+}
+
+async function loadMidwifeBarangays(currentPlace = "") {
+	const province = document.getElementById("edit_midwife_province").value;
+	const city = document.getElementById("edit_midwife_city_municipality").value;
+	const barangaySelect = document.getElementById("edit_midwife_barangay");
+	const purokSelect = document.getElementById("edit_midwife_purok");
+
+	barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+	purokSelect.innerHTML = '<option value="">Select Purok</option>';
+
+	if (!province || !city) return;
+
+	try {
+		const response = await fetch(
+			`../../php/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+				province
+			)}&city_municipality=${encodeURIComponent(city)}`
+		);
+		const barangays = await response.json();
+
+		const [, , currentBarangay] = currentPlace.split(", ");
+
+		barangays.forEach((barangay) => {
+			const option = document.createElement("option");
+			option.value = barangay;
+			option.textContent = barangay;
+			if (barangay === currentBarangay) option.selected = true;
+			barangaySelect.appendChild(option);
+		});
+
+		if (currentBarangay) {
+			await loadMidwifePuroks(currentPlace);
+		}
+	} catch (error) {
+		console.error("Error loading barangays:", error);
+	}
+}
+
+async function loadMidwifePuroks(currentPlace = "") {
+	const province = document.getElementById("edit_midwife_province").value;
+	const city = document.getElementById("edit_midwife_city_municipality").value;
+	const barangay = document.getElementById("edit_midwife_barangay").value;
+	const purokSelect = document.getElementById("edit_midwife_purok");
+
+	purokSelect.innerHTML = '<option value="">Select Purok</option>';
+
+	if (!province || !city || !barangay) return;
+
+	try {
+		const response = await fetch(
+			`../../php/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+				province
+			)}&city_municipality=${encodeURIComponent(
+				city
+			)}&barangay=${encodeURIComponent(barangay)}`
+		);
+		const puroks = await response.json();
+
+		const [, , , currentPurok] = currentPlace.split(", ");
+
+		puroks.forEach((purok) => {
+			const option = document.createElement("option");
+			option.value = purok;
+			option.textContent = purok;
+			if (purok === currentPurok) option.selected = true;
+			purokSelect.appendChild(option);
+		});
+	} catch (error) {
+		console.error("Error loading puroks:", error);
+	}
+}
