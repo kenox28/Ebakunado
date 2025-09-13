@@ -22,12 +22,12 @@ if (!$connect) {
 }
 
 // Check if request method is POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(array('status' => 'error', 'message' => 'Invalid request method'));
-    exit();
+// Handle both GET (for fetching) and POST (for updating)
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $user_id = $_GET['user_id'] ?? '';
+} else {
+    $user_id = $_POST['user_id'] ?? '';
 }
-
-$user_id = $_POST['user_id'] ?? '';
 
 error_log("Edit user: Attempting to edit user_id: '$user_id'");
 
@@ -63,7 +63,7 @@ try {
     $stmt->close();
     
     error_log("Edit user: Successfully retrieved user data for: " . $user['fname'] . ' ' . $user['lname']);
-    echo json_encode($user);
+    echo json_encode(array('status' => 'success', 'data' => $user));
     
 } catch (Exception $e) {
     error_log("Edit user: Exception occurred - " . $e->getMessage());
