@@ -88,8 +88,8 @@ async function loginFun(e) {
 					text: data.message,
 					confirmButtonText: "Continue",
 				}).then(() => {
-					console.log("Redirecting to super_admin home");
-					window.location.href = "../views/super_admin/home.php";
+					console.log("Redirecting to superadmin dashboard");
+					window.location.href = "superadmin/dashboard.php";
 				});
 			} else if (data.user_type === "admin") {
 				Swal.fire({
@@ -139,7 +139,7 @@ async function loginFun(e) {
 			console.log("Already logged in - user_type:", data.user_type);
 			if (data.user_type === "super_admin") {
 				console.log("Redirecting already logged in super_admin");
-				window.location.href = "../views/super_admin/home.php";
+				window.location.href = "../views/superadmin/dashboard.php";
 			} else if (data.user_type === "admin") {
 				console.log("Redirecting already logged in admin");
 				window.location.href = "../views/admin/home.php";

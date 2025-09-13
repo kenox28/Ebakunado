@@ -1,12 +1,32 @@
 <?php
+session_start();
+
+// Check if admin is logged in
+if (!isset($_SESSION['admin_id'])) {
+    http_response_code(401);
+    echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
+    exit();
+}
+
 include "../../database/Database.php";
 
-$sql = "SELECT * FROM users";
-$result = $connect->query($sql);
+header('Content-Type: application/json');
 
-$data = array();
-for($i = 0; $i < $result->num_rows; $i++) {
-    $data[] = $result->fetch_assoc();
+try {
+    $sql = "SELECT * FROM users ORDER BY created_at DESC";
+    $result = $connect->query($sql);
+    
+    if ($result) {
+        $data = array();
+        for($i = 0; $i < $result->num_rows; $i++) {
+            $data[] = $result->fetch_assoc();
+        }
+        echo json_encode($data);
+    } else {
+        echo json_encode([]);
+    }
+} catch (Exception $e) {
+    error_log("Show users error: " . $e->getMessage());
+    echo json_encode([]);
 }
-echo json_encode($data);
 ?>

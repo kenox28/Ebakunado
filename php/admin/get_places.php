@@ -18,7 +18,7 @@ try {
             $query = "SELECT DISTINCT province FROM locations ORDER BY province";
             $result = mysqli_query($connect, $query);
             while ($row = mysqli_fetch_assoc($result)) {
-                $places[] = $row['province'];
+                $places[] = array('province' => $row['province']);
             }
             break;
 
@@ -32,7 +32,7 @@ try {
             $stmt->execute();
             $result = $stmt->get_result();
             while ($row = $result->fetch_assoc()) {
-                $places[] = $row['city_municipality'];
+                $places[] = array('city_municipality' => $row['city_municipality']);
             }
             break;
 
@@ -46,7 +46,7 @@ try {
             $stmt->execute();
             $result = $stmt->get_result();
             while ($row = $result->fetch_assoc()) {
-                $places[] = $row['barangay'];
+                $places[] = array('barangay' => $row['barangay']);
             }
             break;
 
@@ -60,7 +60,7 @@ try {
             $stmt->execute();
             $result = $stmt->get_result();
             while ($row = $result->fetch_assoc()) {
-                $places[] = $row['purok'];
+                $places[] = array('purok' => $row['purok']);
             }
             break;
 

@@ -8,13 +8,12 @@ if (!isset($_SESSION['admin_id']) && !isset($_SESSION['super_admin_id'])) {
     exit();
 }
 
-// Check if request method is POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(array('status' => 'error', 'message' => 'Invalid request method'));
-    exit();
+// Handle both GET (for fetching) and POST (for updating)
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $midwife_id = $_GET['midwife_id'] ?? '';
+} else {
+    $midwife_id = $_POST['midwife_id'] ?? '';
 }
-
-$midwife_id = $_POST['midwife_id'] ?? '';
 
 if(empty($midwife_id)) {
     echo json_encode(array('status' => 'error', 'message' => 'Midwife ID is required'));
@@ -36,7 +35,7 @@ try {
     $midwife = $result->fetch_assoc();
     $stmt->close();
     
-    echo json_encode($midwife);
+    echo json_encode(array('status' => 'success', 'data' => $midwife));
     
 } catch (Exception $e) {
     echo json_encode(array('status' => 'error', 'message' => 'Database error occurred'));
