@@ -15,12 +15,36 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // CSRF Protection
-if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-    echo json_encode([
-        "status" => "failed",
-        "message" => "Invalid request token."
-    ]);
-    exit();
+// Mobile App Support - Add this BEFORE the CSRF token check
+$is_mobile_app = isset($_POST['mobile_app_request']) && $_POST['mobile_app_request'] === 'true';
+
+if ($is_mobile_app) {
+    // For mobile app requests, we'll use a special token system
+    $expected_mobile_token = 'BYPASS_FOR_MOBILE_APP'; // You can make this more secure
+    
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $expected_mobile_token) {
+        echo json_encode([
+            "status" => "failed",
+            "message" => "Invalid mobile app token."
+        ]);
+        exit();
+    }
+    
+    // Skip OTP verification for mobile app if requested
+    if (isset($_POST['skip_otp']) && $_POST['skip_otp'] === 'true') {
+        // Set session variables to simulate OTP verification
+        $_SESSION['otp_verified'] = true;
+        $_SESSION['verified_phone'] = $_POST['number'];
+    }
+} else {
+    // Original CSRF Protection for web requests
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        echo json_encode([
+            "status" => "failed",
+            "message" => "Invalid request token."
+        ]);
+        exit();
+    }
 }
 
 // Rate Limiting - Check if too many requests from this IP
@@ -257,3 +281,5 @@ $stmt->close();
 // Clear sensitive data from memory
 unset($password, $confirm_password, $hashed_password, $salt);
 ?>
+
+

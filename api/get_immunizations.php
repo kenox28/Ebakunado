@@ -9,7 +9,7 @@ try {
     $conn = getApiConnection();
     
     // Query to get all immunization records
-    $query = "SELECT id, patient_id, fname, lname, age, address, vaccine_name, dose_number, date_given, next_due_date, batch_number, provider_id, status, created_at, updated FROM immunization_records ORDER BY date_given DESC";
+    $query = "SELECT * FROM immunization_records ORDER BY date_given DESC";
     $result = $conn->query($query);
     
     if ($result) {

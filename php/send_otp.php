@@ -34,14 +34,16 @@ if (!str_starts_with($phone_number, '+63')) {
     }
 }
 
-// Generate 6-digit OTP
-$otp = sprintf('%06d', mt_rand(0, 999999));
+// Generate 6-digit OTP - TEMPORARILY DISABLED, USING HARDCODED OTP
+// $otp = sprintf('%06d', mt_rand(0, 999999));
+$otp = "123456"; // Hardcoded OTP to save SMS costs
 
 // Store OTP in session with expiration time (5 minutes)
 $_SESSION['otp'] = $otp;
 $_SESSION['otp_phone'] = $phone_number;
 $_SESSION['otp_expires'] = time() + 300; // 5 minutes from now
 
+/* COMMENTED OUT - SMS SENDING DISABLED TO SAVE COSTS
 // TextBee.dev API configuration
 $apiKey = '859e05f9-b29e-4071-b29f-0bd14a273bc2';
 $deviceId = '687e5760c87689a0c22492b3';
@@ -110,4 +112,12 @@ if ($httpCode === 200 || $httpCode === 201) {
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Failed to send SMS. Please check your phone number.']);
 }
+*/
+
+// TEMPORARY: Return success without actually sending SMS
+echo json_encode([
+    'status' => 'success', 
+    'message' => 'OTP sent successfully to ' . $phone_number . ' (TEST MODE: Use 123456)',
+    'expires_in' => 300
+]);
 ?>

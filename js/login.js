@@ -40,14 +40,14 @@ async function loginFun(e) {
 		return;
 	}
 
-	Swal.fire({
-		title: "Logging in...",
-		text: "Please wait while we verify your credentials.",
-		allowOutsideClick: false,
-		didOpen: () => {
-			Swal.showLoading();
-		},
-	});
+	// Swal.fire({
+	// 	title: "Logging in...",
+	// 	text: "Please wait while we verify your credentials.",
+	// 	allowOutsideClick: false,
+	// 	didOpen: () => {
+	// 		Swal.showLoading();
+	// 	},
+	// });
 
 	const formdata = new FormData(loginForm);
 
@@ -57,6 +57,7 @@ async function loginFun(e) {
 	}
 
 	try {
+		console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 		const res = await fetch("../php/login.php", {
 			method: "POST",
 			body: formdata,
@@ -71,69 +72,79 @@ async function loginFun(e) {
 			console.log("Parsed data:", data);
 		} catch (e) {
 			console.log("Server error:\n" + text);
-			Swal.fire({
-				icon: "error",
-				title: "Server Error!",
-				text: "An unexpected error occurred. Please try again.",
-			});
+			// Swal.fire({
+			// 	icon: "error",
+			// 	title: "Server Error!",
+			// 	text: "An unexpected error occurred. Please try again.",
+			// });
 			return;
 		}
 
 		if (data.status === "success") {
 			console.log("Login success - user_type:", data.user_type);
 			if (data.user_type === "super_admin") {
-				Swal.fire({
-					icon: "success",
-					title: "Welcome Super Admin!",
-					text: data.message,
-					confirmButtonText: "Continue",
-				}).then(() => {
-					console.log("Redirecting to superadmin dashboard");
-					window.location.href = "superadmin/dashboard.php";
-				});
+				// 	Swal.fire({
+				// 		icon: "success",
+				// 		title: "Welcome Super Admin!",
+				// 		text: data.message,
+				// 		confirmButtonText: "Continue",
+				// 	}).then(() => {
+				// 		console.log("Redirecting to superadmin dashboard");
+				// 		window.location.href = "superadmin/dashboard.php";
+				// 	});
+				console.log("Redirecting to superadmin dashboard");
+				window.location.href = "superadmin/dashboard.php";
 			} else if (data.user_type === "admin") {
-				Swal.fire({
-					icon: "success",
-					title: "Welcome Admin!",
-					text: data.message,
-					confirmButtonText: "Continue",
-				}).then(() => {
-					console.log("Redirecting to admin home");
-					window.location.href = "../views/admin/home.php";
-				});
+				// Swal.fire({
+				// 	icon: "success",
+				// 	title: "Welcome Admin!",
+				// 	text: data.message,
+				// 	confirmButtonText: "Continue",
+				// }).then(() => {
+				// 	console.log("Redirecting to admin home");
+				// 	window.location.href = "../views/admin/home.php";
+				// });
+				console.log("Redirecting to admin home");
+				window.location.href = "../views/admin/home.php";
 			} else if (data.user_type === "bhw") {
 				console.log("BHW login successful, showing SweetAlert");
-				Swal.fire({
-					icon: "success",
-					title: "Welcome BHW!",
-					text: data.message,
-					confirmButtonText: "Continue",
-				}).then(() => {
-					console.log("Redirecting to BHW home");
-					window.location.href = "../views/bhw/home.php";
-				});
+				// Swal.fire({
+				// 	icon: "success",
+				// 	title: "Welcome BHW!",
+				// 	text: data.message,
+				// 	confirmButtonText: "Continue",
+				// }).then(() => {
+				// 	console.log("Redirecting to BHW home");
+				// 	window.location.href = "../views/bhw/home.php";
+				// });
+				console.log("Redirecting to BHW home");
+				window.location.href = "../views/bhw/home.php";
 			} else if (data.user_type === "midwife") {
 				console.log("Midwife login successful, showing SweetAlert");
-				Swal.fire({
-					icon: "success",
-					title: "Welcome Midwife!",
-					text: data.message,
-					confirmButtonText: "Continue",
-				}).then(() => {
-					console.log("Redirecting to midwives home");
-					window.location.href = "../views/midwives/home.php";
-				});
+				// Swal.fire({
+				// 	icon: "success",
+				// 	title: "Welcome Midwife!",
+				// 	text: data.message,
+				// 	confirmButtonText: "Continue",
+				// }).then(() => {
+				// 	console.log("Redirecting to midwives home");
+				// 	window.location.href = "../views/midwives/home.php";
+				// });
+				console.log("Redirecting to midwives home");
+				window.location.href = "../views/midwives/home.php";
 			} else {
 				console.log("User login successful, showing SweetAlert");
-				Swal.fire({
-					icon: "success",
-					title: "Welcome back!",
-					text: data.message,
-					confirmButtonText: "Continue",
-				}).then(() => {
-					console.log("Redirecting to users home");
-					window.location.href = "../views/users/home.php";
-				});
+				// Swal.fire({
+				// 	icon: "success",
+				// 	title: "Welcome back!",
+				// 	text: data.message,
+				// 	confirmButtonText: "Continue",
+				// }).then(() => {
+				// 	console.log("Redirecting to users home");
+				// 	window.location.href = "../views/users/home.php";
+				// });
+				console.log("Redirecting to users home");
+				window.location.href = "../views/users/home.php";
 			}
 		} else if (data.status === "already_logged_in") {
 			console.log("Already logged in - user_type:", data.user_type);
@@ -154,19 +165,20 @@ async function loginFun(e) {
 				window.location.href = "../views/users/home.php";
 			}
 		} else {
-			Swal.fire({
-				icon: "error",
-				title: "Login Failed!",
-				text: data.message,
-			});
+			// Swal.fire({
+			// 	icon: "error",
+			// 	title: "Login Failed!",
+			// 	text: data.message,
+			// });
+			console.log(Date.message);
 		}
 	} catch (error) {
 		console.error("Network error:", error);
-		Swal.fire({
-			icon: "error",
-			title: "Network Error!",
-			text: "Please check your internet connection and try again.",
-		});
+		// Swal.fire({
+		// 	icon: "error",
+		// 	title: "Network Error!",
+		// 	text: "Please check your internet connection and try again.",
+		// });
 	}
 }
 

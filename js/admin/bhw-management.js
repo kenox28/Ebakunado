@@ -195,16 +195,16 @@ async function editBhw(bhw_id) {
 			await loadEditBhwProvinces();
 
 			// Show modal
-			const modal = new bootstrap.Modal(
-				document.getElementById("editBhwModal")
-			);
-			modal.show();
+			// const modal = new bootstrap.Modal(
+			// 	document.getElementById("editBhwModal")
+			// );
+			// modal.show();
 		} else {
-			Swal.fire("Error!", data.message || "Failed to load BHW data", "error");
+			// Swal.fire("Error!", data.message || "Failed to load BHW data", "error");
 		}
 	} catch (error) {
 		console.error("Error loading BHW:", error);
-		Swal.fire("Error!", "Failed to load BHW data", "error");
+		// Swal.fire("Error!", "Failed to load BHW data", "error");
 	}
 }
 
@@ -378,7 +378,8 @@ async function updateBhw() {
 
 		const data = await response.json();
 		if (data.status === "success") {
-			Swal.fire("Success!", "BHW updated successfully", "success");
+			// Swal.fire("Success!", "BHW updated successfully", "success");
+			alert("Success!", "BHW updated successfully", "success");
 			cancelEditBhw();
 			getBhws(); // Reload BHWs table
 		} else {
@@ -386,7 +387,7 @@ async function updateBhw() {
 		}
 	} catch (error) {
 		console.error("Error updating BHW:", error);
-		Swal.fire("Error!", "Failed to update BHW", "error");
+		// Swal.fire("Error!", "Failed to update BHW", "error");
 	}
 }
 

@@ -9,7 +9,7 @@ try {
     $conn = getApiConnection();
     
     // Query to get all admins (excluding password)
-    $query = "SELECT id, admin_id, fname, lname, email, profileImg, created_at, updated_at FROM admin ORDER BY created_at DESC";
+    $query = "SELECT * FROM admin ORDER BY created_at DESC";
     $result = $conn->query($query);
     
     if ($result) {

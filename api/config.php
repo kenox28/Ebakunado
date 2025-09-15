@@ -1,9 +1,9 @@
 <?php
 // API Database Configuration for InfinityFree/Hostinger
-$api_host = "sql113.infinityfree.com";
-$api_username = "if0_39848303";
-$api_password = "fS584639SGV";
-$api_database = "if0_39848303_ebakunado";
+$api_host = "localhost";
+$api_username = "root";
+$api_password = "";
+$api_database = "ebakunado_db";
 
 // API Configuration
 $api_key = "iquen"; // Change this to your desired API key

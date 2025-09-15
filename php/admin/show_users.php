@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-// Check if admin is logged in
-if (!isset($_SESSION['admin_id'])) {
+// Check if admin or super admin is logged in
+if (!isset($_SESSION['admin_id']) && !isset($_SESSION['super_admin_id'])) {
     http_response_code(401);
     echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
     exit();

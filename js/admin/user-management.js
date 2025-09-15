@@ -183,12 +183,13 @@ async function editUser(user_id) {
 			await loadEditUserProvinces();
 
 			// Show modal
-			const modal = new bootstrap.Modal(
-				document.getElementById("editUserModal")
-			);
-			modal.show();
+			// const modal = new bootstrap.Modal(
+			// 	document.getElementById("editUserModal")
+			// );
+			// modal.show();
+			alert("success");
 		} else {
-			Swal.fire("Error!", data.message || "Failed to load user data", "error");
+			// Swal.fire("Error!", data.message || "Failed to load user data", "error");
 		}
 	} catch (error) {
 		console.error("Error loading user:", error);
@@ -362,15 +363,18 @@ async function updateUser() {
 
 		const data = await response.json();
 		if (data.status === "success") {
-			Swal.fire("Success!", "User updated successfully", "success");
+			// Swal.fire("Success!", "User updated successfully", "success");
+			alert("success");
+
 			cancelEditUser();
 			getUsers(); // Reload users table
 		} else {
-			Swal.fire("Error!", data.message || "Failed to update user", "error");
+			// Swal.fire("Error!", data.message || "Failed to update user", "error");
+			alert("failed");
 		}
 	} catch (error) {
 		console.error("Error updating user:", error);
-		Swal.fire("Error!", "Failed to update user", "error");
+		// Swal.fire("Error!", "Failed to update user", "error");
 	}
 }
 

@@ -154,8 +154,9 @@ if (!$user_found) {
     exit();
 }
 
-// Generate 6-digit OTP
-$otp = sprintf('%06d', mt_rand(0, 999999));
+// Generate 6-digit OTP - TEMPORARILY DISABLED, USING HARDCODED OTP
+// $otp = sprintf('%06d', mt_rand(0, 999999));
+$otp = "123456"; // Hardcoded OTP to save SMS costs
 
 // Store OTP in session with expiration time (5 minutes)
 $_SESSION['reset_otp'] = $otp;
@@ -190,6 +191,7 @@ if ($is_email) {
         echo json_encode(['status' => 'error', 'message' => 'Failed to send email. Please try again.']);
     }
 } else {
+    /* COMMENTED OUT - SMS SENDING DISABLED TO SAVE COSTS
     // Send SMS OTP
     $phone_number = $user_data['phone_number'];
     
@@ -271,6 +273,15 @@ if ($is_email) {
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Failed to send SMS. Please check your phone number.']);
     }
+    */
+    
+    // TEMPORARY: Return success without actually sending SMS
+    echo json_encode([
+        'status' => 'success', 
+        'message' => 'OTP sent successfully to your phone number (TEST MODE: Use 123456)',
+        'contact_type' => 'phone',
+        'expires_in' => 300
+    ]);
 }
 
 // Catch any uncaught errors

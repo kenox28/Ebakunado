@@ -106,20 +106,39 @@ $locations = "CREATE TABLE IF NOT EXISTS locations (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )";
 
+$child_health_records = "CREATE TABLE IF NOT EXISTS Child_Health_Records (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL,
+    baby_id VARCHAR(255) NOT NULL,
+    child_fname VARCHAR(100) NOT NULL,
+    child_lname VARCHAR(100) NOT NULL,
+    child_gender ENUM('Male','Female') NOT NULL,
+    child_birth_date DATE NOT NULL,
+    place_of_birth VARCHAR(255),           -- hospital, home, etc.
+    mother_name VARCHAR(100) NOT NULL,
+    father_name VARCHAR(100),              -- optional but good to have
+    address VARCHAR(255) NOT NULL,
+    birth_weight DECIMAL(5,2) NULL,         -- kg
+    birth_height DECIMAL(5,2) NULL,         -- cm
+    birth_attendant VARCHAR(100) NULL,      -- midwife, doctor, etc.
+    babys_card VARCHAR(500) NULL,           -- file path for uploaded baby's card
+    date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    date_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    status VARCHAR(50) DEFAULT 'pending'
+)";
+
 $immunization_records = "CREATE TABLE IF NOT EXISTS immunization_records(
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    patient_id VARCHAR(50),
-    fname VARCHAR(50),
-    lname VARCHAR(50),
-    age INT,
-    address VARCHAR(255),
+    baby_id VARCHAR(50),
     vaccine_name VARCHAR(100),
     dose_number INT,
-    date_given DATE,
-    next_due_date DATE,
-    batch_number VARCHAR(50),
-    provider_id VARCHAR(255),
+    weight DECIMAL(5,2) NULL,
+    height DECIMAL(5,2) NULL,
+    temperature DECIMAL(5,2) NULL,
     status VARCHAR(50),
+    date_given DATE,
+    catch_up_date DATE,
+    administered_by VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )";
@@ -168,6 +187,7 @@ function initializeDatabase($connect) {
     mysqli_query($connect, $GLOBALS['midwives']);
     mysqli_query($connect, $GLOBALS['bhw']);
     mysqli_query($connect, $GLOBALS['locations']);
+    mysqli_query($connect, $GLOBALS['child_health_records']);
     mysqli_query($connect, $GLOBALS['immunization_records']);
     mysqli_query($connect, $GLOBALS['admin']);
     mysqli_query($connect, $GLOBALS['super_admin']);
@@ -182,7 +202,8 @@ function initializeDatabase($connect) {
         $default_admin = "INSERT INTO admin (admin_id, fname, lname, email, pass) VALUES
         ('ADM001', 'Default', 'Admin', 'admin@gmail.com', '" . md5("admin123456") . "'),
         ('ADM002', 'Default', 'Admin', 'iquenxzx@gmail.com', '" . md5("iquen123456") . "'),
-        ('ADM003', 'Default', 'Admin', 'russeljhondasigan@gmail.com', '" . md5("russel123456") . "')";
+        ('ADM009', 'Default', 'Admin', 'james@gmail.com', '" . md5("james123456") . "'),
+        ('ADM008', 'Default', 'Admin', 'jamesjus@gmail.com', '" . md5("james123456") . "')";
         mysqli_query($connect, $default_admin);
     }
 
