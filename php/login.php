@@ -144,7 +144,7 @@ try {
             
             // If not found in BHW or Midwives, check Users table
             if (!$user_found) {
-                $user_sql = "SELECT user_id as id, fname, lname, email, phone_number, passw, salt, role FROM users WHERE email = ?";
+                $user_sql = "SELECT user_id as id, fname, lname, email, phone_number, passw, salt, role, gender, place FROM users WHERE email = ?";
                 $user_stmt = $connect->prepare($user_sql);
                 $user_stmt->bind_param("s", $email_or_phone);
                 $user_stmt->execute();
@@ -195,7 +195,7 @@ try {
         
         // If not found in BHW or Midwives, check Users table
         if (!$user_found) {
-            $user_sql = "SELECT user_id as id, fname, lname, email, phone_number, passw, salt, role FROM users WHERE phone_number = ?";
+            $user_sql = "SELECT user_id as id, fname, lname, email, phone_number, passw, salt, role, gender , place FROM users WHERE phone_number = ?";
             $user_stmt = $connect->prepare($user_sql);
             $user_stmt->bind_param("s", $email_or_phone);
             $user_stmt->execute();
@@ -327,6 +327,8 @@ try {
             $_SESSION['email'] = $user_data['email'];
             $_SESSION['phone_number'] = $user_data['phone_number'];
             $_SESSION['role'] = $user_data['role'];
+            $_SESSION['gender'] = $user_data['gender'];
+            $_SESSION['place'] = $user_data['place'];
             $_SESSION['user_type'] = 'user';
             $_SESSION['logged_in'] = true;
             

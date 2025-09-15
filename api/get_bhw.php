@@ -9,7 +9,7 @@ try {
     $conn = getApiConnection();
     
     // Query to get all BHW records
-    $query = "SELECT id, bhw_id, fname, lname, email, profileImg, gender, bdate, barangay, permissions, last_active, created_at, updated FROM bhw ORDER BY created_at DESC";
+    $query = "SELECT * FROM bhw ORDER BY created_at DESC";
     $result = $conn->query($query);
     
     if ($result) {

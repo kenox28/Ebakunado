@@ -402,10 +402,10 @@ async function loadProvinces() {
 		provinceSelect.innerHTML = '<option value="">Select Province</option>';
 
 		if (Array.isArray(provinces) && provinces.length > 0) {
-			provinces.forEach((province) => {
+			provinces.forEach((provinceObj) => {
 				const option = document.createElement("option");
-				option.value = province;
-				option.textContent = province;
+				option.value = provinceObj.province;
+				option.textContent = provinceObj.province;
 				provinceSelect.appendChild(option);
 			});
 			console.log(`Added ${provinces.length} provinces to dropdown`);
@@ -438,10 +438,10 @@ async function loadCities() {
 		);
 		const cities = await response.json();
 
-		cities.forEach((city) => {
+		cities.forEach((cityObj) => {
 			const option = document.createElement("option");
-			option.value = city;
-			option.textContent = city;
+			option.value = cityObj.city_municipality;
+			option.textContent = cityObj.city_municipality;
 			citySelect.appendChild(option);
 		});
 	} catch (error) {
@@ -469,10 +469,10 @@ async function loadBarangays() {
 		);
 		const barangays = await response.json();
 
-		barangays.forEach((barangay) => {
+		barangays.forEach((barangayObj) => {
 			const option = document.createElement("option");
-			option.value = barangay;
-			option.textContent = barangay;
+			option.value = barangayObj.barangay;
+			option.textContent = barangayObj.barangay;
 			barangaySelect.appendChild(option);
 		});
 	} catch (error) {
@@ -501,10 +501,10 @@ async function loadPuroks() {
 		);
 		const puroks = await response.json();
 
-		puroks.forEach((purok) => {
+		puroks.forEach((purokObj) => {
 			const option = document.createElement("option");
-			option.value = purok;
-			option.textContent = purok;
+			option.value = purokObj.purok;
+			option.textContent = purokObj.purok;
 			purokSelect.appendChild(option);
 		});
 	} catch (error) {

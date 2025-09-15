@@ -34,14 +34,15 @@ async function logoutSuperAdmin() {
 					showConfirmButton: false,
 					timer: 1500,
 				}).then(() => {
-					window.location.href = "../login.php";
+					window.location.href = "../landing_page.php";
 				});
 			} else {
 				Swal.fire("Error!", data.message, "error");
 			}
 		} catch (error) {
 			console.error("Logout error:", error);
-			Swal.fire("Error!", "Failed to logout", "error");
+			// Even if there's an error, redirect to landing page
+			window.location.href = "../landing_page.php";
 		}
 	}
 }

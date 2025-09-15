@@ -9,8 +9,8 @@ try {
     $conn = getApiConnection();
     
     // Query to get all midwives
-    $query = "SELECT id, midwife_id, fname, lname, email, profileImg, gender, bdate, license_number, specialization, permissions, Approve, last_active, created_at, updated FROM midwives ORDER BY created_at DESC";
-    $result = $conn->query($query);
+        $query = "SELECT * FROM midwives ORDER BY created_at DESC";
+        $result = $conn->query($query);
     
     if ($result) {
         $midwives = [];

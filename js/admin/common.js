@@ -11,44 +11,44 @@ function toggleSidebar() {
 
 // Logout admin
 function logoutAdmin() {
-	Swal.fire({
-		title: "Are you sure?",
-		text: "You will be logged out of the admin panel",
-		icon: "warning",
-		showCancelButton: true,
-		confirmButtonColor: "#dc3545",
-		cancelButtonColor: "#6c757d",
-		confirmButtonText: "Yes, logout",
-	}).then((result) => {
-		if (result.isConfirmed) {
-			// Show loading
-			Swal.fire({
-				title: "Logging out...",
-				allowOutsideClick: false,
-				didOpen: () => {
-					Swal.showLoading();
-				},
-			});
+	// Swal.fire({
+	// 	title: "Are you sure?",
+	// 	text: "You will be logged out of the admin panel",
+	// 	icon: "warning",
+	// 	showCancelButton: true,
+	// 	confirmButtonColor: "#dc3545",
+	// 	cancelButtonColor: "#6c757d",
+	// 	confirmButtonText: "Yes, logout",
+	// }).then((result) => {
+	// 	if (result.isConfirmed) {
+	// 		// Show loading
+	// 		Swal.fire({
+	// 			title: "Logging out...",
+	// 			allowOutsideClick: false,
+	// 			didOpen: () => {
+	// 				Swal.showLoading();
+	// 			},
+	// 		});
 
-			// Perform logout
-			fetch("../../php/admin/logout.php", {
-				method: "POST",
-			})
-				.then((response) => response.json())
-				.then((data) => {
-					if (data.status === "success") {
-						window.location.href = "../../login.php";
-					} else {
-						Swal.fire("Error!", "Logout failed", "error");
-					}
-				})
-				.catch((error) => {
-					console.error("Logout error:", error);
-					// Even if there's an error, redirect to login
-					window.location.href = "../../login.php";
-				});
-		}
-	});
+	// Perform logout
+	fetch("../../php/admin/logout.php", {
+		method: "POST",
+	})
+		.then((response) => response.json())
+		.then((data) => {
+			if (data.status === "success") {
+				window.location.href = "../../views/landing_page.php";
+			} else {
+				Swal.fire("Error!", "Logout failed", "error");
+			}
+		})
+		.catch((error) => {
+			console.error("Logout error:", error);
+			// Even if there's an error, redirect to landing page
+			window.location.href = "../../views/landing_page.php";
+		});
+	// }
+	// });
 }
 
 // Filter table function
