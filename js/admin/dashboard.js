@@ -3,7 +3,8 @@
 // Load dashboard statistics
 async function loadDashboardStats() {
 	try {
-		const response = await fetch("../../php/admin/dashboard-stats.php");
+		// const response = await fetch("../../php/supabase/admin/dashboard-stats.php");
+		const response = await fetch("../../php/mysql/admin/dashboard-stats.php");
 		const data = await response.json();
 
 		if (data.status === "success") {
@@ -40,8 +41,9 @@ async function loadDashboardStats() {
 // Load recent activity
 async function loadRecentActivity() {
 	try {
+		// const response = await fetch("../../php/supabase/admin/get_activity_logs.php?limit=5");
 		const response = await fetch(
-			"../../php/admin/get_activity_logs.php?limit=5"
+			"../../php/mysql/admin/get_activity_logs.php?limit=5"
 		);
 		const data = await response.json();
 

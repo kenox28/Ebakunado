@@ -108,7 +108,8 @@ if (!isset($_SESSION['bhw_id'])) {
 				const body = document.querySelector('#childhealthrecordBody');
 				body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
 				try {
-					const res = await fetch('../../php/bhw/get_child_health_records.php');
+					// const res = await fetch('../../php/bhw/get_child_health_records.php');
+					const res = await fetch('../../php/supabase/bhw/get_child_health_records.php');
 					const data = await res.json();
 					if (data.status !== 'success') { body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>'; return; }
 					if (!data.data || data.data.length === 0){ body.innerHTML = '<tr><td colspan="21">No records found</td></tr>'; return; }
@@ -155,7 +156,8 @@ if (!isset($_SESSION['bhw_id'])) {
 
 			async function acceptRecord(baby_id){
 				const formData = new FormData(); formData.append('baby_id', baby_id);
-				const response = await fetch('../../php/bhw/accept_chr.php', { method: 'POST', body: formData });
+				// const response = await fetch('../../php/bhw/accept_chr.php', { method: 'POST', body: formData });
+				const response = await fetch('../../php/supabase/bhw/accept_chr.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') { getChildHealthRecord(); }
 				else { alert('Record not accepted: ' + data.message); }
@@ -163,7 +165,7 @@ if (!isset($_SESSION['bhw_id'])) {
 
 			async function rejectRecord(baby_id){
 				const formData = new FormData(); formData.append('baby_id', baby_id);
-				const response = await fetch('../../php/bhw/reject_chr.php', { method: 'POST', body: formData });
+				const response = await fetch('../../php/mysql/bhw/reject_chr.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') { getChildHealthRecord(); }
 				else { alert('Record not rejected: ' + data.message); }
@@ -173,7 +175,7 @@ if (!isset($_SESSION['bhw_id'])) {
 				const tr = btn.closest('tr');
 				const next = tr.nextElementSibling;
 				if (next && next.classList.contains('sched-row')) { next.remove(); return; }
-				const res = await fetch('../../php/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
+				const res = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
 				const data = await res.json();
 				let html = '<tr class="sched-row"><td colspan="21">';
 				if (data.status !== 'success' || !data.data || data.data.length === 0) {
@@ -207,7 +209,7 @@ if (!isset($_SESSION['bhw_id'])) {
 				if (weight) fd.append('weight', weight);
 				if (height) fd.append('height', height);
 				if (temperature) fd.append('temperature', temperature);
-				const res = await fetch('../../php/bhw/mark_vaccine_given.php', { method: 'POST', body: fd });
+				const res = await fetch('../../php/supabase/bhw/mark_vaccine_given.php', { method: 'POST', body: fd });
 				const data = await res.json();
 				if (data.status === 'success') { getChildHealthRecord(); }
 				else { alert('Update failed'); }
@@ -215,7 +217,8 @@ if (!isset($_SESSION['bhw_id'])) {
 
 			window.addEventListener('DOMContentLoaded', getChildHealthRecord);
 			async function logoutBhw() {
-				const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
+				// const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
+				const response = await fetch('../../php/supabase/bhw/logout.php', { method: 'POST' });
 				const data = await response.json();
 				if (data.status === 'success') { window.location.href = '../../views/login.php'; }
 				else { alert('Logout failed: ' + data.message); }

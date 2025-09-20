@@ -1,9 +1,7 @@
 <?php
-// API Database Configuration for InfinityFree/Hostinger
-$api_host = "localhost";
-$api_username = "root";
-$api_password = "";
-$api_database = "ebakunado_db";
+// API Supabase Configuration for Ebakunado
+require_once '../database/SupabaseConfig.php';
+require_once '../database/DatabaseHelper.php';
 
 // API Configuration
 $api_key = "iquen"; // Change this to your desired API key
@@ -18,25 +16,20 @@ header('Access-Control-Allow-Headers: Content-Type, Authorization, X-API-Key');
 error_reporting(0);
 ini_set('display_errors', 0);
 
-// Set error handler to throw exceptions
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-// Function to connect to API database
+// Function to get Supabase connection
 function getApiConnection() {
-    global $api_host, $api_username, $api_password, $api_database;
+    global $supabase;
     
-    try {
-        $connection = new mysqli($api_host, $api_username, $api_password, $api_database);
-        $connection->set_charset("utf8");
-        return $connection;
-    } catch (Exception $e) {
+    if (!$supabase) {
         http_response_code(500);
         echo json_encode([
             "status" => "error",
-            "message" => "Database connection failed"
+            "message" => "Supabase connection failed"
         ]);
         exit();
     }
+    
+    return $supabase;
 }
 
 // Function to validate API key

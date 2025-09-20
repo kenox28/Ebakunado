@@ -20,7 +20,7 @@ async function logoutSuperAdmin() {
 
 	if (result.isConfirmed) {
 		try {
-			const response = await fetch("../../php/superadmin/logout.php", {
+			const response = await fetch("../../php/mysql/superadmin/logout.php", {
 				method: "POST",
 			});
 

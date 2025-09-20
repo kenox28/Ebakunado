@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // Fetch and display Midwives (reusing from home.js)
 async function getMidwives() {
 	try {
-		const response = await fetch("../../php/admin/show_midwives.php");
+		const response = await fetch("../../php/mysql/admin/show_midwives.php");
 		const data = await response.json();
 
 		const tbody = document.querySelector("#midwivesTableBody");
@@ -57,7 +57,7 @@ function toggleAllMidwives() {
 async function editMidwife(midwife_id) {
 	try {
 		const response = await fetch(
-			`../../php/admin/edit_midwife.php?midwife_id=${midwife_id}`
+			`../../php/mysql/admin/edit_midwife.php?midwife_id=${midwife_id}`
 		);
 		const data = await response.json();
 
@@ -230,7 +230,7 @@ async function updateMidwife() {
 	formData.append("place", place);
 
 	try {
-		const response = await fetch("../../php/admin/save_user.php", {
+		const response = await fetch("../../php/mysql/admin/save_user.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -273,7 +273,7 @@ async function deleteMidwife(midwife_id) {
 			const formData = new FormData();
 			formData.append("midwife_id", midwife_id);
 
-			const response = await fetch("../../php/admin/delete_midwife.php", {
+			const response = await fetch("../../php/mysql/admin/delete_midwife.php", {
 				method: "POST",
 				body: formData,
 			});
@@ -320,7 +320,7 @@ async function deleteSelectedMidwives() {
 			for (const checkbox of selectedBoxes) {
 				const formData = new FormData();
 				formData.append("midwife_id", checkbox.value);
-				await fetch("../../php/admin/delete_midwife.php", {
+				await fetch("../../php/mysql/admin/delete_midwife.php", {
 					method: "POST",
 					body: formData,
 				});
@@ -343,7 +343,7 @@ async function deleteSelectedMidwives() {
 async function loadEditMidwifeProvinces(currentPlace = "") {
 	try {
 		const response = await fetch(
-			"../../php/admin/get_places.php?type=provinces"
+			"../../php/mysql/admin/get_places.php?type=provinces"
 		);
 		const data = await response.json();
 
@@ -372,7 +372,7 @@ async function loadEditMidwifeCities() {
 
 	try {
 		const response = await fetch(
-			`../../php/admin/get_places.php?type=cities&province=${encodeURIComponent(
+			`../../php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
 				province
 			)}`
 		);
@@ -398,7 +398,7 @@ async function loadEditMidwifeBarangays() {
 
 	try {
 		const response = await fetch(
-			`../../php/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+			`../../php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(city)}`
 		);
@@ -423,7 +423,7 @@ async function loadEditMidwifePuroks() {
 
 	try {
 		const response = await fetch(
-			`../../php/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+			`../../php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(
 				city

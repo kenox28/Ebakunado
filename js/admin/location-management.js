@@ -5,7 +5,8 @@ async function getLocations() {
 	showTableLoading("locationsTableBody", 7);
 
 	try {
-		const response = await fetch("../../php/admin/show_places.php");
+		// const response = await fetch("../../php/supabase/admin/show_places.php");
+		const response = await fetch("../../php/mysql/admin/show_places.php");
 		const data = await response.json();
 
 		const tbody = document.getElementById("locationsTableBody");
@@ -79,7 +80,8 @@ async function addLocation() {
 		formData.append("barangay", barangay);
 		formData.append("purok", purok);
 
-		const response = await fetch("../../php/admin/save_place.php", {
+		// const response = await fetch("../../php/supabase/admin/save_place.php");
+		const response = await fetch("../../php/mysql/admin/save_place.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -120,7 +122,8 @@ async function deleteLocation(location_id) {
 			const formData = new FormData();
 			formData.append("location_id", location_id);
 
-			const response = await fetch("../../php/admin/delete_place.php", {
+			// const response = await fetch("../../php/supabase/admin/delete_place.php");
+			const response = await fetch("../../php/mysql/admin/delete_place.php", {
 				method: "POST",
 				body: formData,
 			});

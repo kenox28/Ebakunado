@@ -62,7 +62,8 @@
     </div>
 </div>
 
-<script src="../../js/admin/user-management.js"></script>
+<!-- <script src="../../js/admin/user-management.js"></script> -->
+<script src="../../js/supabase_js/admin/user-management.js?v=1.0.1"></script>
 <script>
     // Set active menu item
     document.querySelector('a[href="user-management.php"]').classList.add('active');

@@ -209,5 +209,6 @@ session_start();
 			</form>
 		</div>
 	</body>
-	<script src="../js/create_account.js?v=1.0.1"></script>
+	<!-- <script src="../js/create_account.js?v=1.0.1"></script> -->
+	<script src="../js/supabase_js/create_account.js?v=1.0.5"></script>
 </html> 

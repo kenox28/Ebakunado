@@ -73,8 +73,8 @@ document.querySelector('#requestform').addEventListener('submit', function(e) {
 
 async function Request_Immunization() {
     const formData = new FormData(requestform);
-
-    const doc = await fetch('../../php/users/request_immunization.php', {
+    // const doc = await fetch('../../php/users/request_immunization.php', {
+    const doc = await fetch('../../php/supabase/users/request_immunization.php', {
         method: 'POST',
         body: formData
     });

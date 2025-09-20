@@ -254,7 +254,7 @@ async function deleteSelectedAdmins() {
 
 async function getUsers() {
 	try {
-		const response = await fetch("../../php/admin/show_users.php");
+		const response = await fetch("../../php/mysql/admin/show_users.php");
 		const data = await response.json();
 
 		const tbody = document.querySelector("#usersTableBody");
@@ -294,7 +294,7 @@ function toggleAllUsers() {
 async function editUser(user_id) {
 	try {
 		const response = await fetch(
-			`../../php/admin/edit_user.php?user_id=${user_id}`
+			`../../php/mysql/admin/edit_user.php?user_id=${user_id}`
 		);
 		const data = await response.json();
 
@@ -431,7 +431,7 @@ async function saveUser() {
 	formData.append("place", place);
 
 	try {
-		const response = await fetch("../../php/admin/save_user.php", {
+		const response = await fetch("../../php/mysql/admin/save_user.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -468,7 +468,7 @@ async function deleteUser(user_id) {
 			const formData = new FormData();
 			formData.append("user_id", user_id);
 
-			const response = await fetch("../../php/admin/delete_user.php", {
+			const response = await fetch("../../php/mysql/admin/delete_user.php", {
 				method: "POST",
 				body: formData,
 			});
@@ -514,7 +514,7 @@ async function deleteSelectedUsers() {
 			for (const checkbox of selectedBoxes) {
 				const formData = new FormData();
 				formData.append("user_id", checkbox.value);
-				await fetch("../../php/admin/delete_user.php", {
+				await fetch("../../php/mysql/admin/delete_user.php", {
 					method: "POST",
 					body: formData,
 				});
@@ -537,7 +537,7 @@ async function deleteSelectedUsers() {
 
 async function getBhw() {
 	try {
-		const response = await fetch("../../php/admin/show_bhw.php");
+		const response = await fetch("../../php/mysql/admin/show_bhw.php");
 		const data = await response.json();
 
 		const tbody = document.querySelector("#bhwTableBody");
@@ -577,7 +577,7 @@ function toggleAllBhw() {
 async function editBhw(bhw_id) {
 	try {
 		const response = await fetch(
-			`../../php/admin/edit_bhw.php?bhw_id=${bhw_id}`
+			`../../php/mysql/admin/edit_bhw.php?bhw_id=${bhw_id}`
 		);
 		const data = await response.json();
 

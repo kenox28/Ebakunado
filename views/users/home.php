@@ -80,7 +80,9 @@ $phone = $_SESSION['phone_number'] ?? '';
 			const body = document.querySelector('#childrenBody');
 			body.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
 			try{
-				const res = await fetch('../../php/users/get_my_children.php');
+				// const res = await fetch('../../php/users/get_my_children.php');
+
+				const res = await fetch('../../php/mysql/users/get_my_children.php');
 				const data = await res.json();
 				if(data.status !== 'success'){ body.innerHTML = '<tr><td colspan="5">Failed to load</td></tr>'; return; }
 				if(!data.data || data.data.length === 0){ body.innerHTML = '<tr><td colspan="5">No records</td></tr>'; return; }
@@ -108,7 +110,8 @@ $phone = $_SESSION['phone_number'] ?? '';
 			box.style.display = 'block';
 			body.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
 			try{
-				const res = await fetch('../../php/users/get_my_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
+				// const res = await fetch('../../php/users/get_my_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
+				const res = await fetch('../../php/mysql/users/get_my_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
 				const data = await res.json();
 				if(data.status !== 'success'){ body.innerHTML = '<tr><td colspan="5">Failed to load</td></tr>'; return; }
 				if(!data.data || data.data.length === 0){ body.innerHTML = '<tr><td colspan="5">No schedule yet</td></tr>'; return; }

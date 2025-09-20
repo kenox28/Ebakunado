@@ -1,5 +1,6 @@
 async function getActivityLogs() {
-	const response = await fetch("../../php/admin/show_activitylog.php");
+	// const response = await fetch("../../php/supabase/admin/show_activitylog.php");
+	const response = await fetch("../../php/mysql/admin/show_activitylog.php");
 	const data = await response.json();
 	console.log(data);
 	const tbody = document.querySelector("#activityLogs");
@@ -47,7 +48,8 @@ async function deleteSelectedLogs() {
 		for (const checkbox of selectedBoxes) {
 			const formData = new FormData();
 			formData.append("log_id", checkbox.value);
-			await fetch("../../php/admin/delete_log.php", {
+			// await fetch("../../php/supabase/admin/delete_log.php");
+			await fetch("../../php/mysql/admin/delete_log.php", {
 				method: "POST",
 				body: formData,
 			});
@@ -73,7 +75,8 @@ function toggleAllUsers() {
 // Delete selected users
 
 async function getUsers() {
-	const response = await fetch("../../php/admin/show_users.php");
+	// const response = await fetch("../../php/supabase/admin/show_users.php");
+	const response = await fetch("../../php/mysql/admin/show_users.php");
 	const data = await response.json();
 	console.log(data);
 	const tbody = document.querySelector("#users");
@@ -104,7 +107,8 @@ async function editUser(user_id) {
 	try {
 		const formData = new FormData();
 		formData.append("user_id", user_id);
-		const response = await fetch("../../php/admin/edit_user.php", {
+		// const response = await fetch("../../php/supabase/admin/edit_user.php");
+		const response = await fetch("../../php/mysql/admin/edit_user.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -214,7 +218,8 @@ async function saveUser() {
 		).value;
 		formData.append("role", selectedRole);
 
-		const response = await fetch("../../php/admin/save_user.php", {
+		// const response = await fetch("../../php/supabase/admin/save_user.php");
+		const response = await fetch("../../php/mysql/admin/save_user.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -248,7 +253,8 @@ async function deleteUser(user_id) {
 		const formData = new FormData();
 		formData.append("user_id", user_id);
 
-		const response = await fetch("../../php/admin/delete_user.php", {
+		// const response = await fetch("../../php/supabase/admin/delete_user.php");
+		const response = await fetch("../../php/mysql/admin/delete_user.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -287,7 +293,8 @@ async function deleteSelectedUsers() {
 		for (const checkbox of selectedBoxes) {
 			const formData = new FormData();
 			formData.append("user_id", checkbox.value);
-			await fetch("../../php/admin/delete_user.php", {
+			// await fetch("../../php/supabase/admin/delete_user.php");
+			await fetch("../../php/mysql/admin/delete_user.php", {
 				method: "POST",
 				body: formData,
 			});
@@ -303,7 +310,8 @@ async function deleteSelectedUsers() {
 
 // BHW Functions
 async function getBhw() {
-	const response = await fetch("../../php/admin/show_bhw.php");
+	// const response = await fetch("../../php/supabase/admin/show_bhw.php");
+	const response = await fetch("../../php/mysql/admin/show_bhw.php");
 	const data = await response.json();
 	console.log(data);
 	const tbody = document.querySelector("#bhwTable");
@@ -398,7 +406,8 @@ async function deleteBhw(bhw_id) {
 		const formData = new FormData();
 		formData.append("bhw_id", bhw_id);
 
-		const response = await fetch("../../php/admin/delete_bhw.php", {
+		// const response = await fetch("../../php/supabase/admin/delete_bhw.php");
+		const response = await fetch("../../php/mysql/admin/delete_bhw.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -426,7 +435,8 @@ async function deleteMidwife(midwife_id) {
 		const formData = new FormData();
 		formData.append("midwife_id", midwife_id);
 
-		const response = await fetch("../../php/admin/delete_midwife.php", {
+		// const response = await fetch("../../php/supabase/admin/delete_midwife.php");
+		const response = await fetch("../../php/mysql/admin/delete_midwife.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -465,7 +475,8 @@ async function deleteSelectedBhw() {
 		for (const checkbox of selectedBoxes) {
 			const formData = new FormData();
 			formData.append("bhw_id", checkbox.value);
-			await fetch("../../php/admin/delete_bhw.php", {
+			// await fetch("../../php/supabase/admin/delete_bhw.php");
+			await fetch("../../php/mysql/admin/delete_bhw.php", {
 				method: "POST",
 				body: formData,
 			});
@@ -499,7 +510,8 @@ async function deleteSelectedMidwives() {
 		for (const checkbox of selectedBoxes) {
 			const formData = new FormData();
 			formData.append("midwife_id", checkbox.value);
-			await fetch("../../php/admin/delete_midwife.php", {
+			// await fetch("../../php/supabase/admin/delete_midwife.php");
+			await fetch("../../php/mysql/admin/delete_midwife.php", {
 				method: "POST",
 				body: formData,
 			});
@@ -518,7 +530,8 @@ async function editBhw(bhw_id) {
 	try {
 		const formData = new FormData();
 		formData.append("bhw_id", bhw_id);
-		const response = await fetch("../../php/admin/edit_bhw.php", {
+		// const response = await fetch("../../php/supabase/admin/edit_bhw.php");
+		const response = await fetch("../../php/mysql/admin/edit_bhw.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -657,7 +670,8 @@ async function editMidwife(midwife_id) {
 	try {
 		const formData = new FormData();
 		formData.append("midwife_id", midwife_id);
-		const response = await fetch("../../php/admin/edit_midwife.php", {
+		// const response = await fetch("../../php/supabase/admin/edit_midwife.php");
+		const response = await fetch("../../php/mysql/admin/edit_midwife.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -837,7 +851,8 @@ async function saveBhw() {
 		).value;
 		formData.append("permissions", selectedPermission);
 
-		const response = await fetch("../../php/admin/save_bhw.php", {
+		// const response = await fetch("../../php/supabase/admin/save_bhw.php");
+		const response = await fetch("../../php/mysql/admin/save_bhw.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -907,7 +922,8 @@ async function saveMidwife() {
 		).value;
 		formData.append("approve", selectedApprove);
 
-		const response = await fetch("../../php/admin/save_midwife.php", {
+		// const response = await fetch("../../php/supabase/admin/save_midwife.php");
+		const response = await fetch("../../php/mysql/admin/save_midwife.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -1016,7 +1032,8 @@ document.addEventListener("DOMContentLoaded", function () {
 // Location Management Functions
 async function getLocations() {
 	try {
-		const response = await fetch("../../php/admin/show_locations.php");
+		// const response = await fetch("../../php/supabase/admin/show_locations.php");
+		const response = await fetch("../../php/mysql/admin/show_locations.php");
 		const data = await response.json();
 		console.log(data);
 		const tbody = document.querySelector("#locationsTableBody");
@@ -1074,7 +1091,8 @@ async function saveLocation() {
 	formData.append("purok", document.getElementById("add_purok").value);
 
 	try {
-		const response = await fetch("../../php/admin/add_location.php", {
+		// const response = await fetch("../../php/supabase/admin/add_location.php");
+		const response = await fetch("../../php/mysql/admin/add_location.php", {
 			method: "POST",
 			body: formData,
 		});

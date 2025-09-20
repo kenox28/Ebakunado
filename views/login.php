@@ -47,5 +47,6 @@ session_start();
 			</div>
 		</div>
 	</body>
-	<script src="../js/login.js?v=1.0.9"></script>
+	<!-- <script src="/js/login.js?v=1.0.3"></script> -->
+	<script src="../js/supabase_js/login.js?v=1.0.12"></script>
 </html> 

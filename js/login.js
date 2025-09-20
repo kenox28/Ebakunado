@@ -7,7 +7,9 @@ document.addEventListener("DOMContentLoaded", function () {
 // Fetch CSRF token from server
 async function generateCSRFToken() {
 	try {
-		const response = await fetch("../php/generate_csrf.php");
+		// Supabase: const response = await fetch("/php/supabase/generate_csrf.php");
+		const response = await fetch("/php/mysql/generate_csrf.php");
+
 		const data = await response.json();
 		document.getElementById("csrf_token").value = data.csrf_token;
 	} catch (error) {
@@ -58,7 +60,8 @@ async function loginFun(e) {
 
 	try {
 		console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-		const res = await fetch("../php/login.php", {
+		// Supabase: const res = await fetch("/php/supabase/login.php", {
+		const res = await fetch("/php/mysql/login.php", {
 			method: "POST",
 			body: formdata,
 		});
@@ -118,7 +121,7 @@ async function loginFun(e) {
 				// 	window.location.href = "../views/bhw/home.php";
 				// });
 				console.log("Redirecting to BHW home");
-				window.location.href = "../views/bhw/home.php";
+				window.location.href = "/views/bhw/home.php";
 			} else if (data.user_type === "midwife") {
 				console.log("Midwife login successful, showing SweetAlert");
 				// Swal.fire({
@@ -131,7 +134,7 @@ async function loginFun(e) {
 				// 	window.location.href = "../views/midwives/home.php";
 				// });
 				console.log("Redirecting to midwives home");
-				window.location.href = "../views/midwives/home.php";
+				window.location.href = "/views/midwives/home.php";
 			} else {
 				console.log("User login successful, showing SweetAlert");
 				// Swal.fire({
@@ -144,7 +147,7 @@ async function loginFun(e) {
 				// 	window.location.href = "../views/users/home.php";
 				// });
 				console.log("Redirecting to users home");
-				window.location.href = "../views/users/home.php";
+				window.location.href = "/views/users/home.php";
 			}
 		} else if (data.status === "already_logged_in") {
 			console.log("Already logged in - user_type:", data.user_type);
@@ -243,7 +246,8 @@ async function handleForgotPassword(e) {
 		const formData = new FormData();
 		formData.append("email_phone", emailPhone);
 
-		const response = await fetch("../php/forgot_password.php", {
+		// Supabase: const response = await fetch("/php/supabase/forgot_password.php", {
+		const response = await fetch("/php/mysql/forgot_password.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -359,7 +363,8 @@ async function verifyResetOTP(otp) {
 		const formData = new FormData();
 		formData.append("otp", otp);
 
-		const response = await fetch("../php/verify_reset_otp.php", {
+		// Supabase: const response = await fetch("/php/supabase/verify_reset_otp.php", {
+		const response = await fetch("/php/mysql/verify_reset_otp.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -473,7 +478,8 @@ async function resetPassword(newPassword, confirmPassword) {
 		formData.append("new_password", newPassword);
 		formData.append("confirm_password", confirmPassword);
 
-		const response = await fetch("../php/reset_password.php", {
+		// Supabase: const response = await fetch("/php/supabase/reset_password.php", {
+		const response = await fetch("/php/mysql/reset_password.php", {
 			method: "POST",
 			body: formData,
 		});

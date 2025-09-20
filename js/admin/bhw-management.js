@@ -8,7 +8,8 @@ async function getBhws() {
 	showTableLoading("bhwTableBody", 9);
 
 	try {
-		const response = await fetch("../../php/admin/show_bhw.php");
+		// const response = await fetch("../../php/supabase/admin/show_bhw.php");
+		const response = await fetch("../../php/mysql/admin/show_bhw.php");
 		const data = await response.json();
 
 		const tbody = document.getElementById("bhwTableBody");
@@ -74,7 +75,8 @@ function getPermissionBadge(permission) {
 async function editBhw(bhw_id) {
 	try {
 		const response = await fetch(
-			`../../php/admin/edit_bhw.php?bhw_id=${encodeURIComponent(bhw_id)}`
+			// `../../php/supabase/admin/edit_bhw.php?bhw_id=${encodeURIComponent(bhw_id)}`
+			`../../php/mysql/admin/edit_bhw.php?bhw_id=${encodeURIComponent(bhw_id)}`
 		);
 		const data = await response.json();
 
@@ -212,7 +214,8 @@ async function editBhw(bhw_id) {
 async function loadEditBhwProvinces() {
 	try {
 		const response = await fetch(
-			"../../php/admin/get_places.php?type=provinces"
+			// "../../php/supabase/admin/get_places.php?type=provinces"
+			"../../php/mysql/admin/get_places.php?type=provinces"
 		);
 		const data = await response.json();
 
@@ -245,7 +248,8 @@ async function loadEditBhwCities() {
 
 	try {
 		const response = await fetch(
-			`../../php/admin/get_places.php?type=cities&province=${encodeURIComponent(
+			// `../../php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
+			`../../php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
 				province
 			)}`
 		);
@@ -281,7 +285,8 @@ async function loadEditBhwBarangays() {
 
 	try {
 		const response = await fetch(
-			`../../php/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+			// `../../php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+			`../../php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(city)}`
 		);
@@ -318,7 +323,8 @@ async function loadEditBhwPuroks() {
 
 	try {
 		const response = await fetch(
-			`../../php/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+			// `../../php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+			`../../php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(
 				city
@@ -371,7 +377,8 @@ async function updateBhw() {
 	formData.append("place", place);
 
 	try {
-		const response = await fetch("../../php/admin/save_user.php", {
+		// const response = await fetch("../../php/supabase/admin/save_user.php");
+		const response = await fetch("../../php/mysql/admin/save_user.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -417,7 +424,7 @@ async function deleteBhw(bhw_id) {
 			const formData = new FormData();
 			formData.append("bhw_id", bhw_id);
 
-			const response = await fetch("../../php/admin/delete_bhw.php", {
+			const response = await fetch("../../php/mysql/admin/delete_bhw.php", {
 				method: "POST",
 				body: formData,
 			});
