@@ -9,7 +9,9 @@ document.addEventListener("DOMContentLoaded", function () {
 // Load dashboard statistics
 async function loadDashboardStats() {
 	try {
-		const response = await fetch("../../php/superadmin/dashboard-stats.php");
+		const response = await fetch(
+			"../../php/mysql/superadmin/dashboard-stats.php"
+		);
 		const data = await response.json();
 
 		if (data.status === "success") {
@@ -57,7 +59,7 @@ async function loadDashboardStats() {
 async function loadRecentActivity() {
 	try {
 		const response = await fetch(
-			"../../php/admin/show_activitylog.php?limit=10"
+			"../../php/mysql/admin/show_activitylog.php?limit=10"
 		);
 		const data = await response.json();
 

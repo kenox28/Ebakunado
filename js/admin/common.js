@@ -31,7 +31,8 @@ function logoutAdmin() {
 	// 		});
 
 	// Perform logout
-	fetch("../../php/admin/logout.php", {
+	// fetch("../../php/supabase/admin/logout.php", {
+	fetch("../../php/mysql/admin/logout.php", {
 		method: "POST",
 	})
 		.then((response) => response.json())

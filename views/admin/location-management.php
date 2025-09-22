@@ -87,7 +87,8 @@
     </div>
 </div>
 
-<script src="../../js/admin/location-management.js"></script>
+<!-- <script src="../../js/admin/location-management.js"></script> -->
+<script src="../../js/supabase_js/admin/location-management.js"></script>
 <script>
     // Set active menu item
     document.querySelector('a[href="location-management.php"]').classList.add('active');

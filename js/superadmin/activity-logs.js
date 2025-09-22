@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
 async function getActivityLogs() {
 	try {
 		console.log("Loading activity logs...");
-		const response = await fetch("../../php/admin/show_activitylog.php");
+		const response = await fetch("../../php/mysql/admin/show_activitylog.php");
 		console.log("Activity logs response status:", response.status);
 
 		const data = await response.json();
@@ -72,7 +72,7 @@ async function deleteActivityLog(log_id) {
 			const formData = new FormData();
 			formData.append("log_id", log_id);
 
-			const response = await fetch("../../php/admin/delete_log.php", {
+			const response = await fetch("../../php/mysql/admin/delete_log.php", {
 				method: "POST",
 				body: formData,
 			});
@@ -119,7 +119,7 @@ async function deleteSelectedActivityLogs() {
 			for (const checkbox of selectedBoxes) {
 				const formData = new FormData();
 				formData.append("log_id", checkbox.value);
-				await fetch("../../php/admin/delete_log.php", {
+				await fetch("../../php/mysql/admin/delete_log.php", {
 					method: "POST",
 					body: formData,
 				});

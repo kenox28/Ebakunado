@@ -53,6 +53,7 @@ $user_fname = $fname . ' ' . $lname;
         <?php if($gender == 'Male'): ?>
             <input type="text" name="father_name" placeholder="Father Name" value="<?php echo $user_fname; ?>">
             <input type="text" name="mother_name" placeholder="Mother Name" required value="sample">
+    
         <?php else: ?>
             <input type="text" name="mother_name" value="<?php echo $user_fname; ?>" required>
             <input type="text" name="father_name" placeholder="Father Name" value="sample">
@@ -73,8 +74,8 @@ document.querySelector('#requestform').addEventListener('submit', function(e) {
 
 async function Request_Immunization() {
     const formData = new FormData(requestform);
-
-    const doc = await fetch('../../php/users/request_immunization.php', {
+    // const doc = await fetch('../../php/users/request_immunization.php', {
+    const doc = await fetch('../../php/supabase/users/request_immunization.php', {
         method: 'POST',
         body: formData
     });

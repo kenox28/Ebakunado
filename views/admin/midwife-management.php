@@ -63,7 +63,8 @@
     </div>
 </div>
 
-<script src="../../js/admin/midwife-management.js"></script>
+<!-- <script src="../../js/admin/midwife-management.js"></script> -->
+<script src="../../js/supabase_js/admin/midwife-management.js"></script>
 <script>
     // Set active menu item
     document.querySelector('a[href="midwife-management.php"]').classList.add('active');

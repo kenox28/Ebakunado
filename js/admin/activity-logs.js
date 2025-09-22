@@ -5,7 +5,8 @@ async function getActivityLogs() {
 	showTableLoading("activityLogsTableBody", 7);
 
 	try {
-		const response = await fetch("../../php/admin/get_activity_logs.php");
+		// const response = await fetch("../../php/supabase/admin/get_activity_logs.php");
+		const response = await fetch("../../php/mysql/admin/get_activity_logs.php");
 		const data = await response.json();
 
 		const tbody = document.getElementById("activityLogsTableBody");

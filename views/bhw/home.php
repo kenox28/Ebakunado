@@ -50,9 +50,28 @@ if (!isset($_SESSION['bhw_id'])) {
 	<body>
 		<header class="header">
 			<a href="#">ebakunado</a>
-			<a href="#" onclick="logoutBhw()" class="logout-link">Logout</a>
+			<div>
+				<input type="text" id="searchInput" placeholder="Search by Baby ID, Name, or User ID" style="padding:6px 10px; width: 260px;" oninput="filterTable()" />
+				<button onclick="openScanner()" style="padding:6px 10px; margin-left:8px;">Scan QR</button>
+				<a href="#" onclick="logoutBhw()" class="logout-link">Logout</a>
+			</div>
 		</header>
 		<main>
+		<div id="qrOverlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; z-index:9999;">
+			<div style="background:#fff; padding:10px; max-width:90vw; max-height:90vh; display:flex; flex-direction:column; gap:8px;">
+				<select id="cameraSelect" style="margin-bottom:6px; padding:4px 6px; display:none;" onchange="switchCamera(event)"></select>
+				<div id="qrReader" style="width: 340px;"></div>
+				<div style="display:flex; justify-content:space-between; gap:8px; align-items:center; flex-wrap:wrap;">
+					<span style="font-size:12px; color:#444;">Point camera at QR code</span>
+					<label style="font-size:12px;">
+						<span style="margin-right:6px;">or Upload Image:</span>
+						<input type="file" id="qrImageInput" accept="image/*" onchange="scanFromImage(event)" />
+					</label>
+					<button id="torchBtn" onclick="toggleTorch()" style="display:none;">Torch On</button>
+					<button onclick="closeScanner()">Close</button>
+				</div>
+			</div>
+		</div>
 		<table class="table table-hover" id="childhealthrecord">
 				<thead>
 					<tr>
@@ -103,12 +122,14 @@ if (!isset($_SESSION['bhw_id'])) {
 			</div>
 		</main>
 	</body>
+		<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 		<script>
 			async function getChildHealthRecord() {
 				const body = document.querySelector('#childhealthrecordBody');
 				body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
 				try {
-					const res = await fetch('../../php/bhw/get_child_health_records.php');
+					// const res = await fetch('../../php/bhw/get_child_health_records.php');
+					const res = await fetch('../../php/supabase/bhw/get_child_health_records.php');
 					const data = await res.json();
 					if (data.status !== 'success') { body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>'; return; }
 					if (!data.data || data.data.length === 0){ body.innerHTML = '<tr><td colspan="21">No records found</td></tr>'; return; }
@@ -144,6 +165,23 @@ if (!isset($_SESSION['bhw_id'])) {
 				} catch (e) { body.innerHTML = '<tr><td colspan="21">Error loading records</td></tr>'; }
 			}
 
+			function filterTable(){
+				const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+				const rows = document.querySelectorAll('#childhealthrecordBody tr');
+				rows.forEach(tr => {
+					const tds = tr.querySelectorAll('td');
+					if (!tds || tds.length === 0) return;
+					const id = (tds[0].textContent || '').toLowerCase();
+					const userId = (tds[1].textContent || '').toLowerCase();
+					const babyId = (tds[2].textContent || '').toLowerCase();
+					const fname = (tds[3].textContent || '').toLowerCase();
+					const lname = (tds[4].textContent || '').toLowerCase();
+					const childName = (tds[5].textContent || '').toLowerCase();
+					const text = [id,userId,babyId,fname,lname,childName].join(' ');
+					tr.style.display = text.includes(q) ? '' : 'none';
+				});
+			}
+
 			function viewChrImage(urlEnc){
 				const url = decodeURIComponent(urlEnc);
 				document.querySelector('#overlayImage').src = url;
@@ -155,7 +193,8 @@ if (!isset($_SESSION['bhw_id'])) {
 
 			async function acceptRecord(baby_id){
 				const formData = new FormData(); formData.append('baby_id', baby_id);
-				const response = await fetch('../../php/bhw/accept_chr.php', { method: 'POST', body: formData });
+				// const response = await fetch('../../php/bhw/accept_chr.php', { method: 'POST', body: formData });
+				const response = await fetch('../../php/supabase/bhw/accept_chr.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') { getChildHealthRecord(); }
 				else { alert('Record not accepted: ' + data.message); }
@@ -163,7 +202,7 @@ if (!isset($_SESSION['bhw_id'])) {
 
 			async function rejectRecord(baby_id){
 				const formData = new FormData(); formData.append('baby_id', baby_id);
-				const response = await fetch('../../php/bhw/reject_chr.php', { method: 'POST', body: formData });
+				const response = await fetch('../../php/mysql/bhw/reject_chr.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') { getChildHealthRecord(); }
 				else { alert('Record not rejected: ' + data.message); }
@@ -173,7 +212,7 @@ if (!isset($_SESSION['bhw_id'])) {
 				const tr = btn.closest('tr');
 				const next = tr.nextElementSibling;
 				if (next && next.classList.contains('sched-row')) { next.remove(); return; }
-				const res = await fetch('../../php/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
+				const res = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
 				const data = await res.json();
 				let html = '<tr class="sched-row"><td colspan="21">';
 				if (data.status !== 'success' || !data.data || data.data.length === 0) {
@@ -207,15 +246,149 @@ if (!isset($_SESSION['bhw_id'])) {
 				if (weight) fd.append('weight', weight);
 				if (height) fd.append('height', height);
 				if (temperature) fd.append('temperature', temperature);
-				const res = await fetch('../../php/bhw/mark_vaccine_given.php', { method: 'POST', body: fd });
+				const res = await fetch('../../php/supabase/bhw/mark_vaccine_given.php', { method: 'POST', body: fd });
 				const data = await res.json();
 				if (data.status === 'success') { getChildHealthRecord(); }
 				else { alert('Update failed'); }
 			}
 
 			window.addEventListener('DOMContentLoaded', getChildHealthRecord);
+
+			let html5QrcodeInstance = null;
+			async function openScanner(){
+				const overlay = document.getElementById('qrOverlay');
+				overlay.style.display = 'flex';
+				console.log('[QR] Opening scanner...');
+				try{
+					// Check camera permissions/devices first
+					const devices = await Html5Qrcode.getCameras().catch(err => { console.log('[QR] getCameras error:', err); return []; });
+					console.log('[QR] Cameras found:', devices);
+					if(!devices || devices.length === 0){ console.warn('[QR] No camera devices found. Use image upload.'); }
+					// Populate camera select
+					const camSel = document.getElementById('cameraSelect');
+					camSel.innerHTML = '';
+					if (devices && devices.length > 0){
+						devices.forEach((d, idx) => {
+							const opt = document.createElement('option');
+							opt.value = d.id; opt.textContent = d.label || ('Camera ' + (idx+1)); camSel.appendChild(opt);
+						});
+						camSel.style.display = 'inline-block';
+						// Try enabling torch control if supported (via capabilities check after start)
+					} else { camSel.style.display = 'none'; }
+					if(!html5QrcodeInstance){ html5QrcodeInstance = new Html5Qrcode("qrReader"); }
+					await html5QrcodeInstance.start(
+						{ facingMode: "environment" },
+						{ fps: 12, qrbox: 360, formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ], disableFlip: true },
+						onScanSuccess,
+						onScanFailure
+					);
+					console.log('[QR] Scanner started');
+					// Show torch button if track supports torch
+					try{
+						const stream = await html5QrcodeInstance.getState() ? document.querySelector('#qrReader video')?.srcObject : null;
+						const track = stream && stream.getVideoTracks ? stream.getVideoTracks()[0] : null;
+						const caps = track && track.getCapabilities ? track.getCapabilities() : {};
+						const torchBtn = document.getElementById('torchBtn');
+						if (caps && caps.torch !== undefined) { torchBtn.style.display = 'inline-block'; } else { torchBtn.style.display = 'none'; }
+					}catch(_){ document.getElementById('torchBtn').style.display = 'none'; }
+				}catch(e){ console.error('[QR] Camera error:', e); alert('Camera error: ' + e); }
+			}
+
+			async function closeScanner(){
+				const overlay = document.getElementById('qrOverlay');
+				overlay.style.display = 'none';
+				try{
+					if(html5QrcodeInstance){ await html5QrcodeInstance.stop(); await html5QrcodeInstance.clear(); }
+				}catch(_){ /* ignore */ }
+			}
+
+			async function switchCamera(e){
+				const deviceId = e && e.target ? e.target.value : null;
+				if(!deviceId || !html5QrcodeInstance){ return; }
+				console.log('[QR] Switching camera to', deviceId);
+				try{
+					await html5QrcodeInstance.stop();
+					await html5QrcodeInstance.clear();
+					await html5QrcodeInstance.start(
+						{ deviceId: { exact: deviceId } },
+						{ fps: 8, qrbox: 320, formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ] },
+						onScanSuccess,
+						onScanFailure
+					);
+				}catch(err){ console.error('[QR] Switch camera failed:', err); }
+			}
+
+			function onScanSuccess(decodedText){
+				console.log('[QR] Scan success:', decodedText);
+				closeScanner();
+
+
+
+				const match = decodedText.match(/baby_id=([^&\s]+)/i);
+				if(match && match[1]){
+					document.getElementById('searchInput').value = decodeURIComponent(match[1]);
+					filterTable();
+					focusRowByBabyId(decodeURIComponent(match[1]));
+					return;
+				}
+
+				document.getElementById('searchInput').value = decodedText;
+				filterTable();
+				focusRowByBabyId(decodedText);
+			}
+
+			function onScanFailure(err){
+				console.log('[QR] Scanning...', err ? String(err).slice(0,80) : '');
+			}
+
+			
+
+			function focusRowByBabyId(babyId){
+				const rows = document.querySelectorAll('#childhealthrecordBody tr');
+				for (const tr of rows){
+					const tds = tr.querySelectorAll('td');
+					if (!tds || tds.length < 3) continue;
+					const val = (tds[2].textContent || '').trim();
+					if (val === babyId){
+						tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+						const originalBg = tr.style.backgroundColor;
+						tr.style.backgroundColor = '#fff6b3';
+						setTimeout(() => { tr.style.backgroundColor = originalBg || ''; }, 1500);
+						break;
+					}
+				}
+			}
+
+			let torchOn = false;
+			async function toggleTorch(){
+				try{
+					const video = document.querySelector('#qrReader video');
+					const stream = video && video.srcObject ? video.srcObject : null;
+					const track = stream && stream.getVideoTracks ? stream.getVideoTracks()[0] : null;
+					if(!track){ return; }
+					await track.applyConstraints({ advanced: [{ torch: !torchOn }] });
+					torchOn = !torchOn;
+					document.getElementById('torchBtn').textContent = torchOn ? 'Torch Off' : 'Torch On';
+				}catch(err){ console.warn('[QR] Torch not supported:', err); }
+			}
+
+			async function scanFromImage(event){
+				const file = event.target && event.target.files && event.target.files[0];
+				if(!file){ return; }
+				console.log('[QR] Scanning from image:', file.name, file.type, file.size);
+				try{
+					// Use Html5Qrcode to scan file
+					const result = await Html5QrcodeScanner.scanFile(file, true);
+					console.log('[QR] Image scan result:', result);
+					onScanSuccess(result);
+				}catch(err){
+					console.error('[QR] Image scan failed:', err);
+					alert('Unable to read QR from image.');
+				}
+			}
 			async function logoutBhw() {
-				const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
+				// const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
+				const response = await fetch('../../php/supabase/bhw/logout.php', { method: 'POST' });
 				const data = await response.json();
 				if (data.status === 'success') { window.location.href = '../../views/login.php'; }
 				else { alert('Logout failed: ' + data.message); }

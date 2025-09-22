@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", function () {
 // Fetch CSRF token from server
 async function generateCSRFToken() {
 	try {
-		const response = await fetch("../php/generate_csrf.php");
+		// const response = await fetch("../php/supabase/generate_csrf.php");
+		const response = await fetch("../php/mysql/generate_csrf.php");
 		const data = await response.json();
 		document.getElementById("csrf_token").value = data.csrf_token;
 	} catch (error) {
@@ -56,7 +57,8 @@ async function sendOTPAutomatically(phoneNumber) {
 		const formData = new FormData();
 		formData.append("phone_number", phoneNumber);
 
-		const response = await fetch("../php/send_otp.php", {
+		// const response = await fetch("../php/supabase/send_otp.php", {
+		const response = await fetch("../php/mysql/send_otp.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -145,7 +147,8 @@ async function showOTPPopup() {
 					const formData = new FormData();
 					formData.append("otp", otpCode);
 
-					const response = await fetch("../php/verify_otp.php", {
+					// const response = await fetch("../php/supabase/verify_otp.php", {
+					const response = await fetch("../php/mysql/verify_otp.php", {
 						method: "POST",
 						body: formData,
 					});
@@ -334,7 +337,8 @@ async function CreateFun(e) {
 	const formdata = new FormData(createForm);
 
 	try {
-		const res = await fetch("../php/create_account.php", {
+		// const res = await fetch("../php/supabase/create_account.php", {
+		const res = await fetch("../php/supabase/create_account.php", {
 			method: "POST",
 			body: formdata,
 		});
@@ -383,7 +387,10 @@ async function CreateFun(e) {
 async function loadProvinces() {
 	try {
 		console.log("Loading provinces...");
-		const response = await fetch("../php/admin/get_places.php?type=provinces");
+		// const response = await fetch("../php/supabase/admin/get_places.php?type=provinces");
+		const response = await fetch(
+			"../php/mysql/admin/get_places.php?type=provinces"
+		);
 		console.log("Response status:", response.status);
 
 		if (!response.ok) {
@@ -432,7 +439,8 @@ async function loadCities() {
 
 	try {
 		const response = await fetch(
-			`../php/admin/get_places.php?type=cities&province=${encodeURIComponent(
+			// `../php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
+			`../php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
 				province
 			)}`
 		);
@@ -463,7 +471,8 @@ async function loadBarangays() {
 
 	try {
 		const response = await fetch(
-			`../php/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+			// `../php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+			`../php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(city)}`
 		);
@@ -493,7 +502,8 @@ async function loadPuroks() {
 
 	try {
 		const response = await fetch(
-			`../php/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+			// `../php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+			`../php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(
 				city
