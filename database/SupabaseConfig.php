@@ -305,7 +305,7 @@ $table_definitions = [
         pass VARCHAR(255),
         phone_number VARCHAR(20),
         salt VARCHAR(64),
-        profileImg VARCHAR(255),
+        profileImg VARCHAR(255) DEFAULT 'noprofile.png',
         gender VARCHAR(255),
         place VARCHAR(255),
         permissions VARCHAR(255) DEFAULT 'view',
@@ -325,7 +325,7 @@ $table_definitions = [
         pass VARCHAR(255),
         phone_number VARCHAR(20),
         salt VARCHAR(64),
-        profileImg VARCHAR(255),
+        profileImg VARCHAR(255) DEFAULT 'noprofile.png',
         gender VARCHAR(255),
         place VARCHAR(255),
         permissions VARCHAR(255) DEFAULT 'view',
@@ -363,7 +363,8 @@ $table_definitions = [
         babys_card VARCHAR(500),
         date_created TIMESTAMP DEFAULT NOW(),
         date_updated TIMESTAMP DEFAULT NOW(),
-        status VARCHAR(50) DEFAULT 'pending'
+        status VARCHAR(50) DEFAULT 'pending',
+        qr_code VARCHAR(255)
     )",
     
     'immunization_records' => "CREATE TABLE immunization_records (
@@ -375,6 +376,7 @@ $table_definitions = [
         height DECIMAL(5,2),
         temperature DECIMAL(5,2),
         status VARCHAR(50),
+        schedule_date DATE,
         date_given DATE,
         catch_up_date DATE,
         administered_by VARCHAR(255),

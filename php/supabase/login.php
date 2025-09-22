@@ -221,6 +221,7 @@ try {
         $_SESSION['fname'] = $user_data['fname'];
         $_SESSION['lname'] = $user_data['lname'];
         $_SESSION['email'] = $user_data['email'];
+        $_SESSION['profileimg'] = $user_data['profileimg'] ?? 'noprofile.png';
         $_SESSION['user_type'] = 'admin';
         $_SESSION['logged_in'] = true;
     } elseif ($user_type === 'bhw') {
@@ -242,6 +243,7 @@ try {
         $_SESSION['permissions'] = $user_data['permissions'] ?? null;
         $_SESSION['approve'] = $user_data['Approve'] ?? null;
         $_SESSION['role'] = $user_data['role'] ?? null;
+        $_SESSION['profileimg'] = $user_data['profileimg'] ?? null;
         $_SESSION['user_type'] = 'midwife';
         $_SESSION['logged_in'] = true;
     } else {
@@ -253,6 +255,7 @@ try {
         $_SESSION['role'] = $user_data['role'] ?? null;
         $_SESSION['gender'] = $user_data['gender'] ?? null;
         $_SESSION['place'] = $user_data['place'] ?? null;
+        $_SESSION['profileimg'] = $user_data['profileimg'] ?? null;
         $_SESSION['user_type'] = 'user';
         $_SESSION['logged_in'] = true;
     }

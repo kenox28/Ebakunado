@@ -13,6 +13,7 @@ $columns = 'id,user_id,baby_id,child_fname,child_lname,child_gender,child_birth_
 $rows = supabaseSelect('child_health_records', $columns, ['user_id' => $user_id], 'date_created.desc');
 
 echo json_encode(['status'=>'success','data'=>$rows ?: []]);
+
 ?>
 
 

@@ -93,6 +93,11 @@ $city_municipality = isset($_POST['city_municipality']) ? $_POST['city_municipal
 $barangay = isset($_POST['barangay']) ? $_POST['barangay'] : '';
 $purok = isset($_POST['purok']) ? $_POST['purok'] : '';
 
+$profileimg = isset($_POST['profileimg']) ? $_POST['profileimg'] : 'https://res.cloudinary.com/dvecrmrst/image/upload/v1758548365/noprofile_pjqduv.png';
+
+
+
+
 // Combine place information into a single place field
 $place = trim($province . ", " . $city_municipality . ", " . $barangay . ", " . $purok);
 
@@ -269,6 +274,7 @@ try {
         'salt' => $salt,
         'gender' => $gender,
         'place' => $place,
+        'profileimg' => $profileimg,
         'created_at' => $philippines_time,
         'updated' => $philippines_time,
         'role' => 'user'
