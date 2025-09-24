@@ -22,6 +22,7 @@
 			align-items: center;
 			border: 1px solid #000;
 			width: 100%;
+            
 			background-color: #f0f0f0;
 		}
 		nav {
@@ -84,6 +85,24 @@
 		aside.collapsed + main {
 			width: calc(100% - 50px);
 		}
+		/* Table container to prevent overlap and allow horizontal scroll */
+		.table-container {
+			width: 100%;
+			max-width: 100%;
+            height: 100%;
+			overflow-x: auto;
+
+		}
+		.table-container table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+		.table-container th,
+		.table-container td {
+			white-space: nowrap;
+			border: 1px solid #000;
+            text-align: center;
+		}
 		h3 {
 			display: flex;
 			justify-content: center;
@@ -100,16 +119,18 @@
 			flex-direction: column;
 			align-items: center;
 			padding: 10px;
-			width: 90%;
-		}
+			width: 85%;
+		}   
+
+
 	</style>
 	<body>
 		<aside>
 			<h3>Ebakunado</h3>
 			<a href="#" data-icon="🏠"><span>Dashboard</span></a>
 			<a href="#" data-icon="💉"><span>Imuunization form</span></a>
-			<a href="#" data-icon="⏳"><span>Pending Approval</span></a>
-			<a href="#" data-icon="🧒"><span>Child Health Record</span></a>
+			<a href="./pending_approval.php" data-icon="⏳"><span>Pending Approval</span></a>
+			<a href="./child_health_record.php" data-icon="🧒"><span>Child Health Record</span></a>
 			<a href="#" data-icon="🎯"><span>Target client list</span></a>
 		</aside>
 		<main>
@@ -137,20 +158,3 @@
 					<a href="#" onclick="logoutBhw()">Logout</a>
 				</nav>
 			</header>
-			<section>
-				<!-- table -->
-			</section>
-		</main>
-		<script>
-			(function () {
-				var button = document.querySelector(".menu-button");
-				var aside = document.querySelector("aside");
-				if (button && aside) {
-					button.addEventListener("click", function () {
-						aside.classList.toggle("collapsed");
-					});
-				}
-			})();
-		</script>
-	</body>
-</html>
