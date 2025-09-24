@@ -3,7 +3,7 @@
 
 </style>
 
-<div id="imageOverlay" style="display: none;" onclick="closeOverlay(event)">
+<!-- <div id="imageOverlay" onclick="closeOverlay(event)">
     <div class="content">
         <img id="overlayImage" src="" alt="Baby Card" />
         <div class="actions">
@@ -11,17 +11,28 @@
             <button onclick="hideOverlay()">Close</button>
         </div>
     </div>
-</div>
+</div> -->
+<div id="qrOverlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; z-index:9999;">
+			<div style="background:#fff; padding:10px; max-width:90vw; max-height:90vh; display:flex; flex-direction:column; gap:8px;">
+				<select id="cameraSelect" style="margin-bottom:6px; padding:4px 6px; display:none;" onchange="switchCamera(event)"></select>
+				<div id="qrReader" style="width: 340px;"></div>
+				<div style="display:flex; justify-content:space-between; gap:8px; align-items:center; flex-wrap:wrap;">
+					<span style="font-size:12px; color:#444;">Point camera at QR code</span>
+					<label style="font-size:12px;">
+						<span style="margin-right:6px;">or Upload Image:</span>
+						<input type="file" id="qrImageInput" accept="image/*" onchange="scanFromImage(event)" />
+					</label>
+					<button id="torchBtn" onclick="toggleTorch()" style="display:none;">Torch On</button>
+					<button onclick="closeScanner()">Close</button>
+				</div>
+			</div>
+		</div>
     <div class="table-container">
         <table class="table table-hover" id="childhealthrecord">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>User ID</th>
-                                <th>Baby ID</th>
                                 <th>Child Fname</th>
                                 <th>Child Lname</th>
-                                <th>Child Name</th>
                                 <th>Gender</th>
                                 <th>Birth Date</th>
                                 <th>Place of Birth</th>
@@ -31,13 +42,9 @@
                                 <th>Weight</th>
                                 <th>Height</th>
                                 <th>Birth Attendant</th>
-                                <th>Baby Card</th>
-                                <th>Created</th>
-                                <th>Updated</th>
                                 <th>Status</th>
-                                <th>Accept</th>
-                                <th>Reject</th>
-                                <th>Schedule</th>
+								<th>Action</th>
+
                             </tr>
                         </thead>
                         <tbody id="childhealthrecordBody">
@@ -55,6 +62,27 @@
                         </tbody>
                     </table>
     </div>
+	<div class="childinformation-container" style="display: none; height:100%; width:100%; background-color: gray;">
+	<div style="width: 50%;">
+			<h1>Child Information</h1>
+			<p>Child Name: <span id="childName"></span></p>
+			<p>Child Gender: <span id="childGender"></span></p>
+			<p>Child Birth Date: <span id="childBirthDate"></span></p>
+			<p>Child Place of Birth: <span id="childPlaceOfBirth"></span></p>
+			<p>Child Address: <span id="childAddress"></span></p>
+			<p>Child Weight: <span id="childWeight"></span></p>
+			<p>Child Height: <span id="childHeight"></span></p>
+			<p>Child Mother: <span id="childMother"></span></p>
+			<p>Child Father: <span id="childFather"></span></p>
+			<p>Child Birth Attendant: <span id="childBirthAttendant"></span></p>
+		</div>
+		<div style="width: 50%; background-color: white;">
+			<button onclick="closeChildInformation()" id="closeButton">Close</button>
+
+			<img src="" alt="" id="childImage" style="width: 100%; height: 100%; object-fit: cover;">
+			<button id="acceptButton">Accept</button>
+		</div>
+	</div>
             <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 		<script>
 			async function getChildHealthRecord() {
@@ -62,7 +90,7 @@
 				body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
 				try {
 					// const res = await fetch('../../php/bhw/get_child_health_records.php');
-					const res = await fetch('../../php/supabase/bhw/get_child_health_records.php');
+					const res = await fetch('../../php/supabase/bhw/pending_chr.php');
 					const data = await res.json();
 					if (data.status !== 'success') { body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>'; return; }
 					if (!data.data || data.data.length === 0){ body.innerHTML = '<tr><td colspan="21">No records found</td></tr>'; return; }
@@ -70,12 +98,11 @@
 					let rows = '';
 					data.data.forEach(item => {
 						rows += `<tr>
-							<td>${item.id || ''}</td>
-							<td>${item.user_id || ''}</td>
-							<td>${item.baby_id || ''}</td>
+							<td hidden>${item.id || ''}</td>
+							<td hidden>${item.user_id || ''}</td>
+							<td hidden>${item.baby_id || ''}</td>
 							<td>${item.child_fname || ''}</td>
 							<td>${item.child_lname || ''}</td>
-							<td>${item.child_name || ''}</td>
 							<td>${item.child_gender || ''}</td>
 							<td>${item.child_birth_date || ''}</td>
 							<td>${item.place_of_birth || ''}</td>
@@ -85,17 +112,47 @@
 							<td>${item.birth_weight || ''}</td>
 							<td>${item.birth_height || ''}</td>
 							<td>${item.birth_attendant || ''}</td>
-							<td>${item.babys_card ? `<button onclick=\"viewChrImage('${encodeURIComponent(item.babys_card)}')\">View</button>` : '<span style=\"opacity:.6\">No image</span>'}</td>
-							<td>${item.date_created || ''}</td>
-							<td>${item.date_updated || ''}</td>
 							<td>${item.status || ''}</td>
-							<td><button onclick=\"acceptRecord('${item.baby_id}')\">Accept</button></td>
-							<td><button onclick=\"rejectRecord('${item.baby_id}')\">Reject</button></td>
-							<td><button onclick=\"viewSchedule('${item.baby_id}', this)\">View Schedule</button></td>
+							<td><button onclick=\"viewChildInformation('${item.baby_id}')\">View</button></td>
+
 						</tr>`;
 					});
 					body.innerHTML = rows;
 				} catch (e) { body.innerHTML = '<tr><td colspan="21">Error loading records</td></tr>'; }
+			}
+
+
+			async function viewChildInformation(baby_id){
+				formData = new FormData();
+				formData.append('baby_id', baby_id);
+				const response = await fetch('../../php/supabase/bhw/child_information.php', { method: 'POST', body: formData });
+				const data = await response.json();
+				if (data.status === 'success') {
+					console.log(data.data);
+					document.querySelector('#childName').textContent = data.data[0].child_fname + ' ' + data.data[0].child_lname;
+					document.querySelector('#childGender').textContent = data.data[0].child_gender;
+					document.querySelector('#childBirthDate').textContent = data.data[0].child_birth_date;
+					document.querySelector('#childPlaceOfBirth').textContent = data.data[0].place_of_birth;
+					document.querySelector('#childAddress').textContent = data.data[0].address;
+					document.querySelector('#childWeight').textContent = data.data[0].birth_weight;
+					document.querySelector('#childHeight').textContent = data.data[0].birth_height;
+					document.querySelector('#childMother').textContent = data.data[0].mother_name;
+					document.querySelector('#childFather').textContent = data.data[0].father_name;
+					document.querySelector('#childBirthAttendant').textContent = data.data[0].birth_attendant;
+					document.querySelector('#childImage').src = data.data[0].babys_card;
+					document.querySelector('#acceptButton').addEventListener('click', () => { acceptRecord(baby_id); });
+					document.querySelector('.childinformation-container').style.display = 'flex';
+					document.querySelector('.table-container').style.display = 'none';
+				} else {
+					console.log(data.message);
+				}
+
+				
+			}
+
+			function closeChildInformation(){
+				document.querySelector('.childinformation-container').style.display = 'none';
+				document.querySelector('.table-container').style.display = 'block';
 			}
 
 			function filterTable(){
@@ -131,6 +188,7 @@
 				const data = await response.json();
 				if (data.status === 'success') { getChildHealthRecord(); }
 				else { alert('Record not accepted: ' + data.message); }
+				closeChildInformation();
 			}
 
 			async function rejectRecord(baby_id){

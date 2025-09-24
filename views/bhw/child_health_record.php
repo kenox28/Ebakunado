@@ -16,27 +16,13 @@
         <table class="table table-hover" id="childhealthrecord">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>User ID</th>
-                                <th>Baby ID</th>
-                                <th>Child Fname</th>
-                                <th>Child Lname</th>
-                                <th>Child Name</th>
+                                <th>Fullname</th>
                                 <th>Gender</th>
                                 <th>Birth Date</th>
                                 <th>Place of Birth</th>
                                 <th>Mother</th>
-                                <th>Father</th>
                                 <th>Address</th>
-                                <th>Weight</th>
-                                <th>Height</th>
-                                <th>Birth Attendant</th>
-                                <th>Baby Card</th>
-                                <th>Created</th>
-                                <th>Updated</th>
                                 <th>Status</th>
-                                <th>Accept</th>
-                                <th>Reject</th>
                                 <th>Schedule</th>
                             </tr>
                         </thead>
@@ -55,14 +41,14 @@
                         </tbody>
                     </table>
     </div>
-            <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+        <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 		<script>
 			async function getChildHealthRecord() {
 				const body = document.querySelector('#childhealthrecordBody');
 				body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
 				try {
 					// const res = await fetch('../../php/bhw/get_child_health_records.php');
-					const res = await fetch('../../php/supabase/bhw/get_child_health_records.php');
+					const res = await fetch('../../php/supabase/bhw/get_child_health_record.php');
 					const data = await res.json();
 					if (data.status !== 'success') { body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>'; return; }
 					if (!data.data || data.data.length === 0){ body.innerHTML = '<tr><td colspan="21">No records found</td></tr>'; return; }
@@ -70,27 +56,13 @@
 					let rows = '';
 					data.data.forEach(item => {
 						rows += `<tr>
-							<td>${item.id || ''}</td>
-							<td>${item.user_id || ''}</td>
-							<td>${item.baby_id || ''}</td>
-							<td>${item.child_fname || ''}</td>
-							<td>${item.child_lname || ''}</td>
-							<td>${item.child_name || ''}</td>
+							<td>${item.child_fname || ''} ${item.child_lname || ''}</td>
 							<td>${item.child_gender || ''}</td>
 							<td>${item.child_birth_date || ''}</td>
 							<td>${item.place_of_birth || ''}</td>
-							<td>${item.mother_name || ''}</td>
-							<td>${item.father_name || ''}</td>
+                            <td>${item.mother_name || ''}</td>
 							<td>${item.address || ''}</td>
-							<td>${item.birth_weight || ''}</td>
-							<td>${item.birth_height || ''}</td>
-							<td>${item.birth_attendant || ''}</td>
-							<td>${item.babys_card ? `<button onclick=\"viewChrImage('${encodeURIComponent(item.babys_card)}')\">View</button>` : '<span style=\"opacity:.6\">No image</span>'}</td>
-							<td>${item.date_created || ''}</td>
-							<td>${item.date_updated || ''}</td>
 							<td>${item.status || ''}</td>
-							<td><button onclick=\"acceptRecord('${item.baby_id}')\">Accept</button></td>
-							<td><button onclick=\"rejectRecord('${item.baby_id}')\">Reject</button></td>
 							<td><button onclick=\"viewSchedule('${item.baby_id}', this)\">View Schedule</button></td>
 						</tr>`;
 					});
@@ -156,7 +128,7 @@
 						html += `<tr>
 							<td>${r.vaccine_name}</td>
 							<td>${r.dose_number}</td>
-							<td>${r.catch_up_date || ''}</td>
+							<td>${r.schedule_date || ''}</td>
 							<td>${r.date_given || ''}</td>
 							<td>${r.status}</td>
 							<td>${r.status === 'completed' ? 'Done' : `<button onclick=\"markGiven(${r.id})\">Mark</button>`}</td>
