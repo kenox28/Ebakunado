@@ -1,7 +1,4 @@
 <?php include 'Include/header.php'; ?>
-<style>
-
-</style>
 
 <div id="imageOverlay" style="display: none;" onclick="closeOverlay(event)">
     <div class="content">

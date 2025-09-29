@@ -36,6 +36,7 @@ $child_address = $_POST['child_address'] ?? '';
 $birth_weight = $_POST['birth_weight'] ?? null;
 $birth_height = $_POST['birth_height'] ?? null;
 $birth_attendant = $_POST['birth_attendant'] ?? '';
+$vaccines_received = $_POST['vaccines_received'] ?? [];
 
 // Generate baby_id
 $baby_id = 'BABY' . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
@@ -94,12 +95,75 @@ if ($insert === false) {
     exit();
 }
 
+// Create ALL immunization records (transferred + scheduled)
+$vaccines = [
+    ['BCG', 'at birth'],
+    ['Hepatitis B (Birth dose)', 'at birth'],
+    ['Pentavalent (DPT-HepB-Hib) - 1st', '6 weeks'],
+    ['OPV - 1st', '6 weeks'],
+    ['PCV - 1st', '6 weeks'],
+    ['Pentavalent (DPT-HepB-Hib) - 2nd', '10 weeks'],
+    ['OPV - 2nd', '10 weeks'],
+    ['PCV - 2nd', '10 weeks'],
+    ['Pentavalent (DPT-HepB-Hib) - 3rd', '14 weeks'],
+    ['OPV - 3rd', '14 weeks'],
+    ['PCV - 3rd', '14 weeks'],
+    ['IPV', '14 weeks'],
+    ['MMR / Measles - 1st', '9 months'],
+    ['MMR / Measles - 2nd', '12 months']
+];
+
+// Helper to compute due date (catch_up_date)
+function compute_due_date($birth, $sched) {
+    $d = new DateTime($birth);
+    $s = strtolower($sched);
+    if (strpos($s, 'birth') !== false) return $d->format('Y-m-d');
+    if (preg_match('/(\d+)\s*weeks?/', $s, $m)) { $d->modify('+' . intval($m[1]) . ' week'); return $d->format('Y-m-d'); }
+    if (preg_match('/(\d+)\s*months?/', $s, $m)) { $d->modify('+' . intval($m[1]) . ' month'); return $d->format('Y-m-d'); }
+    return $d->format('Y-m-d');
+}
+
+$immunization_records_created = 0;
+$transferred_count = 0;
+$doseNum = 1;
+
+foreach ($vaccines as $v) {
+    $vname = $v[0];
+    $sched = $v[1];
+    $due = compute_due_date($child_birth_date, $sched);
+    
+    // Check if this vaccine was marked as received by user
+    $is_transferred = in_array($vname, $vaccines_received);
+    
+    $immunization_insert = supabaseInsert('immunization_records', [
+        'baby_id' => $baby_id,
+        'vaccine_name' => $vname,
+        'dose_number' => $doseNum,
+        'status' => $is_transferred ? 'transferred' : 'scheduled',
+        'schedule_date' => $due,
+        'catch_up_date' => null,
+        'date_given' => $is_transferred ? $child_birth_date : null,
+        'created_at' => date('Y-m-d H:i:s')
+    ]);
+    
+    if ($immunization_insert !== false) {
+        $immunization_records_created++;
+        if ($is_transferred) {
+            $transferred_count++;
+        }
+    }
+    $doseNum++;
+}
+
 echo json_encode([
     'status' => 'success', 
     'message' => 'Child health record saved successfully',
     'upload_status' => $upload_status,
     'cloudinary_info' => $cloudinary_debug,
-    'baby_id' => $baby_id
+    'baby_id' => $baby_id,
+    'vaccines_transferred' => $transferred_count,
+    'vaccines_scheduled' => $immunization_records_created - $transferred_count,
+    'total_records_created' => $immunization_records_created
 ]);
 
 ?>

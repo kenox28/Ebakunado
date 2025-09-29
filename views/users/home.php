@@ -1,211 +1,7 @@
-<?php
-session_start();
+<?php include 'Include/header.php'; ?>
 
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: ../login.php");
-    exit();
-}
-
-
-// Get user information from session
-$user_id = $_SESSION['user_id'] ?? '';
-$fname = $_SESSION['fname'] ?? 'User';
-$lname = $_SESSION['lname'] ?? '';
-$email = $_SESSION['email'] ?? '';
-$phone = $_SESSION['phone_number'] ?? '';
-$noprofile = $_SESSION['profileimg']?? '';
-?>
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Welcome - Ebakunado System</title>
-		<!-- SweetAlert2 for better notifications -->
-		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-		
-	</head>
-	<style>
-		*{
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-			font-family: 'Poppins', sans-serif;
-		}
-		body{
-			height: 100vh;
-			width: 100%;
-			background-color: whitesmoke;
-
-		}
-		body header{
-			background-color: white;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			padding: 5px;
-			box-shadow: 0 0 10px 0 rgba(145, 76, 76, 0.1);
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			z-index: 1000;
-		}
-		main{
-			margin-top: 4%;
-			height: 95vh;
-			border: 1px solid black;
-			background-color: greenyellow;
-			display: flex;
 			
-		}
-		aside{
-			width: 12vw;
-			height: 100%;
-			background-color: white;
-			border: 1px solid black;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
-		aside a{
-			height: 10vh;
-			width: 100%;
-			background-color: white;
-			border: 1px solid black;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
 
-		footer{
-			background-color:green;
-			height: 5vh;
-			width: 100%;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			position: fixed;
-			bottom: 0;
-			left: 0;
-			z-index: 1000;
-		}
-		section{
-			width: 88vw;
-			height: 100%;
-			background-color: white;
-			border: 1px solid black;
-		}
-		.childrenheader{
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			padding: 5px;
-			box-shadow: 0 0 10px 0 rgba(145, 76, 76, 0.1);
-		}
-		.childrenheader nav{
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			padding: 5px;
-			box-shadow: 0 0 10px 0 rgba(145, 76, 76, 0.1);
-		}
-		.childrenheader nav button{
-			text-decoration: none;
-			color: black;
-			padding: 5px;
-			box-shadow: 0 0 10px 0 rgba(145, 76, 76, 0.1);
-		}
-		section{
-			width: 100%;
-			height: 100%;
-			background-color: greenyellow;
-		}
-
-		section table{
-			width: 100%;
-			height: 100%;
-			background-color: greenyellow;
-			border: 1px solid black;
-		}
-
-		section table thead{
-			background-color: blue	;
-			height: 10px;
-			color: white;
-			font-weight: bold;
-			font-size: 1.2rem;
-			text-align: left;
-			padding: 5px;
-			border: 1px solid black;
-		}
-		
-
-	</style>
-	<body>
-		<header>
-			<div class="logo">
-				<a href="home.php">
-					<h1>Ebakunado</h1>
-				</a>
-			</div>
-			<nav>
-				<a href="children_account.php">Children Accounts</a>
-				<a href="home.php">Notifications</a>
-				<a href="profile.php">Profile</a>
-				<a href="settings.php">Settings</a>
-				<a href="Request.php">Request Immunization</a>
-				<a href="../logout.php">Logout</a>
-				<a href="profile.php">
-					<img src="<?php echo $noprofile; ?>" alt="Profile" style="width: 30px; height: 30px; border-radius: 50%;">
-				</a>
-			</nav>
-		</header>
-
-		<main>
-			<aside>
-					<a href="home.php">View Immunization</a>
-					<a href="upcoming_schedule.php">Upcoming Schedule</a>
-					<a href="missing_schedule.php">Missing Schedule</a>
-					<a href="request_vaccination.php">Request Vaccination</a>
-					<a href="#">Vaccination History</a>
-			</aside>
-			<!-- <h2>My Children's Health Records</h2>
-			<div id="childrenTable">
-				<table border="1" style="width: 100%; border-collapse: collapse;">
-					<thead>
-						<tr>
-							<th>Baby ID</th>
-							<th>Child Name</th>
-							<th>Birth Date</th>
-							<th>Status</th>
-							<th>Actions</th>
-						</tr>
-					</thead>
-					<tbody id="childrenBody">
-						<tr><td colspan="5">Loading...</td></tr>
-					</tbody>
-				</table>
-			</div>
-			
-			<div id="immunizationSchedule" style="display: none; margin-top: 20px;">
-				<h3>Immunization Schedule</h3>
-				<table border="1" style="width: 100%; border-collapse: collapse;">
-					<thead>
-						<tr>
-							<th>Vaccine</th>
-							<th>Dose #</th>
-							<th>Due Date</th>
-							<th>Date Given</th>
-							<th>Status</th>
-						</tr>
-					</thead>
-					<tbody id="scheduleBody">
-					</tbody>
-				</table>
-			</div> -->
-
-			<section>
                     <table id="childrenTable">
                         <thead>
                             <tr>
@@ -264,12 +60,8 @@ $noprofile = $_SESSION['profileimg']?? '';
 					</tbody>
 				</table>
 			</div> -->
-			</section>
-		</main>
-		
-		<footer>
-			<p>&copy; 2024 Ebakunado System. All rights reserved.</p>
-		</footer>
+
+
 	<script>
 			async function getChildren() {
                 try {
@@ -390,6 +182,7 @@ $noprofile = $_SESSION['profileimg']?? '';
 	</body>
 </html> 
 
+<?php include 'Include/footer.php'; ?>
 
 
 
