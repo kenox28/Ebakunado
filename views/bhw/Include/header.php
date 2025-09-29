@@ -128,7 +128,7 @@
 		<aside>
 			<h3>Ebakunado</h3>
 			<a href="#" data-icon="🏠"><span>Dashboard</span></a>
-			<a href="#" data-icon="💉"><span>Imuunization form</span></a>
+			<a href="./immunization.php" data-icon="💉"><span>Imuunization form</span></a>
 			<a href="./pending_approval.php" data-icon="⏳"><span>Pending Approval</span></a>
 			<a href="./child_health_record.php" data-icon="🧒"><span>Child Health Record</span></a>
 			<a href="#" data-icon="🎯"><span>Target client list</span></a>
