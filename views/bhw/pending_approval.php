@@ -1,6 +1,93 @@
 <?php include 'Include/header.php'; ?>
 <style>
-
+	.badge {
+		padding: 4px 8px;
+		border-radius: 4px;
+		font-size: 12px;
+		font-weight: bold;
+		text-transform: uppercase;
+	}
+	
+	.badge-success {
+		background-color: #28a745;
+		color: white;
+	}
+	
+	.badge-danger {
+		background-color: #dc3545;
+		color: white;
+	}
+	
+	.badge-warning {
+		background-color: #ffc107;
+		color: #212529;
+	}
+	
+	.btn {
+		padding: 6px 12px;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 12px;
+		text-decoration: none;
+		display: inline-block;
+	}
+	
+	.btn-sm {
+		padding: 4px 8px;
+		font-size: 11px;
+	}
+	
+	.btn-primary {
+		background-color: #007bff;
+		color: white;
+	}
+	
+	.btn-primary:hover {
+		background-color: #0056b3;
+	}
+	
+	.btn-success {
+		background-color: #28a745;
+		color: white;
+	}
+	
+	.btn-success:hover {
+		background-color: #1e7e34;
+	}
+	
+	.loading {
+		text-align: center;
+		padding: 20px;
+		color: #666;
+	}
+	
+	.loading i {
+		font-size: 24px;
+		margin-bottom: 10px;
+	}
+	
+	.table {
+		border-collapse: collapse;
+		width: 100%;
+		margin-top: 10px;
+	}
+	
+	.table th,
+	.table td {
+		padding: 8px;
+		text-align: left;
+		border-bottom: 1px solid #ddd;
+	}
+	
+	.table th {
+		background-color: #f8f9fa;
+		font-weight: bold;
+	}
+	
+	.table-hover tbody tr:hover {
+		background-color: #f5f5f5;
+	}
 </style>
 
 <!-- <div id="imageOverlay" onclick="closeOverlay(event)">
@@ -62,25 +149,51 @@
                         </tbody>
                     </table>
     </div>
-	<div class="childinformation-container" style="display: none; height:100%; width:100%; background-color: gray;">
-	<div style="width: 50%;">
-			<h1>Child Information</h1>
-			<p>Child Name: <span id="childName"></span></p>
-			<p>Child Gender: <span id="childGender"></span></p>
-			<p>Child Birth Date: <span id="childBirthDate"></span></p>
-			<p>Child Place of Birth: <span id="childPlaceOfBirth"></span></p>
-			<p>Child Address: <span id="childAddress"></span></p>
-			<p>Child Weight: <span id="childWeight"></span></p>
-			<p>Child Height: <span id="childHeight"></span></p>
-			<p>Child Mother: <span id="childMother"></span></p>
-			<p>Child Father: <span id="childFather"></span></p>
-			<p>Child Birth Attendant: <span id="childBirthAttendant"></span></p>
+	<div class="childinformation-container" style="display: none; height:100%; width:100%; background-color: gray; flex-direction: column; padding: 20px; overflow-y: auto;">
+		<!-- Header with close and accept buttons -->
+		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+			<h1>Child Information Review</h1>
+			<div>
+				<button onclick="closeChildInformation()" id="closeButton" style="margin-right: 10px;">Close</button>
+				<button id="acceptButton" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px;">Accept Record</button>
+			</div>
 		</div>
-		<div style="width: 50%; background-color: white;">
-			<button onclick="closeChildInformation()" id="closeButton">Close</button>
 
-			<img src="" alt="" id="childImage" style="width: 100%; height: 100%; object-fit: cover;">
-			<button id="acceptButton">Accept</button>
+		<!-- Main content area -->
+		<div style="display: flex; gap: 20px; margin-bottom: 20px;">
+			<!-- Child details section -->
+			<div style="flex: 1; background-color: white; padding: 20px; border-radius: 8px;">
+				<h2>Child Details</h2>
+				<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+					<p><strong>Name:</strong> <span id="childName"></span></p>
+					<p><strong>Gender:</strong> <span id="childGender"></span></p>
+					<p><strong>Birth Date:</strong> <span id="childBirthDate"></span></p>
+					<p><strong>Place of Birth:</strong> <span id="childPlaceOfBirth"></span></p>
+					<p><strong>Birth Weight:</strong> <span id="childWeight"></span> kg</p>
+					<p><strong>Birth Height:</strong> <span id="childHeight"></span> cm</p>
+					<p><strong>Mother:</strong> <span id="childMother"></span></p>
+					<p><strong>Father:</strong> <span id="childFather"></span></p>
+					<p><strong>Birth Attendant:</strong> <span id="childBirthAttendant"></span></p>
+					<p><strong>Address:</strong> <span id="childAddress"></span></p>
+				</div>
+			</div>
+
+			<!-- Baby card image section -->
+			<div style="flex: 1; background-color: white; padding: 20px; border-radius: 8px; text-align: center;">
+				<h2>Baby Card Image</h2>
+				<img src="" alt="Baby Card" id="childImage" style="width: 100%; max-height: 400px; object-fit: contain; border: 1px solid #ddd; border-radius: 4px;">
+			</div>
+		</div>
+
+		<!-- Vaccination records section -->
+		<div style="background-color: white; padding: 20px; border-radius: 8px;">
+			<h2>Vaccination Records</h2>
+			<div id="vaccinationRecordsContainer">
+				<div class="loading">
+					<i class="fas fa-spinner fa-spin"></i>
+					<p>Loading vaccination records...</p>
+				</div>
+			</div>
 		</div>
 	</div>
             <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -140,19 +253,160 @@
 					document.querySelector('#childFather').textContent = data.data[0].father_name;
 					document.querySelector('#childBirthAttendant').textContent = data.data[0].birth_attendant;
 					document.querySelector('#childImage').src = data.data[0].babys_card;
-					document.querySelector('#acceptButton').addEventListener('click', () => { acceptRecord(baby_id); });
+					
+					// Store baby_id for later use
+					document.querySelector('.childinformation-container').dataset.babyId = baby_id;
+					
+					// Set up accept button
+					document.querySelector('#acceptButton').onclick = () => { acceptRecord(baby_id); };
+					
+					// Load vaccination records
+					await loadVaccinationRecords(baby_id);
+					
 					document.querySelector('.childinformation-container').style.display = 'flex';
 					document.querySelector('.table-container').style.display = 'none';
 				} else {
 					console.log(data.message);
 				}
-
-				
 			}
 
 			function closeChildInformation(){
 				document.querySelector('.childinformation-container').style.display = 'none';
 				document.querySelector('.table-container').style.display = 'block';
+			}
+
+			async function loadVaccinationRecords(baby_id) {
+				const container = document.querySelector('#vaccinationRecordsContainer');
+				container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading vaccination records...</p></div>';
+				
+				try {
+					const response = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
+					const data = await response.json();
+					
+					if (data.status !== 'success' || !data.data || data.data.length === 0) {
+						container.innerHTML = '<p style="text-align: center; color: #666;">No vaccination records found</p>';
+						return;
+					}
+
+					let html = '<table class="table table-hover" style="width: 100%; margin-top: 10px;">';
+					html += '<thead><tr>';
+					html += '<th>Vaccine</th><th>Dose</th><th>Schedule Date</th><th>Catch-up Date</th><th>Date Given</th><th>Status</th><th>Weight (kg)</th><th>Height (cm)</th><th>Temperature (°C)</th><th>Actions</th>';
+					html += '</tr></thead><tbody>';
+					
+					data.data.forEach(record => {
+						const statusClass = record.status === 'completed' ? 'success' : 
+										   record.status === 'missed' ? 'danger' : 'warning';
+						const statusText = record.status.charAt(0).toUpperCase() + record.status.slice(1);
+						
+						html += `<tr data-record-id="${record.id}">`;
+						html += `<td>${record.vaccine_name || ''}</td>`;
+						html += `<td>${record.dose_number || ''}</td>`;
+						html += `<td>${record.schedule_date || ''}</td>`;
+						html += `<td>${record.catch_up_date || ''}</td>`;
+						html += `<td>${record.date_given || ''}</td>`;
+						html += `<td><span class="badge badge-${statusClass}">${statusText}</span></td>`;
+						html += `<td>${record.weight || ''}</td>`;
+						html += `<td>${record.height || ''}</td>`;
+						html += `<td>${record.temperature || ''}</td>`;
+						html += `<td>`;
+						
+						if (record.status === 'completed') {
+							html += `<button onclick="editVaccinationRecord(${record.id})" class="btn btn-sm btn-primary">Edit</button>`;
+						} else {
+							html += `<button onclick="markVaccineGiven(${record.id})" class="btn btn-sm btn-success">Mark Given</button>`;
+						}
+						
+						html += `</td></tr>`;
+					});
+					
+					html += '</tbody></table>';
+					container.innerHTML = html;
+					
+				} catch (error) {
+					console.error('Error loading vaccination records:', error);
+					container.innerHTML = '<p style="text-align: center; color: #dc3545;">Error loading vaccination records</p>';
+				}
+			}
+
+			async function markVaccineGiven(record_id) {
+				const date_given = prompt('Date given (YYYY-MM-DD):');
+				if (!date_given) return;
+				
+				const weight = prompt('Weight (kg) - optional:');
+				const height = prompt('Height (cm) - optional:');
+				const temperature = prompt('Temperature (°C) - optional:');
+				
+				const formData = new FormData();
+				formData.append('record_id', record_id);
+				formData.append('date_given', date_given);
+				if (weight) formData.append('weight', weight);
+				if (height) formData.append('height', height);
+				if (temperature) formData.append('temperature', temperature);
+				
+				try {
+					const response = await fetch('../../php/supabase/bhw/mark_vaccine_given.php', {
+						method: 'POST',
+						body: formData
+					});
+					const data = await response.json();
+					
+					if (data.status === 'success') {
+						alert('Vaccination record updated successfully!');
+						// Reload vaccination records
+						const baby_id = document.querySelector('.childinformation-container').dataset.babyId;
+						await loadVaccinationRecords(baby_id);
+					} else {
+						alert('Failed to update vaccination record: ' + data.message);
+					}
+				} catch (error) {
+					console.error('Error updating vaccination record:', error);
+					alert('Error updating vaccination record');
+				}
+			}
+
+			async function editVaccinationRecord(record_id) {
+				const row = document.querySelector(`tr[data-record-id="${record_id}"]`);
+				if (!row) return;
+				
+				const cells = row.querySelectorAll('td');
+				const currentDateGiven = cells[4].textContent || '';
+				const currentWeight = cells[6].textContent || '';
+				const currentHeight = cells[7].textContent || '';
+				const currentTemp = cells[8].textContent || '';
+				
+				const date_given = prompt('Date given (YYYY-MM-DD):', currentDateGiven);
+				if (date_given === null) return;
+				
+				const weight = prompt('Weight (kg):', currentWeight);
+				const height = prompt('Height (cm):', currentHeight);
+				const temperature = prompt('Temperature (°C):', currentTemp);
+				
+				const formData = new FormData();
+				formData.append('record_id', record_id);
+				formData.append('date_given', date_given);
+				if (weight !== null) formData.append('weight', weight);
+				if (height !== null) formData.append('height', height);
+				if (temperature !== null) formData.append('temperature', temperature);
+				
+				try {
+					const response = await fetch('../../php/supabase/bhw/mark_vaccine_given.php', {
+						method: 'POST',
+						body: formData
+					});
+					const data = await response.json();
+					
+					if (data.status === 'success') {
+						alert('Vaccination record updated successfully!');
+						// Reload vaccination records
+						const baby_id = document.querySelector('.childinformation-container').dataset.babyId;
+						await loadVaccinationRecords(baby_id);
+					} else {
+						alert('Failed to update vaccination record: ' + data.message);
+					}
+				} catch (error) {
+					console.error('Error updating vaccination record:', error);
+					alert('Error updating vaccination record');
+				}
 			}
 
 			function filterTable(){
@@ -199,49 +453,6 @@
 				else { alert('Record not rejected: ' + data.message); }
 			}
 
-			async function viewSchedule(baby_id, btn){
-				const tr = btn.closest('tr');
-				const next = tr.nextElementSibling;
-				if (next && next.classList.contains('sched-row')) { next.remove(); return; }
-				const res = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
-				const data = await res.json();
-				let html = '<tr class="sched-row"><td colspan="21">';
-				if (data.status !== 'success' || !data.data || data.data.length === 0) {
-					html += '<div class="small">No schedule</div>';
-				} else {
-					html += '<table class="small"><tr><th>Vaccine</th><th>Dose #</th><th>Due</th><th>Date Given</th><th>Status</th><th>Mark Given</th></tr>';
-					data.data.forEach(r => {
-						html += `<tr>
-							<td>${r.vaccine_name}</td>
-							<td>${r.dose_number}</td>
-							<td>${r.catch_up_date || ''}</td>
-							<td>${r.date_given || ''}</td>
-							<td>${r.status}</td>
-							<td>${r.status === 'completed' ? 'Done' : `<button onclick=\"markGiven(${r.id})\">Mark</button>`}</td>
-						</tr>`;
-					});
-					html += '</table>';
-				}
-				html += '</td></tr>';
-				tr.insertAdjacentHTML('afterend', html);
-			}
-
-			async function markGiven(record_id){
-				const date_given = prompt('Date given (YYYY-MM-DD):'); if(!date_given) return;
-				const weight = prompt('Weight (kg) optional:');
-				const height = prompt('Height (cm) optional:');
-				const temperature = prompt('Temp (C) optional:');
-				const fd = new FormData();
-				fd.append('record_id', record_id);
-				fd.append('date_given', date_given);
-				if (weight) fd.append('weight', weight);
-				if (height) fd.append('height', height);
-				if (temperature) fd.append('temperature', temperature);
-				const res = await fetch('../../php/supabase/bhw/mark_vaccine_given.php', { method: 'POST', body: fd });
-				const data = await res.json();
-				if (data.status === 'success') { getChildHealthRecord(); }
-				else { alert('Update failed'); }
-			}
 
 			window.addEventListener('DOMContentLoaded', getChildHealthRecord);
 
