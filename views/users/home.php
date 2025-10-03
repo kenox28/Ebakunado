@@ -19,47 +19,7 @@
 
                         </tbody>
                     </table>
-				<!-- <div class="childrenheader">
-					<h3>Child name</h3>
-					<nav>
-						<button>qr code</button>
-						<button>Switch Account</button>
-					</nav>
 
-				</div>
-				<div id="childrenTable">
-				<table border="1" style="width: 100%; border-collapse: collapse;">
-					<thead>
-						<tr>
-							<th>Baby ID</th>
-							<th>Child Name</th>
-							<th>Birth Date</th>
-							<th>Status</th>
-							<th>Actions</th>
-						</tr>
-					</thead>
-					<tbody id="childrenBody">
-						<tr><td colspan="5">Loading...</td></tr>
-					</tbody>
-				</table>
-			</div>
-			
-			<div id="immunizationSchedule" style="display: none; margin-top: 20px;">
-				<h3>Immunization Schedule</h3>
-				<table border="1" style="width: 100%; border-collapse: collapse;">
-					<thead>
-						<tr>
-							<th>Vaccine</th>
-							<th>Dose #</th>
-							<th>Due Date</th>
-							<th>Date Given</th>
-							<th>Status</th>
-						</tr>
-					</thead>
-					<tbody id="scheduleBody">
-					</tbody>
-				</table>
-			</div> -->
 
 
 	<script>
@@ -108,6 +68,7 @@
                 });
             }
 
+
 		async function viewChild(baby_id){
 			const formdata = new FormData();
 			formdata.append('baby_id', baby_id);
@@ -117,6 +78,7 @@
 			});
 			const data = await response.json();
 			if(data.status === 'success'){
+				// window.location.href = 'view_immunization.php?baby_id=' + baby_id;
 				window.location.href = 'view_immunization.php?baby_id=' + baby_id;
 			}else{
 				alert('Error: ' + data.message);

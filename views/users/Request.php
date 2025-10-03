@@ -24,26 +24,51 @@
                 <input type="text" name="child_address" placeholder="Baby Address" value="<?php echo $place; ?>" required>
                 <input type="text" name="birth_weight" placeholder="Baby Birth Weight" value="sample">
                 <input type="text" name="birth_height" placeholder="Baby Birth Height" value="sample">
-                <input type="text" name="birth_attendant" placeholder="Birth Attendant" value="sample">
+                
+                <h3>Child History</h3>
+                
+                <div class="radio-group">
+                    <label>Type of Delivery</label>
+                    <label><input type="radio" name="delivery_type" value="Normal"> Normal</label>
+                    <label><input type="radio" name="delivery_type" value="Caesarean Section"> Caesarean Section</label>
+                </div>
+                
+                <div class="radio-group">
+                    <label>Birth Order</label>
+                    <label><input type="radio" name="birth_order" value="Single"> Single</label>
+                    <label><input type="radio" name="birth_order" value="Twin"> Twin</label>
+                </div>
+                
+                <div class="radio-group">
+                    <label>Birth Attendant</label>
+                    <label><input type="radio" name="birth_attendant" value="Doctor"> Doctor</label>
+                    <label><input type="radio" name="birth_attendant" value="Midwife"> Midwife</label>
+                    <label><input type="radio" name="birth_attendant" value="Nurse"> Nurse</label>
+                    <label><input type="radio" name="birth_attendant" value="Hilot"> Hilot</label>
+                    <label><input type="radio" name="birth_attendant" value="Others"> Others: <input type="text" name="birth_attendant_others" placeholder="Specify"></label>
+                </div>
+                
                 <input type="file" name="babys_card" accept=".jpg,.jpeg,.png,.pdf" title="Upload Baby's Card (JPG, PNG, or PDF)">
             </div>
 
             
             <div class="vaccine-checkboxes">
                 <label><input type="checkbox" name="vaccines_received[]" value="BCG"> BCG (Tuberculosis)</label>
-                <label><input type="checkbox" name="vaccines_received[]" value="Hepatitis B (Birth dose)"> Hepatitis B (Birth dose)</label>
+                <label><input type="checkbox" name="vaccines_received[]" value="HEPAB1 (w/in 24 hrs)"> HEPAB1 (w/in 24 hrs)</label>
+                <label><input type="checkbox" name="vaccines_received[]" value="HEPAB1 (More than 24hrs)"> HEPAB1 (More than 24hrs)</label>
                 <label><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 1st"> Pentavalent (DPT-HepB-Hib) - 1st</label>
                 <label><input type="checkbox" name="vaccines_received[]" value="OPV - 1st"> OPV - 1st (Oral Polio)</label>
                 <label><input type="checkbox" name="vaccines_received[]" value="PCV - 1st"> PCV - 1st (Pneumococcal)</label>
+                <label><input type="checkbox" name="vaccines_received[]" value="Rota Virus Vaccine - 1st"> Rota Virus Vaccine - 1st</label>
                 <label><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 2nd"> Pentavalent (DPT-HepB-Hib) - 2nd</label>
                 <label><input type="checkbox" name="vaccines_received[]" value="OPV - 2nd"> OPV - 2nd (Oral Polio)</label>
                 <label><input type="checkbox" name="vaccines_received[]" value="PCV - 2nd"> PCV - 2nd (Pneumococcal)</label>
+                <label><input type="checkbox" name="vaccines_received[]" value="Rota Virus Vaccine - 2nd"> Rota Virus Vaccine - 2nd</label>
                 <label><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 3rd"> Pentavalent (DPT-HepB-Hib) - 3rd</label>
                 <label><input type="checkbox" name="vaccines_received[]" value="OPV - 3rd"> OPV - 3rd (Oral Polio)</label>
                 <label><input type="checkbox" name="vaccines_received[]" value="PCV - 3rd"> PCV - 3rd (Pneumococcal)</label>
-                <label><input type="checkbox" name="vaccines_received[]" value="IPV"> IPV (Inactivated Polio)</label>
-                <label><input type="checkbox" name="vaccines_received[]" value="MMR / Measles - 1st"> MMR / Measles - 1st</label>
-                <label><input type="checkbox" name="vaccines_received[]" value="MMR / Measles - 2nd"> MMR / Measles - 2nd</label>
+                <label><input type="checkbox" name="vaccines_received[]" value="MCV1 (AMV)"> MCV1 (AMV) - Anti-Measles Vaccine</label>
+                <label><input type="checkbox" name="vaccines_received[]" value="MCV2 (MMR)"> MCV2 (MMR) - Measles-Mumps-Rubella</label>
             </div>
         </section>
         <button type="submit">Request</button>
@@ -72,9 +97,9 @@ async function Request_Immunization() {
         message += 'Total vaccine records created: ' + data.total_records_created + '\n';
         
         if (data.vaccines_transferred > 0) {
-            message += 'Vaccines transferred: ' + data.vaccines_transferred + '\n';
+            message += 'Vaccines taken: ' + data.vaccines_transferred + '\n';
             message += 'Vaccines scheduled: ' + data.vaccines_scheduled + '\n';
-            message += 'Transferred vaccines are marked as "transferred" status.\n';
+            message += 'Taken vaccines are marked as "taken" status with actual schedule dates.\n';
             message += 'Remaining vaccines are scheduled for future appointments.\n';
         } else {
             message += 'All vaccines scheduled for future appointments.\n';

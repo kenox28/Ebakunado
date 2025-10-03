@@ -131,7 +131,7 @@
 			<a href="./immunization.php" data-icon="💉"><span>Imuunization form</span></a>
 			<a href="./pending_approval.php" data-icon="⏳"><span>Pending Approval</span></a>
 			<a href="./child_health_record.php" data-icon="🧒"><span>Child Health Record</span></a>
-			<a href="#" data-icon="🎯"><span>Target client list</span></a>
+			<a href="./target_client.php" data-icon="🎯"><span>Target Client List</span></a>
 			<a href="#" onclick="openSMSNotification()" data-icon="📱"><span>SMS Notifications</span></a>
 		</aside>
 		<main>
