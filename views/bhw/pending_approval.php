@@ -163,18 +163,47 @@
 		<div style="display: flex; gap: 20px; margin-bottom: 20px;">
 			<!-- Child details section -->
 			<div style="flex: 1; background-color: white; padding: 20px; border-radius: 8px;">
-				<h2>Child Details</h2>
+				<h2>Child Details <small>(Click to edit)</small></h2>
 				<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-					<p><strong>Name:</strong> <span id="childName"></span></p>
-					<p><strong>Gender:</strong> <span id="childGender"></span></p>
-					<p><strong>Birth Date:</strong> <span id="childBirthDate"></span></p>
-					<p><strong>Place of Birth:</strong> <span id="childPlaceOfBirth"></span></p>
-					<p><strong>Birth Weight:</strong> <span id="childWeight"></span> kg</p>
-					<p><strong>Birth Height:</strong> <span id="childHeight"></span> cm</p>
-					<p><strong>Mother:</strong> <span id="childMother"></span></p>
-					<p><strong>Father:</strong> <span id="childFather"></span></p>
-					<p><strong>Birth Attendant:</strong> <span id="childBirthAttendant"></span></p>
-					<p><strong>Address:</strong> <span id="childAddress"></span></p>
+					<p><strong>Name:</strong> <input type="text" id="childName" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 3px;"></p>
+					<p><strong>Gender:</strong> 
+						<select id="childGender" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 3px;">
+							<option value="Male">Male</option>
+							<option value="Female">Female</option>
+						</select>
+					</p>
+					<p><strong>Birth Date:</strong> <input type="date" id="childBirthDate" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 3px;"></p>
+					<p><strong>Place of Birth:</strong> <input type="text" id="childPlaceOfBirth" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 3px;"></p>
+					<p><strong>Birth Weight:</strong> <input type="number" id="childWeight" step="0.01" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 3px;"> kg</p>
+					<p><strong>Birth Height:</strong> <input type="number" id="childHeight" step="0.01" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 3px;"> cm</p>
+					<p><strong>Mother:</strong> <input type="text" id="childMother" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 3px;"></p>
+					<p><strong>Father:</strong> <input type="text" id="childFather" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 3px;"></p>
+					<p><strong>Birth Attendant:</strong> 
+						<select id="childBirthAttendant" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 3px;">
+							<option value="Doctor">Doctor</option>
+							<option value="Midwife">Midwife</option>
+							<option value="Nurse">Nurse</option>
+							<option value="Hilot">Hilot</option>
+							<option value="Others">Others</option>
+						</select>
+					</p>
+					<p><strong>Delivery Type:</strong> 
+						<select id="childDeliveryType" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 3px;">
+							<option value="Normal">Normal</option>
+							<option value="Caesarean Section">Caesarean Section</option>
+						</select>
+					</p>
+					<p><strong>Birth Order:</strong> 
+						<select id="childBirthOrder" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 3px;">
+							<option value="Single">Single</option>
+							<option value="Twin">Twin</option>
+						</select>
+					</p>
+					<p><strong>Address:</strong> <input type="text" id="childAddress" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 3px;"></p>
+				</div>
+				<div style="margin-top: 15px;">
+					<button onclick="saveChildInfo()" style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin-right: 10px;">Save Changes</button>
+					<button onclick="resetChildInfo()" style="background-color: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px;">Reset</button>
 				</div>
 			</div>
 
@@ -235,6 +264,9 @@
 			}
 
 
+			// Store original data for reset functionality
+			let originalChildData = {};
+
 			async function viewChildInformation(baby_id){
 				formData = new FormData();
 				formData.append('baby_id', baby_id);
@@ -242,16 +274,23 @@
 				const data = await response.json();
 				if (data.status === 'success') {
 					console.log(data.data);
-					document.querySelector('#childName').textContent = data.data[0].child_fname + ' ' + data.data[0].child_lname;
-					document.querySelector('#childGender').textContent = data.data[0].child_gender;
-					document.querySelector('#childBirthDate').textContent = data.data[0].child_birth_date;
-					document.querySelector('#childPlaceOfBirth').textContent = data.data[0].place_of_birth;
-					document.querySelector('#childAddress').textContent = data.data[0].address;
-					document.querySelector('#childWeight').textContent = data.data[0].birth_weight;
-					document.querySelector('#childHeight').textContent = data.data[0].birth_height;
-					document.querySelector('#childMother').textContent = data.data[0].mother_name;
-					document.querySelector('#childFather').textContent = data.data[0].father_name;
-					document.querySelector('#childBirthAttendant').textContent = data.data[0].birth_attendant;
+					
+					// Store original data for reset functionality
+					originalChildData = data.data[0];
+					
+					// Populate input fields
+					document.querySelector('#childName').value = data.data[0].child_fname + ' ' + data.data[0].child_lname;
+					document.querySelector('#childGender').value = data.data[0].child_gender;
+					document.querySelector('#childBirthDate').value = data.data[0].child_birth_date;
+					document.querySelector('#childPlaceOfBirth').value = data.data[0].place_of_birth;
+					document.querySelector('#childAddress').value = data.data[0].address;
+					document.querySelector('#childWeight').value = data.data[0].birth_weight;
+					document.querySelector('#childHeight').value = data.data[0].birth_height;
+					document.querySelector('#childMother').value = data.data[0].mother_name;
+					document.querySelector('#childFather').value = data.data[0].father_name;
+					document.querySelector('#childBirthAttendant').value = data.data[0].birth_attendant;
+					document.querySelector('#childDeliveryType').value = data.data[0].delivery_type || 'Normal';
+					document.querySelector('#childBirthOrder').value = data.data[0].birth_order || 'Single';
 					document.querySelector('#childImage').src = data.data[0].babys_card;
 					
 					// Store baby_id for later use
@@ -290,7 +329,7 @@
 
 					let html = '<table class="table table-hover" style="width: 100%; margin-top: 10px;">';
 					html += '<thead><tr>';
-					html += '<th>Vaccine</th><th>Dose</th><th>Schedule Date</th><th>Catch-up Date</th><th>Date Given</th><th>Status</th><th>Weight (kg)</th><th>Height (cm)</th><th>Temperature (°C)</th><th>Actions</th>';
+					html += '<th>Vaccine</th><th>Dose</th><th>Schedule Date</th><th>Catch-up Date</th><th>Date Given</th><th>Status</th>';
 					html += '</tr></thead><tbody>';
 					
 					data.data.forEach(record => {
@@ -305,18 +344,7 @@
 						html += `<td>${record.catch_up_date || ''}</td>`;
 						html += `<td>${record.date_given || ''}</td>`;
 						html += `<td><span class="badge badge-${statusClass}">${statusText}</span></td>`;
-						html += `<td>${record.weight || ''}</td>`;
-						html += `<td>${record.height || ''}</td>`;
-						html += `<td>${record.temperature || ''}</td>`;
-						html += `<td>`;
-						
-						if (record.status === 'completed') {
-							html += `<button onclick="editVaccinationRecord(${record.id})" class="btn btn-sm btn-primary">Edit</button>`;
-						} else {
-							html += `<button onclick="markVaccineGiven(${record.id})" class="btn btn-sm btn-success">Mark Given</button>`;
-						}
-						
-						html += `</td></tr>`;
+						html += `</tr>`;
 					});
 					
 					html += '</tbody></table>';
@@ -328,86 +356,6 @@
 				}
 			}
 
-			async function markVaccineGiven(record_id) {
-				const date_given = prompt('Date given (YYYY-MM-DD):');
-				if (!date_given) return;
-				
-				const weight = prompt('Weight (kg) - optional:');
-				const height = prompt('Height (cm) - optional:');
-				const temperature = prompt('Temperature (°C) - optional:');
-				
-				const formData = new FormData();
-				formData.append('record_id', record_id);
-				formData.append('date_given', date_given);
-				if (weight) formData.append('weight', weight);
-				if (height) formData.append('height', height);
-				if (temperature) formData.append('temperature', temperature);
-				
-				try {
-					const response = await fetch('../../php/supabase/bhw/mark_vaccine_given.php', {
-						method: 'POST',
-						body: formData
-					});
-					const data = await response.json();
-					
-					if (data.status === 'success') {
-						alert('Vaccination record updated successfully!');
-						// Reload vaccination records
-						const baby_id = document.querySelector('.childinformation-container').dataset.babyId;
-						await loadVaccinationRecords(baby_id);
-					} else {
-						alert('Failed to update vaccination record: ' + data.message);
-					}
-				} catch (error) {
-					console.error('Error updating vaccination record:', error);
-					alert('Error updating vaccination record');
-				}
-			}
-
-			async function editVaccinationRecord(record_id) {
-				const row = document.querySelector(`tr[data-record-id="${record_id}"]`);
-				if (!row) return;
-				
-				const cells = row.querySelectorAll('td');
-				const currentDateGiven = cells[4].textContent || '';
-				const currentWeight = cells[6].textContent || '';
-				const currentHeight = cells[7].textContent || '';
-				const currentTemp = cells[8].textContent || '';
-				
-				const date_given = prompt('Date given (YYYY-MM-DD):', currentDateGiven);
-				if (date_given === null) return;
-				
-				const weight = prompt('Weight (kg):', currentWeight);
-				const height = prompt('Height (cm):', currentHeight);
-				const temperature = prompt('Temperature (°C):', currentTemp);
-				
-				const formData = new FormData();
-				formData.append('record_id', record_id);
-				formData.append('date_given', date_given);
-				if (weight !== null) formData.append('weight', weight);
-				if (height !== null) formData.append('height', height);
-				if (temperature !== null) formData.append('temperature', temperature);
-				
-				try {
-					const response = await fetch('../../php/supabase/bhw/mark_vaccine_given.php', {
-						method: 'POST',
-						body: formData
-					});
-					const data = await response.json();
-					
-					if (data.status === 'success') {
-						alert('Vaccination record updated successfully!');
-						// Reload vaccination records
-						const baby_id = document.querySelector('.childinformation-container').dataset.babyId;
-						await loadVaccinationRecords(baby_id);
-					} else {
-						alert('Failed to update vaccination record: ' + data.message);
-					}
-				} catch (error) {
-					console.error('Error updating vaccination record:', error);
-					alert('Error updating vaccination record');
-				}
-			}
 
 			function filterTable(){
 				const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
@@ -588,6 +536,82 @@
 					alert('Unable to read QR from image.');
 				}
 			}
+			// Save child information changes
+			async function saveChildInfo() {
+				const baby_id = document.querySelector('.childinformation-container').dataset.babyId;
+				if (!baby_id) {
+					alert('No child record selected');
+					return;
+				}
+
+				// Get form data
+				const nameParts = document.querySelector('#childName').value.trim().split(' ');
+				const child_fname = nameParts[0] || '';
+				const child_lname = nameParts.slice(1).join(' ') || '';
+
+				const updateData = {
+					baby_id: baby_id,
+					child_fname: child_fname,
+					child_lname: child_lname,
+					child_gender: document.querySelector('#childGender').value,
+					child_birth_date: document.querySelector('#childBirthDate').value,
+					place_of_birth: document.querySelector('#childPlaceOfBirth').value,
+					mother_name: document.querySelector('#childMother').value,
+					father_name: document.querySelector('#childFather').value,
+					address: document.querySelector('#childAddress').value,
+					birth_weight: document.querySelector('#childWeight').value,
+					birth_height: document.querySelector('#childHeight').value,
+					birth_attendant: document.querySelector('#childBirthAttendant').value,
+					delivery_type: document.querySelector('#childDeliveryType').value,
+					birth_order: document.querySelector('#childBirthOrder').value
+				};
+
+				try {
+					const formData = new FormData();
+					Object.keys(updateData).forEach(key => {
+						formData.append(key, updateData[key]);
+					});
+
+					const response = await fetch('../../php/supabase/bhw/update_child_info.php', {
+						method: 'POST',
+						body: formData
+					});
+					const data = await response.json();
+
+					if (data.status === 'success') {
+						alert('Child information updated successfully!');
+						// Update original data for reset functionality
+						originalChildData = { ...originalChildData, ...updateData };
+					} else {
+						alert('Failed to update child information: ' + data.message);
+					}
+				} catch (error) {
+					console.error('Error updating child info:', error);
+					alert('Error updating child information');
+				}
+			}
+
+			// Reset child information to original values
+			function resetChildInfo() {
+				if (!originalChildData || Object.keys(originalChildData).length === 0) {
+					alert('No original data to reset to');
+					return;
+				}
+
+				document.querySelector('#childName').value = originalChildData.child_fname + ' ' + originalChildData.child_lname;
+				document.querySelector('#childGender').value = originalChildData.child_gender;
+				document.querySelector('#childBirthDate').value = originalChildData.child_birth_date;
+				document.querySelector('#childPlaceOfBirth').value = originalChildData.place_of_birth;
+				document.querySelector('#childAddress').value = originalChildData.address;
+				document.querySelector('#childWeight').value = originalChildData.birth_weight;
+				document.querySelector('#childHeight').value = originalChildData.birth_height;
+				document.querySelector('#childMother').value = originalChildData.mother_name;
+				document.querySelector('#childFather').value = originalChildData.father_name;
+				document.querySelector('#childBirthAttendant').value = originalChildData.birth_attendant;
+				document.querySelector('#childDeliveryType').value = originalChildData.delivery_type || 'Normal';
+				document.querySelector('#childBirthOrder').value = originalChildData.birth_order || 'Single';
+			}
+
 			async function logoutBhw() {
 				// const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
 				const response = await fetch('../../php/supabase/bhw/logout.php', { method: 'POST' });

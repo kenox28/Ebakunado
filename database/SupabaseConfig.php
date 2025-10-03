@@ -361,6 +361,8 @@ $table_definitions = [
         birth_height DECIMAL(5,2),
         birth_attendant VARCHAR(100),
         babys_card VARCHAR(500),
+        delivery_type VARCHAR(100),
+        birth_order VARCHAR(100),
         date_created TIMESTAMP DEFAULT NOW(),
         date_updated TIMESTAMP DEFAULT NOW(),
         status VARCHAR(50) DEFAULT 'pending',

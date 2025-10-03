@@ -307,6 +307,32 @@ $user_fname = $_SESSION['fname'] ?? '';
 		.form-section{
 			display: flex;
 		}
+
+		/* Radio button groups styling */
+		.radio-group {
+			margin: 10px 0;
+			padding: 10px;
+			background: #f8f9fa;
+			border: 1px solid #e9ecef;
+			border-radius: 3px;
+		}
+		.radio-group label {
+			display: inline-block;
+			margin: 5px 10px 5px 5px;
+			font-weight: normal;
+			cursor: pointer;
+		}
+		.radio-group input[type="radio"] {
+			margin-right: 5px;
+			transform: scale(1.1);
+		}
+		.radio-group input[type="text"] {
+			width: 150px;
+			padding: 4px 8px;
+			margin-left: 5px;
+			border: 1px solid #ccc;
+			border-radius: 3px;
+		}
 	</style>
 	<body>
 		<aside>

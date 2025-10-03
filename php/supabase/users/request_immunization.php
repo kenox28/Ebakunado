@@ -38,6 +38,16 @@ $birth_height = $_POST['birth_height'] ?? null;
 $birth_attendant = $_POST['birth_attendant'] ?? '';
 $vaccines_received = $_POST['vaccines_received'] ?? [];
 
+// Child History fields
+$delivery_type = $_POST['delivery_type'] ?? '';
+$birth_order = $_POST['birth_order'] ?? '';
+$birth_attendant_others = $_POST['birth_attendant_others'] ?? '';
+
+// Handle birth_attendant field - if "Others" is selected, use the others text field
+if ($birth_attendant === 'Others' && !empty($birth_attendant_others)) {
+    $birth_attendant = $birth_attendant_others;
+}
+
 // Generate baby_id
 $baby_id = 'BABY' . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
 
@@ -86,7 +96,9 @@ $insert = supabaseInsert('child_health_records', [
     'birth_weight' => $birth_weight,
     'birth_height' => $birth_height,
     'birth_attendant' => $birth_attendant,
-    'babys_card' => $babys_card
+    'babys_card' => $babys_card,
+    'delivery_type' => $delivery_type,
+    'birth_order' => $birth_order
 ]);
 
 if ($insert === false) {
@@ -98,19 +110,21 @@ if ($insert === false) {
 // Create ALL immunization records (transferred + scheduled)
 $vaccines = [
     ['BCG', 'at birth'],
-    ['Hepatitis B (Birth dose)', 'at birth'],
+    ['HEPAB1 (w/in 24 hrs)', 'at birth'],
+    ['HEPAB1 (More than 24hrs)', 'at birth'],
     ['Pentavalent (DPT-HepB-Hib) - 1st', '6 weeks'],
     ['OPV - 1st', '6 weeks'],
     ['PCV - 1st', '6 weeks'],
+    ['Rota Virus Vaccine - 1st', '6 weeks'],
     ['Pentavalent (DPT-HepB-Hib) - 2nd', '10 weeks'],
     ['OPV - 2nd', '10 weeks'],
     ['PCV - 2nd', '10 weeks'],
+    ['Rota Virus Vaccine - 2nd', '10 weeks'],
     ['Pentavalent (DPT-HepB-Hib) - 3rd', '14 weeks'],
     ['OPV - 3rd', '14 weeks'],
     ['PCV - 3rd', '14 weeks'],
-    ['IPV', '14 weeks'],
-    ['MMR / Measles - 1st', '9 months'],
-    ['MMR / Measles - 2nd', '12 months']
+    ['MCV1 (AMV)', '9 months'],
+    ['MCV2 (MMR)', '12 months']
 ];
 
 // Helper to compute due date (catch_up_date)
@@ -139,10 +153,10 @@ foreach ($vaccines as $v) {
         'baby_id' => $baby_id,
         'vaccine_name' => $vname,
         'dose_number' => $doseNum,
-        'status' => $is_transferred ? 'transferred' : 'scheduled',
+        'status' => $is_transferred ? 'taken' : 'scheduled',
         'schedule_date' => $due,
         'catch_up_date' => null,
-        'date_given' => $is_transferred ? $child_birth_date : null,
+        'date_given' => $is_transferred ? $due : null,
         'created_at' => date('Y-m-d H:i:s')
     ]);
     
