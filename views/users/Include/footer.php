@@ -18,7 +18,12 @@
 			}
 
 			async function logoutUser() {
-				window.location.href = "../../php/supabase/bhw/logout.php"
+				window.location.href = "../../php/supabase/users/logout.php"
+			}
+			
+			function addChild() {
+				// Implement add child functionality
+				alert('Add Child functionality will be implemented');
 			}
 
 			// Close dropdown when clicking outside

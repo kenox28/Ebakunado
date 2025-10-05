@@ -8,7 +8,10 @@ $baby_id = $_POST['baby_id'] ?? '';
 if ($baby_id === '') { echo json_encode(['status'=>'error','message'=>'Missing baby_id']); exit(); }
 
 // 1) Mark CHR accepted
-$ok = supabaseUpdate('child_health_records', ['status' => 'accepted'], ['baby_id' => $baby_id]);
+$ok = supabaseUpdate('child_health_records', [
+	'status' => 'accepted', 
+	'date_updated' => date('Y-m-d H:i:s')
+], ['baby_id' => $baby_id]);
 if ($ok === false) { echo json_encode(['status' => 'error', 'message' => 'Record not accepted']); exit(); }
 
 // 2) Generate QR code and upload to Cloudinary, then store URL in child_health_records.qr_code

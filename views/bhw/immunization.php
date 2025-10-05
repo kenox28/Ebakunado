@@ -135,6 +135,7 @@
 				const response = await fetch('../../php/supabase/bhw/child_information.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') {
+					
 					console.log(data.data);
 					document.querySelector('#childName').textContent = data.data[0].child_fname + ' ' + data.data[0].child_lname;
 					document.querySelector('#childGender').textContent = data.data[0].child_gender;
