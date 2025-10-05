@@ -19,8 +19,8 @@ session_start();
 
 <body>
   <main class="auth-main">
-    <a class="back-to-home" href="../views/landing-page/landing-page.html">
-      &larr; Back to Homepage
+    <a class="back-to-home" href="../views/auth/login.html">
+      &larr; Back to Login
     </a>
 
     <section class="auth-frame">
