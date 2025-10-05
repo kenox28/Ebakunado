@@ -1,0 +1,55 @@
+:root {
+  /* =========================
+     Global Variables
+     ========================= */
+
+  /* Colors */
+  --primary-color: #006c35;
+  --secondary-color: #1a7b49;
+  --border-color: #d1d5db;
+  --background-white: #ffffff;
+  --background-color: #f4f4f4;
+
+  /* Text */
+  --font-color: #006130;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-label: #1a1a1a;
+  --text-terms: #4a4a4a;
+
+  /* Links */
+  --link-color: #2563eb;
+  --link-hover: #1d4ed8;
+
+  /* Effects */
+  --shadow-color: rgba(0, 0, 0, 0.1);
+
+  /* =========================
+     Landing Page Variables
+     ========================= */
+  --hero-headline-font-color: #002b15;
+  --hero-subtext-font-color: #2d2d2d;
+  --feature-font-color: #4d9872;
+  --footer-background-color: #002b15;
+
+  --contact-icon-color: #333333;
+  --contact-submit-btn-color: #0d6efd;
+
+  /* =========================
+     Login Page Variables
+     ========================= */
+  --primary-hover: #005529;
+
+  /* =========================
+     Sidebar Page Variables
+     ========================= */
+  --sidebar-txt-color: #333333;
+
+  /* =========================
+     Dashboard Card Variables
+     ========================= */
+  --card-1-bg: #8FB6FF;
+  --card-2-bg: #A6CCA3;
+  --card-3-bg: #B0E2FF;
+  --card-4-bg: #FEFF99;
+}

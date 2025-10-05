@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="/css/variables.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/queries.css" />
+    <title>Landing Page</title>
+  </head>
+  <body>
+    <header class="header">
+      <a class="logo" href="./landing-page.html#hero">
+        <img
+          class="logo-image"
+          src="../../assets/images/ebakunado-logo-without-label.png"
+          alt="eBakunado Logo"
+        />
+        <h1 class="logo-label">eBakunado</h1>
+      </a>
+      <nav class="navbar">
+        <ul class="nav-links">
+          <li class="nav-item">
+            <a class="nav-button" data-nav="home" href="#hero">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-button" data-nav="about" href="#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-button" data-nav="features" href="#features"
+              >Features</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-button"
+              data-nav="contact"
+              href="./contact-page.html#contact"
+              >Contact</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-button" data-nav="login" href="../auth/login.html"
+              >Login</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <!-- Hero Section -->
+      <section class="hero-section" id="hero">
+        <div class="hero-content">
+          <h1 class="hero-headline">
+            Digital Immunization Management for Linao Health Center
+          </h1>
+          <p class="hero-subtext">
+            Track, schedule, and manage child immunizations with ease.
+          </p>
+          <div class="hero-cta">
+            <button class="btn btn-primary">Get Started</button>
+            <button class="btn btn-secondary">
+              <span class="material-symbols-rounded"> download </span>
+              Download App
+            </button>
+          </div>
+          <img
+            class="hero-icon bottom"
+            src="../../assets/images/medicine-bottle-con.png"
+            alt="Medicine Bottle Icon"
+          />
+        </div>
+        <div class="hero-image-container">
+          <!-- Main hero image -->
+          <img
+            class="hero-image"
+            src="../../assets/images/bg_1.png"
+            alt="Illustration"
+          />
+
+          <!-- Decorative icons -->
+          <span class="hero-icon top-right material-symbols-rounded"
+            >add_2</span
+          >
+          <img
+            class="hero-icon left"
+            src="../../assets/images/syringe-icon.png"
+            alt="Syringe Icon"
+          />
+          <img
+            class="hero-icon bottom-right"
+            src="../../assets/images/red-cross-icon.png"
+            alt="Red Cross Icon"
+          />
+          <span class="hero-icon bottom-left material-symbols-rounded"
+            >add</span
+          >
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section class="about-section" id="about">
+        <div class="about-image-container">
+          <img
+            class="about-image"
+            src="../../assets/images/bg_2.png"
+            alt="About eBakunado"
+          />
+
+          <!-- Decorative icons -->
+          <img
+            class="about-icon protection-shield"
+            src="../../assets/images/shield-icon.png"
+            alt="Protection Shield Icon"
+          />
+          <img
+            class="about-icon band-aid"
+            src="../../assets/images/bandaid-icon.png"
+            alt="Band Aid Icon"
+          />
+        </div>
+        <div class="about-content">
+          <h2 class="about-title">About Our System</h2>
+          <p class="about-description">
+            The eBakunado is a digital solution developed for Linao Health
+            Center to simplify immunization record-keeping. It helps health
+            workers and parents manage vaccine schedules, track upcoming doses,
+            and maintain accurate records. With this system, the traditional
+            manual process of writing and storing immunization data in logbooks
+            is replaced with a faster, safer, and more organized approach.
+            Parents can easily view their child’s vaccination history, receive
+            reminders for upcoming immunizations, and ensure that no dose is
+            missed. <br /><br />
+
+            For health workers, eBakunado reduces the chances of data loss,
+            human error, and the difficulty of retrieving old records by
+            providing a centralized and searchable digital database. It also
+            supports better planning of vaccination programs since staff can
+            monitor which vaccines are due, which children are overdue, and
+            generate reports with ease. <br /><br />
+
+            By combining technology with healthcare, eBakunado not only improves
+            efficiency at the Linao Health Center but also strengthens the
+            community’s trust in the immunization process. It is designed to be
+            user-friendly, reliable, and secure, making immunization management
+            accessible both for parents and healthcare providers.
+          </p>
+
+          <!-- Decorative icon -->
+          <img
+            class="about-icon medicine"
+            src="../../assets/images/medicine-icon.png"
+            alt="Medicine Icon"
+          />
+        </div>
+      </section>
+
+      <!-- Features Section -->
+      <section class="features-section" id="features">
+        <div class="features-header">
+          <h2 class="features-title">Features</h2>
+        </div>
+        <div class="features-cards">
+          <div class="feature-card card-1">
+            <span class="material-symbols-rounded"> manage_accounts </span>
+            <h3 class="features-card-header">User Management</h3>
+            <p class="features-card-description">
+              Secure account creation and management for patients, healthcare
+              providers, and administrators.
+            </p>
+          </div>
+
+          <div class="feature-card card-2">
+            <span class="material-symbols-rounded"> article </span>
+            <h3 class="features-card-header">Healthcare Records</h3>
+            <p class="features-card-description">
+              Comprehensive tracking of immunization records and healthcare
+              services.
+            </p>
+          </div>
+
+          <div class="feature-card card-3">
+            <span class="material-symbols-rounded"> health_and_safety </span>
+            <h3 class="features-card-header">Provider Management</h3>
+            <p class="features-card-description">
+              Efficient management of midwives and barangay health workers.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer Section -->
+      <section class="footer-section">
+        <div class="footer-main">
+          <div class="footer-branding">
+            <img
+              class="footer-image"
+              src="../../assets/images/white-ebakunado-logo.png"
+              alt="Footer eBakunado"
+            />
+            <h2 class="footer-title">eBakunado</h2>
+            <p>Alaga sa Bakuna, Alaga sa Kinabukasan.</p>
+          </div>
+
+          <div class="footer-links">
+            <a class="footer-item" href="#hero">Home</a>
+            <a class="footer-item" href="#about">About</a>
+            <a class="footer-item" href="#features">Features</a>
+            <a class="footer-item" href="../landing-page/contact-page.html"
+              >Contact</a
+            >
+            <a class="footer-item" href="#privacy-policy">Privacy Policy</a>
+            <a class="footer-item" href="#login">Login</a>
+          </div>
+        </div>
+        <p class="footer-note">&copy; 2025 eBakunado. All rights reserved.</p>
+      </section>
+    </main>
+    <script src="../../js/landing-page-handler/nav.js"></script>
+  </body>
+</html>
