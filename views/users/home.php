@@ -420,13 +420,14 @@
 			}
 			
 			const gender = child.gender || 'Unknown';
-			const babyId = child.baby_id || child.id || '';
+			// Use only baby_id to avoid incorrect routing; do not fall back to generic id
+			const babyId = child.baby_id || '';
 			const vaccine = child.vaccine || 'None';
 			const dose = child.dose || '';
 			const scheduleDate = child.schedule_date || 'Not scheduled';
 			const status = child.status || 'Unknown';
 			
-			html += `
+				html += `
 				<div class="child-card">
 					<div class="child-header">
 						<div class="child-avatar">${firstLetter}</div>
@@ -455,8 +456,8 @@
 						<p><strong>Schedule:</strong> ${scheduleDate}</p>
 					</div>
 					<div class="child-actions">
-						<button class="btn btn-primary" onclick="viewChildDetails('${babyId}')">View Details</button>
-						<button class="btn btn-secondary" onclick="viewSchedule('${babyId}')">Schedule</button>
+						<button class="btn btn-primary" data-baby-id="${babyId}" onclick="viewChildDetails(this.dataset.babyId)" ${babyId ? '' : 'disabled'}>View Details</button>
+						<button class="btn btn-secondary" data-baby-id="${babyId}" onclick="viewSchedule(this.dataset.babyId)" ${babyId ? '' : 'disabled'}>Schedule</button>
 					</div>
 				</div>
 			`;
@@ -529,15 +530,17 @@
 		return `${Math.floor(diffInMinutes / 1440)}d ago`;
 	}
 
-	function viewChildDetails(babyId) {
-		// Navigate to child details page
-		window.location.href = `view_immunization.php?baby_id=${babyId}`;
-	}
+function viewChildDetails(babyId) {
+	if (!babyId) return;
+	const encoded = encodeURIComponent(String(babyId));
+	window.location.href = `view_immunization.php?baby_id=${encoded}`;
+}
 
-	function viewSchedule(babyId) {
-		// Navigate to schedule page
-		window.location.href = `upcoming_schedule.php?baby_id=${babyId}`;
-	}
+function viewSchedule(babyId) {
+	if (!babyId) return;
+	const encoded = encodeURIComponent(String(babyId));
+	window.location.href = `upcoming_schedule.php?baby_id=${encoded}`;
+}
 
 	// Load data when page loads
 	document.addEventListener('DOMContentLoaded', function() {

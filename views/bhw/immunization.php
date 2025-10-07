@@ -4,25 +4,7 @@
 </style>
 
 
-<div id="qrOverlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; z-index:9999;">
-			<div style="background:#fff; padding:10px; max-width:90vw; max-height:90vh; display:flex; flex-direction:column; gap:8px;">
-				<select id="cameraSelect" style="margin-bottom:6px; padding:4px 6px; display:none;" onchange="switchCamera(event)"></select>
-				<div id="qrReader" style="width: 340px;"></div>
-				<div style="display:flex; justify-content:space-between; gap:8px; align-items:center; flex-wrap:wrap;">
-					<span style="font-size:12px; color:#444;">Point camera at QR code</span>
-					<label style="font-size:12px;">
-						<span style="margin-right:6px;">or Upload Image:</span>
-						<input type="file" id="qrImageInput" accept="image/*" onchange="scanFromImage(event)" />
-					</label>
-					<button id="torchBtn" onclick="toggleTorch()" style="display:none;">Torch On</button>
-					<button onclick="closeScanner()">Close</button>
-				</div>
-			</div>
-		</div>
 		<div class="filters" style="margin:10px 0; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-			<label style="font-size:12px; color:#333;">Search/QR:
-				<input id="searchInput" type="text" placeholder="Search by ID, name, baby_id" oninput="filterTable()" style="padding:4px 6px;">
-			</label>
 			<label style="font-size:12px; color:#333;">Date:
 				<input id="filterDate" type="date" style="padding:4px 6px;">
 			</label>
@@ -44,7 +26,6 @@
 			</label>
 			<button id="applyFiltersBtn" style="padding:4px 10px;">Apply</button>
 			<button id="clearFiltersBtn" style="padding:4px 10px;">Clear</button>
-			<button id="openScannerBtn" onclick="openScanner()" style="padding:4px 10px;">Scan QR</button>
 		</div>
     <div class="table-container">
         <table class="table table-hover" id="childhealthrecord">
@@ -54,6 +35,8 @@
                                 <th>Address</th>
                                 <th>Vaccine</th>
                                 <th>Schedule Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="childhealthrecordBody">
@@ -92,7 +75,16 @@
 			<button id="acceptButton">Accept</button>
 		</div>
 	</div>
-            <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+	<!-- Immunization Record Overlay -->
+	<div id="immunizationOverlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center; z-index:9999;">
+		<div style="background:#fff; padding:12px; width: 720px; max-width: 95vw; max-height: 90vh; overflow:auto; border-radius:6px;">
+			<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+				<h3 style="margin:0; font-size:16px;">Record Immunization</h3>
+				<button onclick="closeImmunizationForm()" style="padding:4px 8px;">Close</button>
+			</div>
+			<div id="immunizationFormContainer"></div>
+		</div>
+	</div>
 		<script>
 			let chrRecords = [];
 
@@ -107,12 +99,141 @@
 					chrRecords = data.data;
 					renderTable(chrRecords);
 					populateVaccineDropdown();
+                    // Default date to today and status to upcoming; apply filters on first load
+                    const dateInput = document.getElementById('filterDate');
+                    if (dateInput && !dateInput.value) { dateInput.value = normalizeDateStr(new Date()); }
+                    const statusSelEl = document.getElementById('filterStatus');
+                    if (statusSelEl) { statusSelEl.value = 'upcoming'; }
+					applyFilters();
 				} catch (e) { body.innerHTML = '<tr><td colspan="4">Error loading records</td></tr>'; }
+			}
+
+			function openImmunizationForm(btn){
+                const recordId = btn.getAttribute('data-record-id') || '';
+				const userId = btn.getAttribute('data-user-id') || '';
+				const babyId = btn.getAttribute('data-baby-id') || '';
+				const childName = btn.getAttribute('data-child-name') || '';
+				const vaccineName = btn.getAttribute('data-vaccine-name') || '';
+                const scheduleDate = btn.getAttribute('data-schedule-date') || '';
+                const catchUpDate = btn.getAttribute('data-catch-up-date') || '';
+
+				const dateToday = normalizeDateStr(new Date());
+
+				const html = `
+					<div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+						<div>
+							<label style="font-size:12px; color:#333;">Child Name</label>
+							<input type="text" id="im_child_name" value="${childName}" readonly style="width:100%; padding:6px 8px;" />
+						</div>
+						<div>
+							<label style="font-size:12px; color:#333;">Vaccine</label>
+							<input type="text" id="im_vaccine_name" value="${vaccineName}" readonly style="width:100%; padding:6px 8px;" />
+						</div>
+                        <div>
+							<label style="font-size:12px; color:#333;">Scheduled Date</label>
+							<input type="date" id="im_schedule_date" value="${scheduleDate}" readonly style="width:100%; padding:6px 8px;" />
+						</div>
+                        ${catchUpDate ? `
+                        <div>
+                            <label style=\"font-size:12px; color:#333;\">Catch-up Date</label>
+                            <input type=\"date\" id=\"im_catch_up_date\" value=\"${catchUpDate}\" readonly style=\"width:100%; padding:6px 8px;\" />
+                        </div>` : ''}
+						<div>
+							<label style="font-size:12px; color:#333;">Date Taken</label>
+							<input type="date" id="im_date_taken" value="${dateToday}" style="width:100%; padding:6px 8px;" />
+						</div>
+					</div>
+
+					<div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+						<div>
+							<label style="font-size:12px; color:#333;">Temperature (°C)</label>
+							<input type="number" step="0.1" id="im_temperature" placeholder="e.g. 36.8" style="width:100%; padding:6px 8px;" />
+						</div>
+						<div>
+							<label style="font-size:12px; color:#333;">Height (cm)</label>
+							<input type="number" step="0.1" id="im_height" placeholder="e.g. 60" style="width:100%; padding:6px 8px;" />
+						</div>
+						<div>
+							<label style="font-size:12px; color:#333;">Weight (kg)</label>
+							<input type="number" step="0.01" id="im_weight" placeholder="e.g. 6.5" style="width:100%; padding:6px 8px;" />
+						</div>
+					</div>
+
+					<!-- Dose and Lot fields removed: dose is auto-determined from record, lot/site not in schema -->
+
+					<div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+						<div>
+							<label style="font-size:12px; color:#333;">Administered By</label>
+							<input type="text" id="im_administered_by" placeholder="Name" style="width:100%; padding:6px 8px;" />
+						</div>
+						<div style="display:flex; align-items:flex-end; gap:8px;">
+                            <input type="checkbox" id="im_mark_completed" />
+                            <label for="im_mark_completed" style="font-size:12px; color:#333;">Mark as Taken</label>
+						</div>
+					</div>
+
+					<div style="margin-top:10px;">
+						<label style="font-size:12px; color:#333;">Remarks</label>
+						<textarea id="im_remarks" rows="3" style="width:100%; padding:6px 8px;"></textarea>
+					</div>
+
+					<div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end;">
+						<button onclick="closeImmunizationForm()" style="padding:6px 12px;">Cancel</button>
+						<button onclick="submitImmunizationForm()" style="padding:6px 12px; background:#007bff; color:#fff; border:none;">Save</button>
+					</div>
+
+					<input type="hidden" id="im_record_id" value="${recordId}" />
+					<input type="hidden" id="im_user_id" value="${userId}" />
+					<input type="hidden" id="im_baby_id" value="${babyId}" />
+				`;
+
+				document.getElementById('immunizationFormContainer').innerHTML = html;
+				document.getElementById('immunizationOverlay').style.display = 'flex';
+			}
+
+			function closeImmunizationForm(){
+				document.getElementById('immunizationOverlay').style.display = 'none';
+				document.getElementById('immunizationFormContainer').innerHTML = '';
+			}
+
+			async function submitImmunizationForm(){
+				const formData = new FormData();
+				formData.append('record_id', document.getElementById('im_record_id').value || '');
+				formData.append('user_id', document.getElementById('im_user_id').value || '');
+				formData.append('baby_id', document.getElementById('im_baby_id').value || '');
+				formData.append('vaccine_name', document.getElementById('im_vaccine_name').value || '');
+				formData.append('schedule_date', document.getElementById('im_schedule_date').value || '');
+                formData.append('date_taken', document.getElementById('im_date_taken').value || '');
+				formData.append('temperature', document.getElementById('im_temperature').value || '');
+				formData.append('height_cm', document.getElementById('im_height').value || '');
+				formData.append('weight_kg', document.getElementById('im_weight').value || '');
+				// dose_number, lot_number, site removed - dose inferred from existing record
+				formData.append('administered_by', document.getElementById('im_administered_by').value || '');
+				formData.append('remarks', document.getElementById('im_remarks').value || '');
+				formData.append('mark_completed', document.getElementById('im_mark_completed').checked ? '1' : '0');
+                const cu = document.getElementById('im_catch_up_date');
+                if (cu && cu.value) formData.append('catch_up_date', cu.value);
+
+				try{
+					const res = await fetch('../../php/supabase/bhw/save_immunization.php', { method: 'POST', body: formData });
+					const data = await res.json().catch(() => ({ status: 'error', message: 'Invalid server response' }));
+					if (data.status === 'success'){
+						closeImmunizationForm();
+						await getChildHealthRecord();
+						applyFilters();
+						alert('Immunization saved successfully');
+					}else{
+						alert('Save failed: ' + (data.message || 'Unknown error'));
+					}
+				}catch(err){
+					alert('Network error saving immunization');
+					console.error('save_immunization error:', err);
+				}
 			}
 
 			function renderTable(records){
 				const body = document.querySelector('#childhealthrecordBody');
-				if (!records || records.length === 0){ body.innerHTML = '<tr><td colspan="4">No records</td></tr>'; return; }
+                if (!records || records.length === 0){ body.innerHTML = '<tr><td colspan="6">No records</td></tr>'; return; }
 					let rows = '';
 				records.forEach(item => {
 						rows += `<tr>
@@ -123,6 +244,19 @@
 							<td>${item.address || ''}</td>
 						<td>${item.vaccine_name || ''}</td>
 						<td>${item.schedule_date || ''}</td>
+                        <td>${item.status === 'taken' && item.date_given ? ('taken (' + item.date_given + ')') : (item.status || '')}</td>
+							<td>
+								<button style="padding:4px 8px;" onclick="openImmunizationForm(this)"
+                                    data-record-id="${item.immunization_id || ''}"
+									data-user-id="${item.user_id || ''}"
+									data-baby-id="${item.baby_id || ''}"
+									data-child-name="${((item.child_fname || '') + ' ' + (item.child_lname || '')).replace(/"/g, '&quot;')}"
+									data-vaccine-name="${String(item.vaccine_name || '').replace(/"/g, '&quot;')}"
+                                    data-schedule-date="${item.schedule_date || ''}"
+                                    data-catch-up-date="${item.catch_up_date || ''}">
+									Record
+								</button>
+							</td>
 						</tr>`;
 					});
 					body.innerHTML = rows;
@@ -163,18 +297,7 @@
 				document.querySelector('.table-container').style.display = 'block';
 			}
 
-			function filterTable(){
-				const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
-				if (!chrRecords || chrRecords.length === 0){ return; }
-				const filtered = chrRecords.filter(item => {
-					const fullname = ((item.child_fname || '') + ' ' + (item.child_lname || '')).toLowerCase();
-					const address = (item.address || '').toLowerCase();
-					const vaccine = (item.vaccine_name || '').toLowerCase();
-					const text = [fullname, address, vaccine].join(' ');
-					return text.includes(q);
-				});
-				renderTable(filtered);
-			}
+			// Removed text search; filtering is driven by the filter controls only
 
 
 			function populateVaccineDropdown(){
@@ -229,12 +352,12 @@
 						const status = String(item.status || '');
 						if (statusSel === 'upcoming'){
 							const dueDate = item.catch_up_date || item.schedule_date || '';
-							if (dueDate === '' || dueDate < todayStr || status === 'completed') return false;
+                            if (dueDate === '' || dueDate < todayStr || status === 'taken') return false;
 						} else if (statusSel === 'missed'){
 							const dueDate = item.catch_up_date || item.schedule_date || '';
-							if (dueDate === '' || dueDate >= todayStr || status === 'completed') return false;
+                            if (dueDate === '' || dueDate >= todayStr || status === 'taken') return false;
 						} else if (statusSel === 'completed'){
-							if (status !== 'completed') return false;
+                            if (status !== 'taken') return false;
 						}
 					}
 
@@ -245,12 +368,12 @@
 			}
 
 			function clearFilters(){
-				document.getElementById('filterDate').value = '';
-				document.getElementById('filterStatus').value = 'all';
+				document.getElementById('filterDate').value = normalizeDateStr(new Date());
+                document.getElementById('filterStatus').value = 'upcoming';
 				document.getElementById('filterVaccine').value = 'all';
 				document.getElementById('filterPurok').value = '';
-				document.getElementById('searchInput').value = '';
 				renderTable(chrRecords);
+				applyFilters();
 			}
 
 			function viewChrImage(urlEnc){
@@ -291,143 +414,12 @@
 				if (clearBtn) clearBtn.addEventListener('click', clearFilters);
 			});
 
-			let html5QrcodeInstance = null;
-			async function openScanner(){
-				const overlay = document.getElementById('qrOverlay');
-				overlay.style.display = 'flex';
-				console.log('[QR] Opening scanner...');
-				try{
-					// Check camera permissions/devices first
-					const devices = await Html5Qrcode.getCameras().catch(err => { console.log('[QR] getCameras error:', err); return []; });
-					console.log('[QR] Cameras found:', devices);
-					if(!devices || devices.length === 0){ console.warn('[QR] No camera devices found. Use image upload.'); }
-					// Populate camera select
-					const camSel = document.getElementById('cameraSelect');
-					camSel.innerHTML = '';
-					if (devices && devices.length > 0){
-						devices.forEach((d, idx) => {
-							const opt = document.createElement('option');
-							opt.value = d.id; opt.textContent = d.label || ('Camera ' + (idx+1)); camSel.appendChild(opt);
-						});
-						camSel.style.display = 'inline-block';
-						// Try enabling torch control if supported (via capabilities check after start)
-					} else { camSel.style.display = 'none'; }
-					if(!html5QrcodeInstance){ html5QrcodeInstance = new Html5Qrcode("qrReader"); }
-					await html5QrcodeInstance.start(
-						{ facingMode: "environment" },
-						{ fps: 12, qrbox: 360, formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ], disableFlip: true },
-						onScanSuccess,
-						onScanFailure
-					);
-					console.log('[QR] Scanner started');
-					// Show torch button if track supports torch
-					try{
-						const stream = await html5QrcodeInstance.getState() ? document.querySelector('#qrReader video')?.srcObject : null;
-						const track = stream && stream.getVideoTracks ? stream.getVideoTracks()[0] : null;
-						const caps = track && track.getCapabilities ? track.getCapabilities() : {};
-						const torchBtn = document.getElementById('torchBtn');
-						if (caps && caps.torch !== undefined) { torchBtn.style.display = 'inline-block'; } else { torchBtn.style.display = 'none'; }
-					}catch(_){ document.getElementById('torchBtn').style.display = 'none'; }
-				}catch(e){ console.error('[QR] Camera error:', e); alert('Camera error: ' + e); }
-			}
-
-			async function closeScanner(){
-				const overlay = document.getElementById('qrOverlay');
-				overlay.style.display = 'none';
-				try{
-					if(html5QrcodeInstance){ await html5QrcodeInstance.stop(); await html5QrcodeInstance.clear(); }
-				}catch(_){ /* ignore */ }
-			}
-
-			async function switchCamera(e){
-				const deviceId = e && e.target ? e.target.value : null;
-				if(!deviceId || !html5QrcodeInstance){ return; }
-				console.log('[QR] Switching camera to', deviceId);
-				try{
-					await html5QrcodeInstance.stop();
-					await html5QrcodeInstance.clear();
-					await html5QrcodeInstance.start(
-						{ deviceId: { exact: deviceId } },
-						{ fps: 8, qrbox: 320, formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ] },
-						onScanSuccess,
-						onScanFailure
-					);
-				}catch(err){ console.error('[QR] Switch camera failed:', err); }
-			}
-
-			function onScanSuccess(decodedText){
-				console.log('[QR] Scan success:', decodedText);
-				closeScanner();
-
-
-
-				const match = decodedText.match(/baby_id=([^&\s]+)/i);
-				if(match && match[1]){
-					document.getElementById('searchInput').value = decodeURIComponent(match[1]);
-					filterTable();
-					focusRowByBabyId(decodeURIComponent(match[1]));
-					return;
-				}
-
-				document.getElementById('searchInput').value = decodedText;
-				filterTable();
-				focusRowByBabyId(decodedText);
-			}
-
-			function onScanFailure(err){
-				console.log('[QR] Scanning...', err ? String(err).slice(0,80) : '');
-			}
-
-			
-
-			function focusRowByBabyId(babyId){
-				const rows = document.querySelectorAll('#childhealthrecordBody tr');
-				for (const tr of rows){
-					const tds = tr.querySelectorAll('td');
-					if (!tds || tds.length < 3) continue;
-					const val = (tds[2].textContent || '').trim();
-					if (val === babyId){
-						tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
-						const originalBg = tr.style.backgroundColor;
-						tr.style.backgroundColor = '#fff6b3';
-						setTimeout(() => { tr.style.backgroundColor = originalBg || ''; }, 1500);
-						break;
-					}
-				}
-			}
-
-			let torchOn = false;
-			async function toggleTorch(){
-				try{
-					const video = document.querySelector('#qrReader video');
-					const stream = video && video.srcObject ? video.srcObject : null;
-					const track = stream && stream.getVideoTracks ? stream.getVideoTracks()[0] : null;
-					if(!track){ return; }
-					await track.applyConstraints({ advanced: [{ torch: !torchOn }] });
-					torchOn = !torchOn;
-					document.getElementById('torchBtn').textContent = torchOn ? 'Torch Off' : 'Torch On';
-				}catch(err){ console.warn('[QR] Torch not supported:', err); }
-			}
-
-			async function scanFromImage(event){
-				const file = event.target && event.target.files && event.target.files[0];
-				if(!file){ return; }
-				console.log('[QR] Scanning from image:', file.name, file.type, file.size);
-				try{
-					// Use Html5Qrcode to scan file
-					const result = await Html5QrcodeScanner.scanFile(file, true);
-					console.log('[QR] Image scan result:', result);
-					onScanSuccess(result);
-				}catch(err){
-					console.error('[QR] Image scan failed:', err);
-					alert('Unable to read QR from image.');
-				}
-			}
+			// Removed QR scanner functionality and dependencies
 			async function logoutBhw() {
 				// const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
 				const response = await fetch('../../php/supabase/bhw/logout.php', { method: 'POST' });
 				const data = await response.json();
-				if (data.status === 'success') { window.location.href = '../../views/login.php'; }
+				if (data.status === 'success') { window.location.href = '../../views/auth/login.php'; }
 				else { alert('Logout failed: ' + data.message); }
 			}
 		</script>

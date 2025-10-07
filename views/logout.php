@@ -24,6 +24,6 @@ session_unset();
 session_destroy();
 
 // Redirect to landing page
-header("Location: landing_page.php");
+header("Location: landing-page/landing-page.html");
 exit();
 ?> 

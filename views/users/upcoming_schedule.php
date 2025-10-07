@@ -31,14 +31,21 @@
     let scheduleData = [];
     let currentTab = 'upcoming';
     let currentChild = null;
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedBabyId = urlParams.get('baby_id') || '';
 
     async function loadImmunizationSchedule() {
         try {
-            const response = await fetch('../../php/supabase/users/get_immunization_schedule.php');
+            const endpoint = '../../php/supabase/users/get_immunization_schedule.php' + (selectedBabyId ? ('?baby_id=' + encodeURIComponent(selectedBabyId)) : '');
+            const response = await fetch(endpoint);
                     const data = await response.json();
                     
                     if (data.status === 'success') {
-                scheduleData = data.data;
+                scheduleData = Array.isArray(data.data) ? data.data : [];
+                // If API returns all, filter by selectedBabyId
+                if (selectedBabyId) {
+                    scheduleData = scheduleData.filter(r => String(r.baby_id || '') === String(selectedBabyId));
+                }
                 loadChildData();
                 renderVaccineCards();
                     }
@@ -51,19 +58,19 @@
     }
 
     function loadChildData() {
-        if (scheduleData.length > 0) {
-            // Get first child for now (you can modify this logic later)
-            const firstRecord = scheduleData[0];
-            currentChild = firstRecord;
-            
-            // Update child profile
-            const childName = firstRecord.child_name || 'Unknown Child';
-            document.getElementById('childName').textContent = childName;
-            document.getElementById('childAge').textContent = 'Loading age...';
-            
-            // Get child age and gender
-            fetchChildAge(firstRecord.baby_id);
+        if (scheduleData.length === 0) {
+            document.getElementById('scheduleBody').innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">No immunization records found</td></tr>';
+            document.getElementById('childName').textContent = 'Unknown Child';
+            document.getElementById('childAge').textContent = 'Unknown age';
+            document.getElementById('childGender').textContent = 'Unknown';
+            return;
         }
+        const firstRecord = scheduleData[0];
+        currentChild = firstRecord;
+        const childName = firstRecord.child_name || 'Unknown Child';
+        document.getElementById('childName').textContent = childName;
+        document.getElementById('childAge').textContent = 'Loading age...';
+        fetchChildAge(firstRecord.baby_id);
     }
 
     async function fetchChildAge(baby_id) {

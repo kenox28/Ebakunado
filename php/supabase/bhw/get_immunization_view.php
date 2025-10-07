@@ -12,11 +12,11 @@ if (!isset($_SESSION['bhw_id'])) {
 
 try {
 	// Get all accepted children
-	$children = supabaseSelect('child_health_records', 'id,user_id,baby_id,child_fname,child_lname,address', ['status' => 'accepted'], 'child_fname.asc');
+$children = supabaseSelect('child_health_records', 'id,user_id,baby_id,child_fname,child_lname,address', ['status' => 'accepted'], 'child_fname.asc');
 	if (!$children) $children = [];
 	
-	// Get all immunization records
-	$immunizations = supabaseSelect('immunization_records', 'baby_id,vaccine_name,schedule_date,catch_up_date,status', [], 'schedule_date.asc');
+    // Get all immunization records (include id and dose_number for actions)
+    $immunizations = supabaseSelect('immunization_records', 'id,baby_id,vaccine_name,dose_number,schedule_date,catch_up_date,date_given,status', [], 'schedule_date.asc');
 	if (!$immunizations) $immunizations = [];
 	
 	// Group immunizations by baby_id
@@ -51,17 +51,22 @@ try {
 			];
 		} else {
 			// Child with vaccines - show one row per vaccine
-			foreach ($childImmunizations as $immunization) {
+            foreach ($childImmunizations as $immunization) {
 				$rows[] = [
-					'id' => $child['id'],
+                    // child record id
+                    'id' => $child['id'],
+                    // immunization record id for actions
+                    'immunization_id' => $immunization['id'] ?? null,
 					'user_id' => $child['user_id'],
 					'baby_id' => $child['baby_id'],
 					'child_fname' => $child['child_fname'],
 					'child_lname' => $child['child_lname'],
 					'address' => $child['address'],
 					'vaccine_name' => $immunization['vaccine_name'],
+                    'dose_number' => $immunization['dose_number'] ?? null,
 					'schedule_date' => $immunization['schedule_date'],
 					'catch_up_date' => $immunization['catch_up_date'],
+                    'date_given' => $immunization['date_given'] ?? null,
 					'status' => $immunization['status']
 				];
 			}

@@ -1,9 +1,19 @@
+<?php session_start(); ?>
+<?php 
+// Debug BHW session
+if (isset($_SESSION['bhw_id'])) {
+    echo "<!-- BHW Session Active: " . $_SESSION['bhw_id'] . " -->";
+} else {
+    echo "<!-- BHW Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Document</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 	</head>
 	<style>
 		* {
@@ -122,15 +132,203 @@
 			width: 85%;
 		}   
 
+		/* Notification Styles */
+		.notification-button {
+			position: relative;
+			cursor: pointer;
+			padding: 8px;
+			margin: 0 10px;
+			border-radius: 50%;
+			transition: background-color 0.3s ease;
+		}
+
+		.notification-button:hover {
+			background-color: #e0e0e0;
+		}
+
+		.notification-button i {
+			font-size: 18px;
+			color: #333;
+		}
+
+		.notification-badge {
+			position: absolute;
+			top: 5px;
+			right: 5px;
+			background-color: #dc3545;
+			color: white;
+			border-radius: 50%;
+			width: 18px;
+			height: 18px;
+			font-size: 11px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: bold;
+		}
+
+		.notification-dropdown {
+			position: absolute;
+			top: 100%;
+			right: 0;
+			width: 400px;
+			background: white;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+			z-index: 1000;
+			height: 500px;
+			max-height: 500px;
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+		}
+
+		.notification-header {
+			padding: 15px;
+			border-bottom: 1px solid #eee;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			background-color: #f8f9fa;
+		}
+
+		.notification-header h3 {
+			margin: 0;
+			font-size: 16px;
+			color: #333;
+		}
+
+		.notification-header button {
+			background: none;
+			border: none;
+			color: #007bff;
+			cursor: pointer;
+			font-size: 12px;
+			text-decoration: underline;
+		}
+
+		.notification-header button:hover {
+			color: #0056b3;
+		}
+
+		.notification-content {
+			flex: 1;
+			overflow-y: auto;
+			padding: 0;
+			/* Custom scrollbar styling */
+			scrollbar-width: thin;
+			scrollbar-color: #ccc #f1f1f1;
+		}
+		
+		/* Custom scrollbar for webkit browsers */
+		.notification-content::-webkit-scrollbar {
+			width: 8px;
+		}
+		
+		.notification-content::-webkit-scrollbar-track {
+			background: #f1f1f1;
+			border-radius: 4px;
+		}
+		
+		.notification-content::-webkit-scrollbar-thumb {
+			background: #ccc;
+			border-radius: 4px;
+		}
+		
+		.notification-content::-webkit-scrollbar-thumb:hover {
+			background: #999;
+		}
+
+		.notification-item {
+			padding: 12px 15px;
+			border-bottom: 1px solid #f0f0f0;
+			cursor: pointer;
+			transition: background-color 0.2s ease;
+		}
+
+		.notification-item:hover {
+			background-color: #f8f9fa;
+		}
+
+		.notification-item.unread {
+			background-color: #fff3cd;
+			border-left: 4px solid #ffc107;
+		}
+
+		.notification-item.urgent {
+			background-color: #f8d7da;
+			border-left: 4px solid #dc3545;
+		}
+
+		.notification-item h4 {
+			margin: 0 0 5px 0;
+			font-size: 14px;
+			color: #333;
+			font-weight: 600;
+		}
+
+		.notification-item p {
+			margin: 0 0 5px 0;
+			font-size: 12px;
+			color: #666;
+			line-height: 1.4;
+		}
+
+		.notification-item .notification-time {
+			font-size: 11px;
+			color: #999;
+		}
+
+		.notification-footer {
+			padding: 10px 15px;
+			border-top: 1px solid #eee;
+			text-align: center;
+			background-color: #f8f9fa;
+		}
+
+		.notification-footer a {
+			color: #007bff;
+			text-decoration: none;
+			font-size: 12px;
+		}
+
+		.notification-footer a:hover {
+			text-decoration: underline;
+		}
+
+		.loading-notifications {
+			padding: 20px;
+			text-align: center;
+			color: #666;
+		}
+
+		.loading-notifications i {
+			font-size: 16px;
+			margin-bottom: 8px;
+		}
+
+		.no-notifications {
+			padding: 20px;
+			text-align: center;
+			color: #666;
+		}
+
+		.no-notifications i {
+			font-size: 24px;
+			margin-bottom: 8px;
+			color: #ccc;
+		}
 
 	</style>
 	<body>
 		<aside>
 			<h3>Ebakunado</h3>
-			<a href="#" data-icon="🏠"><span>Dashboard</span></a>
+			<a href="./home.php" data-icon="🏠"><span>Dashboard</span></a>
 			<a href="./immunization.php" data-icon="💉"><span>Imuunization form</span></a>
 			<a href="./pending_approval.php" data-icon="⏳"><span>Pending Approval</span></a>
 			<a href="./child_health_record.php" data-icon="🧒"><span>Child Health Record</span></a>
+				<a href="./chr-doc-requests.php" data-icon="📄"><span>CHR Doc Requests</span></a>
 			<a href="./target_client.php" data-icon="🎯"><span>Target Client List</span></a>
 			<a href="#" onclick="openSMSNotification()" data-icon="📱"><span>SMS Notifications</span></a>
 		</aside>
@@ -156,6 +354,25 @@
 						style="padding: 6px 10px; margin-left: 8px">
 						Scan QR
 					</button>
+					<div class="notification-button" onclick="toggleNotificationDropdown()">
+						<i class="fas fa-bell"></i>
+						<span class="notification-badge" id="notificationCount" style="display: none;">0</span>
+						<div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+							<div class="notification-header">
+								<h3>Notifications</h3>
+								<button onclick="markAllAsRead()">Mark all as read</button>
+							</div>
+							<div class="notification-content" id="notificationContent">
+								<div class="loading-notifications">
+									<i class="fas fa-spinner fa-spin"></i>
+									<p>Loading notifications...</p>
+								</div>
+							</div>
+							<div class="notification-footer">
+								<a href="#" onclick="viewAllNotifications()">View all notifications</a>
+							</div>
+						</div>
+					</div>
 					<a href="#" onclick="logoutBhw()">Logout</a>
 				</nav>
 			</header>
@@ -435,4 +652,179 @@
 						button.style.background = '#28a745';
 					}
 				}
+
+				// Simple Notification System
+				let notifications = [];
+				let notificationDropdownOpen = false;
+				let unreadCount = 0;
+
+				function toggleNotificationDropdown() {
+					const dropdown = document.getElementById('notificationDropdown');
+					notificationDropdownOpen = !notificationDropdownOpen;
+					
+					if (notificationDropdownOpen) {
+						dropdown.style.display = 'block';
+						loadNotifications(); // Always load fresh notifications
+					} else {
+						dropdown.style.display = 'none';
+					}
+				}
+
+				async function loadNotifications() {
+					const content = document.getElementById('notificationContent');
+					content.innerHTML = '<div class="loading-notifications"><i class="fas fa-spinner fa-spin"></i><p>Loading notifications...</p></div>';
+
+					try {
+						console.log('Loading BHW notifications...');
+						const startTime = Date.now();
+						
+						// Use updated notification system with pending requests
+						const response = await fetch('../../php/supabase/bhw/get_bhw_notifications.php');
+						console.log('Response status:', response.status);
+						
+						if (!response.ok) {
+							throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+						}
+						
+						const data = await response.json();
+						const loadTime = Date.now() - startTime;
+						console.log('Notification response received in', loadTime + 'ms:', data);
+
+						if (data.status === 'success') {
+							notifications = data.data.notifications;
+							unreadCount = data.data.unread_count;
+							updateNotificationBadge(unreadCount);
+							renderNotifications(notifications);
+							console.log('Notifications loaded successfully:', notifications.length, 'unread:', unreadCount);
+						} else {
+							console.error('Notification API error:', data);
+							let errorMsg = data.message || 'Error loading notifications';
+							content.innerHTML = `<div class="no-notifications"><i class="fas fa-exclamation-triangle"></i><p>${errorMsg}</p></div>`;
+						}
+					} catch (error) {
+						console.error('Error loading notifications:', error);
+						content.innerHTML = '<div class="no-notifications"><i class="fas fa-exclamation-triangle"></i><p>Network error: ' + error.message + '</p></div>';
+					}
+				}
+
+				function updateNotificationBadge(count) {
+					const badge = document.getElementById('notificationCount');
+					if (count > 0) {
+						badge.textContent = count > 99 ? '99+' : count;
+						badge.style.display = 'flex';
+					} else {
+						badge.style.display = 'none';
+					}
+				}
+				
+				function markNotificationAsRead(notificationId) {
+					// Decrease unread count and update badge
+					if (unreadCount > 0) {
+						unreadCount--;
+						updateNotificationBadge(unreadCount);
+					}
+				}
+
+				function renderNotifications(notifications) {
+					const content = document.getElementById('notificationContent');
+					
+					if (!notifications || notifications.length === 0) {
+						content.innerHTML = '<div class="no-notifications"><i class="fas fa-bell-slash"></i><p>No notifications</p></div>';
+						return;
+					}
+
+					// Simple HTML rendering
+					let html = '';
+					notifications.forEach(notification => {
+						const timeAgo = getTimeAgo(notification.timestamp);
+						
+						html += `
+							<div class="notification-item" onclick="handleNotificationClick('${notification.id}')">
+								<h4>${notification.icon} ${notification.title}</h4>
+								<p>${notification.message}</p>
+								<div class="notification-time">${timeAgo}</div>
+							</div>
+						`;
+					});
+
+					content.innerHTML = html;
+					
+					// Don't update badge here - it's already updated in loadNotifications
+				}
+
+				function handleNotificationClick(notificationId) {
+					const notification = notifications.find(n => n.id === notificationId);
+					if (notification) {
+						// Mark as read using the new function
+						markNotificationAsRead(notificationId);
+						
+						// Navigate to the action URL if provided
+						if (notification.action_url && notification.action_url !== '#') {
+							window.location.href = notification.action_url;
+						}
+					}
+				}
+
+				function markAllAsRead() {
+					// Set unread count to 0 and hide badge
+					unreadCount = 0;
+					updateNotificationBadge(0);
+				}
+
+
+				function getTimeAgo(timestamp) {
+					const now = new Date();
+					let time;
+					
+					// Handle different timestamp formats
+					if (timestamp.includes('T')) {
+						// ISO format with T - manually parse to avoid timezone issues
+						// Split the timestamp and create date manually
+						const parts = timestamp.split('T');
+						const datePart = parts[0]; // 2025-10-05
+						const timePart = parts[1].split('.')[0]; // 16:51:03 (remove microseconds)
+						
+						// Create date in local timezone
+						time = new Date(datePart + ' ' + timePart);
+					} else {
+						// Regular date format (Y-m-d H:i:s)
+						time = new Date(timestamp.replace(' ', 'T'));
+					}
+					
+					// Check if timestamp is valid
+					if (isNaN(time.getTime())) {
+						console.error('Invalid timestamp:', timestamp);
+						return 'Unknown time';
+					}
+					
+					const diffInSeconds = Math.floor((now - time) / 1000);
+					
+					console.log('Timestamp calculation:', {
+						original: timestamp,
+						parsed: time.toISOString(),
+						parsed_local: time.toString(),
+						now: now.toISOString(),
+						now_local: now.toString(),
+						diff: diffInSeconds
+					});
+					
+					if (diffInSeconds < 0) return 'In the future';
+					if (diffInSeconds < 60) return 'Just now';
+					if (diffInSeconds < 3600) return Math.floor(diffInSeconds / 60) + ' minutes ago';
+					if (diffInSeconds < 86400) return Math.floor(diffInSeconds / 3600) + ' hours ago';
+					if (diffInSeconds < 2592000) return Math.floor(diffInSeconds / 86400) + ' days ago';
+					return 'Over a month ago';
+				}
+
+				// Close dropdown when clicking outside
+				document.addEventListener('click', function(event) {
+					const notificationButton = document.querySelector('.notification-button');
+					const dropdown = document.getElementById('notificationDropdown');
+					
+					if (notificationDropdownOpen && !notificationButton.contains(event.target)) {
+						toggleNotificationDropdown();
+					}
+				});
+
+				// Simple notification system - easy to redesign
 			</script>

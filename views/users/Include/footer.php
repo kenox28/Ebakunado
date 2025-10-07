@@ -18,7 +18,7 @@
 			}
 
 			async function logoutUser() {
-				window.location.href = "../../php/supabase/users/logout.php"
+				window.location.href = "../../views/logout.php"
 			}
 			
 			function addChild() {

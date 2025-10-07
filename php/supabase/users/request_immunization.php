@@ -98,7 +98,9 @@ $insert = supabaseInsert('child_health_records', [
     'birth_attendant' => $birth_attendant,
     'babys_card' => $babys_card,
     'delivery_type' => $delivery_type,
-    'birth_order' => $birth_order
+    'birth_order' => $birth_order,
+    'status' => 'pending',
+    'date_created' => date('Y-m-d H:i:s')
 ]);
 
 if ($insert === false) {

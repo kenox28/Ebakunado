@@ -38,7 +38,8 @@ $user_fname = $_SESSION['fname'] ?? '';
 			display: flex;
 			margin: 0;
 			padding: 0;
-			overflow: hidden;
+			overflow-x: hidden;
+			overflow-y: auto;
 		}
 		header {
 			display: flex;
@@ -178,7 +179,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 		.table-container {
 			width: 100%;
 			max-width: 100%;
-			height: 100%;
+            height: 100%;
 			overflow-x: auto;
 		}
 		.table-container table {
@@ -189,7 +190,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 		.table-container td {
 			white-space: nowrap;
 			border: 1px solid #000;
-			text-align: center;
+            text-align: center;
 		}
 		h3 {
 			display: flex;
@@ -209,7 +210,8 @@ $user_fname = $_SESSION['fname'] ?? '';
 			width: 85%;
 			height: 100vh;
 			transition: width 0.3s ease;
-			overflow: hidden;
+			overflow-x: hidden;
+			overflow-y: auto;
 			box-sizing: border-box;
 		}   
 		.profile-link {
@@ -294,6 +296,11 @@ $user_fname = $_SESSION['fname'] ?? '';
 		button:hover {
 			opacity: 0.8;
 		}
+		/* Notification System Styles */
+		.notification-container {
+			position: relative;
+		}
+
 		.notification-button {
 			position: relative;
 			background: none;
@@ -327,6 +334,116 @@ $user_fname = $_SESSION['fname'] ?? '';
 			justify-content: center;
 			font-size: 10px;
 			font-weight: bold;
+		}
+
+		/* Notification Dropdown */
+		.notification-dropdown {
+			position: absolute;
+			top: 100%;
+			right: 0;
+			width: 400px;
+			background: white;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+			z-index: 1000;
+			height: 500px;
+			max-height: 500px;
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+		}
+
+		.notification-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 15px 20px;
+			border-bottom: 1px solid #eee;
+			background: #f8f9fa;
+		}
+
+		.notification-header h4 {
+			margin: 0;
+			font-size: 16px;
+			color: #333;
+		}
+
+		.notification-header button {
+			background: #007bff;
+			color: white;
+			border: none;
+			padding: 6px 12px;
+			border-radius: 4px;
+			font-size: 12px;
+			cursor: pointer;
+		}
+
+		.notification-header button:hover {
+			background: #0056b3;
+		}
+
+		.notification-content {
+			flex: 1;
+			overflow-y: auto;
+			padding: 0;
+			scrollbar-width: thin;
+			scrollbar-color: #ccc #f1f1f1;
+		}
+
+		/* Webkit scrollbar styles */
+		.notification-content::-webkit-scrollbar { width: 8px; }
+		.notification-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+		.notification-content::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+		.notification-content::-webkit-scrollbar-thumb:hover { background: #999; }
+
+		.notification-item {
+			padding: 15px 20px;
+			border-bottom: 1px solid #f0f0f0;
+			cursor: pointer;
+			transition: background-color 0.2s ease;
+		}
+
+		.notification-item:hover {
+			background-color: #f8f9fa;
+		}
+
+		.notification-item h4 {
+			margin: 0 0 5px 0;
+			font-size: 14px;
+			color: #333;
+		}
+
+		.notification-item p {
+			margin: 0 0 8px 0;
+			font-size: 13px;
+			color: #666;
+			line-height: 1.4;
+		}
+
+		.notification-time {
+			font-size: 11px;
+			color: #999;
+		}
+
+		.loading-notifications, .no-notifications {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding: 40px 20px;
+			text-align: center;
+			color: #666;
+		}
+
+		.loading-notifications i, .no-notifications i {
+			font-size: 24px;
+			margin-bottom: 10px;
+		}
+
+		.loading-notifications p, .no-notifications p {
+			margin: 0;
+			font-size: 14px;
 		}
 
 		/* Form styling */
@@ -446,15 +563,17 @@ $user_fname = $_SESSION['fname'] ?? '';
 	<body>
 		<aside>
 			<div class="profile-section">
-				<img class="profile-img" src="<?php echo $noprofile; ?>" alt="profile">
+			<img class="profile-img" src="<?php echo $noprofile; ?>" alt="profile">
 				<label><?php echo $fname . ' ' . $lname; ?></label>
 			</div>
 			
 			<nav class="aside-nav">
 				<a href="home.php" data-icon="🏠"><span>Dashboard</span></a>
 				<a href="upcoming_schedule.php" data-icon="📅"><span>Upcoming</span></a>
+				<a href="children_list.php" data-icon="🧒"><span>Child Record</span></a>
+				<a href="approved_requests.php" data-icon="✅"><span>Approved Requests</span></a>
 				<a href="missed_immunization.php" data-icon="⚠️"><span>Missed</span></a>
-				<a href="#" onclick="addChild()" data-icon="➕"><span>Add Child</span></a>
+				<a href="Request.php" data-icon="➕"><span>Add Child</span></a>
 				<a href="#" onclick="logoutUser()" data-icon="🚪"><span>Logout</span></a>
 			</nav>
 		</aside>
@@ -465,256 +584,195 @@ $user_fname = $_SESSION['fname'] ?? '';
 						☰
 					</button>
 					<h1>ebakunado</h1>
-				</div>
+					</div>
 				<div class="header-right">
-					<button class="notification-button" onclick="showNotifications()">
-						<i class="fa-solid fa-bell"></i>
-						<span class="notification-badge" id="notificationCount">0</span>
-					</button>
+					<!-- Notification Button with Dropdown -->
+					<div class="notification-container">
+						<button class="notification-button" onclick="toggleNotificationDropdown()">
+							<i class="fa-solid fa-bell"></i>
+							<span class="notification-badge" id="notificationCount">0</span>
+						</button>
+						<div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+							<div class="notification-header">
+								<h4><i class="fas fa-bell"></i> Notifications</h4>
+								<button onclick="markAllAsRead()">Mark all as read</button>
+					</div>
+							<div class="notification-content" id="notificationContent">
+								<div class="loading-notifications">
+									<i class="fas fa-spinner fa-spin"></i>
+									<p>Loading notifications...</p>
+					</div>
+					</div>
+						</div>
+					</div>
 				</div>
 			</header>
 
 <script>
-		function showNotifications() {
-			// Mark notifications as read when user opens the modal
-			notificationRead = true;
+		// Simple User Notification System (same as BHW)
+		let notifications = [];
+		let notificationDropdownOpen = false;
+		let unreadCount = 0;
+
+		function toggleNotificationDropdown() {
+			const dropdown = document.getElementById('notificationDropdown');
+			notificationDropdownOpen = !notificationDropdownOpen;
+			
+			if (notificationDropdownOpen) {
+				dropdown.style.display = 'block';
+				loadNotifications(); // Always load fresh notifications
+			} else {
+				dropdown.style.display = 'none';
+			}
+		}
+
+		async function loadNotifications() {
+			const content = document.getElementById('notificationContent');
+			content.innerHTML = '<div class="loading-notifications"><i class="fas fa-spinner fa-spin"></i><p>Loading notifications...</p></div>';
+
+			try {
+				console.log('Loading user notifications...');
+				const startTime = Date.now();
+				
+				const response = await fetch('../../php/supabase/users/get_user_notifications.php');
+				console.log('Response status:', response.status);
+				
+				if (!response.ok) {
+					throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+				}
+				
+				const data = await response.json();
+				const loadTime = Date.now() - startTime;
+				console.log('Notification response received in', loadTime + 'ms:', data);
+
+				if (data.status === 'success') {
+					notifications = data.data.notifications;
+					unreadCount = data.data.unread_count;
+					updateNotificationBadge(unreadCount);
+					renderNotifications(notifications);
+					console.log('User notifications loaded successfully:', notifications.length, 'unread:', unreadCount);
+				} else {
+					console.error('Notification API error:', data);
+					let errorMsg = data.message || 'Error loading notifications';
+					content.innerHTML = `<div class="no-notifications"><i class="fas fa-exclamation-triangle"></i><p>${errorMsg}</p></div>`;
+				}
+			} catch (error) {
+				console.error('Error loading notifications:', error);
+				content.innerHTML = '<div class="no-notifications"><i class="fas fa-exclamation-triangle"></i><p>Network error: ' + error.message + '</p></div>';
+			}
+		}
+
+		function updateNotificationBadge(count) {
 			const badge = document.getElementById('notificationCount');
-			if (badge) {
-				badge.textContent = '0';
+			if (count > 0) {
+				badge.textContent = count > 99 ? '99+' : count;
+				badge.style.display = 'flex';
+			} else {
 				badge.style.display = 'none';
 			}
+		}
 
-			// Create notification modal
-			const modal = document.createElement('div');
-			modal.style.cssText = `
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: rgba(0,0,0,0.5);
-				z-index: 1000;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-			`;
+		function markNotificationAsRead(notificationId) {
+			// Decrease unread count and update badge
+			if (unreadCount > 0) {
+				unreadCount--;
+				updateNotificationBadge(unreadCount);
+			}
+		}
 
-			const modalContent = document.createElement('div');
-			modalContent.style.cssText = `
-				background: white;
-				padding: 20px;
-				border-radius: 10px;
-				max-width: 500px;
-				width: 90%;
-				max-height: 80vh;
-				overflow-y: auto;
-			`;
+		function renderNotifications(notifications) {
+			const content = document.getElementById('notificationContent');
+			
+			if (!notifications || notifications.length === 0) {
+				content.innerHTML = '<div class="no-notifications"><i class="fas fa-bell-slash"></i><p>No notifications</p></div>';
+				return;
+			}
 
-			// Get dashboard data from home page or fetch it
-			fetchNotificationData().then(dashboardData => {
-				let notificationHTML = `
-					<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-						<h3><i class="fas fa-bell"></i> Notifications</h3>
-						<button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
-					</div>
-					<div id="notificationsList">
-				`;
-
-				// Add pending approvals notifications
-				if (dashboardData.pendingApprovals > 0) {
-					notificationHTML += `
-						<div class="notification-item" style="padding: 10px; border-left: 4px solid #ffc107; background: #fff8e1; margin-bottom: 10px;">
-							<h4><i class="fas fa-clock"></i> Pending Approvals (${dashboardData.pendingApprovals})</h4>
-							<p>You have ${dashboardData.pendingApprovals} child registration(s) waiting for BHW approval.</p>
-						</div>
-					`;
-				}
-
-				// Add upcoming vaccines notifications
-				if (dashboardData.upcomingVaccines > 0) {
-					notificationHTML += `
-						<div class="notification-item" style="padding: 10px; border-left: 4px solid #28a745; background: #e8f5e8; margin-bottom: 10px;">
-							<h4><i class="fas fa-calendar-alt"></i> Upcoming Vaccines (${dashboardData.upcomingVaccines})</h4>
-							<p>You have ${dashboardData.upcomingVaccines} vaccination(s) scheduled in the next 30 days.</p>
-						</div>
-					`;
-				}
-
-				// Add today's and tomorrow's schedules
-				if (dashboardData.todaySchedules && dashboardData.todaySchedules.length > 0) {
-					notificationHTML += `
-						<div class="notification-item" style="padding: 10px; border-left: 4px solid #dc3545; background: #fff5f5; margin-bottom: 10px;">
-							<h4><i class="fas fa-calendar-day"></i> Today's Schedule (${dashboardData.todaySchedules.length})</h4>
-							<p>You have ${dashboardData.todaySchedules.length} vaccination(s) scheduled for today!</p>
-						</div>
-					`;
-				}
-
-				if (dashboardData.tomorrowSchedules && dashboardData.tomorrowSchedules.length > 0) {
-					notificationHTML += `
-						<div class="notification-item" style="padding: 10px; border-left: 4px solid #ffc107; background: #fffdf0; margin-bottom: 10px;">
-							<h4><i class="fas fa-calendar-plus"></i> Tomorrow's Schedule (${dashboardData.tomorrowSchedules.length})</h4>
-							<p>You have ${dashboardData.tomorrowSchedules.length} vaccination(s) scheduled for tomorrow.</p>
-						</div>
-					`;
-				}
-
-				// Add recent activities as notifications
-				if (dashboardData.activities && dashboardData.activities.length > 0) {
-					notificationHTML += `<h4 style="margin-top: 20px;"><i class="fas fa-history"></i> Recent Updates</h4>`;
-					dashboardData.activities.slice(0, 5).forEach(activity => {
-						const iconClass = getActivityIcon(activity.type);
-						const iconBg = getActivityIconBg(activity.type);
-						
-						notificationHTML += `
-							<div class="notification-item" style="padding: 10px; border-left: 4px solid ${iconBg}; background: #f8f9fa; margin-bottom: 10px;">
-								<div style="display: flex; align-items: center; gap: 10px;">
-									<div style="width: 30px; height: 30px; border-radius: 50%; background: ${iconBg}; display: flex; align-items: center; justify-content: center; color: white;">
-										<i class="${iconClass}" style="font-size: 14px;"></i>
-									</div>
-									<div>
-										<h5 style="margin: 0; font-size: 14px;">${activity.title}</h5>
-										<p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${activity.description}</p>
-										<small style="color: #999;">${formatTime(new Date(activity.timestamp))}</small>
-									</div>
-								</div>
-							</div>
-						`;
-					});
-				}
-
-				if ((!dashboardData.pendingApprovals || dashboardData.pendingApprovals === 0) && 
-					(!dashboardData.upcomingVaccines || dashboardData.upcomingVaccines === 0) && 
-					(!dashboardData.activities || dashboardData.activities.length === 0)) {
-					notificationHTML += `
-						<div style="text-align: center; padding: 40px; color: #666;">
-							<i class="fas fa-bell-slash" style="font-size: 48px; margin-bottom: 10px;"></i>
-							<p>No notifications at the moment</p>
-						</div>
-					`;
-				}
-
-				notificationHTML += `</div>`;
-				modalContent.innerHTML = notificationHTML;
-			}).catch(error => {
-				modalContent.innerHTML = `
-					<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-						<h3><i class="fas fa-bell"></i> Notifications</h3>
-						<button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
-					</div>
-					<div style="text-align: center; padding: 40px; color: #666;">
-						<p>Unable to load notifications</p>
+			// Simple HTML rendering
+			let html = '';
+			notifications.forEach(notification => {
+				const timeAgo = getTimeAgo(notification.timestamp);
+				
+				html += `
+					<div class="notification-item" onclick="handleNotificationClick('${notification.id}')">
+						<h4>${notification.icon} ${notification.title}</h4>
+						<p>${notification.message}</p>
+						<div class="notification-time">${timeAgo}</div>
 					</div>
 				`;
 			});
 
-			modal.appendChild(modalContent);
-			modal.className = 'modal';
+			content.innerHTML = html;
 			
-			document.body.appendChild(modal);
-			
-			// Close modal when clicking outside
-			modal.addEventListener('click', function(e) {
-				if (e.target === modal) {
-					modal.remove();
+			// Don't update badge here - it's already updated in loadNotifications
+		}
+
+		function handleNotificationClick(notificationId) {
+			const notification = notifications.find(n => n.id === notificationId);
+			if (notification) {
+				// Mark as read on server and locally
+				markNotificationAsRead(notificationId);
+				try{ const fd=new FormData(); fd.append('id', notificationId); fetch('../../php/supabase/users/mark_notification_read.php', {method:'POST', body:fd}); }catch(e){}
+				
+				// Navigate to the action URL
+				if (notification.action_url) {
+					window.location.href = notification.action_url;
 				}
-			});
-		}
-
-		async function fetchNotificationData() {
-			try {
-				const [pendingResponse, statsResponse, activityResponse, scheduleResponse] = await Promise.all([
-					fetch('../../php/supabase/users/get_pending_requests.php'),
-					fetch('../../php/supabase/users/get_vaccination_stats.php'),
-					fetch('../../php/supabase/users/get_recent_activity.php'),
-					fetch('../../php/supabase/users/get_today_tomorrow_schedules.php')
-				]);
-
-				const pendingData = await pendingResponse.json();
-				const statsData = await statsResponse.json();
-				const activityData = await activityResponse.json();
-				const scheduleData = await scheduleResponse.json();
-
-				return {
-					pendingApprovals: pendingData.status === 'success' ? pendingData.data.length : 0,
-					upcomingVaccines: statsData.status === 'success' ? statsData.data.upcoming : 0,
-					completedVaccines: statsData.status === 'success' ? statsData.data.completed : 0,
-					activities: activityData.status === 'success' ? activityData.data : [],
-					todaySchedules: scheduleData.status === 'success' ? scheduleData.data.today : [],
-					tomorrowSchedules: scheduleData.status === 'success' ? scheduleData.data.tomorrow : []
-				};
-			} catch (error) {
-				console.error('Error fetching notification data:', error);
-				return {
-					pendingApprovals: 0,
-					upcomingVaccines: 0,
-					completedVaccines: 0,
-					activities: [],
-					todaySchedules: [],
-					tomorrowSchedules: []
-				};
 			}
 		}
 
-		function getActivityIcon(type) {
-			switch(type) {
-				case 'approval': return 'fas fa-check-circle';
-				case 'rejection': return 'fas fa-times-circle';
-				case 'vaccine': return 'fas fa-syringe';
-				case 'schedule': return 'fas fa-calendar';
-				default: return 'fas fa-info-circle';
-			}
+		function markAllAsRead() {
+			// Set unread count to 0 and hide badge, persist on server
+			unreadCount = 0;
+			updateNotificationBadge(0);
+			try{ fetch('../../php/supabase/users/mark_notifications_read_all.php', {method:'POST'}); }catch(e){}
 		}
 
-		function getActivityIconBg(type) {
-			switch(type) {
-				case 'approval': return '#28a745';
-				case 'rejection': return '#dc3545';
-				case 'vaccine': return '#007bff';
-				case 'schedule': return '#ffc107';
-				default: return '#6c757d';
-			}
-		}
-
-		function formatTime(timestamp) {
-			const date = new Date(timestamp);
+		function getTimeAgo(timestamp) {
 			const now = new Date();
-			const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+			let time;
 			
-			if (diffInMinutes < 1) return 'Just now';
-			if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-			if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
-			return `${Math.floor(diffInMinutes / 1440)}d ago`;
-		}
-
-		let notificationRead = false;
-
-		// Update notification badge on page load
-		document.addEventListener('DOMContentLoaded', function() {
-			updateNotificationBadge();
-			// Auto-refresh notifications every 30 seconds
-			setInterval(updateNotificationBadge, 30000);
-		});
-
-		async function updateNotificationBadge() {
-			if (notificationRead) return; // Don't update if user has already seen notifications
-			
-			try {
-				const data = await fetchNotificationData();
-				// Count pending approvals + upcoming vaccines + recent activities + today's + tomorrow's schedules
-				const notificationCount = data.pendingApprovals + 
-										 data.upcomingVaccines + 
-										 data.activities.length +
-										 data.todaySchedules.length +
-										 data.tomorrowSchedules.length;
-				const badge = document.getElementById('notificationCount');
-				if (badge) {
-					badge.textContent = notificationCount;
-					badge.style.display = notificationCount > 0 ? 'inline-flex' : 'none';
-				}
-			} catch (error) {
-				console.error('Error updating notification badge:', error);
-				}
+			// Handle different timestamp formats
+			if (timestamp.includes('T')) {
+				// ISO format with T - manually parse to avoid timezone issues
+				const parts = timestamp.split('T');
+				const datePart = parts[0]; // 2025-10-05
+				const timePart = parts[1].split('.')[0]; // 16:51:03 (remove microseconds)
+				
+				// Create date in local timezone
+				time = new Date(datePart + ' ' + timePart);
+			} else {
+				// Regular date format (Y-m-d H:i:s)
+				time = new Date(timestamp.replace(' ', 'T'));
 			}
+			
+			// Check if timestamp is valid
+			if (isNaN(time.getTime())) {
+				console.error('Invalid timestamp:', timestamp);
+				return 'Unknown time';
+			}
+			
+			const diffInSeconds = Math.floor((now - time) / 1000);
+			
+			if (diffInSeconds < 0) return 'In the future';
+			if (diffInSeconds < 60) return 'Just now';
+			if (diffInSeconds < 3600) return Math.floor(diffInSeconds / 60) + ' minutes ago';
+			if (diffInSeconds < 86400) return Math.floor(diffInSeconds / 3600) + ' hours ago';
+			if (diffInSeconds < 2592000) return Math.floor(diffInSeconds / 86400) + ' days ago';
+			return 'Over a month ago';
+			}
+
+		// Preload unread badge on every page load (no dropdown auto-open)
+		document.addEventListener('DOMContentLoaded', async function(){
+			try{
+				const res = await fetch('../../php/supabase/users/get_user_notifications.php');
+				if (!res.ok) return;
+				const data = await res.json();
+				if (data && data.status === 'success' && data.data){
+					unreadCount = data.data.unread_count || 0;
+					updateNotificationBadge(unreadCount);
+				}
+			}catch(e){ /* silent */ }
+		});
 		</script>
 
