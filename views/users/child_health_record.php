@@ -34,7 +34,7 @@
 			</div>
 		</div>
 
-		<!-- Child History (trimmed: exclude breastfeeding section per request) -->
+		<!-- Child History -->
 		<div id="childHistory" style="font-size: 13px; line-height: 1.6; margin: 8px 0 16px 0;">
 			<div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
 				<div>
@@ -46,6 +46,44 @@
 					<div>Place of Newborn Screening: <span id="f_nbs_place"></span></div>
 					<div>Attended by: <span id="f_attended_by"></span></div>
 				</div>
+			</div>
+		</div>
+
+		<!-- Exclusive Breastfeeding & Complementary Feeding -->
+		<div id="feedingSection" style="font-size: 13px; line-height: 1.6; margin: 8px 0 16px 0; border: 1px solid #ddd; padding: 8px;">
+			<h3 style="margin: 0 0 8px 0; font-size: 14px; text-align: center;">Exclusive Breastfeeding & Complementary Feeding</h3>
+			<div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+				<div>
+					<h4 style="margin: 0 0 4px 0; font-size: 13px;">Exclusive Breastfeeding:</h4>
+					<div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:4px; font-size: 12px;">
+						<div>1st mo: <span id="f_eb_1mo"></span></div>
+						<div>2nd mo: <span id="f_eb_2mo"></span></div>
+						<div>3rd mo: <span id="f_eb_3mo"></span></div>
+						<div>4th mo: <span id="f_eb_4mo"></span></div>
+						<div>5th mo: <span id="f_eb_5mo"></span></div>
+						<div>6th mo: <span id="f_eb_6mo"></span></div>
+					</div>
+				</div>
+				<div>
+					<h4 style="margin: 0 0 4px 0; font-size: 13px;">Complementary Feeding:</h4>
+					<div style="font-size: 12px;">
+						<div>6th mo food: <span id="f_cf_6mo"></span></div>
+						<div>7th mo food: <span id="f_cf_7mo"></span></div>
+						<div>8th mo food: <span id="f_cf_8mo"></span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Mother's TD Status -->
+		<div id="tdSection" style="font-size: 13px; line-height: 1.6; margin: 8px 0 16px 0; border: 1px solid #ddd; padding: 8px;">
+			<h3 style="margin: 0 0 8px 0; font-size: 14px; text-align: center;">Mother's TD (Tetanus-Diphtheria) Status</h3>
+			<div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; font-size: 12px;">
+				<div>TD 1st dose: <span id="f_td_dose1"></span></div>
+				<div>TD 2nd dose: <span id="f_td_dose2"></span></div>
+				<div>TD 3rd dose: <span id="f_td_dose3"></span></div>
+				<div>TD 4th dose: <span id="f_td_dose4"></span></div>
+				<div>TD 5th dose: <span id="f_td_dose5"></span></div>
 			</div>
 		</div>
 
@@ -137,6 +175,26 @@ document.addEventListener('DOMContentLoaded', async function(){
         document.getElementById('f_birth_order').textContent = child.birth_order || '';
 		document.getElementById('f_nbs_place').textContent = '';
 		document.getElementById('f_attended_by').textContent = child.birth_attendant || '';
+
+		// Fill Exclusive Breastfeeding data
+		document.getElementById('f_eb_1mo').textContent = child.exclusive_breastfeeding_1mo ? '✓' : '';
+		document.getElementById('f_eb_2mo').textContent = child.exclusive_breastfeeding_2mo ? '✓' : '';
+		document.getElementById('f_eb_3mo').textContent = child.exclusive_breastfeeding_3mo ? '✓' : '';
+		document.getElementById('f_eb_4mo').textContent = child.exclusive_breastfeeding_4mo ? '✓' : '';
+		document.getElementById('f_eb_5mo').textContent = child.exclusive_breastfeeding_5mo ? '✓' : '';
+		document.getElementById('f_eb_6mo').textContent = child.exclusive_breastfeeding_6mo ? '✓' : '';
+
+		// Fill Complementary Feeding data
+		document.getElementById('f_cf_6mo').textContent = child.complementary_feeding_6mo || '';
+		document.getElementById('f_cf_7mo').textContent = child.complementary_feeding_7mo || '';
+		document.getElementById('f_cf_8mo').textContent = child.complementary_feeding_8mo || '';
+
+		// Fill Mother's TD Status data
+		document.getElementById('f_td_dose1').textContent = formatDate(child.mother_td_dose1_date) || '';
+		document.getElementById('f_td_dose2').textContent = formatDate(child.mother_td_dose2_date) || '';
+		document.getElementById('f_td_dose3').textContent = formatDate(child.mother_td_dose3_date) || '';
+		document.getElementById('f_td_dose4').textContent = formatDate(child.mother_td_dose4_date) || '';
+		document.getElementById('f_td_dose5').textContent = formatDate(child.mother_td_dose5_date) || '';
 
 		// Wire two request buttons (transfer, school)
 		const reqTransferBtn = document.getElementById('reqTransferBtn');

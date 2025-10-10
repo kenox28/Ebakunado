@@ -420,6 +420,26 @@ $table_definitions = [
     )"
 ];
 
+// CREATE TABLE IF NOT EXISTS notification_logs (
+//     id SERIAL PRIMARY KEY,
+//     baby_id VARCHAR(255) NOT NULL,
+//     user_id VARCHAR(255) NOT NULL,
+//     type VARCHAR(50) NOT NULL, -- 'schedule_reminder', 'missed_vaccination', etc.
+//     message TEXT NOT NULL,
+//     notification_date DATE NOT NULL,
+//     sms_sent BOOLEAN DEFAULT FALSE,
+//     email_sent BOOLEAN DEFAULT FALSE,
+//     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+// );
+
+// -- Create indexes for better performance
+// CREATE INDEX IF NOT EXISTS idx_notification_logs_baby_id ON notification_logs(baby_id);
+// CREATE INDEX IF NOT EXISTS idx_notification_logs_user_id ON notification_logs(user_id);
+// CREATE INDEX IF NOT EXISTS idx_notification_logs_date ON notification_logs(notification_date);
+// CREATE INDEX IF NOT EXISTS idx_notification_logs_type ON notification_logs(type);
+
+
 // Function to initialize database tables (for Supabase setup)
 function initializeSupabaseTables($supabase) {
     if (!$supabase) {

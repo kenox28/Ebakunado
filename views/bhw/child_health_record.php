@@ -63,7 +63,10 @@
                             <td>${item.mother_name || ''}</td>
 							<td>${item.address || ''}</td>
 							<td>${item.status || ''}</td>
-							<td><button onclick=\"viewSchedule('${item.baby_id}', this)\">View Schedule</button></td>
+							<td>
+								<button onclick=\"viewSchedule('${item.baby_id}', this)\">View Schedule</button>
+								<button onclick=\"window.open('bhw_child_health_record.php?baby_id=${encodeURIComponent(item.baby_id)}', '_blank')\" style="margin-left:4px; background: #007bff; color: white; border: none; padding: 4px 8px; border-radius: 3px;">View CHR</button>
+							</td>
 						</tr>`;
 					});
 					body.innerHTML = rows;
@@ -123,7 +126,7 @@
 				if (data.status !== 'success' || !data.data || data.data.length === 0) {
 					html += '<div class="small">No schedule</div>';
 				} else {
-					html += '<table class="small"><tr><th>Vaccine</th><th>Dose #</th><th>Due</th><th>Date Given</th><th>Status</th><th>Mark Given</th></tr>';
+					html += '<table class="small"><tr><th>Vaccine</th><th>Dose #</th><th>Due</th><th>Date Given</th><th>Status</th></tr>';
 					data.data.forEach(r => {
 						html += `<tr>
 							<td>${r.vaccine_name}</td>
@@ -131,7 +134,6 @@
 							<td>${r.schedule_date || ''}</td>
 							<td>${r.date_given || ''}</td>
 							<td>${r.status}</td>
-							<td>${r.status === 'completed' ? 'Done' : `<button onclick=\"markGiven(${r.id})\">Mark</button>`}</td>
 						</tr>`;
 					});
 					html += '</table>';
@@ -140,24 +142,9 @@
 				tr.insertAdjacentHTML('afterend', html);
 			}
 
-			async function markGiven(record_id){
-				const date_given = prompt('Date given (YYYY-MM-DD):'); if(!date_given) return;
-				const weight = prompt('Weight (kg) optional:');
-				const height = prompt('Height (cm) optional:');
-				const temperature = prompt('Temp (C) optional:');
-				const fd = new FormData();
-				fd.append('record_id', record_id);
-				fd.append('date_given', date_given);
-				if (weight) fd.append('weight', weight);
-				if (height) fd.append('height', height);
-				if (temperature) fd.append('temperature', temperature);
-				const res = await fetch('../../php/supabase/bhw/mark_vaccine_given.php', { method: 'POST', body: fd });
-				const data = await res.json();
-				if (data.status === 'success') { getChildHealthRecord(); }
-				else { alert('Update failed'); }
-			}
 
 			window.addEventListener('DOMContentLoaded', getChildHealthRecord);
+
 
 			let html5QrcodeInstance = null;
 			async function openScanner(){

@@ -331,6 +331,7 @@ if (isset($_SESSION['bhw_id'])) {
 				<a href="./chr-doc-requests.php" data-icon="📄"><span>CHR Doc Requests</span></a>
 			<a href="./target_client.php" data-icon="🎯"><span>Target Client List</span></a>
 			<a href="#" onclick="openSMSNotification()" data-icon="📱"><span>SMS Notifications</span></a>
+			<a href="./system_settings.php" data-icon="⚙️"><span>System Settings</span></a>
 		</aside>
 		<main>
 			<header>

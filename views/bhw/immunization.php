@@ -117,7 +117,106 @@
                 const scheduleDate = btn.getAttribute('data-schedule-date') || '';
                 const catchUpDate = btn.getAttribute('data-catch-up-date') || '';
 
+				// Get feeding status data
+				const feedingData = {
+					eb1mo: btn.getAttribute('data-eb-1mo') === 'true',
+					eb2mo: btn.getAttribute('data-eb-2mo') === 'true',
+					eb3mo: btn.getAttribute('data-eb-3mo') === 'true',
+					eb4mo: btn.getAttribute('data-eb-4mo') === 'true',
+					eb5mo: btn.getAttribute('data-eb-5mo') === 'true',
+					eb6mo: btn.getAttribute('data-eb-6mo') === 'true',
+					cf6mo: btn.getAttribute('data-cf-6mo') || '',
+					cf7mo: btn.getAttribute('data-cf-7mo') || '',
+					cf8mo: btn.getAttribute('data-cf-8mo') || '',
+					tdDose1: btn.getAttribute('data-td-dose1') || '',
+					tdDose2: btn.getAttribute('data-td-dose2') || '',
+					tdDose3: btn.getAttribute('data-td-dose3') || '',
+					tdDose4: btn.getAttribute('data-td-dose4') || '',
+					tdDose5: btn.getAttribute('data-td-dose5') || ''
+				};
+
 				const dateToday = normalizeDateStr(new Date());
+
+				// Function to determine feeding status based on vaccination month
+				function getFeedingStatusForVaccine(vaccineName, scheduleDate) {
+					// Map vaccines to their typical month ranges
+					const vaccineMonths = {
+						'BCG': 0, // Birth/1st month
+						'HEPAB1': 0, // Within 24 hours or 1st month
+						'Pentavalent': [1, 2, 3], // 2nd, 3rd, 4th months
+						'OPV': [1, 2, 3], // 2nd, 3rd, 4th months
+						'PCV': [1, 2, 3], // 2nd, 3rd, 4th months
+						'MCV1': 8, // 9th month
+						'MCV2': 14, // 15th month
+						'MMR': 11 // 12th month
+					};
+
+					let relevantMonth = null;
+					if (vaccineName.includes('BCG') || vaccineName.includes('HEPAB1')) {
+						relevantMonth = 1; // 1st month
+					} else if (vaccineName.includes('Pentavalent') || vaccineName.includes('OPV') || vaccineName.includes('PCV')) {
+						// Determine dose number from vaccine name
+						if (vaccineName.includes('1st')) relevantMonth = 2;
+						else if (vaccineName.includes('2nd')) relevantMonth = 3;
+						else if (vaccineName.includes('3rd')) relevantMonth = 4;
+						else relevantMonth = 2; // Default to 1st dose
+					} else if (vaccineName.includes('MCV1')) {
+						relevantMonth = 6; // MCV1 is around 6th month, show 6th month complementary feeding
+					} else if (vaccineName.includes('MCV2') || vaccineName.includes('MMR')) {
+						relevantMonth = 8; // MCV2/MMR is around 8th month, show 8th month complementary feeding
+					}
+
+					if (!relevantMonth) return null;
+
+					// Get feeding status for the relevant month
+					if (relevantMonth <= 6) {
+						// For months 1-6, show exclusive breastfeeding
+						const feedingKey = `eb${relevantMonth}mo`;
+						return {
+							type: 'exclusive_breastfeeding',
+							month: relevantMonth,
+							status: feedingData[feedingKey] ? '✓' : '✗',
+							text: `${relevantMonth}st month exclusive breastfeeding`
+						};
+					} else if (relevantMonth >= 6 && relevantMonth <= 8) {
+						// For months 6-8, show complementary feeding
+						const feedingKey = `cf${relevantMonth}mo`;
+						const food = feedingData[feedingKey];
+						return {
+							type: 'complementary_feeding',
+							month: relevantMonth,
+							status: food ? food : 'Not recorded',
+							text: `${relevantMonth}th month complementary feeding`
+						};
+					}
+
+					return null;
+				}
+
+				// Function to get Mother's TD Status
+				function getMotherTDStatus() {
+					const tdDoses = [
+						{ dose: 1, date: feedingData.tdDose1 },
+						{ dose: 2, date: feedingData.tdDose2 },
+						{ dose: 3, date: feedingData.tdDose3 },
+						{ dose: 4, date: feedingData.tdDose4 },
+						{ dose: 5, date: feedingData.tdDose5 }
+					];
+
+					const completedDoses = tdDoses.filter(d => d.date && d.date !== '');
+					const lastCompletedDose = completedDoses.length > 0 ? completedDoses[completedDoses.length - 1] : null;
+					const nextDose = completedDoses.length < 5 ? tdDoses[completedDoses.length] : null;
+
+					return {
+						completed: completedDoses.length,
+						lastDose: lastCompletedDose,
+						nextDose: nextDose,
+						allCompleted: completedDoses.length === 5
+					};
+				}
+
+				const feedingStatus = getFeedingStatusForVaccine(vaccineName, scheduleDate);
+				const motherTDStatus = getMotherTDStatus();
 
 				const html = `
 					<div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
@@ -142,6 +241,41 @@
 							<label style="font-size:12px; color:#333;">Date Taken</label>
 							<input type="date" id="im_date_taken" value="${dateToday}" style="width:100%; padding:6px 8px;" />
 						</div>
+					</div>
+
+					${feedingStatus ? `
+					<div style="background:#f8f9fa; border: 1px solid #dee2e6; border-radius:4px; padding:8px; margin-bottom:10px;">
+						<h4 style="margin:0 0 8px 0; font-size:13px; color:#495057;">Update Feeding Status for ${vaccineName}</h4>
+						<div style="display:flex; align-items:center; gap:8px;">
+							<span style="font-size:12px; color:#6c757d; font-weight:bold;">${feedingStatus.text}:</span>
+							${feedingStatus.type === 'exclusive_breastfeeding' ? `
+								<label style="font-size:12px; display:flex; align-items:center; gap:4px;">
+									<input type="checkbox" id="update_feeding_status" ${feedingStatus.status === '✓' ? 'checked' : ''} style="margin:0;">
+									<span>Currently breastfeeding</span>
+								</label>
+							` : `
+								<input type="text" id="update_complementary_feeding" placeholder="Enter food given" 
+									value="${feedingStatus.status !== 'Not recorded' ? feedingStatus.status : ''}" 
+									style="padding:4px 6px; font-size:12px; width:200px;">
+							`}
+						</div>
+					</div>` : ''}
+
+					<div style="background:#e8f4f8; border: 1px solid #bee5eb; border-radius:4px; padding:8px; margin-bottom:10px;">
+						<h4 style="margin:0 0 8px 0; font-size:13px; color:#0c5460;">Mother's TD (Tetanus-Diphtheria) Status</h4>
+						<div style="font-size:12px; color:#0c5460; margin-bottom:8px;">
+							<span style="font-weight:bold;">Completed Doses: ${motherTDStatus.completed}/5</span>
+							${motherTDStatus.lastDose ? `<span style="margin-left:8px;">Last dose: ${motherTDStatus.lastDose.date}</span>` : ''}
+						</div>
+						${motherTDStatus.nextDose ? `
+						<div style="display:flex; align-items:center; gap:8px;">
+							<span style="font-size:12px; color:#0c5460; font-weight:bold;">TD ${motherTDStatus.nextDose.dose} dose date:</span>
+							<input type="date" id="update_td_dose" value="${motherTDStatus.nextDose.date}" 
+								style="padding:4px 6px; font-size:12px;">
+						</div>
+						` : `
+						<div style="font-size:12px; color:#28a745; font-weight:bold;">✓ All TD doses completed</div>
+						`}
 					</div>
 
 					<div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
@@ -214,6 +348,22 @@
                 const cu = document.getElementById('im_catch_up_date');
                 if (cu && cu.value) formData.append('catch_up_date', cu.value);
 
+				// Add feeding status updates if available
+				const feedingCheckbox = document.getElementById('update_feeding_status');
+				const feedingInput = document.getElementById('update_complementary_feeding');
+				if (feedingCheckbox) {
+					formData.append('update_feeding_status', feedingCheckbox.checked ? '1' : '0');
+				}
+				if (feedingInput) {
+					formData.append('update_complementary_feeding', feedingInput.value || '');
+				}
+
+				// Add Mother's TD Status update if available
+				const tdDoseInput = document.getElementById('update_td_dose');
+				if (tdDoseInput && tdDoseInput.value) {
+					formData.append('update_td_dose_date', tdDoseInput.value);
+				}
+
 				try{
 					const res = await fetch('../../php/supabase/bhw/save_immunization.php', { method: 'POST', body: formData });
 					const data = await res.json().catch(() => ({ status: 'error', message: 'Invalid server response' }));
@@ -253,7 +403,21 @@
 									data-child-name="${((item.child_fname || '') + ' ' + (item.child_lname || '')).replace(/"/g, '&quot;')}"
 									data-vaccine-name="${String(item.vaccine_name || '').replace(/"/g, '&quot;')}"
                                     data-schedule-date="${item.schedule_date || ''}"
-                                    data-catch-up-date="${item.catch_up_date || ''}">
+                                    data-catch-up-date="${item.catch_up_date || ''}"
+                                    data-eb-1mo="${item.exclusive_breastfeeding_1mo || false}"
+                                    data-eb-2mo="${item.exclusive_breastfeeding_2mo || false}"
+                                    data-eb-3mo="${item.exclusive_breastfeeding_3mo || false}"
+                                    data-eb-4mo="${item.exclusive_breastfeeding_4mo || false}"
+                                    data-eb-5mo="${item.exclusive_breastfeeding_5mo || false}"
+                                    data-eb-6mo="${item.exclusive_breastfeeding_6mo || false}"
+                                    data-cf-6mo="${(item.complementary_feeding_6mo || '').replace(/"/g, '&quot;')}"
+                                    data-cf-7mo="${(item.complementary_feeding_7mo || '').replace(/"/g, '&quot;')}"
+                                    data-cf-8mo="${(item.complementary_feeding_8mo || '').replace(/"/g, '&quot;')}"
+                                    data-td-dose1="${item.mother_td_dose1_date || ''}"
+                                    data-td-dose2="${item.mother_td_dose2_date || ''}"
+                                    data-td-dose3="${item.mother_td_dose3_date || ''}"
+                                    data-td-dose4="${item.mother_td_dose4_date || ''}"
+                                    data-td-dose5="${item.mother_td_dose5_date || ''}">
 									Record
 								</button>
 							</td>

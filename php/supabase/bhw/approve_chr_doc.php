@@ -41,22 +41,29 @@ $child = $childRows[0];
 
 // Build formatted DOCX similar to the provided sheet
 $word = new PhpWord();
-$styleTitle = ['bold' => true, 'size' => 14];
-$styleSubTitle = ['bold' => true, 'size' => 12];
-$styleLabel = ['bold' => true, 'size' => 10];
-$styleText = ['size' => 10];
+$styleTitle = ['bold' => true, 'size' => 12];
+$styleSubTitle = ['bold' => true, 'size' => 10];
+$styleLabel = ['bold' => true, 'size' => 9];
+$styleText = ['size' => 9];
 $tableStyle = ['borderSize' => 6, 'borderColor' => '000000', 'cellMargin' => 80];
 
 $word->addParagraphStyle('center', ['alignment' => 'center']);
 $word->addTableStyle('grid', $tableStyle);
 
-$section = $word->addSection([ 'pageSizeW' => 12240, 'pageSizeH' => 15840, 'marginTop' => 720, 'marginBottom' => 720, 'marginLeft' => 720, 'marginRight' => 720 ]);
+$section = $word->addSection([ 
+    'pageSizeW' => 12240, 
+    'pageSizeH' => 15840, 
+    'marginTop' => 360, 
+    'marginBottom' => 360, 
+    'marginLeft' => 360, 
+    'marginRight' => 360 
+]);
 $title = 'CHILD HEALTH RECORD';
 if ($request_type === 'transfer') { $title .= ' — Transfer Copy'; }
 if ($request_type === 'school') { $title .= ' — School Copy'; }
 $section->addText($title, $styleTitle, 'center');
 $section->addText('City Health Department, Ormoc City', $styleText, 'center');
-$section->addTextBreak(1);
+$section->addTextBreak(0.5);
 
 // Helper to line field
 $line = function($label, $value = '') use ($section, $styleLabel, $styleText) {
@@ -96,7 +103,7 @@ $lineR("Mother's Name:", $child['mother_name'] ?? '');
 $lineR('LMP:', '');
 $lineR('Family Planning:', '');
 
-$section->addTextBreak(1);
+$section->addTextBreak(0.3);
 $section->addText('CHILD HISTORY', $styleSubTitle, 'center');
 
 $line('Date of Newbornscreening:', '');
@@ -105,57 +112,184 @@ $line('Type of Delivery:', $child['delivery_type'] ?? '');
 $line('Birth Order:', $child['birth_order'] ?? '');
 $line('Attended by:', $child['birth_attendant'] ?? '');
 
-$section->addTextBreak(1);
+$section->addTextBreak(0.3);
+
+// Exclusive Breastfeeding, Complementary Feeding & TD Status Section
+$feedingTitle = $section->addTextRun();
+$feedingTitle->addText('Exclusive Breastfeeding:Complementary Feeding:', $styleSubTitle);
+$feedingTitle->addText(' TD Status: (date pls.)', $styleSubTitle);
+
+// Create a table for feeding and TD status
+$feedingTable = $section->addTable();
+$feedingTable->addRow();
+
+// Left column for Exclusive Breastfeeding and Complementary Feeding
+$feedingLeft = $feedingTable->addCell(6000);
+$feedingRight = $feedingTable->addCell(6000);
+
+// Exclusive Breastfeeding section
+$feedingLeft->addText('Exclusive Breastfeeding:', $styleLabel);
+$feedingLeft->addTextBreak(0.2);
+
+// Helper function to add feeding checkbox
+$addFeedingCheckbox = function($month, $value) use ($feedingLeft, $styleText) {
+    $text = $feedingLeft->addTextRun();
+    $text->addText($month . ': ', $styleText);
+    if ($value) {
+        $text->addText('✓', $styleText);
+    } else {
+        $text->addText('☐', $styleText);
+    }
+    $feedingLeft->addTextBreak(0.05);
+};
+
+$addFeedingCheckbox('1st mo', $child['exclusive_breastfeeding_1mo'] ?? false);
+$addFeedingCheckbox('2nd mo', $child['exclusive_breastfeeding_2mo'] ?? false);
+$addFeedingCheckbox('3rd mo', $child['exclusive_breastfeeding_3mo'] ?? false);
+$addFeedingCheckbox('4th mo', $child['exclusive_breastfeeding_4mo'] ?? false);
+$addFeedingCheckbox('5th mo', $child['exclusive_breastfeeding_5mo'] ?? false);
+$addFeedingCheckbox('6th mo', $child['exclusive_breastfeeding_6mo'] ?? false);
+
+// Complementary Feeding section
+$feedingLeft->addTextBreak(0.3);
+$feedingLeft->addText('Complementary Feeding:', $styleLabel);
+$feedingLeft->addTextBreak(0.2);
+
+$addComplementaryFeeding = function($month, $food) use ($feedingLeft, $styleText) {
+    $text = $feedingLeft->addTextRun();
+    $text->addText($month . ' food: ', $styleText);
+    $text->addText($food ? $food : '____________________', $styleText);
+    $feedingLeft->addTextBreak(0.05);
+};
+
+$addComplementaryFeeding('6th mo', $child['complementary_feeding_6mo'] ?? '');
+$addComplementaryFeeding('7th mo', $child['complementary_feeding_7mo'] ?? '');
+$addComplementaryFeeding('8th mo', $child['complementary_feeding_8mo'] ?? '');
+
+// Right column for Mother's TD Status
+$feedingRight->addText('Mother\'s TD (Tetanus-Diphtheria) Status:', $styleLabel);
+$feedingRight->addTextBreak(0.2);
+
+$addTDDate = function($dose, $date) use ($feedingRight, $styleText) {
+    $text = $feedingRight->addTextRun();
+    $text->addText('TD ' . $dose . ' dose: ', $styleText);
+    $text->addText($date ? $date : '____________________', $styleText);
+    $feedingRight->addTextBreak(0.05);
+};
+
+$addTDDate('1st', $child['mother_td_dose1_date'] ?? '');
+$addTDDate('2nd', $child['mother_td_dose2_date'] ?? '');
+$addTDDate('3rd', $child['mother_td_dose3_date'] ?? '');
+$addTDDate('4th', $child['mother_td_dose4_date'] ?? '');
+$addTDDate('5th', $child['mother_td_dose5_date'] ?? '');
+
+$section->addTextBreak(0.3);
 $section->addText('IMMUNIZATION RECORD (pls. put the date)', $styleSubTitle, 'center');
 
 // Fetch immunization rows for vaccine mapping and ledger
 $immRows = supabaseSelect('immunization_records', '*', ['baby_id' => $req['baby_id']], 'schedule_date.asc');
 $immRows = $immRows ?: [];
 
-// Helper to find taken date for a vaccine label (by exact name)
-$getDate = function($name) use ($immRows){
+// Helper to find taken date for a vaccine label (with mapping for database names)
+$getDate = function($displayName) use ($immRows){
+    // Map display names to database names
+    $nameMapping = [
+        'BCG' => 'BCG',
+        'Hepa B within 24 hrs' => 'HEPAB1 (w/in 24 hrs)',
+        'Hepa B more than 24 hrs' => 'HEPAB1 (More than 24hrs)',
+        'Pentavalent 1st dose' => 'Pentavalent (DPT-HepB-Hib) - 1st',
+        'Pentavalent 2nd dose' => 'Pentavalent (DPT-HepB-Hib) - 2nd',
+        'Pentavalent 3rd dose' => 'Pentavalent (DPT-HepB-Hib) - 3rd',
+        'bOPV 1st dose' => 'OPV - 1st',
+        'bOPV 2nd dose' => 'OPV - 2nd',
+        'bOPV 3rd dose' => 'OPV - 3rd',
+        'PCV 1st dose' => 'PCV - 1st',
+        'PCV 2nd dose' => 'PCV - 2nd',
+        'PCV 3rd dose' => 'PCV - 3rd',
+        'MMR 1st dose' => 'MCV1 (AMV)',
+        'MMR 2nd dose' => 'MCV2 (MMR)',
+        'Rota Virus Vaccine - 1st' => 'Rota Virus Vaccine - 1st',
+        'Rota Virus Vaccine - 2nd' => 'Rota Virus Vaccine - 2nd',
+        'IPV' => 'IPV',
+        'FIC' => 'FIC',
+        'CIC' => 'CIC'
+    ];
+    
+    $dbName = $nameMapping[$displayName] ?? $displayName;
+    
     foreach ($immRows as $r){
-        if (strcasecmp((string)$r['vaccine_name'], (string)$name) === 0 && in_array($r['status'], ['taken','completed'])){
+        if (strcasecmp((string)$r['vaccine_name'], (string)$dbName) === 0 && in_array($r['status'], ['taken','completed'])){
             return $r['date_given'] ?? $r['schedule_date'] ?? '';
         }
     }
     return '';
 };
 
-$vLines = [
+// Create immunization record table with two columns like the template
+$immTable = $section->addTable();
+$immTable->addRow();
+
+$immLeft = $immTable->addCell(6000);
+$immRight = $immTable->addCell(6000);
+
+// Left column vaccines
+$leftVaccines = [
     'BCG',
-    'HEPAB1 (w/in 24 hrs)',
-    'HEPAB1 (More than 24hrs)',
-    'Pentavalent (DPT-HepB-Hib) - 1st',
-    'Pentavalent (DPT-HepB-Hib) - 2nd',
-    'Pentavalent (DPT-HepB-Hib) - 3rd',
-    'OPV - 1st', 'OPV - 2nd', 'OPV - 3rd',
-    'PCV - 1st', 'PCV - 2nd', 'PCV - 3rd',
-    'Rota Virus Vaccine - 1st', 'Rota Virus Vaccine - 2nd',
-    'MCV1 (AMV)', 'MCV2 (MMR)'
+    'Hepa B within 24 hrs',
+    'Pentavalent 1st dose',
+    'bOPV 1st dose',
+    'PCV 1st dose',
+    'MMR 1st dose',
+    'Other Vaccines'
 ];
 
-foreach ($vLines as $vn){
-    $line($vn . ':', $getDate($vn));
+foreach ($leftVaccines as $vaccine) {
+    $text = $immLeft->addTextRun();
+    $text->addText($vaccine . ': ', $styleText);
+    $text->addText($getDate($vaccine) ? $getDate($vaccine) : '____________________', $styleText);
+    $immLeft->addTextBreak(0.05);
 }
 
-$line('Scar:', '');
-$line('IPV:', '');
-$line('FIC:', '');
-$line('CIC:', '');
-$line('Other Vaccines:', '');
+// Right column vaccines
+$rightVaccines = [
+    'Hepa B more than 24 hrs',
+    'Pentavalent 2nd dose',
+    'Pentavalent 3rd dose',
+    'bOPV 2nd dose',
+    'bOPV 3rd dose',
+    'IPV',
+    'PCV 2nd dose',
+    'PCV 3rd dose',
+    'MMR 2nd dose',
+    'Rota Virus Vaccine - 1st',
+    'Rota Virus Vaccine - 2nd',
+    'FIC',
+    'CIC'
+];
 
-$section->addTextBreak(1);
+foreach ($rightVaccines as $vaccine) {
+    $text = $immRight->addTextRun();
+    $text->addText($vaccine . ': ', $styleText);
+    $text->addText($getDate($vaccine) ? $getDate($vaccine) : '____________________', $styleText);
+    $immRight->addTextBreak(0.05);
+}
+
+// Add Scar field at the bottom right
+$immRight->addTextBreak(0.3);
+$scarText = $immRight->addTextRun();
+$scarText->addText('Scar: (yes/no) ', $styleText);
+$scarText->addText('____________________', $styleText);
+
+$section->addTextBreak(0.3);
 
 // Ledger table
-$section->addText(' ', $styleText);
 $table = $section->addTable('grid');
 $table->addRow();
 foreach (['Date','Purpose','HT','WT','MUAC','STATUS','Condition of Baby','Advice Given','Next Sched Date','Remarks'] as $h){
     $table->addCell()->addText($h, $styleLabel);
 }
 
-// Build canonical order and best taken mapping
+// Build canonical order and best taken mapping (using database names)
 $canonical = [
     'BCG','HEPAB1 (w/in 24 hrs)','HEPAB1 (More than 24hrs)',
     'Pentavalent (DPT-HepB-Hib) - 1st','OPV - 1st','PCV - 1st','Rota Virus Vaccine - 1st',
@@ -206,8 +340,8 @@ foreach ($canonical as $name){
     $table->addCell()->addText('', $styleText);
 }
 
-// Add blank rows to complete a full ledger like the paper form (e.g., 20 rows total)
-$minRows = 20;
+// Add blank rows to complete a full ledger like the paper form (e.g., 15 rows total for single page)
+$minRows = 15;
 $currentRows = count($table->getRows());
 while ($currentRows < ($minRows + 1)) { // +1 because header row already added
     $table->addRow();

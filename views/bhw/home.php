@@ -768,6 +768,7 @@
 		}
 	}
 
+
 	// Initialize dashboard when page loads
 	document.addEventListener('DOMContentLoaded', function() {
 		loadDashboardData();

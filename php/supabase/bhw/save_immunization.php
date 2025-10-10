@@ -24,6 +24,11 @@ try {
     $weight_kg = $_POST['weight_kg'] ?? '';
     $administered_by = $_POST['administered_by'] ?? '';
     $mark_completed = isset($_POST['mark_completed']) ? ($_POST['mark_completed'] === '1') : false;
+    
+    // Feeding status updates
+    $update_feeding_status = $_POST['update_feeding_status'] ?? '';
+    $update_complementary_feeding = $_POST['update_complementary_feeding'] ?? '';
+    $update_td_dose_date = $_POST['update_td_dose_date'] ?? '';
 
     // Validate identifiers
     $record = null;
@@ -80,6 +85,67 @@ try {
     if ($res === false || (is_array($res) && count($res) === 0)) {
         echo json_encode([ 'status' => 'error', 'message' => 'Update failed or no rows affected' ]);
         exit();
+    }
+
+    // Update feeding status and TD status if provided
+    if ($update_feeding_status !== '' || $update_complementary_feeding !== '' || $update_td_dose_date !== '') {
+        $feeding_update = [];
+        
+        // Determine which feeding field to update based on vaccine name and dose
+        $vaccine_name = $record['vaccine_name'] ?? '';
+        $dose_number = $record['dose_number'] ?? 1;
+        
+        // Map vaccine to feeding month
+        $feeding_month = null;
+        if (strpos($vaccine_name, 'BCG') !== false || strpos($vaccine_name, 'HEPAB1') !== false) {
+            $feeding_month = 1;
+        } else if (strpos($vaccine_name, 'Pentavalent') !== false || strpos($vaccine_name, 'OPV') !== false || strpos($vaccine_name, 'PCV') !== false) {
+            $feeding_month = $dose_number + 1; // 1st dose = 2nd month, 2nd dose = 3rd month, etc.
+        } else if (strpos($vaccine_name, 'MCV1') !== false) {
+            $feeding_month = 6; // MCV1 is around 6th month, show 6th month complementary feeding
+        } else if (strpos($vaccine_name, 'MCV2') !== false || strpos($vaccine_name, 'MMR') !== false) {
+            $feeding_month = 8; // MCV2/MMR is around 8th month, show 8th month complementary feeding
+        }
+        
+        if ($feeding_month && $feeding_month <= 6 && $update_feeding_status !== '') {
+            // Update exclusive breastfeeding
+            $field_name = 'exclusive_breastfeeding_' . $feeding_month . 'mo';
+            $feeding_update[$field_name] = $update_feeding_status === '1';
+        } else if ($feeding_month && $feeding_month >= 6 && $feeding_month <= 8 && $update_complementary_feeding !== '') {
+            // Update complementary feeding
+            $field_name = 'complementary_feeding_' . $feeding_month . 'mo';
+            $feeding_update[$field_name] = $update_complementary_feeding;
+        }
+        
+        // Handle Mother's TD Status update
+        if ($update_td_dose_date !== '') {
+            // Get current TD status to determine which dose to update
+            $current_td = supabaseSelect('child_health_records', 'mother_td_dose1_date,mother_td_dose2_date,mother_td_dose3_date,mother_td_dose4_date,mother_td_dose5_date', ['baby_id' => $record['baby_id']], null, 1);
+            
+            if ($current_td && count($current_td) > 0) {
+                $td_record = $current_td[0];
+                $next_dose = 1;
+                
+                // Find the next dose that needs to be updated
+                for ($i = 1; $i <= 5; $i++) {
+                    $field_name = 'mother_td_dose' . $i . '_date';
+                    if (empty($td_record[$field_name])) {
+                        $next_dose = $i;
+                        break;
+                    }
+                }
+                
+                if ($next_dose <= 5) {
+                    $td_field_name = 'mother_td_dose' . $next_dose . '_date';
+                    $feeding_update[$td_field_name] = $update_td_dose_date;
+                }
+            }
+        }
+        
+        if (!empty($feeding_update)) {
+            $feeding_update['date_updated'] = date('Y-m-d H:i:s');
+            supabaseUpdate('child_health_records', $feeding_update, [ 'baby_id' => $record['baby_id'] ]);
+        }
     }
 
     // Return the updated record

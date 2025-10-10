@@ -1,0 +1,57 @@
+AUTOMATIC NOTIFICATION SYSTEM SETUP
+====================================
+
+The notification system will automatically send SMS and email reminders to parents 
+about their child's upcoming vaccination schedules.
+
+SCHEDULE: Every day at 2:40 AM Philippines time
+
+CRON JOB SETUP:
+===============
+
+1. Open your server's crontab:
+   crontab -e
+
+2. Add this line to run at 2:40 AM Philippines time:
+   40 2 * * * /usr/bin/php /path/to/ebakunado/cron/daily_notifications.php
+
+3. Save and exit the crontab editor
+
+4. Verify the cron job is set:
+   crontab -l
+
+IMPORTANT NOTES:
+===============
+
+- The system uses Asia/Manila timezone (Philippines time)
+- Notifications are sent 1 day before vaccination schedules
+- SMS and email are sent automatically
+- Duplicate notifications are prevented
+- All notifications are logged in the database
+
+DATABASE SETUP:
+===============
+
+Create the notification_logs table in your Supabase database:
+
+CREATE TABLE notification_logs (
+    id SERIAL PRIMARY KEY,
+    baby_id VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    message TEXT NOT NULL,
+    notification_date DATE NOT NULL,
+    sms_sent BOOLEAN DEFAULT FALSE,
+    email_sent BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+TESTING:
+========
+
+To test if the cron job is working:
+1. Check the logs directory: logs/daily_notifications_YYYY-MM-DD.log
+2. Check the notification_logs table in your database
+3. Verify parents receive SMS and email notifications
+
+The system is now fully automatic - no manual intervention needed!
