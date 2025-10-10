@@ -18,7 +18,17 @@
 					alt="eBakunado Logo" />
 				<h1 class="logo-label">eBakunado</h1>
 			</a>
-			<nav class="navbar">
+
+			<!-- Mobile menu button (used by js/nav.js) -->
+			<span
+				class="menu-icon material-symbols-rounded"
+				aria-label="Open menu"
+				aria-expanded="false"
+				aria-controls="primary-navigation">
+				menu
+			</span>
+
+			<nav id="primary-navigation" class="navbar">
 				<ul class="nav-links">
 					<li class="nav-item">
 						<a class="nav-button" data-nav="home" href="#hero">Home</a>
@@ -193,7 +203,8 @@
 						<p>Alaga sa Bakuna, Alaga sa Kinabukasan.</p>
 					</div>
 
-					<div class="footer-links">
+					<!-- Use semantic nav with an accessible label -->
+					<nav class="footer-links" aria-label="Footer">
 						<a class="footer-item" href="#hero">Home</a>
 						<a class="footer-item" href="#about">About</a>
 						<a class="footer-item" href="#features">Features</a>
@@ -202,7 +213,7 @@
 						>
 						<a class="footer-item" href="#privacy-policy">Privacy Policy</a>
 						<a class="footer-item" href="#login">Login</a>
-					</div>
+					</nav>
 				</div>
 				<p class="footer-note">&copy; 2025 eBakunado. All rights reserved.</p>
 			</section>

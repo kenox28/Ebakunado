@@ -360,7 +360,7 @@ async function CreateFun(e) {
 				text: data.message,
 				confirmButtonText: "Continue to Login",
 			}).then(() => {
-				window.location.href = "../views/login.php";
+				window.location.href = "../views/auth/login.php";
 			});
 		} else {
 			// Log detailed debug info if provided by the server
