@@ -1,4 +1,4 @@
-<aside class="sidebar">
+<aside class="sidebar" id="sideNav">
     <nav class="sidebar-nav">
         <div class="sidebar-brand">
             <img

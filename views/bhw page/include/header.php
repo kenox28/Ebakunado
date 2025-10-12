@@ -1,6 +1,13 @@
 <header class="header">
     <div class="header-left">
-        <span class="icon-menu material-symbols-rounded">menu</span>
+        <button
+            id="menuToggle"
+            class="icon-menu material-symbols-rounded"
+            type="button"
+            aria-label="Open menu"
+            aria-expanded="false"
+            aria-controls="sideNav"
+        >menu</button>
         <h1 class="header-greeting">Welcome, John Doe!</h1>
     </div>
 
@@ -14,14 +21,14 @@
 
         <!-- Popover Menu -->
         <div id="profileMenu" class="profile-menu" role="menu" aria-hidden="true">
-            <button class="menu-item" type="button">
+            <a class="menu-item" href="#" role="menuitem">
                 <span class="material-symbols-rounded">person</span>
                 Account
-            </button>
-            <button class="menu-item" type="button">
+            </a>
+            <a class="menu-item" href="#" role="menuitem" onclick="logoutBhw()">
                 <span class="material-symbols-rounded">logout</span>
                 Logout
-            </button>
+            </a>
         </div>
     </div>
 </header>
