@@ -17,12 +17,22 @@ if (isset($_SESSION['user_id'])) {
     $log_stmt->bind_param("ss", $_SESSION['user_id'], $ip);
     $log_stmt->execute();
     $log_stmt->close();
+
+    
 }
 
 // Destroy all session data
 session_unset();
 session_destroy();
 
+echo json_encode([
+    "status" => "success",
+    "message" => "User logged out successfully",
+    "debug" => [
+        "db_connected" => $db_connected,
+        "had_session" => ($_SESSION['user_id'] !== null)
+    ]
+]);
 // Redirect to landing page
 header("Location: landing-page/landing-page.html");
 exit();

@@ -2,7 +2,13 @@
 // Automatic notification service for upcoming vaccination schedules
 // This script checks for tomorrow's schedules and sends SMS + Email notifications
 
-header('Content-Type: application/json');
+// Only set header if not running from command line
+if (!isset($_SERVER['REQUEST_METHOD'])) {
+    // Running from command line (cron job)
+} else {
+    // Running from web request
+    header('Content-Type: application/json');
+}
 
 require_once __DIR__ . '/../../../database/SupabaseConfig.php';
 require_once __DIR__ . '/../../../database/DatabaseHelper.php';
@@ -13,29 +19,53 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 try {
-    // Get tomorrow's date
-    $tomorrow = date('Y-m-d', strtotime('+1 day'));
+    // Debug: Log current time and timezone
+    error_log("DEBUG: Current time: " . date('Y-m-d H:i:s') . ", Timezone: " . date_default_timezone_get());
     
-    // Get all immunization records scheduled for tomorrow
+    // Determine notification type (reminder or same-day)
+    $notification_type = isset($GLOBALS['notification_type']) ? $GLOBALS['notification_type'] : 'reminder';
+    
+    // Set target date based on notification type
+    if ($notification_type === 'same_day') {
+        $target_date = date('Y-m-d'); // Today
+        $date_label = 'today';
+        $message_prefix = '📅 TODAY';
+    } else {
+        $target_date = date('Y-m-d', strtotime('+1 day')); // Tomorrow
+        $date_label = 'tomorrow';
+        $message_prefix = '🔔 REMINDER';
+    }
+    
+    // Debug: Log target date
+    error_log("DEBUG: Notification type: $notification_type, Target date: $target_date");
+    
+    // Get all immunization records scheduled for target date
     $upcoming_schedules = supabaseSelect(
         'immunization_records',
         'id,baby_id,vaccine_name,dose_number,schedule_date,catch_up_date',
         [
-            'schedule_date' => $tomorrow,
+            'schedule_date' => $target_date,
             'status' => 'scheduled'
         ],
         'schedule_date.asc'
     );
     
     if (!$upcoming_schedules || count($upcoming_schedules) === 0) {
+        // Debug: Log why no schedules were found
+        error_log("DEBUG: No schedules found for date $target_date, type $notification_type");
         echo json_encode([
             'status' => 'success',
-            'message' => 'No upcoming schedules for tomorrow',
-            'date' => $tomorrow,
-            'notifications_sent' => 0
+            'message' => "No upcoming schedules for $date_label",
+            'date' => $target_date,
+            'notifications_sent' => 0,
+            'notification_type' => $notification_type,
+            'debug' => "Target date: $target_date, Type: $notification_type"
         ]);
-        exit();
+        return; // Don't exit - let cron job continue to next notification type
     }
+    
+    // Debug: Log that schedules were found
+    error_log("DEBUG: Found " . count($upcoming_schedules) . " schedules for $notification_type");
     
     // Get unique baby_ids
     $baby_ids = array_unique(array_column($upcoming_schedules, 'baby_id'));
@@ -88,13 +118,14 @@ try {
         }
         
         // Check if notification was already sent today
+        $notification_type_key = $notification_type === 'same_day' ? 'schedule_same_day' : 'schedule_reminder';
         $notification_exists = supabaseSelect(
             'notification_logs',
             'id',
             [
                 'baby_id' => $baby_id,
-                'notification_date' => date('Y-m-d'),
-                'type' => 'schedule_reminder'
+                'notification_date' => $target_date,
+                'type' => $notification_type_key
             ],
             null,
             1
@@ -113,19 +144,19 @@ try {
         $vaccines_text = implode(', ', $vaccine_list);
         
         // Send SMS notification
-        $sms_sent = sendSMSNotification($parent, $child, $vaccines_text, $tomorrow);
+        $sms_sent = sendSMSNotification($parent, $child, $vaccines_text, $target_date, $message_prefix, $date_label);
         
         // Send Email notification
-        $email_sent = sendEmailNotification($parent, $child, $vaccines_text, $tomorrow);
+        $email_sent = sendEmailNotification($parent, $child, $vaccines_text, $target_date, $notification_type, $date_label);
         
         // Log the notification
         if ($sms_sent || $email_sent) {
             supabaseInsert('notification_logs', [
                 'baby_id' => $baby_id,
-                'user_id' => $parent['id'],
-                'type' => 'schedule_reminder',
-                'message' => "Vaccination reminder for " . $child['child_fname'] . ' ' . $child['child_lname'],
-                'notification_date' => date('Y-m-d'),
+                'user_id' => $parent['user_id'],
+                'type' => $notification_type_key,
+                'message' => "Vaccination " . ($notification_type === 'same_day' ? 'same-day notification' : 'reminder') . " for " . $child['child_fname'] . ' ' . $child['child_lname'],
+                'notification_date' => $target_date,
                 'sms_sent' => $sms_sent,
                 'email_sent' => $email_sent,
                 'created_at' => date('Y-m-d H:i:s')
@@ -137,10 +168,11 @@ try {
     
     echo json_encode([
         'status' => 'success',
-        'message' => 'Notifications processed',
-        'date' => $tomorrow,
+        'message' => ucfirst($notification_type) . ' notifications processed',
+        'date' => $target_date,
         'notifications_sent' => $notifications_sent,
-        'errors' => $errors
+        'errors' => $errors,
+        'notification_type' => $notification_type
     ]);
     
 } catch (Exception $e) {
@@ -160,7 +192,7 @@ function getDoseText($doseNumber) {
     return $doseMap[$doseNumber] ?? "Dose $doseNumber";
 }
 
-function sendSMSNotification($parent, $child, $vaccines, $schedule_date) {
+function sendSMSNotification($parent, $child, $vaccines, $schedule_date, $message_prefix, $date_label) {
     $phone_number = $parent['phone_number'] ?? '';
     
     if (empty($phone_number)) {
@@ -182,7 +214,7 @@ function sendSMSNotification($parent, $child, $vaccines, $schedule_date) {
     }
     
     // SMS message
-    $message = "Hi " . $parent['fname'] . ", reminder: " . $child['child_fname'] . " " . $child['child_lname'] . " has " . $vaccines . " scheduled tomorrow (" . date('M d, Y', strtotime($schedule_date)) . "). Please bring your child to the health center. - City Health Department, Ormoc City";
+    $message = "Hi " . $parent['fname'] . ", $message_prefix: " . $child['child_fname'] . " " . $child['child_lname'] . " has " . $vaccines . " scheduled $date_label (" . date('M d, Y', strtotime($target_date)) . "). Please bring your child to the health center. - City Health Department, Ormoc City";
     
     // TextBee.dev API configuration
     $apiKey = '859e05f9-b29e-4071-b29f-0bd14a273bc2';
@@ -232,7 +264,7 @@ function sendSMSNotification($parent, $child, $vaccines, $schedule_date) {
     return $httpCode === 200 || $httpCode === 201;
 }
 
-function sendEmailNotification($parent, $child, $vaccines, $schedule_date) {
+function sendEmailNotification($parent, $child, $vaccines, $schedule_date, $notification_type, $date_label) {
     $email = $parent['email'] ?? '';
     
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -257,7 +289,7 @@ function sendEmailNotification($parent, $child, $vaccines, $schedule_date) {
         
         // Content
         $mail->isHTML(true);
-        $mail->Subject = 'Vaccination Schedule Reminder - ' . $child['child_fname'] . ' ' . $child['child_lname'];
+        $mail->Subject = 'Vaccination Schedule ' . ($notification_type === 'same_day' ? 'Today' : 'Reminder') . ' - ' . $child['child_fname'] . ' ' . $child['child_lname'];
         
         $mail->Body = '
         <html>
@@ -273,18 +305,18 @@ function sendEmailNotification($parent, $child, $vaccines, $schedule_date) {
         <body>
             <div class="header">
                 <h2>🏥 City Health Department</h2>
-                <h3>Ormoc City - Vaccination Reminder</h3>
+                <h3>Ormoc City - Vaccination ' . ($notification_type === 'same_day' ? 'Today' : 'Reminder') . '</h3>
             </div>
             
             <div class="content">
                 <p>Dear ' . $parent['fname'] . ' ' . $parent['lname'] . ',</p>
                 
-                <p>This is a friendly reminder that your child has an upcoming vaccination appointment:</p>
+                <p>This is a ' . ($notification_type === 'same_day' ? 'confirmation' : 'friendly reminder') . ' that your child has a vaccination appointment ' . ($notification_type === 'same_day' ? 'today' : 'coming up') . ':</p>
                 
                 <div class="highlight">
                     <h3>📅 Vaccination Details</h3>
                     <p><strong>Child:</strong> ' . $child['child_fname'] . ' ' . $child['child_lname'] . '</p>
-                    <p><strong>Scheduled Date:</strong> ' . date('M d, Y', strtotime($schedule_date)) . ' (Tomorrow)</p>
+                    <p><strong>Scheduled Date:</strong> ' . date('M d, Y', strtotime($schedule_date)) . ' (' . ucfirst($date_label) . ')</p>
                     <p><strong>Vaccines:</strong> ' . $vaccines . '</p>
                 </div>
                 

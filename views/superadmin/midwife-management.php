@@ -2,7 +2,7 @@
 session_start();
 $current_page = 'midwife-management';
 $page_title = 'Midwife Management';
-$page_js = 'midwife-management.js';
+$page_js = 'midwife-management.js?v=1.0.2';
 
 include 'includes/header.php';
 ?>

@@ -8,8 +8,9 @@ document.addEventListener("DOMContentLoaded", function () {
 // Fetch and display admins
 async function getAdmins() {
 	try {
+		console.log("Loading admins...");
 		const response = await fetch(
-			"../../../php/supabase/superadmin/show_admins.php"
+			"../../php/supabase/superadmin/show_admins.php"
 		);
 		// const response = await fetch("../../php/mysql/superadmin/show_admins.php");
 		const data = await response.json();
@@ -34,6 +35,7 @@ async function getAdmins() {
 		}
 	} catch (error) {
 		console.error("Error fetching admins:", error);
+		console.log("Loading admins...");
 	}
 }
 

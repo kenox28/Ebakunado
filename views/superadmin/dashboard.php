@@ -2,7 +2,7 @@
 session_start();
 $current_page = 'dashboard';
 $page_title = 'Dashboard';
-$page_js = 'dashboard.js';
+$page_js = 'dashboard.js?v=1.0.2';
 
 include 'includes/header.php';
 ?>

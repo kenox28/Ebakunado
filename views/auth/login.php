@@ -6,9 +6,9 @@ session_start();
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="/css/fonts.css" />
-		<link rel="stylesheet" href="/css/variables.css" />
-		<link rel="stylesheet" href="/css/login-style.css" />
+		<link rel="stylesheet" href="../../css/fonts.css" />
+		<link rel="stylesheet" href="../../css/variables.css" />
+		<link rel="stylesheet" href="../../css/login-style.css?v=1.0.1" />
 		<!-- <link rel="stylesheet" href="/css/login-style-v2.css" /> -->
 		<title>Health Worker Portal</title>
 	</head>
@@ -24,7 +24,7 @@ session_start();
 					<header class="auth-header">
 						<img
 							class="brand-logo"
-							src="/assets/images/white-ebakunado-logo-with-label.png"
+							src="../../assets/images/white-ebakunado-logo-with-label.png"
 							alt="Ebakunado Logo" />
 						<div class="brand-text">
 							<h2 class="brand-title">Immunization Data Management</h2>
@@ -91,7 +91,7 @@ session_start();
 			</section>
 		</main>
 
-		<script src="../../js/login-handler/password-toggle.js"></script>
+		<script src="../../js/auth-handler/password-toggle.js"></script>
 		<script src="../../js/supabase_js/login.js?v=1.0.12"></script>
 	</body>
 </html>

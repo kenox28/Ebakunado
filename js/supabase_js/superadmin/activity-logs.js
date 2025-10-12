@@ -10,7 +10,7 @@ async function getActivityLogs() {
 	try {
 		console.log("Loading activity logs...");
 		const response = await fetch(
-			"../../../php/supabase/admin/show_activitylog.php"
+			"../../php/supabase/admin/show_activitylog.php"
 		);
 		// const response = await fetch("../../php/mysql/admin/show_activitylog.php");
 		console.log("Activity logs response status:", response.status);
@@ -75,14 +75,11 @@ async function deleteActivityLog(log_id) {
 			const formData = new FormData();
 			formData.append("log_id", log_id);
 
-			const response = await fetch(
-				"../../../php/supabase/admin/delete_log.php",
-				{
-					// const response = await fetch("../../php/mysql/admin/delete_log.php", {
-					method: "POST",
-					body: formData,
-				}
-			);
+			const response = await fetch("../../php/supabase/admin/delete_log.php", {
+				// const response = await fetch("../../php/mysql/admin/delete_log.php", {
+				method: "POST",
+				body: formData,
+			});
 
 			const data = await response.json();
 			if (data.status === "success") {
@@ -126,7 +123,7 @@ async function deleteSelectedActivityLogs() {
 			for (const checkbox of selectedBoxes) {
 				const formData = new FormData();
 				formData.append("log_id", checkbox.value);
-				await fetch("../../../php/supabase/admin/delete_log.php", {
+				await fetch("../../php/supabase/admin/delete_log.php", {
 					// await fetch("../../php/mysql/admin/delete_log.php", {
 					method: "POST",
 					body: formData,

@@ -96,7 +96,7 @@ async function loginFun(e) {
 				// 		window.location.href = "superadmin/dashboard.php";
 				// 	});
 				console.log("Redirecting to superadmin dashboard");
-				window.location.href = "superadmin/dashboard.php";
+				window.location.href = "../../views/superadmin/dashboard.php";
 			} else if (data.user_type === "admin") {
 				// Swal.fire({
 				// 	icon: "success",

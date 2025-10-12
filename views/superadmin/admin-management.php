@@ -2,7 +2,7 @@
 session_start();
 $current_page = 'admin-management';
 $page_title = 'Admin Management';
-$page_js = 'admin-management.js';
+$page_js = 'admin-management.js?v=1.0.2';
 
 include 'includes/header.php';
 ?>

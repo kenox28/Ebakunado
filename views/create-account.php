@@ -9,9 +9,9 @@ session_start();
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Create Account - Ebakunado</title>
-  <link rel="stylesheet" href="/css/fonts.css" />
-  <link rel="stylesheet" href="/css/variables.css" />
-  <link rel="stylesheet" href="/css/create-account-style.css" />
+  <link rel="stylesheet" href="../css/fonts.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/create-account-style.css?v=1.0.1" />
 
   <!-- SweetAlert2 for better notifications -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -29,7 +29,7 @@ session_start();
         <header class="auth-header">
           <img
             class="brand-logo"
-            src="/assets/images/white-ebakunado-logo-with-label.png"
+            src="../assets/images/white-ebakunado-logo-with-label.png"
             alt="Ebakunado Logo" />
           <div class="brand-text">
             <h2 class="brand-title">Create Your Parent Account</h2>
