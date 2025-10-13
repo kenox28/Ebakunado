@@ -8,6 +8,15 @@
   height: 100vh;     
   position: sticky;
   top: 0;
+
+  transform: translateX(0);
+  transition: transform 300ms ease;
+  will-change: transform;
+}
+
+body.sidebar-collapsed .sidebar {
+  transform: translateX(-100%);
+  pointer-events: none;
 }
 
 .sidebar-nav {
