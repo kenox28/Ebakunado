@@ -1095,7 +1095,7 @@
     background-repeat: no-repeat;
   }
 
-  body.page_login::before {
+  body.page-login::before {
     content: "";
     position: absolute;
     inset: 0;
