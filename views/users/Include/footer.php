@@ -18,7 +18,39 @@
 			}
 
 			async function logoutUser() {
-				window.location.href = "../../views/logout.php"
+
+				// window.location.href = "../../php/supabase/users/logout.php"
+				const result = await Swal.fire({
+					title: "Are you sure?",
+					text: "You will be logged out of the system",
+					icon: "question",
+					showCancelButton: true,
+					confirmButtonColor: "#e74c3c",
+					cancelButtonColor: "#95a5a6",
+					confirmButtonText: "Yes, logout",
+				});
+
+				if (result.isConfirmed) {
+					const response = await fetch("../../php/supabase/users/logout.php", {
+						method: "POST",
+					});
+
+					const data = await response.json();
+
+					if (data.status === "success") {
+						Swal.fire({
+							icon: "success",
+							title: "Logged Out",
+							text: "You have been successfully logged out",
+							showConfirmButton: false,
+							timer: 1500,
+						}).then(() => {
+							window.location.href = "../../views/landing-page/landing-page.html";
+						});
+					} else {
+						Swal.fire("Error!", data.message, "error");
+					}
+				}
 			}
 			
 			function addChild() {

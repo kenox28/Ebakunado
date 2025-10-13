@@ -7,9 +7,9 @@ session_start();
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="stylesheet" href="/css/fonts.css" />
-	<link rel="stylesheet" href="/css/variables.css" />
-	<link rel="stylesheet" href="/css/login-style.css" />
+	<link rel="stylesheet" href="../../css/fonts.css" />
+	<link rel="stylesheet" href="../../css/variables.css" />
+	<link rel="stylesheet" href="../../css/login-style.css?v=1.0.1" />
 	<link rel="stylesheet" href="/css/queries.css" />
 	<title>Health Worker Portal</title>
 </head>
@@ -20,25 +20,25 @@ session_start();
 			&larr; Back to Homepage
 		</a>
 
-		<section class="auth-frame">
-			<!-- Left Side -->
-			<div class="auth-left">
-				<header class="auth-header">
-					<img
-						class="brand-logo"
-						src="/assets/images/white-ebakunado-logo-with-label.png"
-						alt="Ebakunado Logo" />
-					<div class="brand-text">
-						<h2 class="brand-title">Immunization Data Management</h2>
-						<h2 class="brand-subtitle">Linao Health Center</h2>
-					</div>
-				</header>
-				<footer class="auth-footer">
-					<p class="copyright-text">
-						&copy; 2025 Linao Health Center | eBakunado System
-					</p>
-				</footer>
-			</div>
+			<section class="auth-frame">
+				<!-- Left Side -->
+				<div class="auth-left">
+					<header class="auth-header">
+						<img
+							class="brand-logo"
+							src="../../assets/images/white-ebakunado-logo-with-label.png"
+							alt="Ebakunado Logo" />
+						<div class="brand-text">
+							<h2 class="brand-title">Immunization Data Management</h2>
+							<h2 class="brand-subtitle">Linao Health Center</h2>
+						</div>
+					</header>
+					<footer class="auth-footer">
+						<p class="copyright-text">
+							&copy; 2025 Linao Health Center | eBakunado System
+						</p>
+					</footer>
+				</div>
 
 			<!-- Right Side -->
 			<div class="auth-right">
@@ -91,8 +91,7 @@ session_start();
 		</section>
 	</main>
 
-	<script src="../../js/auth-handler/password-toggle.js"></script>
-	<script src="../../js/supabase_js/login.js?v=1.0.12"></script>
-</body>
-
+		<script src="../../js/auth-handler/password-toggle.js"></script>
+		<script src="../../js/supabase_js/login.js?v=1.0.12"></script>
+	</body>
 </html>

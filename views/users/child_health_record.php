@@ -206,8 +206,8 @@ document.addEventListener('DOMContentLoaded', async function(){
 				const res2 = await fetch('../../php/supabase/users/request_chr_doc.php', { method: 'POST', body: fd2 });
 				const j = await res2.json();
 				if (j.status === 'success'){
-					if (type==='transfer'){ reqTransferBtn.textContent = 'Transfer: Requested (pendingCHR)'; /* keep enabled for multiple requests */ }
-					if (type==='school'){ reqSchoolBtn.textContent = 'School: Requested (pendingCHR)'; /* keep enabled for multiple requests */ }
+					if (type==='transfer'){ reqTransferBtn.textContent = 'Transfer: Requested (pendingCHR)'; }
+					if (type==='school'){ reqSchoolBtn.textContent = 'School: Requested (pendingCHR)'; }
 				} else {
 					alert('Request failed: ' + (j.message||'Unknown error'));
 				}
@@ -230,13 +230,35 @@ document.addEventListener('DOMContentLoaded', async function(){
 				if (j.status === 'success' && j.data){
 					const st = j.data.status || '';
 					const url = j.data.doc_url || '';
+					const hasNewerRecords = j.data.has_newer_records || false;
+					
 					if (type==='transfer'){
-						if (st === 'approved' && url){ reqTransferBtn && (reqTransferBtn.textContent = 'Transfer: Approved — see Approved Requests'); }
-						else if (st === 'pendingCHR'){ reqTransferBtn && (reqTransferBtn.textContent = 'Transfer: Requested (pendingCHR)'); }
+						if (st === 'approved' && url && !hasNewerRecords){ 
+							reqTransferBtn && (reqTransferBtn.textContent = 'Transfer: Approved — see Approved Requests'); 
+						}
+						else if (st === 'approved' && url && hasNewerRecords){ 
+							reqTransferBtn && (reqTransferBtn.textContent = 'Transfer: New Records Available - Request Updated Copy'); 
+						}
+						else if (st === 'pendingCHR'){ 
+							reqTransferBtn && (reqTransferBtn.textContent = 'Transfer: Requested (pendingCHR)'); 
+						}
+						else {
+							reqTransferBtn && (reqTransferBtn.textContent = 'Request Transfer Copy');
+						}
 					}
 					if (type==='school'){
-						if (st === 'approved' && url){ reqSchoolBtn && (reqSchoolBtn.textContent = 'School: Approved — see Approved Requests'); }
-						else if (st === 'pendingCHR'){ reqSchoolBtn && (reqSchoolBtn.textContent = 'School: Requested (pendingCHR)'); }
+						if (st === 'approved' && url && !hasNewerRecords){ 
+							reqSchoolBtn && (reqSchoolBtn.textContent = 'School: Approved — see Approved Requests'); 
+						}
+						else if (st === 'approved' && url && hasNewerRecords){ 
+							reqSchoolBtn && (reqSchoolBtn.textContent = 'School: New Records Available - Request Updated Copy'); 
+						}
+						else if (st === 'pendingCHR'){ 
+							reqSchoolBtn && (reqSchoolBtn.textContent = 'School: Requested (pendingCHR)'); 
+						}
+						else {
+							reqSchoolBtn && (reqSchoolBtn.textContent = 'Request School Copy');
+						}
 					}
 				}
 			}catch(e){ /* silent */ }

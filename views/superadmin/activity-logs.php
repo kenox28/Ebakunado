@@ -2,7 +2,7 @@
 session_start();
 $current_page = 'activity-logs';
 $page_title = 'Activity Logs';
-$page_js = 'activity-logs.js';
+$page_js = 'activity-logs.js?v=1.0.4';
 
 include 'includes/header.php';
 ?>

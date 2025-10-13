@@ -2,7 +2,7 @@
 session_start();
 $current_page = 'bhw-management';
 $page_title = 'BHW Management';
-$page_js = 'bhw-management.js';
+$page_js = 'bhw-management.js?v=1.0.4';
 
 include 'includes/header.php';
 ?>

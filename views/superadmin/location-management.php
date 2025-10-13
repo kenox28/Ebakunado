@@ -2,7 +2,7 @@
 session_start();
 $current_page = 'location-management';
 $page_title = 'Location Management';
-$page_js = 'location-management.js';
+$page_js = 'location-management.js?v=1.0.4';
 
 include 'includes/header.php';
 ?>

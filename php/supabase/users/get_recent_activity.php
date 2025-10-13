@@ -15,71 +15,47 @@ $user_id = $_SESSION['user_id'];
 try {
     $activities = [];
 
-    // Get recent child health record status changes
-    $child_records = supabaseSelect(
-        'child_health_records',
-        'child_fname,child_lname,status,date_created,date_updated',
-        ['user_id' => $user_id],
-        'date_updated.desc',
+    // Get recent approved CHR document requests
+    $chr_requests = supabaseSelect(
+        'chrdocrequest',
+        'baby_id,request_type,status,created_at,doc_url',
+        ['user_id' => $user_id, 'status' => 'approved'],
+        'created_at.desc',
         10
     );
 
-    if ($child_records) {
-        foreach ($child_records as $record) {
-            $activity_type = 'approval';
-            $title = 'Request Approved';
-            $description = "Child registration for {$record['child_fname']} {$record['child_lname']} has been approved";
+    if ($chr_requests) {
+        // Get child names for the CHR requests
+        $baby_ids = array_column($chr_requests, 'baby_id');
+        $children = [];
+        
+        if (!empty($baby_ids)) {
+            $child_records = supabaseSelect(
+                'child_health_records',
+                'baby_id,child_fname,child_lname',
+                ['user_id' => $user_id, 'baby_id' => $baby_ids]
+            );
             
-            if ($record['status'] === 'rejected') {
-                $activity_type = 'rejection';
-                $title = 'Request Rejected';
-                $description = "Child registration for {$record['child_fname']} {$record['child_lname']} has been rejected";
-            } elseif ($record['status'] === 'pending') {
-                $activity_type = 'schedule';
-                $title = 'Request Submitted';
-                $description = "Child registration for {$record['child_fname']} {$record['child_lname']} has been submitted";
+            foreach ($child_records as $child) {
+                $children[$child['baby_id']] = $child;
             }
+        }
 
+        foreach ($chr_requests as $request) {
+            $child = $children[$request['baby_id']] ?? null;
+            $childName = $child ? "{$child['child_fname']} {$child['child_lname']}" : "Unknown Child";
+            $requestType = ucfirst($request['request_type']);
+            
             $activities[] = [
-                'type' => $activity_type,
-                'title' => $title,
-                'description' => $description,
-                'timestamp' => $record['date_updated'] ?: $record['date_created']
+                'type' => 'approval',
+                'title' => 'CHR Document Approved',
+                'description' => "{$requestType} copy approved for {$childName}",
+                'timestamp' => $request['created_at']
             ];
         }
     }
 
-    // Get recent vaccination completions
-    $children = supabaseSelect(
-        'child_health_records',
-        'baby_id,child_fname,child_lname',
-        ['user_id' => $user_id, 'status' => 'accepted']
-    );
-
-    if ($children) {
-        foreach ($children as $child) {
-            $vaccinations = supabaseSelect(
-                'immunization_records',
-                'vaccine_name,status,date_given',
-                ['baby_id' => $child['baby_id']],
-                'date_given.desc',
-                5
-            );
-
-            if ($vaccinations) {
-                foreach ($vaccinations as $vaccination) {
-                    if ($vaccination['status'] === 'completed' || $vaccination['status'] === 'taken') {
-                        $activities[] = [
-                            'type' => 'vaccine',
-                            'title' => 'Vaccine Completed',
-                            'description' => "{$vaccination['vaccine_name']} completed for {$child['child_fname']} {$child['child_lname']}",
-                            'timestamp' => $vaccination['date_given']
-                        ];
-                    }
-                }
-            }
-        }
-    }
+    // Only show approved CHR documents - vaccination completions removed as requested
 
     // Sort activities by timestamp (most recent first)
     usort($activities, function($a, $b) {

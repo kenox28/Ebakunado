@@ -19,34 +19,24 @@ async function logoutSuperAdmin() {
 	});
 
 	if (result.isConfirmed) {
-		try {
-			const response = await fetch(
-				"../../../php/supabase/superadmin/logout.php",
-				{
-					// const response = await fetch("../../php/mysql/superadmin/logout.php", {
-					method: "POST",
-				}
-			);
+		const response = await fetch("../../php/supabase/superadmin/logout.php", {
+			method: "POST",
+		});
 
-			const data = await response.json();
+		const data = await response.json();
 
-			if (data.status === "success") {
-				Swal.fire({
-					icon: "success",
-					title: "Logged Out",
-					text: "You have been successfully logged out",
-					showConfirmButton: false,
-					timer: 1500,
-				}).then(() => {
-					window.location.href = "../landing_page.php";
-				});
-			} else {
-				Swal.fire("Error!", data.message, "error");
-			}
-		} catch (error) {
-			console.error("Logout error:", error);
-			// Even if there's an error, redirect to landing page
-			window.location.href = "../landing_page.php";
+		if (data.status === "success") {
+			Swal.fire({
+				icon: "success",
+				title: "Logged Out",
+				text: "You have been successfully logged out",
+				showConfirmButton: false,
+				timer: 1500,
+			}).then(() => {
+				window.location.href = "../../views/landing-page/landing-page.html";
+			});
+		} else {
+			Swal.fire("Error!", data.message, "error");
 		}
 	}
 }

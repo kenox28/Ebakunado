@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // Fetch and display locations (reusing from home.js)
 async function getLocations() {
 	try {
-		const response = await fetch("../../php/mysql/admin/show_locations.php");
+		const response = await fetch("../../php/supabase/admin/show_locations.php");
 		const data = await response.json();
 
 		const tbody = document.querySelector("#locationsTableBody");
@@ -74,7 +74,7 @@ async function saveLocation() {
 	formData.append("purok", document.getElementById("add_purok").value);
 
 	try {
-		const response = await fetch("../../php/mysql/admin/add_location.php", {
+		const response = await fetch("../../php/supabase/admin/add_location.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -111,7 +111,7 @@ async function deleteLocation(location_id) {
 			formData.append("location_id", location_id);
 
 			const response = await fetch(
-				"../../php/mysql/admin/delete_location.php",
+				"../../php/supabase/admin/delete_location.php",
 				{
 					method: "POST",
 					body: formData,
@@ -160,7 +160,7 @@ async function deleteSelectedLocations() {
 			for (const checkbox of selectedBoxes) {
 				const formData = new FormData();
 				formData.append("location_id", checkbox.value);
-				await fetch("../../php/mysql/admin/delete_location.php", {
+				await fetch("../../php/supabase/admin/delete_location.php", {
 					method: "POST",
 					body: formData,
 				});

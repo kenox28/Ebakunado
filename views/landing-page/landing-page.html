@@ -3,10 +3,10 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="/css/fonts.css" />
-		<link rel="stylesheet" href="/css/variables.css" />
-		<link rel="stylesheet" href="/css/styles.css" />
-		<link rel="stylesheet" href="/css/queries.css" />
+		<link rel="stylesheet" href="../../css/fonts.css" />
+		<link rel="stylesheet" href="../../css/variables.css" />
+		<link rel="stylesheet" href="../../css/styles.css" />
+		<link rel="stylesheet" href="../../css/queries.css" />
 		<title>Landing Page</title>
 	</head>
 	<body>
@@ -68,7 +68,9 @@
 						Track, schedule, and manage child immunizations with ease.
 					</p>
 					<div class="hero-cta">
-						<button class="btn btn-primary">Get Started</button>
+						<button class="btn btn-primary" onclick="openCreateAccount()">
+							Get Started
+						</button>
 						<button class="btn btn-secondary">
 							<span class="material-symbols-rounded"> download </span>
 							Download App
@@ -213,11 +215,14 @@
 						>
 						<a class="footer-item" href="#privacy-policy">Privacy Policy</a>
 						<a class="footer-item" href="#login">Login</a>
+						<a class="footer-item" href="../create-account.php"
+							>Create Account</a
+						>
 					</nav>
 				</div>
 				<p class="footer-note">&copy; 2025 eBakunado. All rights reserved.</p>
 			</section>
 		</main>
-		<script src="../../js/landing-page-handler/nav.js"></script>
+		<script src="../../js/landing-page-handler/nav.js?v=1.0.1"></script>
 	</body>
 </html>

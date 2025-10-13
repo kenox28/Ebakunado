@@ -50,27 +50,42 @@ if ($child_records && count($child_records) > 0) {
         $missed_count = 0;
         $scheduled_count = 0;
         $upcoming_schedule = '';
+        $upcoming_vaccine = '';
         $latest_vaccine = '';
         $latest_dose = '';
         
         if ($immunization_records && count($immunization_records) > 0) {
             $current_date_str = $current_date->format('Y-m-d');
             
+            // First, count all statuses
             foreach ($immunization_records as $immunization) {
-                // Count by vaccination status
                 if ($immunization['status'] === 'taken') {
                     $taken_count++;
                 } elseif ($immunization['status'] === 'missed') {
                     $missed_count++;
                 } elseif ($immunization['status'] === 'scheduled') {
                     $scheduled_count++;
-                    // Get the next upcoming vaccination
-                    if (empty($upcoming_schedule) && 
-                        $immunization['schedule_date'] && 
-                        $immunization['schedule_date'] >= $current_date_str) {
-                        $upcoming_schedule = $immunization['schedule_date'];
-                    }
                 }
+            }
+            
+            // Now find the closest upcoming vaccination
+            $upcoming_vaccinations = array_filter($immunization_records, function($immunization) use ($current_date_str) {
+                return $immunization['status'] === 'scheduled' && 
+                       ($immunization['schedule_date'] >= $current_date_str || 
+                        $immunization['catch_up_date'] >= $current_date_str);
+            });
+            
+            if (!empty($upcoming_vaccinations)) {
+                // Sort by schedule_date or catch_up_date to find the closest one
+                usort($upcoming_vaccinations, function($a, $b) use ($current_date_str) {
+                    $dateA = $a['schedule_date'] ?: $a['catch_up_date'];
+                    $dateB = $b['schedule_date'] ?: $b['catch_up_date'];
+                    return strtotime($dateA) - strtotime($dateB);
+                });
+                
+                $closest_upcoming = $upcoming_vaccinations[0];
+                $upcoming_schedule = $closest_upcoming['schedule_date'] ?: $closest_upcoming['catch_up_date'];
+                $upcoming_vaccine = $closest_upcoming['vaccine_name'] ?: '';
             }
             
             // Get the latest vaccine and dose information
@@ -87,7 +102,7 @@ if ($child_records && count($child_records) > 0) {
             'age' => $age,
             'weeks_old' => round($weeks_old, 1),
             'gender' => $child['child_gender'],
-            'vaccine' => $latest_vaccine,
+            'vaccine' => $upcoming_vaccine ?: $latest_vaccine, // Use upcoming vaccine if available, otherwise latest
             'dose' => $latest_dose,
             'schedule_date' => $upcoming_schedule,
             'status' => $child['status'],
