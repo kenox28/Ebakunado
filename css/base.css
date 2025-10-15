@@ -27,4 +27,10 @@ body {
   min-width: 1366px;
   max-width: 1366px;      
   overflow-x: auto; 
+  
+  transition: grid-template-columns 300ms ease;
+}
+
+body.sidebar-collapsed {
+  grid-template-columns: 0 1fr;
 }

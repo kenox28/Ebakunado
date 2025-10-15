@@ -12,12 +12,13 @@ session_start();
   <link rel="stylesheet" href="../css/fonts.css" />
   <link rel="stylesheet" href="../css/variables.css" />
   <link rel="stylesheet" href="../css/create-account-style.css?v=1.0.1" />
+  <link rel="stylesheet" href="/css/queries.css" />
 
   <!-- SweetAlert2 for better notifications -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
-<body>
+<body class="page-create-account">
   <main class="auth-main">
     <a class="back-to-home" href="../views/auth/login.php">
       &larr; Back to Login

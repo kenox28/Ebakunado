@@ -1,4 +1,4 @@
-<aside class="sidebar">
+<aside class="sidebar" id="sideNav">
     <nav class="sidebar-nav">
         <div class="sidebar-brand">
             <img
@@ -33,32 +33,32 @@
                 </li>
                 <li class="sidebar-menu-item">
                     <a href="#" class="menu-link">
-                        <span class="menu-icon material-symbols-rounded">dashboard</span>
-                        <span class="menu-label">Dashboard</span>
+                        <span class="menu-icon material-symbols-rounded">vaccines</span>
+                        <span class="menu-label">Immunization Form</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
                     <a href="#" class="menu-link">
-                        <span class="menu-icon material-symbols-rounded">dashboard</span>
-                        <span class="menu-label">Dashboard</span>
+                        <span class="menu-icon material-symbols-rounded">hourglass_top</span>
+                        <span class="menu-label">Pending Approval</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
                     <a href="#" class="menu-link">
-                        <span class="menu-icon material-symbols-rounded">dashboard</span>
-                        <span class="menu-label">Dashboard</span>
+                        <span class="menu-icon material-symbols-rounded">child_care</span>
+                        <span class="menu-label">Child Health Record</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
                     <a href="#" class="menu-link">
-                        <span class="menu-icon material-symbols-rounded">dashboard</span>
-                        <span class="menu-label">Dashboard</span>
+                        <span class="menu-icon material-symbols-rounded">description</span>
+                        <span class="menu-label">CHR Doc Requests</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
                     <a href="#" class="menu-link">
-                        <span class="menu-icon material-symbols-rounded">dashboard</span>
-                        <span class="menu-label">Dashboard</span>
+                        <span class="menu-icon material-symbols-rounded">format_list_bulleted</span>
+                        <span class="menu-label">Target Client List</span>
                     </a>
                 </li>
             </ul>

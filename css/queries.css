@@ -916,9 +916,8 @@
 /* Mobile Phone Styles (max-width: 30rem (480px)) */
 @media (max-width: 30rem) {
   html,
-  body {
+  body.page-login {
     font-size: 56.25%;
-
     margin: 0;
     padding: 0;
     width: 100%;
@@ -929,16 +928,15 @@
     overflow-y: hidden;
   }
 
-  body {
-    display: block; /* override global flex */
+  body.page-login {
+    display: block;
     background-image: url("/assets/images/linao-health-center-bg.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
   }
 
-  /* Remove the white overlay on mobile */
-  body::before {
+  body.page-login::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -946,7 +944,7 @@
     z-index: 1;
   }
 
-  .auth-main {
+  body.page-login .auth-main {
     width: 100%;
     min-height: 100svh;
     padding: 1.6rem;
@@ -956,7 +954,7 @@
   }
 
   /* Frame fits screen and stacks vertically */
-  .auth-frame {
+  body.page-login .auth-frame {
     width: 100%;
     max-width: 420px;
     height: auto;
@@ -971,7 +969,7 @@
     overflow: hidden;
   }
 
-  .auth-left {
+  body.page-login .auth-left {
     display: flex;
     width: 100%;
     height: auto;
@@ -983,30 +981,30 @@
     justify-content: stretch;
   }
 
-  .auth-header {
+  body.page-login .auth-header {
     height: 6rem;
     padding: 0 1.2rem;
     gap: 0.8rem;
   }
 
   /* FIX: width had no unit and base width (85px) was not overridden */
-  .brand-logo {
+  body.page-login .brand-logo {
     width: 6.2rem;
     height: auto;
   }
 
-  .brand-title {
+  body.page-login .brand-title {
     font-size: 1.4rem;
   }
-  .brand-subtitle {
+  body.page-login .brand-subtitle {
     font-size: 1.8rem;
   }
 
-  .auth-footer {
+  body.page-login .auth-footer {
     display: none;
   }
 
-  .auth-right {
+  body.page-login .auth-right {
     width: 100%;
     height: auto;
     padding: 2rem 1.6rem 2.4rem;
@@ -1015,82 +1013,81 @@
     justify-content: center;
   }
 
-  .login-header {
+  body.page-login .login-header {
     margin-bottom: 1.6rem;
     text-align: center;
   }
-  .portal-title {
+  body.page-login .portal-title {
     font-size: 2.8rem;
   }
-  .form-title {
+  body.page-login .form-title {
     font-size: 2.4rem;
     margin-bottom: 1.2rem;
   }
 
-  .input-group {
+  body.page-login .input-group {
     margin-bottom: 1.2rem;
   }
-  .input-label {
+  body.page-login .input-label {
     font-size: 1.8rem;
     margin-bottom: 0.8rem;
   }
-  .form-input {
+  body.page-login .form-input {
     font-size: 1.8rem;
     padding: 1.4rem 1.4rem;
     border-radius: 10px;
   }
-  .password-input {
+  body.page-login .password-input {
     padding-right: 4.4rem;
   }
-  .password-toggle {
+  body.page-login .password-toggle {
     right: 1.6rem;
     font-size: 2.8rem;
   }
-  .forgot-password-wrapper {
+  body.page-login .forgot-password-wrapper {
     margin-bottom: 1.6rem;
     text-align: right;
   }
-  .forgot-password-link {
+  body.page-login .forgot-password-link {
     font-size: 1.8rem;
   }
 
-  .btn-primary {
+  body.page-login .btn-primary {
     font-size: 2rem;
     padding: 1.2rem;
     border-radius: 10px;
   }
-  .login-btn {
+  body.page-login .login-btn {
     width: 100%;
   }
-  .terms-text {
+  body.page-login .terms-text {
     font-size: 1.4rem;
   }
 
-  .back-to-home {
+  body.page-login .back-to-home {
     align-self: center;
     font-size: 1.6rem;
   }
 }
 
-
 /* Tablet: 480px–768px (30.0625rem–48rem) */
 @media (min-width: 30.0625rem) and (max-width: 48rem) {
   html,
-  body {
+  body.page-login {
     font-size: 62.5%;
     margin: 0;
     padding: 0;
     width: 100%;
-    height: auto;         
-    min-height: 100%;      
-    overflow-x: clip;      
-    overflow-y: auto;      
+    height: auto;
+    min-height: 100%;
+    overflow-x: clip;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  body {
-    display: block;        
-    min-height: auto;    
+  body.page-login {
+    display: block;
+    min-height: auto;
     position: relative;
     background-image: url("/assets/images/linao-health-center-bg.jpg");
     background-size: cover;
@@ -1098,7 +1095,7 @@
     background-repeat: no-repeat;
   }
 
-  body::before {
+  body.page-login::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -1106,24 +1103,24 @@
     z-index: 1;
   }
 
-  .auth-main {
+  body.page-login .auth-main {
     position: relative;
     z-index: 2;
     width: 100%;
-    min-height: auto;     
+    min-height: auto;
     padding: 2.4rem;
     display: grid;
     place-items: center;
     gap: 1.6rem;
   }
 
-  .auth-frame {
+  body.page-login .auth-frame {
     width: 100%;
-    max-width: 72rem;  
-    height: auto;         
+    max-width: 72rem;
+    height: auto;
     min-height: 0;
     padding: 0;
-    margin: 0 auto 2rem;   
+    margin: 0 auto 2rem;
     display: flex;
     flex-direction: column;
     background: var(--background-white);
@@ -1132,10 +1129,10 @@
     overflow: hidden;
   }
 
-  .auth-left {
+  body.page-login .auth-left {
     width: 100%;
     height: auto;
-    min-height: 24rem; 
+    min-height: 24rem;
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -1143,28 +1140,28 @@
     align-items: center;
   }
 
-  .auth-header {
+  body.page-login .auth-header {
     height: 6.4rem;
     padding: 0 1.6rem;
     gap: 1rem;
   }
 
-  .brand-logo {
+  body.page-login .brand-logo {
     width: 7.2rem;
     height: auto;
   }
-  .brand-title {
+  body.page-login .brand-title {
     font-size: 1.6rem;
   }
-  .brand-subtitle {
+  body.page-login .brand-subtitle {
     font-size: 2.2rem;
   }
 
-  .auth-footer {
+  body.page-login .auth-footer {
     display: none;
   }
 
-  .auth-right {
+  body.page-login .auth-right {
     width: 100%;
     height: auto;
     padding: 2.4rem 2rem 3rem;
@@ -1173,61 +1170,435 @@
     justify-content: center;
   }
 
-  .login-header {
+  body.page-login .login-header {
     margin-bottom: 1.6rem;
     text-align: center;
   }
-  .portal-title {
+  body.page-login .portal-title {
     font-size: 3.2rem;
   }
-  .form-title {
+  body.page-login .form-title {
     font-size: 2.4rem;
     margin-bottom: 1.6rem;
   }
 
-  .input-group {
+  body.page-login .input-group {
     margin-bottom: 1.6rem;
   }
-  .input-label {
+  body.page-login .input-label {
     font-size: 1.6rem;
     margin-bottom: 0.8rem;
   }
-  .form-input {
+  body.page-login .form-input {
     font-size: 1.8rem;
     padding: 1.4rem 1.6rem;
     border-radius: 10px;
   }
-  .password-input {
+  body.page-login .password-input {
     padding-right: 4.8rem;
   }
-  .password-toggle {
+  body.page-login .password-toggle {
     right: 1.6rem;
     font-size: 2.6rem;
   }
 
-  .forgot-password-wrapper {
+  body.page-login .forgot-password-wrapper {
     margin-bottom: 1.6rem;
     text-align: right;
   }
-  .forgot-password-link {
+  body.page-login .forgot-password-link {
     font-size: 1.6rem;
   }
 
-  .btn-primary {
+  body.page-login .btn-primary {
     font-size: 1.8rem;
     padding: 1.2rem;
     border-radius: 10px;
   }
-  .login-btn {
+  body.page-login .login-btn {
     width: 100%;
   }
-  .terms-text {
+  body.page-login .terms-text {
     font-size: 1.4rem;
   }
 
-  .back-to-home {
+  body.page-login .back-to-home {
     align-self: center;
     font-size: 1.6rem;
   }
 }
 /* End of Media Queries for Login Page */
+
+
+/* CREATE ACCOUNT PAGE MEDIA QUERIES */
+/* Mobile Phone Styles (max-width: 30rem (480px)) */
+@media (max-width: 30rem) {
+  html,
+  body.page-create-account {
+    font-size: 56.25%;
+
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-width: 0;
+    /* height: 100dvh; */
+    height: auto;
+    min-height: 100dvh;
+    overflow-x: clip;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.page-create-account {
+    display: block;
+    position: relative;
+    background-image: url("/assets/images/linao-health-center-bg.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  body.page-create-account::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 1;
+  }
+
+  body.page-create-account .auth-main {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: auto;
+    padding: 1.6rem;
+    display: grid;
+    place-items: center;
+    gap: 1.2rem;
+  }
+
+  body.page-create-account .auth-frame {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    min-height: 0;
+    padding: 0;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    background: var(--background-white); /* ensure white card */
+    border-radius: 10px;
+    box-shadow: 0 4px 16px var(--shadow-color);
+    overflow: hidden;
+  }
+
+  body.page-create-account .auth-left {
+    width: 100%;
+    height: auto;
+    min-height: 18rem;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: flex-start;
+    justify-content: stretch;
+  }
+
+  body.page-create-account .auth-header {
+    height: auto;
+    padding: 0;
+    gap: 0.8rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  body.page-create-account .brand-logo {
+    width: 6.2rem;
+    height: auto;
+    margin: 0 auto 0.6rem;
+  }
+  body.page-create-account .brand-title {
+    font-size: 1.6rem;
+  }
+  body.page-create-account .brand-subtitle {
+    font-size: 1.8rem;
+  }
+  body.page-create-account .brand-desc {
+    font-size: 1.3rem;
+  }
+  body.page-create-account .auth-footer {
+    display: none;
+  }
+
+  body.page-create-account .auth-right {
+    width: 100%;
+    height: auto;
+    padding: 2rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  body.page-create-account .create-account-header {
+    margin-bottom: 1.2rem;
+    text-align: center;
+  }
+  body.page-create-account .create-account-title {
+    font-size: 2.6rem;
+    margin-bottom: 0.6rem;
+  }
+  body.page-create-account .create-account-subtext {
+    font-size: 1.4rem;
+  }
+
+  body.page-create-account .form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+  body.page-create-account .form-row-2 > .input-group {
+    margin-bottom: 0;
+  }
+
+  body.page-create-account .create-account-form {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0.4rem;
+  }
+
+  body.page-create-account .form-title {
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+  }
+  body.page-create-account .input-group {
+    margin-bottom: 1.2rem;
+  }
+  body.page-create-account .input-label {
+    font-size: 1.6rem;
+    margin-bottom: 0.6rem;
+  }
+  body.page-create-account .form-input {
+    font-size: 1.8rem;
+    padding: 1.4rem 1.4rem;
+    border-radius: 10px;
+  }
+  body.page-create-account .password-input {
+    padding-right: 4.4rem;
+  }
+  body.page-create-account .password-toggle {
+    right: 1.6rem;
+    font-size: 2.6rem;
+  }
+
+  body.page-create-account .step-actions {
+    margin-top: 2rem;
+    gap: 0.8rem;
+  }
+  body.page-create-account .btn-primary,
+  body.page-create-account .btn-outline {
+    font-size: 1.8rem;
+    padding: 0.889rem 2.778rem;
+    border-radius: 10px;
+    margin: 1.8rem 0 0.889rem;
+  }
+
+  body.page-create-account .footer-note {
+    font-size: 1.3rem;
+    text-align: left;
+  }
+  body.page-create-account .back-to-home {
+    align-self: center;
+    font-size: 1.6rem;
+  }
+}
+
+/* Tablet: 480px–768px (30.0625rem–48rem) */
+@media (min-width: 30.0625rem) and (max-width: 48rem) {
+  html,
+  body.page-create-account {
+    font-size: 62.5%;
+
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 100%;
+    overflow-x: clip;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.page-create-account {
+    display: block;
+    min-height: auto;
+    position: relative;
+    background-image: url("/assets/images/linao-health-center-bg.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  body.page-create-account::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 1;
+  }
+
+  body.page-create-account .auth-main {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: auto;
+    padding: 2.4rem;
+    display: grid;
+    place-items: center;
+    gap: 1.6rem;
+  }
+
+  body.page-create-account .auth-frame {
+    width: 100%;
+    max-width: 72rem;
+    height: auto;
+    padding: 0;
+    margin: 0 auto 2rem;
+    display: flex;
+    flex-direction: column;
+    background: var(--background-white);
+    border-radius: 10px;
+    box-shadow: 0 4px 16px var(--shadow-color);
+    overflow: hidden;
+  }
+
+  body.page-create-account .auth-left {
+    width: 100%;
+    min-height: 24rem;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+  }
+
+  body.page-create-account .auth-header {
+    height: auto;
+    padding: 0 1.6rem;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  body.page-create-account .brand-logo {
+    width: 7.2rem;
+    height: auto;
+    margin: 0 auto 0.8rem;
+  }
+  body.page-create-account .brand-title {
+    font-size: 1.8rem;
+  }
+  body.page-create-account .brand-subtitle {
+    font-size: 2.2rem;
+  }
+  body.page-create-account .brand-desc {
+    font-size: 1.4rem;
+  }
+  body.page-create-account .auth-footer {
+    display: none;
+  }
+
+  body.page-create-account .auth-right {
+    width: 100%;
+    padding: 2.4rem 2rem 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  body.page-create-account .create-account-header {
+    margin-bottom: 1.6rem;
+    text-align: center;
+  }
+  body.page-create-account .create-account-title {
+    font-size: 3rem;
+  }
+  body.page-create-account .create-account-subtext {
+    font-size: 1.6rem;
+  }
+
+  body.page-create-account .stepper {
+    gap: 1rem;
+    margin: 0 0 1.6rem 0;
+  }
+  body.page-create-account .step-index {
+    width: 30px;
+    height: 30px;
+    font-size: 1.4rem;
+  }
+  body.page-create-account .step-label {
+    font-size: 1.4rem;
+  }
+
+  body.page-create-account .create-account-form {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0.4rem;
+  }
+
+  body.page-create-account .form-row-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.6rem;
+    margin-bottom: 1.6rem;
+  }
+  body.page-create-account .form-row-2 > .input-group {
+    margin-bottom: 0;
+  }
+
+  body.page-create-account .form-title {
+    font-size: 2.2rem;
+    margin-bottom: 1.6rem;
+  }
+  body.page-create-account .input-group {
+    margin-bottom: 1.6rem;
+  }
+  body.page-create-account .input-label {
+    font-size: 1.6rem;
+  }
+  body.page-create-account .form-input {
+    font-size: 1.8rem;
+    padding: 1.4rem 1.6rem;
+    border-radius: 10px;
+  }
+  body.page-create-account .password-input {
+    padding-right: 4.8rem;
+  }
+  body.page-create-account .password-toggle {
+    right: 1.6rem;
+    font-size: 2.6rem;
+  }
+
+  body.page-create-account .step-actions {
+    margin-top: 2rem;
+    gap: 1rem;
+  }
+  body.page-create-account .btn-primary,
+  body.page-create-account .btn-outline {
+    font-size: 1.8rem;
+    padding: 1rem 3rem;
+    border-radius: 10px;
+    margin-top: 1.6rem;
+  }
+
+  body.page-create-account .footer-note {
+    font-size: 1.4rem;
+    text-align: left;
+  }
+  body.page-create-account .back-to-home {
+    align-self: center;
+    font-size: 1.6rem;
+  }
+}
+/* End of Media Queries for Create Account Page */

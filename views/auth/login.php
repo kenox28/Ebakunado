@@ -3,20 +3,22 @@ session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="../../css/fonts.css" />
-		<link rel="stylesheet" href="../../css/variables.css" />
-		<link rel="stylesheet" href="../../css/login-style.css?v=1.0.1" />
-		<!-- <link rel="stylesheet" href="/css/login-style-v2.css" /> -->
-		<title>Health Worker Portal</title>
-	</head>
-	<body>
-		<main class="auth-main">
-			<a class="back-to-home" href="../landing-page/landing-page.html">
-				&larr; Back to Homepage
-			</a>
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="../../css/fonts.css" />
+	<link rel="stylesheet" href="../../css/variables.css" />
+	<link rel="stylesheet" href="../../css/login-style.css?v=1.0.1" />
+	<link rel="stylesheet" href="/css/queries.css" />
+	<title>Health Worker Portal</title>
+</head>
+
+<body class="page-login">
+	<main class="auth-main">
+		<a class="back-to-home" href="../landing-page/landing-page.html">
+			&larr; Back to Homepage
+		</a>
 
 			<section class="auth-frame">
 				<!-- Left Side -->
@@ -38,58 +40,56 @@ session_start();
 					</footer>
 				</div>
 
-				<!-- Right Side -->
-				<div class="auth-right">
-					<header class="login-header">
-						<h1 class="portal-title">Health Worker Portal</h1>
-					</header>
-					<form class="login-form" action="#" id="LoginForm">
-						<h2 class="form-title">Sign In</h2>
-						<div class="input-group">
-							<input type="hidden" name="csrf_token" id="csrf_token" value="" />
-							<label class="input-label" for="mobile_number">Mobile No.</label>
+			<!-- Right Side -->
+			<div class="auth-right">
+				<header class="login-header">
+					<h1 class="portal-title">Health Worker Portal</h1>
+				</header>
+				<form class="login-form" action="#" id="LoginForm">
+					<h2 class="form-title">Sign In</h2>
+					<div class="input-group">
+						<input type="hidden" name="csrf_token" id="csrf_token" value="" />
+						<label class="input-label" for="mobile_number">Mobile No.</label>
+						<input
+							class="form-input"
+							type="text"
+							id="Email_number"
+							name="Email_number"
+							required
+							placeholder="+63 9XX XXX XXXX" />
+					</div>
+					<div class="input-group password-group">
+						<label class="input-label" for="password">Password</label>
+						<div class="password-wrapper">
 							<input
-								class="form-input"
-								type="text"
-								id="Email_number"
-								name="Email_number"
+								class="form-input password-input"
+								type="password"
+								id="password"
+								name="password"
 								required
-								placeholder="+63 9XX XXX XXXX" />
+								placeholder="Enter your password" />
+							<span class="material-symbols-rounded password-toggle">visibility_off</span>
 						</div>
-						<div class="input-group password-group">
-							<label class="input-label" for="password">Password</label>
-							<div class="password-wrapper">
-								<input
-									class="form-input password-input"
-									type="password"
-									id="password"
-									name="password"
-									required
-									placeholder="Enter your password" />
-								<span class="material-symbols-rounded password-toggle"
-									>visibility_off</span
-								>
-							</div>
-						</div>
-						<div class="forgot-password-wrapper">
-							<a class="forgot-password-link" href="#">Forgot Password?</a>
-						</div>
-						<div class="submit-wrapper">
-							<button class="btn btn-primary login-btn" type="submit">
-								Login
-							</button>
-						</div>
-						<div class="terms-wrapper">
-							<p class="terms-text">
-								By logging in, you agree to the Linao Health Center's
-								<a class="terms-link" href="#">Terms of Service</a> and
-								<a class="terms-link" href="#">Privacy Policy</a>.
-							</p>
-						</div>
-					</form>
-				</div>
-			</section>
-		</main>
+					</div>
+					<div class="forgot-password-wrapper">
+						<a class="forgot-password-link" href="#">Forgot Password?</a>
+					</div>
+					<div class="submit-wrapper">
+						<button class="btn btn-primary login-btn" type="submit">
+							Login
+						</button>
+					</div>
+					<div class="terms-wrapper">
+						<p class="terms-text">
+							By logging in, you agree to the Linao Health Center's
+							<a class="terms-link" href="#">Terms of Service</a> and
+							<a class="terms-link" href="#">Privacy Policy</a>.
+						</p>
+					</div>
+				</form>
+			</div>
+		</section>
+	</main>
 
 		<script src="../../js/auth-handler/password-toggle.js"></script>
 		<script src="../../js/supabase_js/login.js?v=1.0.12"></script>
