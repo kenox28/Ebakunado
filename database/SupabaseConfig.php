@@ -309,7 +309,6 @@ $table_definitions = [
         gender VARCHAR(255),
         place VARCHAR(255),
         permissions VARCHAR(255) DEFAULT 'view',
-        Approve BOOLEAN DEFAULT false,
         last_active TIMESTAMP DEFAULT NULL,
         created_at TIMESTAMP DEFAULT NOW(),
         updated TIMESTAMP DEFAULT NOW(),
@@ -438,6 +437,21 @@ $table_definitions = [
 // CREATE INDEX IF NOT EXISTS idx_notification_logs_user_id ON notification_logs(user_id);
 // CREATE INDEX IF NOT EXISTS idx_notification_logs_date ON notification_logs(notification_date);
 // CREATE INDEX IF NOT EXISTS idx_notification_logs_type ON notification_logs(type);
+// CREATE TABLE IF NOT EXISTS system_settings (
+//     id SERIAL PRIMARY KEY,
+//     email_username VARCHAR(255) NOT NULL,
+//     email_password VARCHAR(255) NOT NULL,
+//     sms_api_key VARCHAR(255) NOT NULL,
+//     sms_device_id VARCHAR(255) NOT NULL,
+//     notification_time TIME DEFAULT '02:40:00',
+//     system_name VARCHAR(255) DEFAULT 'eBakunado',
+//     health_center_name VARCHAR(255) DEFAULT 'City Health Department, Ormoc City',
+//     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+// );
+
+// -- Create index for better performance
+// CREATE INDEX IF NOT EXISTS idx_system_settings_id ON system_settings(id);
 
 
 // Function to initialize database tables (for Supabase setup)

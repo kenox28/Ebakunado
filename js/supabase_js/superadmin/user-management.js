@@ -198,12 +198,19 @@ async function updateUser() {
 		});
 
 		const data = await response.json();
+		console.log("Update user response:", data);
 		if (data.status === "success") {
 			Swal.fire("Success!", "User updated successfully", "success");
 			cancelEditUser();
 			getUsers();
 		} else {
-			Swal.fire("Error!", data.message, "error");
+			console.error("Update user error:", data);
+			Swal.fire(
+				"Error!",
+				data.message +
+					(data.debug ? "\nDebug: " + JSON.stringify(data.debug) : ""),
+				"error"
+			);
 		}
 	} catch (error) {
 		console.error("Error updating user:", error);

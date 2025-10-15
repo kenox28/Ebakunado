@@ -51,7 +51,7 @@
 </div>
 
 <!-- <script src="../../js/admin/dashboard.js?v=1.0.1"></script> -->
-<script src="../../js/supabase_js/admin/dashboard.js?v=1.0.2"></script>
+<script src="../../js/supabase_js/admin/dashboard.js?v=1.0.3"></script>
 <script>
     // Set active menu item
     document.querySelector('a[href="dashboard.php"]').classList.add('active');

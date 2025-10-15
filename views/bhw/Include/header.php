@@ -1,10 +1,15 @@
 <?php session_start(); ?>
 <?php 
-// Debug BHW session
-if (isset($_SESSION['bhw_id'])) {
-    echo "<!-- BHW Session Active: " . $_SESSION['bhw_id'] . " -->";
+// Handle both BHW and Midwife sessions (but BHW should only see BHW features)
+$user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+$user_type = $_SESSION['user_type'] ?? 'bhw'; // Default to bhw for BHW pages
+$user_name = $_SESSION['fname'] ?? 'User';
+
+// Debug session
+if ($user_id) {
+    echo "<!-- Session Active: " . $user_type . " - " . $user_id . " -->";
 } else {
-    echo "<!-- BHW Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
+    echo "<!-- Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
 }
 ?>
 <!DOCTYPE html>
@@ -328,9 +333,8 @@ if (isset($_SESSION['bhw_id'])) {
 			<a href="./immunization.php" data-icon="💉"><span>Imuunization form</span></a>
 			<a href="./pending_approval.php" data-icon="⏳"><span>Pending Approval</span></a>
 			<a href="./child_health_record.php" data-icon="🧒"><span>Child Health Record</span></a>
-				<a href="./chr-doc-requests.php" data-icon="📄"><span>CHR Doc Requests</span></a>
 			<a href="./target_client.php" data-icon="🎯"><span>Target Client List</span></a>
-			<a href="./system_settings.php" data-icon="⚙️"><span>System Settings</span></a>
+			<a href="./profile_management.php" data-icon="👤"><span>Profile Management</span></a>
 		</aside>
 		<main>
 			<header>
@@ -343,6 +347,12 @@ if (isset($_SESSION['bhw_id'])) {
 					<a href="#">ebakunado</a>
 				</nav>
 				<nav>
+					<div style="display: flex; align-items: center; margin-right: 15px;">
+						<span style="font-weight: bold; color: #2c5aa0;">Welcome, <?php echo htmlspecialchars($user_name); ?>!</span>
+						<span style="margin-left: 10px; padding: 4px 8px; background: #e3f2fd; border-radius: 12px; font-size: 12px; color: #1976d2;">
+							<?php echo ucfirst($user_type); ?>
+						</span>
+					</div>
 					<input
 						type="text"
 						id="searchInput"
@@ -398,7 +408,7 @@ if (isset($_SESSION['bhw_id'])) {
 					const content = document.getElementById('notificationContent');
 					
 					try {
-						const response = await fetch('../../php/supabase/bhw/get_bhw_notifications_simple.php');
+						const response = await fetch('../../php/supabase/shared/get_bhw_notifications_simple.php');
 						const data = await response.json();
 						
 						if (data.status === 'success' && data.data.length > 0) {
