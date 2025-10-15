@@ -1,36 +1,37 @@
 html {
-  font-size: 62.5%;
+	font-size: 62.5%;
 }
 
-html, body {
-  height: 100%;
+html,
+body {
+	height: 100%;
 }
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 body {
-  font-family: "Poppins", sans-serif;
-  user-select: none;
+	font-family: "Poppins", sans-serif;
+	user-select: none;
 
-  display: grid;
-  grid-template-columns: 230px 1fr;
-  grid-template-rows: 60px 1fr;
-  grid-template-areas:
-    "sidebar header"
-    "sidebar main";
-  min-height: 100vh;
+	display: grid;
+	grid-template-columns: 230px 1fr;
+	grid-template-rows: 60px 1fr;
+	grid-template-areas:
+		"sidebar header"
+		"sidebar main";
+	min-height: 100vh;
 
-  min-width: 1366px;
-  max-width: 1366px;      
-  overflow-x: auto; 
-  
-  transition: grid-template-columns 300ms ease;
+	min-width: 1366px;
+	max-width: 100%;
+	overflow-x: auto;
+
+	transition: grid-template-columns 300ms ease;
 }
 
 body.sidebar-collapsed {
-  grid-template-columns: 0 1fr;
+	grid-template-columns: 0 1fr;
 }

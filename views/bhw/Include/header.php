@@ -353,6 +353,28 @@ if ($user_id) {
 							<?php echo ucfirst($user_type); ?>
 						</span>
 					</div>
+					
+					<!-- Plus Button for Add Child -->
+					<a href="./add_child.php" style="
+						background: #4CAF50; 
+						color: white; 
+						border: none; 
+						border-radius: 50%; 
+						width: 40px; 
+						height: 40px; 
+						margin-right: 10px;
+						cursor: pointer;
+						font-size: 18px;
+						box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+						transition: all 0.3s ease;
+						display: inline-flex;
+						align-items: center;
+						justify-content: center;
+						text-decoration: none;
+					" title="Add Child" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+						➕
+					</a>
+					
 					<input
 						type="text"
 						id="searchInput"

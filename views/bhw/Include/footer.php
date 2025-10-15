@@ -9,6 +9,13 @@
 					});
 				}
 			})();
+			async function logoutBhw() {
+				// const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
+				const response = await fetch('../../php/supabase/bhw/logout.php', { method: 'POST' });
+				const data = await response.json();
+				if (data.status === 'success') { window.location.href = '../../views/auth/login.php'; }
+				else { alert('Logout failed: ' + data.message); }
+			}
 		</script>
 	</body>
 </html>

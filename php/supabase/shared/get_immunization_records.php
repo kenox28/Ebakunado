@@ -4,7 +4,9 @@ include '../../../database/SupabaseConfig.php';
 include '../../../database/DatabaseHelper.php';
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['bhw_id'])) { echo json_encode(['status'=>'error','message'=>'Unauthorized']); exit(); }
+// Handle both BHW and Midwife sessions
+$user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+if (!$user_id) { echo json_encode(['status'=>'error','message'=>'Unauthorized - User ID not found in session']); exit(); }
 
 $baby_id = $_GET['baby_id'] ?? '';
 if ($baby_id === '') { echo json_encode(['status'=>'error','message'=>'Missing baby_id']); exit(); }

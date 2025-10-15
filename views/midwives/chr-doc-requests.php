@@ -14,10 +14,13 @@ async function loadChrRequests(){
 	const container = document.getElementById('reqContainer');
 	container.innerHTML = '<div class="loading" style="text-align:center; padding: 20px;">Loading requests...</div>';
 	try{
+		console.log('Loading CHR requests...');
 		const res = await fetch('../../php/supabase/shared/list_chr_doc_requests.php');
+		console.log('Response status:', res.status);
 		const data = await res.json();
+		console.log('Response data:', data);
 		if (!(data && data.status === 'success')){
-			container.innerHTML = '<div style="text-align:center; color:#dc3545; padding:20px;">Failed to load requests</div>';
+			container.innerHTML = '<div style="text-align:center; color:#dc3545; padding:20px;">Failed to load requests: ' + (data.message || 'Unknown error') + '</div>';
 			return;
 		}
 		const rows = Array.isArray(data.data) ? data.data : [];
@@ -51,7 +54,8 @@ async function loadChrRequests(){
 		html += '</tbody></table>';
 		container.innerHTML = html;
 	}catch(e){
-		container.innerHTML = '<div style="text-align:center; color:#dc3545; padding:20px;">Network error</div>';
+		console.error('Error loading CHR requests:', e);
+		container.innerHTML = '<div style="text-align:center; color:#dc3545; padding:20px;">Network error: ' + e.message + '</div>';
 	}
 }
 

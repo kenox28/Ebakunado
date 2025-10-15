@@ -8,7 +8,7 @@
             aria-expanded="false"
             aria-controls="sideNav"
         >menu</button>
-        <h1 class="header-greeting">Welcome, John Doe!</h1>
+        <h1 class="header-greeting">Welcome, <?php echo htmlspecialchars($user_name);?>!</h1>
     </div>
 
     <div class="header-user" id="headerUser">
@@ -16,7 +16,7 @@
             class="user-avatar"
             src="/assets/images/user-profile.png"
             alt="User Profile" />
-        <h2 class="user-display-name">John Doe</h2>
+        <h2 class="user-display-name"><?php echo htmlspecialchars($user_name);?></h2>
         <span class="icon-dropdown material-symbols-rounded">keyboard_arrow_down</span>
 
         <!-- Popover Menu -->

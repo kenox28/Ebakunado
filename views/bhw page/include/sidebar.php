@@ -17,8 +17,8 @@
                 src="/assets/images/user-profile.png"
                 alt="User Profile" />
             <div class="profile-text-block">
-                <h2 class="profile-name">John Doe</h2>
-                <h3 class="profile-role">Barangay Health Worker</h3>
+                <h2 class="profile-name"><?php echo htmlspecialchars($user_fullname);?></h2>
+                <h3 class="profile-role"><?php echo htmlspecialchars($user_type);?></h3>
             </div>
         </div>
 

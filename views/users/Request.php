@@ -226,6 +226,24 @@
         <p>Please fill out all required information for your child's health record</p>
     </div>
 
+    <!-- Family Code Entry Section -->
+    <div class="family-code-section" style="background: #e8f5e8; padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #4CAF50;">
+        <h3 style="margin: 0 0 15px 0; color: #2e7d32;">🏷️ Have a Family Code?</h3>
+        <p style="margin: 0 0 15px 0; color: #666;">Enter the code given by your BHW/Midwife to add your child</p>
+        
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="text" id="familyCode" placeholder="Enter family code (e.g., FAM-ABC123)" style="flex: 1; padding: 10px; border: 2px solid #4CAF50; border-radius: 5px; font-size: 16px;">
+            <button onclick="claimChildWithCode()" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Claim Child</button>
+        </div>
+        
+        <div id="familyCodeResult" style="margin-top: 10px;"></div>
+    </div>
+
+    <div class="or-divider" style="text-align: center; margin: 30px 0; position: relative;">
+        <hr style="border: none; border-top: 2px solid #ddd; margin: 0;">
+        <span style="background: white; padding: 0 20px; color: #666; font-weight: bold;">OR</span>
+    </div>
+
     <form id="requestform" method="post" enctype="multipart/form-data">
         <!-- Basic Information Section -->
         <div class="form-container">
@@ -434,6 +452,52 @@ async function Request_Immunization() {
         requestform.reset();
     } else {
         alert('Error: ' + data.message);
+    }
+}
+
+// Family Code Claiming Function
+async function claimChildWithCode() {
+    const familyCode = document.getElementById('familyCode').value.trim();
+    const resultDiv = document.getElementById('familyCodeResult');
+    
+    if (!familyCode) {
+        resultDiv.innerHTML = '<div style="color: #f44336; padding: 10px; background: #ffebee; border-radius: 4px;">Please enter a family code</div>';
+        return;
+    }
+    
+    resultDiv.innerHTML = '<div style="color: #1976d2; padding: 10px; background: #e3f2fd; border-radius: 4px;">Checking code...</div>';
+    
+    try {
+        const formData = new FormData();
+        formData.append('family_code', familyCode);
+        
+        const response = await fetch('../../php/supabase/users/claim_child_with_code.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            resultDiv.innerHTML = `
+                <div style="color: #2e7d32; padding: 15px; background: #e8f5e8; border-radius: 4px;">
+                    <h4 style="margin: 0 0 10px 0;">✅ Child Added Successfully!</h4>
+                    <p style="margin: 0 0 5px 0;"><strong>Child:</strong> ${data.child_name}</p>
+                    <p style="margin: 0 0 5px 0;"><strong>Baby ID:</strong> ${data.baby_id}</p>
+                    <p style="margin: 0;">The child has been added to your account. You can now view their records in your dashboard.</p>
+                </div>
+            `;
+            document.getElementById('familyCode').value = '';
+            
+            // Redirect to children list after 3 seconds
+            setTimeout(() => {
+                window.location.href = 'children_list.php';
+            }, 3000);
+        } else {
+            resultDiv.innerHTML = `<div style="color: #f44336; padding: 10px; background: #ffebee; border-radius: 4px;">❌ ${data.message}</div>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<div style="color: #f44336; padding: 10px; background: #ffebee; border-radius: 4px;">❌ Error: ${error.message}</div>`;
     }
 }
 </script>
