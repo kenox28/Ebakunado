@@ -4,6 +4,9 @@
   max-width: 100%;
   margin: 0 auto;
   padding: 1.2rem 3rem;
+  /* padding: 1.2rem 1.6rem; */
+
+  overflow-y: scroll;
 }
 
 .dashboard-section {
@@ -13,7 +16,9 @@
 }
 
 .dashboard-overview,
-.dashboard-charts {
+.quick-actions,
+.activity-section,
+.tasks-section {
   display: flex;
   flex-direction: column;
   gap: 1.6rem;
@@ -70,17 +75,17 @@
   display: flex;
   align-items: center;
   justify-content: flex-start; 
-  gap: 8px;
+  gap: 1rem;
 }
 
 .card-info .material-symbols-rounded:first-child {
-  font-size: 2.8rem;
+  font-size: 4.2rem;
   line-height: 1;
   flex: 0 0 auto; 
 }
 
 .card-title {
-  font-size: 1.4rem;
+  font-size: 1.8rem;
   font-weight: 500;
   width: 140px;
   color: var(--text-label);
@@ -109,19 +114,58 @@
   transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
 }
 
-.card-info .card-info-btn:hover,
-.card-info .card-info-btn:focus-visible {
-  background-color: #00000014;
-  color: var(--text-label);
-  outline: none;
-}
-
-.card-info .card-info-btn:active {
-  transform: scale(0.95);
-}
-
 .card-count .card-number {
   font-size: 4rem;
   font-weight: 600;
   color: var(--text-label);
+}
+
+
+/* Quick Actions */
+.actions-wrapper {
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  align-items: stretch; 
+}
+
+.action-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  padding: 1.2rem 1.5rem;
+
+  text-decoration: none;
+  border: 1px solid black;
+  border-radius: 12px;
+}
+
+/* Activity and Tasks Section */
+.activity-task-container {
+  border: 1px solid black;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.activity-section,
+.tasks-section {
+  border: 1px solid black;
+  padding: 0;
+  border-radius: 12px;
+}
+
+.activity-section {
+  height: auto;
+}
+
+.activity-list {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
