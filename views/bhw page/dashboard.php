@@ -33,91 +33,64 @@ if (isset($_SESSION['bhw_id'])) {
                 <h2 class="dashboard-heading">Dashboard Overview</h2>
                 <div class="card-wrapper">
                     <div class="card card-1">
-                        <div class="card-info">
+                        <div class="card-icon">
                             <span class="material-symbols-rounded">hourglass_top</span>
-                            <p class="card-title">Pending Approvals</p>
                         </div>
-                        <div class="card-count">
+                        <div class="card-info">
                             <p class="card-number" id="pendingCount">0</p>
+                            <p class="card-title">Pending Approvals</p>
+                            <a class="card-link" href="#">
+                                <span class="material-symbols-rounded">visibility</span>
+                                View Details
+                            </a>
                         </div>
                     </div>
-                    <div class="card card-2">
-                        <div class="card-info">
-                            <span class="material-symbols-rounded">vaccines</span>
-                            <p class="card-title">Today's Vaccinations</p>
-                        </div>
-                        <div class="card-count">
-                            <p class="card-number" id="todayCount">0</p>
-                        </div>
-                    </div>
-                    <div class="card card-3">
-                        <div class="card-info">
-                            <span class="material-symbols-rounded">warning</span>
-                            <p class="card-title">Missed Vaccinations</p>
-                        </div>
-                        <div class="card-count">
-                            <p class="card-number" id="missedCount">0</p>
-                        </div>
-                    </div>
-                    <div class="card card-4">
-                        <div class="card-info">
-                            <span class="material-symbols-rounded">child_care</span>
-                            <p class="card-title">Total Children</p>
-                        </div>
-                        <div class="card-count">
-                            <p class="card-number" id="totalCount">0</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <h2 class="dashboard-heading">Quick Actions</h2>
-                <div class="actions-wrapper">
-                    <a href="#" class="action-card action-card-1">
-                        <div>
-                            <span class="action-icon material-symbols-rounded">inbox</span>
+                    <div class="card card-2">
+                        <div class="card-icon">
+                            <span class="material-symbols-rounded">vaccines</span>
                         </div>
-                        <div>
-                            <h4>Pending Approvals</h4>
-                            <p>Review child health records</p>
-                            <span class="action-count" id="pendingActionCount">0</span>
+                        <div class="card-info">
+                            <p class="card-number" id="todayCount">0</p>
+                            <p class="card-title">Today's Vaccinations</p>
+                            <a class="card-link" href="#">
+                                <span class="material-symbols-rounded">visibility</span>
+                                View Details
+                            </a>
                         </div>
-                    </a>
-                    <a href="#" class="action-card action-card-2">
-                        <div>
-                            <span class="action-icon material-symbols-rounded">vaccines</span>
+                    </div>
+
+                    <div class="card card-3">
+                        <div class="card-icon">
+                            <span class="material-symbols-rounded">warning</span>
                         </div>
-                        <div>
-                            <h4>Today's Schedule</h4>
-                            <p>View today's vaccination schedules</p>
-                            <span class="action-count" id="todayActionCount">0</span>
+                        <div class="card-info">
+                            <p class="card-number" id="missedCount">0</p>
+                            <p class="card-title">Missed Vaccinations</p>
+                            <a class="card-link" href="#">
+                                <span class="material-symbols-rounded">visibility</span>
+                                View Details
+                            </a>
                         </div>
-                    </a>
-                    <a href="#" class="action-card action-card-3">
-                        <div>
-                            <span class="action-icon material-symbols-rounded">assignment</span>
+                    </div>
+
+                    <div class="card card-4">
+                        <div class="card-icon">
+                            <span class="material-symbols-rounded">child_care</span>
                         </div>
-                        <div>
-                            <h4>All Records</h4>
-                            <p>Manage child health records</p>
+                        <div class="card-info">
+                            <p class="card-number" id="totalCount">0</p>
+                            <p class="card-title">Total Children</p>
+                            <a class="card-link" href="#">
+                                <span class="material-symbols-rounded">visibility</span>
+                                View Details
+                            </a>
                         </div>
-                    </a>
-                    <button class="action-card action-card-scanner" onclick="openQRScanner()">
-                        <div>
-                            <span class="action-icon material-symbols-rounded">qr_code_scanner</span>
-                        </div>
-                        <div>
-                            <h4>QR Scanner</h4>
-                            <p>Scan child QR codes</p>
-                        </div>
-                    </button>
+                    </div>
                 </div>
             </div>
-                
-            <div class="activity-task-container">
-                <!-- Recent Activities -->
+            
+            <!-- <div class="activity-task-container" >
                 <div class="activity-section">
                     <h2 class="dashboard-heading">Recent Activities</h2>
                     <div class="activity-list" id="activityList">
@@ -127,7 +100,6 @@ if (isset($_SESSION['bhw_id'])) {
                     </div>
                 </div>
 
-                <!-- Task Overview -->
                 <div class="tasks-section">
                     <h2 class="dashboard-heading">Task Overview</h2>
                     <div class="task-wrapper">
@@ -151,7 +123,7 @@ if (isset($_SESSION['bhw_id'])) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </section>
     </main>
 
