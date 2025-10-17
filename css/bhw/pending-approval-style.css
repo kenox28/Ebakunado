@@ -1,0 +1,155 @@
+main {
+    max-height: 100vh;
+    overflow-y: auto;
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+}
+
+.btn:hover {
+  background-color: #005d2d;
+}
+
+.view-btn {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  transition: background-color 0.3s ease;
+}
+
+.view-btn .material-symbols-rounded {
+  font-size: 2rem;
+}
+
+.childinformation-container {
+  padding: 0;
+  background-color: #ffffff;
+  border-radius: 8px;
+  /* border: #bebebe 1px solid; */
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+
+  display: none;
+}
+
+.childinfo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.childinfo-main {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.childinfo-details {
+  /* width: 50%; */
+  border: 1px solid #ccc;
+}
+
+.childinfo-details h2 {
+  margin-bottom: 1.2rem;
+}
+
+.childinfo-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.childinfo-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.childinfo-row label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  color: #333;
+}
+
+.childinfo-row input,
+.childinfo-row select {
+  margin-top: 4px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+.childinfo-row input:focus,
+.childinfo-row select:focus {
+  border-color: #007bff;
+}
+
+/* Buttons section styling */
+.childinfo-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.childinfo-buttons button {
+  padding: 0.8rem 1.6rem;
+  font-size: 1.4rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Button colors */
+.save-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.save-btn:hover {
+  background-color: #0056b3;
+}
+
+.reset-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.reset-btn:hover {
+  background-color: #5a6268;
+}
+
+.childinfo-buttons button:active {
+  transform: scale(0.97);
+}
+
+/* Child information image styling */
+.childinfo-image {
+  /* width: 50%; */
+  border: 1px solid #ccc;
+}
+
+.childinfo-image h2 {
+  margin-bottom: 1.2rem;
+}
+
+.childinfo-image img {
+  width: 100%;
+  height: 48rem;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.vaccination-section {
+  width: 100%;
+  border: 1px solid #ccc;
+}

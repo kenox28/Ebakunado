@@ -1,0 +1,117 @@
+@import url('./fonts.css');
+@import url('./variables.css');
+
+html {
+  font-size: 62.5%;
+}
+
+html, body {
+  height: 100%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  user-select: none;
+
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  grid-template-rows: 60px 1fr;
+  grid-template-areas:
+    "sidebar header"
+    "sidebar main";
+  min-height: 100vh;
+
+  min-width: 100%;
+  max-width: 100%;      
+  overflow-x: auto; 
+  
+  transition: grid-template-columns 300ms ease;
+}
+
+body.sidebar-collapsed {
+  grid-template-columns: 0 1fr;
+}
+
+main {
+  grid-area: main;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  /* padding: 1.2rem 3rem; */
+  padding: 1.2rem 2.6rem;
+}
+
+/* =========================
+   Links
+========================= */
+a {
+  text-decoration: none;
+  color: #0d6efd;
+}
+
+/* =========================
+   Buttons (basic)
+========================= */
+button {
+  background: #0d6efd;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #0b5ed7;
+}
+
+/* =========================
+   Forms (basic)
+========================= */
+/* input, select, textarea {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 4px rgba(13,110,253,0.2);
+} */
+
+/* =========================
+   Tables (basic)
+========================= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  margin-top: 1rem;
+}
+
+th, td {
+  border: 1px solid #c6c6c6;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+th {
+  background-color: #dedede;
+  color: #1A1A1A;
+}
+
+/* tr:nth-child(even) {
+  background: #f2f2f2;
+} */

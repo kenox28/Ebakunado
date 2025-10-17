@@ -25,7 +25,7 @@ body {
 		"sidebar main";
 	min-height: 100vh;
 
-	min-width: 1366px;
+	min-width: 100%;
 	max-width: 100%;
 	overflow-x: auto;
 
