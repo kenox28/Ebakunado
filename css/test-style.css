@@ -1,0 +1,81 @@
+/* main.css - central stylesheet for the whole system */
+
+/* Import all other CSS files */
+@import url('layout.css');
+@import url('table.css');
+@import url('form.css');
+
+/* Global styles that apply to all pages */
+:root {
+  --primary-color: #0066cc;
+  --text-color: #333;
+  --background-color: #f8f9fa;
+  --border-radius: 8px;
+  --transition: 0.3s ease;
+}
+
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+/* You can still override styles from imported files below */
+
+header {
+  background: var(--primary-color);
+  color: #fff;
+  padding: 1rem;
+}
+
+.sidebar {
+  width: 220px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border-radius: var(--border-radius);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+  outline: none;
+  transition: var(--transition);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--primary-color);
+}
+
+button {
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+button:hover {
+  background: #0052a3;
+}
+

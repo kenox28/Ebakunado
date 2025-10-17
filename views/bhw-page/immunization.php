@@ -20,10 +20,11 @@ if (isset($_SESSION['bhw_id'])) {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>BHW Dashboard</title>
-        <link rel="stylesheet" href="/css/main.css" />
-        <link rel="stylesheet" href="/css/header.css" />
-        <link rel="stylesheet" href="/css/sidebar.css" />
-        <link rel="stylesheet" href="/css/bhw/immunization-1style.css">
+        <link rel="stylesheet" href="../../css/main.css" />
+        <link rel="stylesheet" href="../../css/variables.css" />
+        <link rel="stylesheet" href="../../css/header.css" />
+        <link rel="stylesheet" href="../../css/sidebar.css" />
+        <link rel="stylesheet" href="../../css/bhw/immunization-style.css">
     </head>
 
 <body>
@@ -79,28 +80,6 @@ if (isset($_SESSION['bhw_id'])) {
                         </tr>
                     </tbody>
                 </table>
-            </div>
-
-            <div class="childinformation-container">
-                <div class="child-info">
-                    <h1>Child Information</h1>
-                    <p>Child Name: <span id="childName"></span></p>
-                    <p>Child Gender: <span id="childGender"></span></p>
-                    <p>Child Birth Date: <span id="childBirthDate"></span></p>
-                    <p>Child Place of Birth: <span id="childPlaceOfBirth"></span></p>
-                    <p>Child Address: <span id="childAddress"></span></p>
-                    <p>Child Weight: <span id="childWeight"></span></p>
-                    <p>Child Height: <span id="childHeight"></span></p>
-                    <p>Child Mother: <span id="childMother"></span></p>
-                    <p>Child Father: <span id="childFather"></span></p>
-                    <p>Child Birth Attendant: <span id="childBirthAttendant"></span></p>
-                </div>
-
-                <div class="child-image">
-                    <button onclick="closeChildInformation()" id="closeButton">Close</button>
-                    <img src="" alt="" id="childImage">
-                    <button id="acceptButton">Accept</button>
-                </div>
             </div>
 
             <!-- Immunization Record Overlay -->
@@ -236,12 +215,26 @@ if (isset($_SESSION['bhw_id'])) {
             }
 
             function getMotherTDStatus() {
-                const tdDoses = [
-                    { dose: 1, date: feedingData.tdDose1 },
-                    { dose: 2, date: feedingData.tdDose2 },
-                    { dose: 3, date: feedingData.tdDose3 },
-                    { dose: 4, date: feedingData.tdDose4 },
-                    { dose: 5, date: feedingData.tdDose5 }
+                const tdDoses = [{
+                        dose: 1,
+                        date: feedingData.tdDose1
+                    },
+                    {
+                        dose: 2,
+                        date: feedingData.tdDose2
+                    },
+                    {
+                        dose: 3,
+                        date: feedingData.tdDose3
+                    },
+                    {
+                        dose: 4,
+                        date: feedingData.tdDose4
+                    },
+                    {
+                        dose: 5,
+                        date: feedingData.tdDose5
+                    }
                 ];
 
                 const completedDoses = tdDoses.filter(d => d.date && d.date !== '');

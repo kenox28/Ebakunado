@@ -15,13 +15,13 @@ if (isset($_SESSION['bhw_id'])) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BHW Dashboard</title>
-    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="imm/css/fonts.css" />
     <!-- <link rel="stylesheet" href="/css/base.css" /> -->
      <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="/css/variables.css" />
-    <link rel="stylesheet" href="/css/header.css" />
-    <link rel="stylesheet" href="/css/sidebar.css" />
-    <link rel="stylesheet" href="/css/bhw/dashboard.css" />
+    <link rel="stylesheet" href="../../css/variables.css" />
+    <link rel="stylesheet" href="../../css/header.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/bhw/dashboard.css" />
 </head>
 
 <body>

@@ -1,7 +1,12 @@
+main {
+    max-height: 100vh;
+    overflow-y: auto;
+}
+
 .childinformation-container {
-    display: none;
+  display: none;
 }
 
 .immunization-record {
-    display: none;
+  display: none;
 }
