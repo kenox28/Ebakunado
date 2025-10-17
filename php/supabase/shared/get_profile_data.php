@@ -15,24 +15,19 @@ require_once __DIR__ . '/../../../database/SupabaseConfig.php';
 require_once __DIR__ . '/../../../database/DatabaseHelper.php';
 
 try {
-    $supabase = getSupabase();
-    
     if ($user_type === 'midwife') {
         // Get midwife data
-        $response = $supabase->from('midwives')
-            ->select('*')
-            ->eq('midwife_id', $user_id)
-            ->single();
+        $data = supabaseSelect('midwives', '*', ['midwife_id' => $user_id]);
     } else {
         // Get BHW data
-        $response = $supabase->from('bhw')
-            ->select('*')
-            ->eq('bhw_id', $user_id)
-            ->single();
+        $data = supabaseSelect('bhw', '*', ['bhw_id' => $user_id]);
     }
     
-    if ($response->getData()) {
-        $data = $response->getData();
+    if ($data && !empty($data)) {
+        // Unwrap first row if supabaseSelect returned an array of rows
+        if (is_array($data) && isset($data[0])) {
+            $data = $data[0];
+        }
         $data['user_type'] = $user_type;
         
         echo json_encode([

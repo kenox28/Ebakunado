@@ -172,7 +172,7 @@ if ($user_id) {
         async function loadDashboardData() {
             try {
                 console.log('Loading BHW dashboard data...');
-                const response = await fetch('../../php/supabase/bhw/get_dashboard_stats.php');
+                const response = await fetch('/ebakunado/php/supabase/bhw/get_dashboard_stats.php');
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -408,8 +408,8 @@ if ($user_id) {
         });
 
         async function logoutBhw() {
-				// const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
-				const response = await fetch('../../php/supabase/bhw/logout.php', { method: 'POST' });
+				// const response = await fetch('/ebakunado/php/bhw/logout.php', { method: 'POST' });
+				const response = await fetch('/ebakunado/php/supabase/bhw/logout.php', { method: 'POST' });
 				const data = await response.json();
 				if (data.status === 'success') { window.location.href = '../../views/auth/login.php'; }
 				else { alert('Logout failed: ' + data.message); }

@@ -15,8 +15,6 @@ require_once __DIR__ . '/../../../database/SupabaseConfig.php';
 require_once __DIR__ . '/../../../database/DatabaseHelper.php';
 
 try {
-    $supabase = getSupabase();
-    
     // Get form data
     $fname = $_POST['fname'] ?? '';
     $lname = $_POST['lname'] ?? '';
@@ -48,32 +46,26 @@ try {
         
         // Get current user data to verify current password
         if ($user_type === 'midwife') {
-            $response = $supabase->from('midwives')
-                ->select('pass, salt')
-                ->eq('midwife_id', $user_id)
-                ->single();
+            $userData = supabaseSelect('midwives', 'pass, salt', ['midwife_id' => $user_id]);
         } else {
-            $response = $supabase->from('bhw')
-                ->select('pass, salt')
-                ->eq('bhw_id', $user_id)
-                ->single();
+            $userData = supabaseSelect('bhw', 'pass, salt', ['bhw_id' => $user_id]);
         }
         
-        if ($response->getData()) {
-            $userData = $response->getData();
-            $storedHash = $userData['pass'];
-            $salt = $userData['salt'];
+        if ($userData && !empty($userData)) {
+            // Unwrap first row if needed
+            if (is_array($userData) && isset($userData[0])) { $userData = $userData[0]; }
+            $storedHash = $userData['pass'] ?? '';
+            $salt = $userData['salt'] ?? '';
             
-            // Verify current password
-            $currentHash = hash('sha256', $current_password . $salt);
-            if ($currentHash !== $storedHash) {
+            // Verify current password using bcrypt (same scheme as create account/login)
+            if (!password_verify($current_password . $salt, $storedHash)) {
                 echo json_encode(['status' => 'error', 'message' => 'Current password is incorrect']);
                 exit();
             }
             
-            // Hash new password
+            // Hash new password using bcrypt with a fresh salt
             $newSalt = bin2hex(random_bytes(32));
-            $newHash = hash('sha256', $new_password . $newSalt);
+            $newHash = password_hash($new_password . $newSalt, PASSWORD_BCRYPT, ['cost' => 12]);
             
             $updateData['pass'] = $newHash;
             $updateData['salt'] = $newSalt;
@@ -82,16 +74,12 @@ try {
     
     // Update user data
     if ($user_type === 'midwife') {
-        $response = $supabase->from('midwives')
-            ->update($updateData)
-            ->eq('midwife_id', $user_id);
+        $result = supabaseUpdate('midwives', $updateData, ['midwife_id' => $user_id]);
     } else {
-        $response = $supabase->from('bhw')
-            ->update($updateData)
-            ->eq('bhw_id', $user_id);
+        $result = supabaseUpdate('bhw', $updateData, ['bhw_id' => $user_id]);
     }
     
-    if ($response->getData()) {
+    if ($result !== false) {
         // Update session data
         $_SESSION['fname'] = $fname;
         $_SESSION['lname'] = $lname;

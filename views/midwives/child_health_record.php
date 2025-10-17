@@ -47,8 +47,8 @@
 				const body = document.querySelector('#childhealthrecordBody');
 				body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
 				try {
-					// const res = await fetch('../../php/bhw/get_child_health_records.php');
-					const res = await fetch('../../php/supabase/shared/get_child_health_record.php');
+					// const res = await fetch('/ebakunado/php/bhw/get_child_health_records.php');
+					const res = await fetch('/ebakunado/php/supabase/shared/get_child_health_record.php');
 					const data = await res.json();
 					if (data.status !== 'success') { body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>'; return; }
 					if (!data.data || data.data.length === 0){ body.innerHTML = '<tr><td colspan="21">No records found</td></tr>'; return; }
@@ -101,8 +101,8 @@
 
 			async function acceptRecord(baby_id){
 				const formData = new FormData(); formData.append('baby_id', baby_id);
-				// const response = await fetch('../../php/bhw/accept_chr.php', { method: 'POST', body: formData });
-				const response = await fetch('../../php/supabase/shared/accept_chr.php', { method: 'POST', body: formData });
+				// const response = await fetch('/ebakunado/php/bhw/accept_chr.php', { method: 'POST', body: formData });
+				const response = await fetch('/ebakunado/php/supabase/shared/accept_chr.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') { getChildHealthRecord(); }
 				else { alert('Record not accepted: ' + data.message); }
@@ -110,7 +110,7 @@
 
 			async function rejectRecord(baby_id){
 				const formData = new FormData(); formData.append('baby_id', baby_id);
-				const response = await fetch('../../php/mysql/bhw/reject_chr.php', { method: 'POST', body: formData });
+				const response = await fetch('/ebakunado/php/mysql/bhw/reject_chr.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') { getChildHealthRecord(); }
 				else { alert('Record not rejected: ' + data.message); }
@@ -120,7 +120,7 @@
 				const tr = btn.closest('tr');
 				const next = tr.nextElementSibling;
 				if (next && next.classList.contains('sched-row')) { next.remove(); return; }
-				const res = await fetch('../../php/supabase/shared/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
+				const res = await fetch('/ebakunado/php/supabase/shared/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
 				const data = await res.json();
 				let html = '<tr class="sched-row"><td colspan="21">';
 				if (data.status !== 'success' || !data.data || data.data.length === 0) {
@@ -279,8 +279,8 @@
 				}
 			}
 			async function logoutBhw() {
-				// const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
-				const response = await fetch('../../php/supabase/shared/logout.php', { method: 'POST' });
+				// const response = await fetch('/ebakunado/php/bhw/logout.php', { method: 'POST' });
+				const response = await fetch('/ebakunado/php/supabase/shared/logout.php', { method: 'POST' });
 				const data = await response.json();
 				if (data.status === 'success') { window.location.href = '../../views/login.php'; }
 				else { alert('Logout failed: ' + data.message); }

@@ -22,7 +22,6 @@ $child_birth_date = $_POST['child_birth_date'] ?? '';
 $place_of_birth = $_POST['place_of_birth'] ?? '';
 $mother_name = $_POST['mother_name'] ?? '';
 $father_name = $_POST['father_name'] ?? '';
-$child_address = $_POST['child_address'] ?? '';
 $birth_weight = $_POST['birth_weight'] ?? null;
 $birth_height = $_POST['birth_height'] ?? null;
 $birth_attendant = $_POST['birth_attendant'] ?? '';
@@ -31,9 +30,18 @@ $birth_order = $_POST['birth_order'] ?? '';
 $birth_attendant_others = $_POST['birth_attendant_others'] ?? '';
 $vaccines_received = $_POST['vaccines_received'] ?? [];
 
+// Get address dropdown values
+$province = $_POST['province'] ?? '';
+$city_municipality = $_POST['city_municipality'] ?? '';
+$barangay = $_POST['barangay'] ?? '';
+$purok = $_POST['purok'] ?? '';
+
+// Create standardized address format
+$child_address = trim($province . ", " . $city_municipality . ", " . $barangay . ($purok ? ", " . $purok : ""));
+
 // Validate required fields
-if (empty($child_fname) || empty($child_lname) || empty($child_gender) || empty($child_birth_date) || empty($child_address)) {
-    echo json_encode(['status' => 'error', 'message' => 'Required fields are missing']);
+if (empty($child_fname) || empty($child_lname) || empty($child_gender) || empty($child_birth_date) || empty($province) || empty($city_municipality) || empty($barangay)) {
+    echo json_encode(['status' => 'error', 'message' => 'Required fields are missing (including Province, City, and Barangay)']);
     exit();
 }
 
@@ -76,12 +84,50 @@ if ($insert !== false) {
     // Create immunization records for the child
     createImmunizationRecords($baby_id, $child_birth_date, $vaccines_received);
     
+    // Generate QR code automatically
+    $qrSecureUrl = null;
+    try {
+        require_once __DIR__ . '/../../../vendor/autoload.php';
+        $cloudinaryConfig = include __DIR__ . '/../../../assets/config/cloudinary.php';
+
+        \Cloudinary\Configuration\Configuration::instance([
+            'cloud' => [
+                'cloud_name' => $cloudinaryConfig['cloud_name'],
+                'api_key' => $cloudinaryConfig['api_key'],
+                'api_secret' => $cloudinaryConfig['api_secret']
+            ],
+            'url' => ['secure' => $cloudinaryConfig['secure']]
+        ]);
+
+        // Generate QR with baby_id
+        $qrData = $baby_id;
+        $qrServiceUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=600x600&ecc=H&qzone=2&data=' . rawurlencode($qrData);
+
+        $uploader = new \Cloudinary\Api\Upload\UploadApi();
+        $uploadResult = $uploader->upload($qrServiceUrl, [
+            'folder' => 'ebakunado/qr_codes',
+            'public_id' => 'baby_' . preg_replace('/[^A-Za-z0-9_-]/', '_', $baby_id),
+            'overwrite' => true,
+            'resource_type' => 'image'
+        ]);
+
+        $qrSecureUrl = $uploadResult['secure_url'] ?? ($uploadResult['url'] ?? null);
+        if (!empty($qrSecureUrl)) {
+            // Save QR URL to the record
+            supabaseUpdate('child_health_records', ['qr_code' => $qrSecureUrl], ['baby_id' => $baby_id]);
+        }
+    } catch (Exception $e) {
+        error_log('QR generation failed during child creation: ' . $e->getMessage());
+        // Don't fail the entire process if QR generation fails
+    }
+    
     $share_link = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']) . "/../../views/users/Request.php?family_code=" . $family_code;
     
         echo json_encode([
             'status' => 'success',
             'family_code' => $family_code,
             'baby_id' => $baby_id,
+            'qr_code' => $qrSecureUrl,
             'share_link' => $share_link,
             'message' => 'Child added successfully'
         ]);

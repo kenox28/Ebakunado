@@ -575,6 +575,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 				<a href="approved_requests.php" data-icon="✅"><span>Approved Requests</span></a>
 				<a href="missed_immunization.php" data-icon="⚠️"><span>Missed</span></a>
 				<a href="Request.php" data-icon="➕"><span>Add Child</span></a>
+				<a href="profile_management.php" data-icon="👤"><span>Profile Management</span></a>
 				<a href="#" onclick="logoutUser()" data-icon="🚪"><span>Logout</span></a>
 			</nav>
 		</aside>

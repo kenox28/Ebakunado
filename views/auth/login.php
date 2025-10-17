@@ -72,7 +72,8 @@ session_start();
 						</div>
 					</div>
 					<div class="forgot-password-wrapper">
-						<a class="forgot-password-link" href="#">Forgot Password?</a>
+						<a class="forgot-password-link" href="#" id="forgot-password">Forgot Password?</a>
+
 					</div>
 					<div class="submit-wrapper">
 						<button class="btn btn-primary login-btn" type="submit">
@@ -92,6 +93,8 @@ session_start();
 	</main>
 
 		<script src="../../js/auth-handler/password-toggle.js"></script>
-		<script src="../../js/supabase_js/login.js?v=1.0.12"></script>
+		<script src="../../js/supabase_js/login.js?v=1.0.21"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		
 	</body>
 </html>

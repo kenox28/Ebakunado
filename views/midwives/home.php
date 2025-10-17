@@ -543,7 +543,7 @@
 	async function loadDashboardData() {
 		try {
 			console.log('Loading BHW dashboard data...');
-			const response = await fetch('../../php/supabase/shared/get_dashboard_stats.php');
+			const response = await fetch('/ebakunado/php/supabase/shared/get_dashboard_stats.php');
 			
 			if (!response.ok) {
 				throw new Error(`HTTP ${response.status}: ${response.statusText}`);

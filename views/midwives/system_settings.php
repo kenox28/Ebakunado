@@ -458,7 +458,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load current system settings
 async function loadCurrentSettings() {
     try {
-        const response = await fetch('../../php/supabase/shared/get_system_settings.php');
+        const response = await fetch('/ebakunado/php/supabase/shared/get_system_settings.php');
         const data = await response.json();
         
         if (data.status === 'success') {
@@ -509,7 +509,7 @@ document.getElementById('systemSettingsForm').addEventListener('submit', async f
     const formData = new FormData(this);
     
     try {
-        const response = await fetch('../../php/supabase/shared/save_system_settings.php', {
+        const response = await fetch('/ebakunado/php/supabase/shared/save_system_settings.php', {
             method: 'POST',
             body: formData
         });
@@ -544,7 +544,7 @@ async function testEmailConfig() {
         formData.append('email_username', document.getElementById('email_username').value);
         formData.append('email_password', document.getElementById('email_password').value);
         
-        const response = await fetch('../../php/supabase/shared/test_system_config.php', {
+        const response = await fetch('/ebakunado/php/supabase/shared/test_system_config.php', {
             method: 'POST',
             body: formData
         });
@@ -586,7 +586,7 @@ async function testSMSConfig() {
         formData.append('sms_api_key', document.getElementById('sms_api_key').value);
         formData.append('sms_device_id', document.getElementById('sms_device_id').value);
         
-        const response = await fetch('../../php/supabase/shared/test_system_config.php', {
+        const response = await fetch('/ebakunado/php/supabase/shared/test_system_config.php', {
             method: 'POST',
             body: formData
         });
@@ -626,7 +626,7 @@ async function testCreateAccount() {
         const formData = new FormData();
         formData.append('test_type', 'create_account');
         
-        const response = await fetch('../../php/supabase/shared/test_system_config.php', {
+        const response = await fetch('/ebakunado/php/supabase/shared/test_system_config.php', {
             method: 'POST',
             body: formData
         });
@@ -666,7 +666,7 @@ async function testForgotPassword() {
         const formData = new FormData();
         formData.append('test_type', 'forgot_password');
         
-        const response = await fetch('../../php/supabase/shared/test_system_config.php', {
+        const response = await fetch('/ebakunado/php/supabase/shared/test_system_config.php', {
             method: 'POST',
             body: formData
         });
@@ -703,7 +703,7 @@ async function testNotificationSystem() {
     resultsDiv.style.display = 'none';
     
     try {
-        const response = await fetch('../../php/supabase/shared/send_schedule_notifications.php');
+        const response = await fetch('/ebakunado/php/supabase/shared/send_schedule_notifications.php');
         const data = await response.json();
         
         if (data.status === 'success') {

@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 	try{
 		// Fetch child details
 		const fd = new FormData(); fd.append('baby_id', babyId);
-		const childRes = await fetch('../../php/supabase/users/get_child_details.php', { method:'POST', body: fd });
+		const childRes = await fetch('/ebakunado/php/supabase/users/get_child_details.php', { method:'POST', body: fd });
 		const childJson = await childRes.json();
 		const child = (childJson && childJson.status==='success' && childJson.data && childJson.data[0]) ? childJson.data[0] : {};
 
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 		async function sendRequest(type){
 			try{
 				const fd2 = new FormData(); fd2.append('baby_id', babyId); fd2.append('request_type', type);
-				const res2 = await fetch('../../php/supabase/users/request_chr_doc.php', { method: 'POST', body: fd2 });
+				const res2 = await fetch('/ebakunado/php/supabase/users/request_chr_doc.php', { method: 'POST', body: fd2 });
 				const j = await res2.json();
 				if (j.status === 'success'){
 					if (type==='transfer'){ reqTransferBtn.textContent = 'Transfer: Requested (pendingCHR)'; }
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 
 		async function refreshChrDocStatus(type){
 			try{
-				const res = await fetch(`../../php/supabase/users/get_chr_doc_status.php?baby_id=${encodeURIComponent(babyId)}&request_type=${encodeURIComponent(type)}`);
+				const res = await fetch(`/ebakunado/php/supabase/users/get_chr_doc_status.php?baby_id=${encodeURIComponent(babyId)}&request_type=${encodeURIComponent(type)}`);
 				const j = await res.json();
 				if (j.status === 'success' && j.data){
 					const st = j.data.status || '';
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 		}
 
         // Fetch immunization schedule for child to build compact ledger
-        const schedRes = await fetch(`../../php/supabase/users/get_immunization_schedule.php?baby_id=${encodeURIComponent(babyId)}`);
+        const schedRes = await fetch(`/ebakunado/php/supabase/users/get_immunization_schedule.php?baby_id=${encodeURIComponent(babyId)}`);
         const schedJson = await schedRes.json();
         const allRows = (schedJson && schedJson.status==='success' && Array.isArray(schedJson.data)) ? schedJson.data : [];
 

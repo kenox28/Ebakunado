@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function loadProfileData() {
 	try {
-		const response = await fetch('../../php/supabase/shared/get_profile_data.php');
+		const response = await fetch('/ebakunado/php/supabase/shared/get_profile_data.php');
 		const data = await response.json();
 		
 		if (data.status === 'success') {
@@ -305,7 +305,7 @@ async function uploadProfilePhoto() {
 	formData.append('photo', file);
 	
 	try {
-		const response = await fetch('../../php/supabase/shared/upload_profile_photo.php', {
+		const response = await fetch('/ebakunado/php/supabase/shared/upload_profile_photo.php', {
 			method: 'POST',
 			body: formData
 		});
@@ -331,7 +331,7 @@ document.getElementById('profileForm').addEventListener('submit', async function
 	const formData = new FormData(this);
 	
 	try {
-		const response = await fetch('../../php/supabase/shared/update_profile.php', {
+		const response = await fetch('/ebakunado/php/supabase/shared/update_profile.php', {
 			method: 'POST',
 			body: formData
 		});

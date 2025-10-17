@@ -26,9 +26,9 @@ if (!$record) {
     exit();
 }
 
-// Update record with actual user_id
+// Update record with actual user_id and set status to accepted
 $update = supabaseUpdate('child_health_records', 
-    ['user_id' => $user_id, 'date_updated' => date('Y-m-d H:i:s')], 
+    ['user_id' => $user_id, 'status' => 'accepted', 'date_updated' => date('Y-m-d H:i:s')], 
     ['user_id' => $family_code]
 );
 

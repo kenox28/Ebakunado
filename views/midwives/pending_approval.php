@@ -231,8 +231,8 @@
 				const body = document.querySelector('#childhealthrecordBody');
 				body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
 				try {
-					// const res = await fetch('../../php/bhw/get_child_health_records.php');
-					const res = await fetch('../../php/supabase/shared/pending_chr.php');
+					// const res = await fetch('/ebakunado/php/bhw/get_child_health_records.php');
+					const res = await fetch('/ebakunado/php/supabase/shared/pending_chr.php');
 					const data = await res.json();
 					if (data.status !== 'success') { body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>'; return; }
 					if (!data.data || data.data.length === 0){ body.innerHTML = '<tr><td colspan="21">No records found</td></tr>'; return; }
@@ -270,7 +270,7 @@
 			async function viewChildInformation(baby_id){
 				formData = new FormData();
 				formData.append('baby_id', baby_id);
-				const response = await fetch('../../php/supabase/shared/child_information.php', { method: 'POST', body: formData });
+				const response = await fetch('/ebakunado/php/supabase/shared/child_information.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') {
 					console.log(data.data);
@@ -319,7 +319,7 @@
 				container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading vaccination records...</p></div>';
 				
 				try {
-					const response = await fetch('../../php/supabase/shared/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
+					const response = await fetch('/ebakunado/php/supabase/shared/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
 					const data = await response.json();
 					
 					if (data.status !== 'success' || !data.data || data.data.length === 0) {
@@ -385,8 +385,8 @@
 
 			async function acceptRecord(baby_id){
 				const formData = new FormData(); formData.append('baby_id', baby_id);
-				// const response = await fetch('../../php/bhw/accept_chr.php', { method: 'POST', body: formData });
-				const response = await fetch('../../php/supabase/shared/accept_chr.php', { method: 'POST', body: formData });
+				// const response = await fetch('/ebakunado/php/bhw/accept_chr.php', { method: 'POST', body: formData });
+				const response = await fetch('/ebakunado/php/supabase/shared/accept_chr.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') { getChildHealthRecord(); }
 				else { alert('Record not accepted: ' + data.message); }
@@ -395,7 +395,7 @@
 
 			async function rejectRecord(baby_id){
 				const formData = new FormData(); formData.append('baby_id', baby_id);
-				const response = await fetch('../../php/mysql/bhw/reject_chr.php', { method: 'POST', body: formData });
+				const response = await fetch('/ebakunado/php/mysql/bhw/reject_chr.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') { getChildHealthRecord(); }
 				else { alert('Record not rejected: ' + data.message); }
@@ -572,7 +572,7 @@
 						formData.append(key, updateData[key]);
 					});
 
-					const response = await fetch('../../php/supabase/shared/update_child_info.php', {
+					const response = await fetch('/ebakunado/php/supabase/shared/update_child_info.php', {
 						method: 'POST',
 						body: formData
 					});
@@ -613,8 +613,8 @@
 			}
 
 			async function logoutBhw() {
-				// const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
-				const response = await fetch('../../php/supabase/shared/logout.php', { method: 'POST' });
+				// const response = await fetch('/ebakunado/php/bhw/logout.php', { method: 'POST' });
+				const response = await fetch('/ebakunado/php/supabase/shared/logout.php', { method: 'POST' });
 				const data = await response.json();
 				if (data.status === 'success') { window.location.href = '../../views/auth/login.php'; }
 				else { alert('Logout failed: ' + data.message); }

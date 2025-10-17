@@ -15,7 +15,7 @@ async function loadChrRequests(){
 	container.innerHTML = '<div class="loading" style="text-align:center; padding: 20px;">Loading requests...</div>';
 	try{
 		console.log('Loading CHR requests...');
-		const res = await fetch('../../php/supabase/shared/list_chr_doc_requests.php');
+		const res = await fetch('/ebakunado/php/supabase/shared/list_chr_doc_requests.php');
 		console.log('Response status:', res.status);
 		const data = await res.json();
 		console.log('Response data:', data);
@@ -63,7 +63,7 @@ async function approveChr(requestId, requestType){
 	if (!confirm('Approve this request and generate DOCX?')) return;
 	try{
 		const fd = new FormData(); fd.append('request_id', requestId); if (requestType) fd.append('request_type', requestType);
-		const res = await fetch('../../php/supabase/shared/approve_chr_doc.php', { method:'POST', body: fd });
+		const res = await fetch('/ebakunado/php/supabase/shared/approve_chr_doc.php', { method:'POST', body: fd });
 		const j = await res.json();
 		if (j.status === 'success'){
 			alert('Approved. DOCX generated.');

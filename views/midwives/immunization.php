@@ -92,7 +92,7 @@
 				const body = document.querySelector('#childhealthrecordBody');
 				body.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
 				try {
-					const res = await fetch('../../php/supabase/shared/get_immunization_view.php');
+					const res = await fetch('/ebakunado/php/supabase/shared/get_immunization_view.php');
 					const data = await res.json();
 					if (data.status !== 'success') { body.innerHTML = '<tr><td colspan="4">Failed to load records</td></tr>'; return; }
 					if (!data.data || data.data.length === 0){ body.innerHTML = '<tr><td colspan="4">No records found</td></tr>'; chrRecords = []; return; }
@@ -365,7 +365,7 @@
 				}
 
 				try{
-					const res = await fetch('../../php/supabase/shared/save_immunization.php', { method: 'POST', body: formData });
+					const res = await fetch('/ebakunado/php/supabase/shared/save_immunization.php', { method: 'POST', body: formData });
 					const data = await res.json().catch(() => ({ status: 'error', message: 'Invalid server response' }));
 					if (data.status === 'success'){
 						closeImmunizationForm();
@@ -430,7 +430,7 @@
 			async function viewChildInformation(baby_id){
 				formData = new FormData();
 				formData.append('baby_id', baby_id);
-				const response = await fetch('../../php/supabase/shared/child_information.php', { method: 'POST', body: formData });
+				const response = await fetch('/ebakunado/php/supabase/shared/child_information.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') {
 					
@@ -551,8 +551,8 @@
 
 			async function acceptRecord(baby_id){
 				const formData = new FormData(); formData.append('baby_id', baby_id);
-				// const response = await fetch('../../php/bhw/accept_chr.php', { method: 'POST', body: formData });
-				const response = await fetch('../../php/supabase/shared/accept_chr.php', { method: 'POST', body: formData });
+				// const response = await fetch('/ebakunado/php/bhw/accept_chr.php', { method: 'POST', body: formData });
+				const response = await fetch('/ebakunado/php/supabase/shared/accept_chr.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') { getChildHealthRecord(); }
 				else { alert('Record not accepted: ' + data.message); }
@@ -561,7 +561,7 @@
 
 			async function rejectRecord(baby_id){
 				const formData = new FormData(); formData.append('baby_id', baby_id);
-				const response = await fetch('../../php/mysql/bhw/reject_chr.php', { method: 'POST', body: formData });
+				const response = await fetch('/ebakunado/php/mysql/bhw/reject_chr.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') { getChildHealthRecord(); }
 				else { alert('Record not rejected: ' + data.message); }
@@ -580,8 +580,8 @@
 
 			// Removed QR scanner functionality and dependencies
 			async function logoutBhw() {
-				// const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
-				const response = await fetch('../../php/supabase/shared/logout.php', { method: 'POST' });
+				// const response = await fetch('/ebakunado/php/bhw/logout.php', { method: 'POST' });
+				const response = await fetch('/ebakunado/php/supabase/shared/logout.php', { method: 'POST' });
 				const data = await response.json();
 				if (data.status === 'success') { window.location.href = '../../views/auth/login.php'; }
 				else { alert('Logout failed: ' + data.message); }

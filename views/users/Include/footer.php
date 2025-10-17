@@ -19,7 +19,7 @@
 
 			async function logoutUser() {
 
-				// window.location.href = "../../php/supabase/users/logout.php"
+				// window.location.href = "/ebakunado/php/supabase/users/logout.php"
 				const result = await Swal.fire({
 					title: "Are you sure?",
 					text: "You will be logged out of the system",
@@ -31,7 +31,7 @@
 				});
 
 				if (result.isConfirmed) {
-					const response = await fetch("../../php/supabase/users/logout.php", {
+					const response = await fetch("/ebakunado/php/supabase/users/logout.php", {
 						method: "POST",
 					});
 

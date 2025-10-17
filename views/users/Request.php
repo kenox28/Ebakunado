@@ -252,12 +252,12 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label for="child_fname">Baby First Name *</label>
-                    <input type="text" name="child_fname" placeholder="Enter baby's first name" required>
+                    <input value="example" type="text" name="child_fname" placeholder="Enter baby's first name" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="child_lname">Baby Last Name *</label>
-                    <input type="text" name="child_lname" placeholder="Enter baby's last name" required>
+                    <input value="example" type="text" name="child_lname" placeholder="Enter baby's last name" required>
                 </div>
                 
                 <div class="form-group">
@@ -272,7 +272,7 @@
                 
                 <div class="form-group">
                     <label for="child_address">Address *</label>
-                    <input type="text" name="child_address" value="<?php echo $place; ?>" required>
+                    <input value="<?php echo $place; ?>" type="text" name="child_address" value="<?php echo $place; ?>" required>
                 </div>
                 
                 <div class="form-group">
@@ -308,16 +308,16 @@
                     </div>
                     <div class="form-group">
                         <label for="mother_name">Mother Name *</label>
-                        <input type="text" name="mother_name" placeholder="Enter mother's name" required>
+                        <input value="example" type="text" name="mother_name" placeholder="Enter mother's name" required>
                     </div>
                 <?php else: ?>
                     <div class="form-group">
                         <label for="mother_name">Mother Name *</label>
-                        <input type="text" name="mother_name" value="<?php echo $user_fname; ?>" required>
+                        <input value="example" type="text" name="mother_name" value="<?php echo $user_fname; ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="father_name">Father Name</label>
-                        <input type="text" name="father_name" placeholder="Enter father's name">
+                        <input value="example" type="text" name="father_name" placeholder="Enter father's name">
                     </div>
                 <?php endif; ?>
             </div>
@@ -426,8 +426,8 @@ document.querySelector('#requestform').addEventListener('submit', function(e) {
 
 async function Request_Immunization() {
     const formData = new FormData(requestform);
-    // const doc = await fetch('../../php/users/request_immunization.php', {
-    const doc = await fetch('../../php/supabase/users/request_immunization.php', {
+    // const doc = await fetch('/ebakunado/php/users/request_immunization.php', {
+    const doc = await fetch('/ebakunado/php/supabase/users/request_immunization.php', {
         method: 'POST',
         body: formData
     });
@@ -471,7 +471,7 @@ async function claimChildWithCode() {
         const formData = new FormData();
         formData.append('family_code', familyCode);
         
-        const response = await fetch('../../php/supabase/users/claim_child_with_code.php', {
+        const response = await fetch('/ebakunado/php/supabase/users/claim_child_with_code.php', {
             method: 'POST',
             body: formData
         });

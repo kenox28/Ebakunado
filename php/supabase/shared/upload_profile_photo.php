@@ -40,30 +40,37 @@ try {
     $filename = $user_type . '_' . $user_id . '_' . time() . '.' . $extension;
     
     // Upload to Cloudinary
-    require_once __DIR__ . '/../../../assets/config/cloudinary.php';
+    require_once __DIR__ . '/../../../vendor/autoload.php';
+    $cloudinaryConfig = include __DIR__ . '/../../../assets/config/cloudinary.php';
     
-    $cloudinary = \Cloudinary\Uploader::upload($file['tmp_name'], [
+    \Cloudinary\Configuration\Configuration::instance([
+        'cloud' => [
+            'cloud_name' => $cloudinaryConfig['cloud_name'],
+            'api_key' => $cloudinaryConfig['api_key'],
+            'api_secret' => $cloudinaryConfig['api_secret']
+        ],
+        'url' => ['secure' => $cloudinaryConfig['secure']]
+    ]);
+    
+    $uploader = new \Cloudinary\Api\Upload\UploadApi();
+    $cloudinary = $uploader->upload($file['tmp_name'], [
         'public_id' => 'profile_photos/' . pathinfo($filename, PATHINFO_FILENAME),
         'folder' => 'ebakunado/profiles',
         'resource_type' => 'image'
     ]);
     
-    $imageUrl = $cloudinary['secure_url'];
+    $imageUrl = $cloudinary['secure_url'] ?? ($cloudinary['url'] ?? null);
     
     // Update user profile image in database
-    $supabase = getSupabase();
+    $updateData = ['profileImg' => $imageUrl, 'updated' => date('c')];
     
     if ($user_type === 'midwife') {
-        $response = $supabase->from('midwives')
-            ->update(['profileImg' => $imageUrl, 'updated' => date('c')])
-            ->eq('midwife_id', $user_id);
+        $result = supabaseUpdate('midwives', $updateData, ['midwife_id' => $user_id]);
     } else {
-        $response = $supabase->from('bhw')
-            ->update(['profileImg' => $imageUrl, 'updated' => date('c')])
-            ->eq('bhw_id', $user_id);
+        $result = supabaseUpdate('bhw', $updateData, ['bhw_id' => $user_id]);
     }
     
-    if ($response->getData()) {
+    if ($result !== false) {
         // Update session
         $_SESSION['profileimg'] = $imageUrl;
         

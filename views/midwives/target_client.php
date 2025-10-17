@@ -126,7 +126,7 @@
 		body.innerHTML = '<tr><td colspan="19">Loading...</td></tr>';
 		
 		try {
-			const res = await fetch('../../php/supabase/shared/get_tcl_data.php');
+			const res = await fetch('/ebakunado/php/supabase/shared/get_tcl_data.php');
 			const data = await res.json();
 			
 			if (data.status !== 'success') {

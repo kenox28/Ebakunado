@@ -30,7 +30,7 @@ session_start();
         <header class="auth-header">
           <img
             class="brand-logo"
-            src="../assets/images/white-ebakunado-logo-with-label.png"
+            src="/ebakunado/assets/images/white-ebakunado-logo-with-label.png"
             alt="Ebakunado Logo" />
           <div class="brand-text">
             <h2 class="brand-title">Create Your Parent Account</h2>
@@ -253,9 +253,9 @@ session_start();
     </section>
   </main>
 
-  <script src="../js/auth-handler/password-toggle.js"></script>
-  <script src="../js/auth-handler/create-account-stepper.js"></script>
-  <script src="../js/supabase_js/create_account.js?v=1.0.5"></script>
+  <script src="/ebakunado/js/auth-handler/password-toggle.js"></script>
+  <script src="/ebakunado/js/auth-handler/create-account-stepper.js"></script>
+  <script src="/ebakunado/js/supabase_js/create_account.js?v=1.0.5"></script>
 </body>
 
 </html>

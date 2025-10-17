@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 async function generateCSRFToken() {
 	try {
 		// Supabase: const response = await fetch("/php/supabase/generate_csrf.php");
-		const response = await fetch("../../php/supabase/generate_csrf.php");
+		const response = await fetch("/ebakunado/php/supabase/generate_csrf.php");
 
 		const data = await response.json();
 		document.getElementById("csrf_token").value = data.csrf_token;
@@ -61,7 +61,7 @@ async function loginFun(e) {
 	try {
 		console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 		// Supabase: const res = await fetch("/php/supabase/login.php", {
-		const res = await fetch("../../php/supabase/login.php", {
+		const res = await fetch("/ebakunado/php/supabase/login.php", {
 			method: "POST",
 			body: formdata,
 		});
@@ -72,14 +72,22 @@ async function loginFun(e) {
 		let data;
 		try {
 			data = JSON.parse(text);
-			console.log("Parsed data:", data);
+			if (data.status === "failed") {
+				console.log(data);
+				Swal.fire({
+					icon: "error",
+					title: "Login failed!",
+					text: data.message,
+				});
+				return;
+			}
+			// Do not show SweetAlert on success or already_logged_in; proceed to redirect
 		} catch (e) {
-			console.log("Server error:\n" + text);
-			// Swal.fire({
-			// 	icon: "error",
-			// 	title: "Server Error!",
-			// 	text: "An unexpected error occurred. Please try again.",
-			// });
+			Swal.fire({
+				icon: "error",
+				title: "Server error",
+				text: text,
+			});
 			return;
 		}
 
@@ -168,12 +176,12 @@ async function loginFun(e) {
 				window.location.href = "../../views/users/home.php";
 			}
 		} else {
-			// Swal.fire({
-			// 	icon: "error",
-			// 	title: "Login Failed!",
-			// 	text: data.message,
-			// });
-			console.log(Date.message);
+			Swal.fire({
+				icon: "error",
+				title: "Login Failed!",
+				text: data.message,
+			});
+			// console.log(Date.message);
 		}
 	} catch (error) {
 		console.error("Network error:", error);
@@ -247,10 +255,13 @@ async function handleForgotPassword(e) {
 		formData.append("email_phone", emailPhone);
 
 		// Supabase: const response = await fetch("/php/supabase/forgot_password.php", {
-		const response = await fetch("../../php/supabase/forgot_password.php", {
-			method: "POST",
-			body: formData,
-		});
+		const response = await fetch(
+			"/ebakunado/php/supabase/forgot_password.php",
+			{
+				method: "POST",
+				body: formData,
+			}
+		);
 
 		const data = await response.json();
 
@@ -364,10 +375,13 @@ async function verifyResetOTP(otp) {
 		formData.append("otp", otp);
 
 		// Supabase: const response = await fetch("/php/supabase/verify_reset_otp.php", {
-		const response = await fetch("../../php/supabase/verify_reset_otp.php", {
-			method: "POST",
-			body: formData,
-		});
+		const response = await fetch(
+			"/ebakunado/php/supabase/verify_reset_otp.php",
+			{
+				method: "POST",
+				body: formData,
+			}
+		);
 
 		const data = await response.json();
 
@@ -479,7 +493,7 @@ async function resetPassword(newPassword, confirmPassword) {
 		formData.append("confirm_password", confirmPassword);
 
 		// Supabase: const response = await fetch("/php/supabase/reset_password.php", {
-		const response = await fetch("../../php/supabase/reset_password.php", {
+		const response = await fetch("/ebakunado/php/supabase/reset_password.php", {
 			method: "POST",
 			body: formData,
 		});
