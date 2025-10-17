@@ -44,7 +44,7 @@
 </div>
 
 <!-- <script src="../../js/admin/activity-logs.js"></script> -->
-<script src="../../js/supabase_js/admin/activity-logs.js"></script>
+<script src="../../js/supabase_js/admin/activity-logs.js?v=1.0.1"></script>
 <script>
     // Set active menu item
     document.querySelector('a[href="activity-logs.php"]').classList.add('active');

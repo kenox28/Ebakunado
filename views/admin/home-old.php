@@ -254,6 +254,6 @@ $admin_lname = $_SESSION['admin_lname'] ?? '';
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
-    <script src="../../js/admin/home.js?v=1.0.0"></script>
+    <script src="../../js/supabase_js/admin/home.js?v=1.0.1"></script>
 </body>
 </html>

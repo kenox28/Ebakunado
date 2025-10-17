@@ -187,11 +187,11 @@ async function editUser(user_id) {
 			await loadEditUserProvinces();
 
 			// Show modal
-			// const modal = new bootstrap.Modal(
-			// 	document.getElementById("editUserModal")
-			// );
-			// modal.show();
-			alert("success");
+			const modal = new bootstrap.Modal(
+				document.getElementById("editUserModal")
+			);
+			modal.show();
+			// alert("success");
 		} else {
 			// Swal.fire("Error!", data.message || "Failed to load user data", "error");
 		}

@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 	try{
 		// Fetch child details
 		const fd = new FormData(); fd.append('baby_id', babyId);
-		const childRes = await fetch('../../php/supabase/bhw/get_child_details.php', { method:'POST', body: fd });
+		const childRes = await fetch('/ebakunado/php/supabase/bhw/get_child_details.php', { method:'POST', body: fd });
 		const childJson = await childRes.json();
 		const child = (childJson && childJson.status==='success' && childJson.data && childJson.data[0]) ? childJson.data[0] : {};
 
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 		document.getElementById('td_dose5').value = child.mother_td_dose5_date || '';
 
         // Fetch immunization schedule for child to build editable ledger
-        const schedRes = await fetch(`../../php/supabase/bhw/get_immunization_records.php?baby_id=${encodeURIComponent(babyId)}`);
+        const schedRes = await fetch(`/ebakunado/php/supabase/bhw/get_immunization_records.php?baby_id=${encodeURIComponent(babyId)}`);
         const schedJson = await schedRes.json();
         const allRows = (schedJson && schedJson.status==='success' && Array.isArray(schedJson.data)) ? schedJson.data : [];
 
@@ -262,7 +262,7 @@ async function updateFeedingStatus() {
         formData.append('complementary_feeding_7mo', document.getElementById('cf_7mo').value);
         formData.append('complementary_feeding_8mo', document.getElementById('cf_8mo').value);
 
-        const res = await fetch('../../php/supabase/bhw/update_feeding_status.php', { method: 'POST', body: formData });
+        const res = await fetch('/ebakunado/php/supabase/bhw/update_feeding_status.php', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.status === 'success') {
             alert('Feeding status updated successfully!');
@@ -288,7 +288,7 @@ async function updateTDStatus() {
         formData.append('mother_td_dose4_date', document.getElementById('td_dose4').value);
         formData.append('mother_td_dose5_date', document.getElementById('td_dose5').value);
 
-        const res = await fetch('../../php/supabase/bhw/update_td_status.php', { method: 'POST', body: formData });
+        const res = await fetch('/ebakunado/php/supabase/bhw/update_td_status.php', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.status === 'success') {
             alert('TD status updated successfully!');
@@ -307,7 +307,7 @@ async function updateImmunizationDate(recordId, newDate) {
         formData.append('record_id', recordId);
         formData.append('date_given', newDate);
         
-        const res = await fetch('../../php/supabase/bhw/update_immunization_date.php', { method: 'POST', body: formData });
+        const res = await fetch('/ebakunado/php/supabase/bhw/update_immunization_date.php', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.status !== 'success') {
             alert('Failed to update date: ' + data.message);
@@ -323,7 +323,7 @@ async function updateImmunizationHeight(recordId, newHeight) {
         formData.append('record_id', recordId);
         formData.append('height', newHeight);
         
-        const res = await fetch('../../php/supabase/bhw/update_immunization_height.php', { method: 'POST', body: formData });
+        const res = await fetch('/ebakunado/php/supabase/bhw/update_immunization_height.php', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.status !== 'success') {
             alert('Failed to update height: ' + data.message);
@@ -339,7 +339,7 @@ async function updateImmunizationWeight(recordId, newWeight) {
         formData.append('record_id', recordId);
         formData.append('weight', newWeight);
         
-        const res = await fetch('../../php/supabase/bhw/update_immunization_weight.php', { method: 'POST', body: formData });
+        const res = await fetch('/ebakunado/php/supabase/bhw/update_immunization_weight.php', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.status !== 'success') {
             alert('Failed to update weight: ' + data.message);
@@ -355,7 +355,7 @@ async function updateImmunizationStatus(recordId, newStatus) {
         formData.append('record_id', recordId);
         formData.append('status', newStatus);
         
-        const res = await fetch('../../php/supabase/bhw/update_immunization_status.php', { method: 'POST', body: formData });
+        const res = await fetch('/ebakunado/php/supabase/bhw/update_immunization_status.php', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.status !== 'success') {
             alert('Failed to update status: ' + data.message);
@@ -371,7 +371,7 @@ async function updateNextScheduleDate(recordId, newDate) {
         formData.append('record_id', recordId);
         formData.append('catch_up_date', newDate);
         
-        const res = await fetch('../../php/supabase/bhw/update_next_schedule_date.php', { method: 'POST', body: formData });
+        const res = await fetch('/ebakunado/php/supabase/bhw/update_next_schedule_date.php', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.status !== 'success') {
             alert('Failed to update next schedule date: ' + data.message);
@@ -390,7 +390,7 @@ async function deleteImmunizationRecord(recordId) {
         const formData = new FormData();
         formData.append('record_id', recordId);
         
-        const res = await fetch('../../php/supabase/bhw/delete_immunization_record.php', { method: 'POST', body: formData });
+        const res = await fetch('/ebakunado/php/supabase/bhw/delete_immunization_record.php', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.status === 'success') {
             alert('Immunization record deleted successfully!');

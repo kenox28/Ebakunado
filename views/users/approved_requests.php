@@ -14,7 +14,7 @@ async function loadApprovedRequests(){
 	const root = document.getElementById('approvedRoot');
 	root.innerHTML = '<div style="text-align:center; padding: 20px;">Loading...</div>';
 	try{
-		const res = await fetch('../../php/supabase/users/get_my_chr_requests.php');
+		const res = await fetch('/ebakunado/php/supabase/users/get_my_chr_requests.php');
 		const j = await res.json();
 		if (!(j && j.status==='success')){ root.innerHTML = '<div style="text-align:center; color:#dc3545; padding:20px;">Failed to load</div>'; return; }
 		const rows = Array.isArray(j.data) ? j.data : [];

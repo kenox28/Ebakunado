@@ -36,7 +36,7 @@
 
     async function loadImmunizationSchedule() {
         try {
-            const endpoint = '../../php/supabase/users/get_immunization_schedule.php' + (selectedBabyId ? ('?baby_id=' + encodeURIComponent(selectedBabyId)) : '');
+            const endpoint = '/ebakunado/php/supabase/users/get_immunization_schedule.php' + (selectedBabyId ? ('?baby_id=' + encodeURIComponent(selectedBabyId)) : '');
             const response = await fetch(endpoint);
                     const data = await response.json();
                     
@@ -77,7 +77,7 @@
         try {
             const formData = new FormData();
             formData.append('baby_id', baby_id);
-            const response = await fetch('../../php/supabase/users/get_child_details.php', {
+            const response = await fetch('/ebakunado/php/supabase/users/get_child_details.php', {
 				method: 'POST',
                 body: formData
             });

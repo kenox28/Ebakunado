@@ -161,7 +161,7 @@
 
     async function loadMissedImmunizations() {
         try {
-            const response = await fetch('../../php/supabase/users/get_immunization_schedule.php');
+            const response = await fetch('/ebakunado/php/supabase/users/get_immunization_schedule.php');
             const data = await response.json();
 
             if (data.status === 'success') {
@@ -200,7 +200,7 @@
         try {
             const formData = new FormData();
             formData.append('baby_id', baby_id);
-            const response = await fetch('../../php/supabase/users/get_child_details.php', {
+            const response = await fetch('/ebakunado/php/supabase/users/get_child_details.php', {
                 method: 'POST',
                 body: formData
             });

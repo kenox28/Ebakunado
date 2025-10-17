@@ -2,7 +2,7 @@
 session_start();
 $current_page = 'user-management';
 $page_title = 'User Management';
-$page_js = 'user-management.js?v=1.0.3';
+$page_js = 'user-management.js?v=1.0.4';
 
 include 'includes/header.php';
 ?>

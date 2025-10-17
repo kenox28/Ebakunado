@@ -1,10 +1,20 @@
 <?php session_start(); ?>
-<?php
-// Debug BHW session
-if (isset($_SESSION['bhw_id'])) {
-    echo "<!-- BHW Session Active: " . $_SESSION['bhw_id'] . " -->";
+<?php 
+// Handle both BHW and Midwife sessions (but BHW should only see BHW features)
+$user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+$user_types = $_SESSION['user_type']; // Default to bhw for BHW pages
+$user_name = $_SESSION['fname'] ?? 'User';
+$user_fullname = $_SESSION['fname'] ." ". $_SESSION['lname'];
+if($user_types != 'midwifes') {   
+    $user_type = 'Barangay Health Worker';
+}else{
+    $user_type = 'Midwife';
+}
+// Debug session
+if ($user_id) {
+    echo "<!-- Session Active: " . $user_type . " - " . $user_id . " -->";
 } else {
-    echo "<!-- BHW Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
+    echo "<!-- Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
 }
 ?>
 
@@ -135,7 +145,7 @@ if (isset($_SESSION['bhw_id'])) {
         async function loadDashboardData() {
             try {
                 console.log('Loading BHW dashboard data...');
-                const response = await fetch('../../php/supabase/bhw/get_dashboard_stats.php');
+                const response = await fetch('/ebakunado/php/supabase/bhw/get_dashboard_stats.php');
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -369,6 +379,14 @@ if (isset($_SESSION['bhw_id'])) {
         document.addEventListener('DOMContentLoaded', function() {
             loadDashboardData();
         });
+
+        async function logoutBhw() {
+				// const response = await fetch('/ebakunado/php/bhw/logout.php', { method: 'POST' });
+				const response = await fetch('/ebakunado/php/supabase/bhw/logout.php', { method: 'POST' });
+				const data = await response.json();
+				if (data.status === 'success') { window.location.href = '../../views/auth/login.php'; }
+				else { alert('Logout failed: ' + data.message); }
+        }
     </script>
 </body>
 

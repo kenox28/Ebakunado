@@ -88,38 +88,25 @@
 <script>
 	let chrRecords = [];
 
-	async function getChildHealthRecord() {
-		const body = document.querySelector('#childhealthrecordBody');
-		body.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
-		try {
-			const res = await fetch('../../php/supabase/bhw/get_immunization_view.php');
-			const data = await res.json();
-			if (data.status !== 'success') {
-				body.innerHTML = '<tr><td colspan="4">Failed to load records</td></tr>';
-				return;
+			async function getChildHealthRecord() {
+				const body = document.querySelector('#childhealthrecordBody');
+				body.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+				try {
+					const res = await fetch('/ebakunado/php/supabase/bhw/get_immunization_view.php');
+					const data = await res.json();
+					if (data.status !== 'success') { body.innerHTML = '<tr><td colspan="4">Failed to load records</td></tr>'; return; }
+					if (!data.data || data.data.length === 0){ body.innerHTML = '<tr><td colspan="4">No records found</td></tr>'; chrRecords = []; return; }
+					chrRecords = data.data;
+					renderTable(chrRecords);
+					populateVaccineDropdown();
+                    // Default date to today and status to upcoming; apply filters on first load
+                    const dateInput = document.getElementById('filterDate');
+                    if (dateInput && !dateInput.value) { dateInput.value = normalizeDateStr(new Date()); }
+                    const statusSelEl = document.getElementById('filterStatus');
+                    if (statusSelEl) { statusSelEl.value = 'upcoming'; }
+					applyFilters();
+				} catch (e) { body.innerHTML = '<tr><td colspan="4">Error loading records</td></tr>'; }
 			}
-			if (!data.data || data.data.length === 0) {
-				body.innerHTML = '<tr><td colspan="4">No records found</td></tr>';
-				chrRecords = [];
-				return;
-			}
-			chrRecords = data.data;
-			renderTable(chrRecords);
-			populateVaccineDropdown();
-			// Default date to today and status to upcoming; apply filters on first load
-			const dateInput = document.getElementById('filterDate');
-			if (dateInput && !dateInput.value) {
-				dateInput.value = normalizeDateStr(new Date());
-			}
-			const statusSelEl = document.getElementById('filterStatus');
-			if (statusSelEl) {
-				statusSelEl.value = 'upcoming';
-			}
-			applyFilters();
-		} catch (e) {
-			body.innerHTML = '<tr><td colspan="4">Error loading records</td></tr>';
-		}
-	}
 
 	function openImmunizationForm(btn) {
 		const recordId = btn.getAttribute('data-record-id') || '';
@@ -391,28 +378,22 @@
 			formData.append('update_td_dose_date', tdDoseInput.value);
 		}
 
-		try {
-			const res = await fetch('../../php/supabase/bhw/save_immunization.php', {
-				method: 'POST',
-				body: formData
-			});
-			const data = await res.json().catch(() => ({
-				status: 'error',
-				message: 'Invalid server response'
-			}));
-			if (data.status === 'success') {
-				closeImmunizationForm();
-				await getChildHealthRecord();
-				applyFilters();
-				alert('Immunization saved successfully');
-			} else {
-				alert('Save failed: ' + (data.message || 'Unknown error'));
+				try{
+					const res = await fetch('/ebakunado/php/supabase/bhw/save_immunization.php', { method: 'POST', body: formData });
+					const data = await res.json().catch(() => ({ status: 'error', message: 'Invalid server response' }));
+					if (data.status === 'success'){
+						closeImmunizationForm();
+						await getChildHealthRecord();
+						applyFilters();
+						alert('Immunization saved successfully');
+					}else{
+						alert('Save failed: ' + (data.message || 'Unknown error'));
+					}
+				}catch(err){
+					alert('Network error saving immunization');
+					console.error('save_immunization error:', err);
+				}
 			}
-		} catch (err) {
-			alert('Network error saving immunization');
-			console.error('save_immunization error:', err);
-		}
-	}
 
 	function renderTable(records) {
 		const body = document.querySelector('#childhealthrecordBody');
@@ -463,36 +444,31 @@
 	}
 
 
-	async function viewChildInformation(baby_id) {
-		formData = new FormData();
-		formData.append('baby_id', baby_id);
-		const response = await fetch('../../php/supabase/bhw/child_information.php', {
-			method: 'POST',
-			body: formData
-		});
-		const data = await response.json();
-		if (data.status === 'success') {
-
-			console.log(data.data);
-			document.querySelector('#childName').textContent = data.data[0].child_fname + ' ' + data.data[0].child_lname;
-			document.querySelector('#childGender').textContent = data.data[0].child_gender;
-			document.querySelector('#childBirthDate').textContent = data.data[0].child_birth_date;
-			document.querySelector('#childPlaceOfBirth').textContent = data.data[0].place_of_birth;
-			document.querySelector('#childAddress').textContent = data.data[0].address;
-			document.querySelector('#childWeight').textContent = data.data[0].birth_weight;
-			document.querySelector('#childHeight').textContent = data.data[0].birth_height;
-			document.querySelector('#childMother').textContent = data.data[0].mother_name;
-			document.querySelector('#childFather').textContent = data.data[0].father_name;
-			document.querySelector('#childBirthAttendant').textContent = data.data[0].birth_attendant;
-			document.querySelector('#childImage').src = data.data[0].babys_card;
-			document.querySelector('#acceptButton').addEventListener('click', () => {
-				acceptRecord(baby_id);
-			});
-			document.querySelector('.childinformation-container').style.display = 'flex';
-			document.querySelector('.table-container').style.display = 'none';
-		} else {
-			console.log(data.message);
-		}
+			async function viewChildInformation(baby_id){
+				formData = new FormData();
+				formData.append('baby_id', baby_id);
+				const response = await fetch('/ebakunado/php/supabase/bhw/child_information.php', { method: 'POST', body: formData });
+				const data = await response.json();
+				if (data.status === 'success') {
+					
+					console.log(data.data);
+					document.querySelector('#childName').textContent = data.data[0].child_fname + ' ' + data.data[0].child_lname;
+					document.querySelector('#childGender').textContent = data.data[0].child_gender;
+					document.querySelector('#childBirthDate').textContent = data.data[0].child_birth_date;
+					document.querySelector('#childPlaceOfBirth').textContent = data.data[0].place_of_birth;
+					document.querySelector('#childAddress').textContent = data.data[0].address;
+					document.querySelector('#childWeight').textContent = data.data[0].birth_weight;
+					document.querySelector('#childHeight').textContent = data.data[0].birth_height;
+					document.querySelector('#childMother').textContent = data.data[0].mother_name;
+					document.querySelector('#childFather').textContent = data.data[0].father_name;
+					document.querySelector('#childBirthAttendant').textContent = data.data[0].birth_attendant;
+					document.querySelector('#childImage').src = data.data[0].babys_card;
+					document.querySelector('#acceptButton').addEventListener('click', () => { acceptRecord(baby_id); });
+					document.querySelector('.childinformation-container').style.display = 'flex';
+					document.querySelector('.table-container').style.display = 'none';
+				} else {
+					console.log(data.message);
+				}
 
 
 	}
@@ -603,37 +579,23 @@
 		}
 	}
 
-	async function acceptRecord(baby_id) {
-		const formData = new FormData();
-		formData.append('baby_id', baby_id);
-		// const response = await fetch('../../php/bhw/accept_chr.php', { method: 'POST', body: formData });
-		const response = await fetch('../../php/supabase/bhw/accept_chr.php', {
-			method: 'POST',
-			body: formData
-		});
-		const data = await response.json();
-		if (data.status === 'success') {
-			getChildHealthRecord();
-		} else {
-			alert('Record not accepted: ' + data.message);
-		}
-		closeChildInformation();
-	}
+			async function acceptRecord(baby_id){
+				const formData = new FormData(); formData.append('baby_id', baby_id);
+				// const response = await fetch('/ebakunado/php/bhw/accept_chr.php', { method: 'POST', body: formData });
+				const response = await fetch('/ebakunado/php/supabase/bhw/accept_chr.php', { method: 'POST', body: formData });
+				const data = await response.json();
+				if (data.status === 'success') { getChildHealthRecord(); }
+				else { alert('Record not accepted: ' + data.message); }
+				closeChildInformation();
+			}
 
-	async function rejectRecord(baby_id) {
-		const formData = new FormData();
-		formData.append('baby_id', baby_id);
-		const response = await fetch('../../php/mysql/bhw/reject_chr.php', {
-			method: 'POST',
-			body: formData
-		});
-		const data = await response.json();
-		if (data.status === 'success') {
-			getChildHealthRecord();
-		} else {
-			alert('Record not rejected: ' + data.message);
-		}
-	}
+			async function rejectRecord(baby_id){
+				const formData = new FormData(); formData.append('baby_id', baby_id);
+				const response = await fetch('/ebakunado/php/mysql/bhw/reject_chr.php', { method: 'POST', body: formData });
+				const data = await response.json();
+				if (data.status === 'success') { getChildHealthRecord(); }
+				else { alert('Record not rejected: ' + data.message); }
+			}
 
 
 
@@ -646,19 +608,14 @@
 		if (clearBtn) clearBtn.addEventListener('click', clearFilters);
 	});
 
-	// Removed QR scanner functionality and dependencies
-	async function logoutBhw() {
-		// const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
-		const response = await fetch('../../php/supabase/bhw/logout.php', {
-			method: 'POST'
-		});
-		const data = await response.json();
-		if (data.status === 'success') {
-			window.location.href = '../../views/auth/login.php';
-		} else {
-			alert('Logout failed: ' + data.message);
-		}
-	}
-</script>
+			// Removed QR scanner functionality and dependencies
+			async function logoutBhw() {
+				// const response = await fetch('/ebakunado/php/bhw/logout.php', { method: 'POST' });
+				const response = await fetch('/ebakunado/php/supabase/bhw/logout.php', { method: 'POST' });
+				const data = await response.json();
+				if (data.status === 'success') { window.location.href = '../../views/auth/login.php'; }
+				else { alert('Logout failed: ' + data.message); }
+			}
+		</script>
 
 <?php include 'Include/footer.php'; ?>

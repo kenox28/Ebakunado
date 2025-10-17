@@ -24,6 +24,8 @@ $lname = $_POST['lname'] ?? '';
 $email = $_POST['email'] ?? '';
 $phone_number = $_POST['phone_number'] ?? '';
 $role = $_POST['role'] ?? '';
+$gender = $_POST['gender'] ?? '';
+$place = $_POST['place'] ?? '';
 
 if(empty($user_id) || empty($fname) || empty($lname) || empty($email) || empty($phone_number)) {
 	echo json_encode(array('status' => 'error', 'message' => 'User ID, first name, last name, email, and phone number are required'));
@@ -72,8 +74,8 @@ try {
 		}
 	}
 
-	// Helper lambdas to insert and delete
-    $insert_user_from_record = function($record, $id_key) use ($fname,$lname,$email,$phone_number,$insert_with_fallback) {
+    // Helper lambdas to insert and delete
+    $insert_user_from_record = function($record, $id_key) use ($fname,$lname,$email,$phone_number,$gender,$place,$insert_with_fallback) {
         return $insert_with_fallback('users', [
         'user_id' => $record[$id_key],
         'fname' => $fname,
@@ -83,15 +85,15 @@ try {
         'phone_number' => $phone_number,
         'salt' => $record['salt'] ?? null,
         'profileImg' => $record['profileImg'] ?? 'noimage.jpg',
-        'gender' => $record['gender'] ?? null,
-        'place' => $record['place'] ?? null,
+        'gender' => $gender ?: ($record['gender'] ?? null),
+        'place' => $place ?: ($record['place'] ?? null),
         'role' => 'user',
         'created_at' => date('c'),
         'updated' => date('c')
     ]);
 };
 
-    $insert_bhw_from_record = function($record, $id_key) use ($fname,$lname,$email,$phone_number,$insert_with_fallback) {
+    $insert_bhw_from_record = function($record, $id_key) use ($fname,$lname,$email,$phone_number,$gender,$place,$insert_with_fallback) {
         return $insert_with_fallback('bhw', [
         'bhw_id' => $record[$id_key],
         'fname' => $fname,
@@ -101,8 +103,8 @@ try {
         'phone_number' => $phone_number,
         'salt' => $record['salt'] ?? null,
         'profileImg' => $record['profileImg'] ?? 'noimage.jpg',
-        'gender' => $record['gender'] ?? null,
-        'place' => $record['place'] ?? null,
+        'gender' => $gender ?: ($record['gender'] ?? null),
+        'place' => $place ?: ($record['place'] ?? null),
         'permissions' => 'view',
         'role' => 'bhw',
         'created_at' => date('c'),
@@ -110,8 +112,8 @@ try {
     ]);
 };
 
-    $insert_midwife_from_record = function($record, $id_key) use ($fname,$lname,$email,$phone_number,$insert_with_fallback) {
-        return $insert_with_fallback('midwives', [
+    $insert_midwife_from_record = function($record, $id_key) use ($fname,$lname,$email,$phone_number,$gender,$place,$insert_with_fallback) {
+        $midwife_data = [
         'midwife_id' => $record[$id_key],
         'fname' => $fname,
         'lname' => $lname,
@@ -120,14 +122,19 @@ try {
         'phone_number' => $phone_number,
         'salt' => $record['salt'] ?? null,
         'profileImg' => $record['profileImg'] ?? 'noimage.jpg',
-        'gender' => $record['gender'] ?? null,
-        'place' => $record['place'] ?? null,
+        'gender' => $gender ?: ($record['gender'] ?? null),
+        'place' => $place ?: ($record['place'] ?? null),
         'permissions' => 'view',
-        'Approve' => 0,
         'role' => 'midwife',
         'created_at' => date('c'),
         'updated' => date('c')
-    ]);
+        ];
+        
+        error_log("Attempting to insert midwife data: " . json_encode($midwife_data));
+        $result = $insert_with_fallback('midwives', $midwife_data);
+        error_log("Midwife insert result: " . ($result ? 'SUCCESS' : 'FAILED'));
+        
+        return $result;
 };
 
 	// If role changes, handle moves between tables
@@ -149,6 +156,8 @@ try {
 					'lname' => $lname,
 					'email' => $email,
 					'phone_number' => $phone_number,
+					'gender' => $gender,
+					'place' => $place,
 					'role' => $role
 				], ['user_id' => $user_id]);
 				if ($upd === false) { echo json_encode(['status'=>'error','message'=>'Failed to update user']); exit(); }
@@ -173,27 +182,53 @@ try {
 					'fname' => $fname,
 					'lname' => $lname,
 					'email' => $email,
-					'phone_number' => $phone_number
+					'phone_number' => $phone_number,
+					'gender' => $gender,
+					'place' => $place
 				], ['bhw_id' => $user_id]);
 				if ($upd === false) { echo json_encode(['status'=>'error','message'=>'Failed to update BHW']); exit(); }
 			}
 		} elseif ($role === 'midwife') {
 			if ($current_table === 'users') {
+				error_log("Attempting to move user from users to midwives table. User data: " . json_encode($current_user));
 				$ins = $insert_midwife_from_record($current_user, 'user_id');
-				if ($ins === false) { echo json_encode(['status'=>'error','message'=>'Failed to move user to midwives table']); exit(); }
+				if ($ins === false) { 
+					$dbg = getSupabase() ? ['status' => getSupabase()->getLastStatus(), 'error' => getSupabase()->getLastError()] : null;
+					error_log("Failed to insert into midwives table. Debug: " . json_encode($dbg));
+					echo json_encode(['status'=>'error','message'=>'Failed to move user to midwives table','debug'=>$dbg]); 
+					exit(); 
+				}
+				error_log("Successfully inserted into midwives table, now deleting from users table");
 				$del = supabaseDelete('users', ['user_id' => $user_id]);
-				if ($del === false) { echo json_encode(['status'=>'error','message'=>'Failed to remove user from users table']); exit(); }
+				if ($del === false) { 
+					error_log("Failed to delete from users table");
+					echo json_encode(['status'=>'error','message'=>'Failed to remove user from users table']); 
+					exit(); 
+				}
 			} elseif ($current_table === 'bhw') {
+				error_log("Attempting to move user from bhw to midwives table. User data: " . json_encode($current_user));
 				$ins = $insert_midwife_from_record($current_user, 'bhw_id');
-				if ($ins === false) { echo json_encode(['status'=>'error','message'=>'Failed to move user to midwives table']); exit(); }
+				if ($ins === false) { 
+					$dbg = getSupabase() ? ['status' => getSupabase()->getLastStatus(), 'error' => getSupabase()->getLastError()] : null;
+					error_log("Failed to insert into midwives table. Debug: " . json_encode($dbg));
+					echo json_encode(['status'=>'error','message'=>'Failed to move user to midwives table','debug'=>$dbg]); 
+					exit(); 
+				}
+				error_log("Successfully inserted into midwives table, now deleting from bhw table");
 				$del = supabaseDelete('bhw', ['bhw_id' => $user_id]);
-				if ($del === false) { echo json_encode(['status'=>'error','message'=>'Failed to remove user from BHW table']); exit(); }
+				if ($del === false) { 
+					error_log("Failed to delete from bhw table");
+					echo json_encode(['status'=>'error','message'=>'Failed to remove user from BHW table']); 
+					exit(); 
+				}
 			} else {
 				$upd = supabaseUpdate('midwives', [
 					'fname' => $fname,
 					'lname' => $lname,
 					'email' => $email,
-					'phone_number' => $phone_number
+					'phone_number' => $phone_number,
+					'gender' => $gender,
+					'place' => $place
 				], ['midwife_id' => $user_id]);
 				if ($upd === false) { echo json_encode(['status'=>'error','message'=>'Failed to update midwife']); exit(); }
 			}
@@ -205,21 +240,27 @@ try {
 				'fname' => $fname,
 				'lname' => $lname,
 				'email' => $email,
-				'phone_number' => $phone_number
+				'phone_number' => $phone_number,
+				'gender' => $gender,
+				'place' => $place
 			], ['user_id' => $user_id]);
 		} elseif ($current_table === 'bhw') {
 			$upd = supabaseUpdate('bhw', [
 				'fname' => $fname,
 				'lname' => $lname,
 				'email' => $email,
-				'phone_number' => $phone_number
+				'phone_number' => $phone_number,
+				'gender' => $gender,
+				'place' => $place
 			], ['bhw_id' => $user_id]);
 		} else {
 			$upd = supabaseUpdate('midwives', [
 				'fname' => $fname,
 				'lname' => $lname,
 				'email' => $email,
-				'phone_number' => $phone_number
+				'phone_number' => $phone_number,
+				'gender' => $gender,
+				'place' => $place
 			], ['midwife_id' => $user_id]);
 		}
 		if ($upd === false) { echo json_encode(['status'=>'error','message'=>'Failed to update user']); exit(); }

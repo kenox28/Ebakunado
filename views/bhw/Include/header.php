@@ -1,10 +1,15 @@
 <?php session_start(); ?>
-<?php
-// Debug BHW session
-if (isset($_SESSION['bhw_id'])) {
-	echo "<!-- BHW Session Active: " . $_SESSION['bhw_id'] . " -->";
+<?php 
+// Handle both BHW and Midwife sessions (but BHW should only see BHW features)
+$user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+$user_type = $_SESSION['user_type'] ?? 'bhw'; // Default to bhw for BHW pages
+$user_name = $_SESSION['fname'] ?? 'User';
+
+// Debug session
+if ($user_id) {
+    echo "<!-- Session Active: " . $user_type . " - " . $user_id . " -->";
 } else {
-	echo "<!-- BHW Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
+    echo "<!-- Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
 }
 ?>
 <!DOCTYPE html>
@@ -329,68 +334,95 @@ if (isset($_SESSION['bhw_id'])) {
 		color: #666;
 	}
 
-	.no-notifications i {
-		font-size: 24px;
-		margin-bottom: 8px;
-		color: #ccc;
-	}
-</style>
+		.no-notifications i {
+			font-size: 24px;
+			margin-bottom: 8px;
+			color: #ccc;
+		}
 
-<body>
-	<aside>
-		<h3>Ebakunado</h3>
-		<a href="./home.php" data-icon="🏠"><span>Dashboard</span></a>
-		<a href="./immunization.php" data-icon="💉"><span>Imuunization form</span></a>
-		<a href="./pending_approval.php" data-icon="⏳"><span>Pending Approval</span></a>
-		<a href="./child_health_record.php" data-icon="🧒"><span>Child Health Record</span></a>
-		<a href="./chr-doc-requests.php" data-icon="📄"><span>CHR Doc Requests</span></a>
-		<a href="./target_client.php" data-icon="🎯"><span>Target Client List</span></a>
-		<a href="./system_settings.php" data-icon="⚙️"><span>System Settings</span></a>
-	</aside>
-	<main>
-		<header>
-			<nav>
-				<button
-					class="menu-button"
-					style="padding: 6px 10px; margin-right: 8px">
-					☰
-				</button>
-				<a href="#">ebakunado</a>
-			</nav>
-			<nav>
-				<input
-					type="text"
-					id="searchInput"
-					placeholder="Search by Baby ID, Name, or User ID"
-					style="padding: 6px 10px; width: 260px"
-					oninput="filterTable()" />
-				<button
-					onclick="openScanner()"
-					style="padding: 6px 10px; margin-left: 8px">
-					Scan QR
-				</button>
-				<div class="notification-button" onclick="toggleNotificationDropdown()">
-					<i class="fas fa-bell"></i>
-					<span class="notification-badge" id="notificationCount" style="display: none;">0</span>
-					<div class="notification-dropdown" id="notificationDropdown" style="display: none;">
-						<div class="notification-header">
-							<h3>Notifications</h3>
-							<button onclick="markAllAsRead()">Mark all as read</button>
-						</div>
-						<div class="notification-content" id="notificationContent">
-							<div class="loading-notifications">
-								<i class="fas fa-spinner fa-spin"></i>
-								<p>Loading notifications...</p>
+	</style>
+	<body>
+		<aside>
+			<h3>Ebakunado</h3>
+			<a href="./home.php" data-icon="🏠"><span>Dashboard</span></a>
+			<a href="./immunization.php" data-icon="💉"><span>Imuunization form</span></a>
+			<a href="./pending_approval.php" data-icon="⏳"><span>Pending Approval</span></a>
+			<a href="./child_health_record.php" data-icon="🧒"><span>Child Health Record</span></a>
+			<a href="./target_client.php" data-icon="🎯"><span>Target Client List</span></a>
+			<a href="./profile_management.php" data-icon="👤"><span>Profile Management</span></a>
+		</aside>
+		<main>
+			<header>
+				<nav>
+					<button
+						class="menu-button"
+						style="padding: 6px 10px; margin-right: 8px">
+						☰
+					</button>
+					<a href="#">ebakunado</a>
+				</nav>
+				<nav>
+					<div style="display: flex; align-items: center; margin-right: 15px;">
+						<span style="font-weight: bold; color: #2c5aa0;">Welcome, <?php echo htmlspecialchars($user_name); ?>!</span>
+						<span style="margin-left: 10px; padding: 4px 8px; background: #e3f2fd; border-radius: 12px; font-size: 12px; color: #1976d2;">
+							<?php echo ucfirst($user_type); ?>
+						</span>
+					</div>
+					
+					<!-- Plus Button for Add Child -->
+					<a href="./add_child.php" style="
+						background: #4CAF50; 
+						color: white; 
+						border: none; 
+						border-radius: 50%; 
+						width: 40px; 
+						height: 40px; 
+						margin-right: 10px;
+						cursor: pointer;
+						font-size: 18px;
+						box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+						transition: all 0.3s ease;
+						display: inline-flex;
+						align-items: center;
+						justify-content: center;
+						text-decoration: none;
+					" title="Add Child" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+						➕
+					</a>
+					
+					<input
+						type="text"
+						id="searchInput"
+						placeholder="Search by Baby ID, Name, or User ID"
+						style="padding: 6px 10px; width: 260px"
+						oninput="filterTable()" />
+					<button
+						onclick="openScanner()"
+						style="padding: 6px 10px; margin-left: 8px">
+						Scan QR
+					</button>
+					<div class="notification-button" onclick="toggleNotificationDropdown()">
+						<i class="fas fa-bell"></i>
+						<span class="notification-badge" id="notificationCount" style="display: none;">0</span>
+						<div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+							<div class="notification-header">
+								<h3>Notifications</h3>
+								<button onclick="markAllAsRead()">Mark all as read</button>
+							</div>
+							<div class="notification-content" id="notificationContent">
+								<div class="loading-notifications">
+									<i class="fas fa-spinner fa-spin"></i>
+									<p>Loading notifications...</p>
+								</div>
+							</div>
+							<div class="notification-footer">
+								<a href="#" onclick="viewAllNotifications()">View all notifications</a>
 							</div>
 						</div>
-						<div class="notification-footer">
-							<a href="#" onclick="viewAllNotifications()">View all notifications</a>
-						</div>
 					</div>
-				</div>
-				<a href="#" onclick="logoutBhw()">Logout</a>
-			</nav>
-		</header>
+					<a href="#" onclick="logoutBhw()">Logout</a>
+				</nav>
+			</header>
 
 
 		<script>
@@ -413,7 +445,7 @@ if (isset($_SESSION['bhw_id'])) {
 				const content = document.getElementById('notificationContent');
 
 				try {
-					const response = await fetch('../../php/supabase/bhw/get_bhw_notifications_simple.php');
+					const response = await fetch('../../php/supabase/shared/get_bhw_notifications_simple.php');
 					const data = await response.json();
 
 					if (data.status === 'success' && data.data.length > 0) {
@@ -470,40 +502,34 @@ if (isset($_SESSION['bhw_id'])) {
 				return `${Math.floor(diffInMinutes / 1440)}d ago`;
 			}
 
-			async function markAsRead(notificationId) {
-				try {
-					await fetch('../../php/supabase/bhw/mark_notification_read.php', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify({
-							notification_id: notificationId
-						})
-					});
-
-					// Reload notifications
-					loadNotifications();
-				} catch (error) {
-					console.error('Error marking notification as read:', error);
+				async function markAsRead(notificationId) {
+					try {
+						await fetch('../../php/supabase/bhw/mark_notification_read.php', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({ notification_id: notificationId })
+						});
+						
+						// Reload notifications
+						loadNotifications();
+					} catch (error) {
+						console.error('Error marking notification as read:', error);
+					}
 				}
-			}
 
-			async function markAllAsRead() {
-				try {
-					await fetch('../../php/supabase/bhw/mark_notifications_read_all.php', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						}
-					});
-
-					// Reload notifications
-					loadNotifications();
-				} catch (error) {
-					console.error('Error marking all notifications as read:', error);
+				async function markAllAsRead() {
+					try {
+						await fetch('../../php/supabase/bhw/mark_notifications_read_all.php', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' }
+						});
+						
+						// Reload notifications
+						loadNotifications();
+					} catch (error) {
+						console.error('Error marking all notifications as read:', error);
+					}
 				}
-			}
 
 			function viewAllNotifications() {
 				// Could redirect to a dedicated notifications page

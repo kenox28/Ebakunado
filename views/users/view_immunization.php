@@ -75,7 +75,7 @@
 
             const formData = new FormData();
             formData.append('baby_id', baby_id);
-            const response = await fetch('../../php/supabase/users/get_child_details.php', {
+            const response = await fetch('/ebakunado/php/supabase/users/get_child_details.php', {
                 method: 'POST',
                 body: formData
             });
@@ -114,7 +114,7 @@
             const baby_id = '<?php echo $_GET['baby_id']; ?>';
             const formData = new FormData();
             formData.append('baby_id', baby_id);
-            const response = await fetch('../../php/supabase/users/get_my_immunization_records.php', {
+            const response = await fetch('/ebakunado/php/supabase/users/get_my_immunization_records.php', {
                 method: 'POST',
                 body: formData
             });

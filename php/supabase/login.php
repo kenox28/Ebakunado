@@ -241,7 +241,7 @@ try {
         $_SESSION['email'] = $user_data['email'];
         $_SESSION['phone_number'] = $user_data['phone_number'] ?? null;
         $_SESSION['permissions'] = $user_data['permissions'] ?? null;
-        $_SESSION['approve'] = $user_data['Approve'] ?? null;
+        $_SESSION['approve'] = 1; // Midwives are approved by default
         $_SESSION['role'] = $user_data['role'] ?? null;
         $_SESSION['profileimg'] = $user_data['profileimg'] ?? null;
         $_SESSION['user_type'] = 'midwife';
@@ -265,10 +265,33 @@ try {
     $actor_id = $_SESSION['super_admin_id'] ?? $_SESSION['admin_id'] ?? $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? $_SESSION['user_id'] ?? null;
     supabaseLogActivity($actor_id, $user_type, 'login_success', ucfirst($user_type) . ' logged in successfully', $ip);
 
+    // Set redirect URLs based on user type
+    $redirect_url = '';
+    switch ($user_type) {
+        case 'bhw':
+            $redirect_url = '../../views/bhw/home.php';
+            break;
+        case 'midwife':
+            $redirect_url = '../../views/midwives/home.php';
+            break;
+        case 'super_admin':
+            $redirect_url = '../../views/super_admin/dashboard.php';
+            break;
+        case 'admin':
+            $redirect_url = '../../views/admin/dashboard.php';
+            break;
+        case 'user':
+            $redirect_url = '../../views/users/dashboard.php';
+            break;
+        default:
+            $redirect_url = '../../views/auth/login.php';
+    }
+
     echo json_encode([
         "status" => "success",
         "message" => "Login successful",
         "user_type" => $user_type,
+        "redirect_url" => $redirect_url,
         "user" => [
             "fname" => $_SESSION['fname'],
             "lname" => $_SESSION['lname'],
