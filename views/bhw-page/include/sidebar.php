@@ -1,3 +1,7 @@
+<?php
+// Determine which page is currently loaded
+$currentPage = basename($_SERVER['PHP_SELF']);
+?>
 <aside class="sidebar" id="sideNav">
     <nav class="sidebar-nav">
         <div class="sidebar-brand">
@@ -25,24 +29,31 @@
         <div class="sidebar-section">
             <h2 class="sidebar-section-title">Main Menu</h2>
             <ul class="sidebar-menu">
-                <li class="sidebar-menu-item active">
-                    <a href="../dashboard.php" class="menu-link">
+                <!-- Dashboard -->
+                <li class="sidebar-menu-item<?php echo $currentPage === 'dashboard.php' ? ' active' : ''; ?>">
+                    <a href="/views/bhw-page/dashboard.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">dashboard</span>
                         <span class="menu-label">Dashboard</span>
                     </a>
                 </li>
-                <li class="sidebar-menu-item">
-                    <a href="#" class="menu-link">
+
+                <!-- Immunization -->
+                <li class="sidebar-menu-item<?php echo $currentPage === 'immunization.php' ? ' active' : ''; ?>">
+                    <a href="/views/bhw-page/immunization.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">vaccines</span>
                         <span class="menu-label">Immunization Form</span>
                     </a>
                 </li>
-                <li class="sidebar-menu-item">
-                    <a href="#" class="menu-link">
+
+                <!-- Pending Approval -->
+                <li class="sidebar-menu-item<?php echo $currentPage === 'pending-approval.php' ? ' active' : ''; ?>">
+                    <a href="/views/bhw-page/pending-approval.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">hourglass_top</span>
                         <span class="menu-label">Pending Approval</span>
                     </a>
                 </li>
+
+                <!-- Others (no active state until pages exist/linked) -->
                 <li class="sidebar-menu-item">
                     <a href="#" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">child_care</span>

@@ -1,6 +1,6 @@
 <?php include 'Include/header.php'; ?>
 
-    <div class="content">
+<div class="content">
 	<!-- Dashboard Stats -->
 	<div class="dashboard-stats">
 		<div class="stat-card pending">
@@ -29,9 +29,9 @@
 			<div class="stat-info">
 				<h3 id="totalCount">0</h3>
 				<p>Total Children</p>
-        </div>
-    </div>
-</div>
+			</div>
+		</div>
+	</div>
 
 	<!-- Quick Actions -->
 	<div class="quick-actions">
@@ -74,7 +74,7 @@
 	<div class="activity-section">
 		<h2>Recent Activity</h2>
 		<div class="activity-list" id="activityList">
-                                    <div class="loading">
+			<div class="loading">
 				<div style="display: flex; align-items: center; gap: 10px;">
 					<div style="width: 20px; height: 20px; border: 2px solid #f3f3f3; border-top: 2px solid #1976d2; border-radius: 50%; animation: spin 1s linear infinite;"></div>
 					<p>Loading recent activity...</p>
@@ -124,7 +124,7 @@
 			</div>
 		</div>
 	</div>
-                                    </div>
+</div>
 
 <style>
 	.content {
@@ -136,7 +136,7 @@
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: auto auto 1fr;
 		gap: 15px;
-		grid-template-areas: 
+		grid-template-areas:
 			"stats stats"
 			"actions actions"
 			"activity tasks";
@@ -150,12 +150,12 @@
 		margin-bottom: 0;
 	}
 
-	
+
 	.stat-card {
 		background: white;
 		padding: 15px;
 		border-radius: 8px;
-		box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 		display: flex;
 		align-items: center;
 		gap: 12px;
@@ -227,7 +227,7 @@
 		background: white;
 		padding: 15px;
 		border-radius: 8px;
-		box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 		display: flex;
 		align-items: center;
 		gap: 10px;
@@ -239,7 +239,7 @@
 
 	.action-card:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 	}
 
 	.action-icon {
@@ -307,7 +307,8 @@
 		margin-bottom: 0;
 	}
 
-	.activity-section h2, .tasks-section h2 {
+	.activity-section h2,
+	.tasks-section h2 {
 		margin-bottom: 15px;
 		color: #333;
 		font-size: 18px;
@@ -316,7 +317,7 @@
 	.activity-list {
 		background: white;
 		border-radius: 8px;
-		box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 		padding: 15px;
 		height: calc(100vh - 400px);
 		overflow-y: auto;
@@ -374,7 +375,7 @@
 		background: white;
 		padding: 15px;
 		border-radius: 8px;
-		box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 		border-left: 4px solid #ddd;
 		flex-shrink: 0;
 	}
@@ -442,7 +443,7 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background: rgba(0,0,0,0.8);
+		background: rgba(0, 0, 0, 0.8);
 		z-index: 1000;
 		display: flex;
 		align-items: center;
@@ -504,24 +505,29 @@
 	}
 
 	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
+		0% {
+			transform: rotate(0deg);
+		}
+
+		100% {
+			transform: rotate(360deg);
+		}
 	}
 
 	@media (max-width: 1200px) {
 		.content {
 			grid-template-columns: 1fr;
-			grid-template-areas: 
+			grid-template-areas:
 				"stats"
 				"actions"
 				"activity"
 				"tasks";
 		}
-		
+
 		.dashboard-stats {
 			grid-template-columns: repeat(2, 1fr);
 		}
-		
+
 		.actions-grid {
 			grid-template-columns: repeat(2, 1fr);
 		}
@@ -531,24 +537,24 @@
 		.dashboard-stats {
 			grid-template-columns: 1fr;
 		}
-		
+
 		.actions-grid {
 			grid-template-columns: 1fr;
 		}
 	}
 </style>
 
-		<script>
+<script>
 	// Dashboard Data Loading
 	async function loadDashboardData() {
 		try {
 			console.log('Loading BHW dashboard data...');
 			const response = await fetch('../../php/supabase/bhw/get_dashboard_stats.php');
-			
+
 			if (!response.ok) {
 				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 			}
-			
+
 			const data = await response.json();
 			console.log('Dashboard data received:', data);
 
@@ -583,7 +589,7 @@
 
 	function updateActivity(activities) {
 		const activityList = document.getElementById('activityList');
-		
+
 		if (!activities || activities.length === 0) {
 			activityList.innerHTML = '<div class="loading"><p>No recent activity</p></div>';
 			return;
@@ -610,22 +616,22 @@
 	function getTimeAgo(timestamp) {
 		const now = new Date();
 		let time;
-		
+
 		if (timestamp.includes('T')) {
 			const parts = timestamp.split('T');
 			const datePart = parts[0];
 			const timePart = parts[1].split('.')[0];
 			time = new Date(datePart + ' ' + timePart);
-				} else {
+		} else {
 			time = new Date(timestamp.replace(' ', 'T'));
 		}
-		
+
 		if (isNaN(time.getTime())) {
 			return 'Unknown time';
 		}
-		
+
 		const diffInSeconds = Math.floor((now - time) / 1000);
-		
+
 		if (diffInSeconds < 0) return 'In the future';
 		if (diffInSeconds < 60) return 'Just now';
 		if (diffInSeconds < 3600) return Math.floor(diffInSeconds / 60) + ' minutes ago';
@@ -644,59 +650,59 @@
 	}
 
 	// QR Scanner Functions
-			let html5QrcodeInstance = null;
+	let html5QrcodeInstance = null;
 
 	function openQRScanner() {
-				const overlay = document.getElementById('qrOverlay');
-				overlay.style.display = 'flex';
-				console.log('[QR] Opening scanner...');
-		
+		const overlay = document.getElementById('qrOverlay');
+		overlay.style.display = 'flex';
+		console.log('[QR] Opening scanner...');
+
 		// Initialize scanner after a short delay to ensure overlay is visible
 		setTimeout(initializeScanner, 100);
 	}
 
 	async function initializeScanner() {
 		try {
-			const devices = await Html5Qrcode.getCameras().catch(err => { 
-				console.log('[QR] getCameras error:', err); 
-				return []; 
+			const devices = await Html5Qrcode.getCameras().catch(err => {
+				console.log('[QR] getCameras error:', err);
+				return [];
 			});
-			
-					console.log('[QR] Cameras found:', devices);
-			
-					const camSel = document.getElementById('cameraSelect');
-					camSel.innerHTML = '';
-			
+
+			console.log('[QR] Cameras found:', devices);
+
+			const camSel = document.getElementById('cameraSelect');
+			camSel.innerHTML = '';
+
 			if (devices && devices.length > 0) {
-						devices.forEach((d, idx) => {
-							const opt = document.createElement('option');
+				devices.forEach((d, idx) => {
+					const opt = document.createElement('option');
 					opt.value = d.id;
 					opt.textContent = d.label || ('Camera ' + (idx + 1));
 					camSel.appendChild(opt);
-						});
-						camSel.style.display = 'inline-block';
+				});
+				camSel.style.display = 'inline-block';
 			} else {
 				camSel.style.display = 'none';
 			}
-			
+
 			if (!html5QrcodeInstance) {
 				html5QrcodeInstance = new Html5Qrcode("qrReader");
 			}
-			
-					await html5QrcodeInstance.start(
-						{ facingMode: "environment" },
-				{ 
-					fps: 12, 
-					qrbox: 300, 
-					formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ], 
-					disableFlip: true 
+
+			await html5QrcodeInstance.start({
+					facingMode: "environment"
+				}, {
+					fps: 12,
+					qrbox: 300,
+					formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+					disableFlip: true
 				},
-						onScanSuccess,
-						onScanFailure
-					);
-			
-					console.log('[QR] Scanner started');
-			
+				onScanSuccess,
+				onScanFailure
+			);
+
+			console.log('[QR] Scanner started');
+
 		} catch (e) {
 			console.error('[QR] Camera error:', e);
 			alert('Camera error: ' + e.message);
@@ -704,9 +710,9 @@
 	}
 
 	function closeQRScanner() {
-				const overlay = document.getElementById('qrOverlay');
-				overlay.style.display = 'none';
-		
+		const overlay = document.getElementById('qrOverlay');
+		overlay.style.display = 'none';
+
 		try {
 			if (html5QrcodeInstance) {
 				html5QrcodeInstance.stop();
@@ -718,11 +724,11 @@
 	}
 
 	function onScanSuccess(decodedText) {
-				console.log('[QR] Scan success:', decodedText);
+		console.log('[QR] Scan success:', decodedText);
 		closeQRScanner();
 
 		// Handle the scanned QR code
-				const match = decodedText.match(/baby_id=([^&\s]+)/i);
+		const match = decodedText.match(/baby_id=([^&\s]+)/i);
 		if (match && match[1]) {
 			// Redirect to child health record with the baby_id
 			window.location.href = `child_health_record.php?baby_id=${encodeURIComponent(match[1])}`;
@@ -739,7 +745,7 @@
 	async function scanFromImage(event) {
 		const file = event.target && event.target.files && event.target.files[0];
 		if (!file) return;
-		
+
 		console.log('[QR] Scanning from image:', file.name);
 		try {
 			const result = await Html5QrcodeScanner.scanFile(file, true);
@@ -748,21 +754,25 @@
 		} catch (err) {
 			console.error('[QR] Image scan failed:', err);
 			alert('Unable to read QR from image.');
-				}
-			}
+		}
+	}
 
-			let torchOn = false;
+	let torchOn = false;
 	async function toggleTorch() {
 		try {
-					const video = document.querySelector('#qrReader video');
-					const stream = video && video.srcObject ? video.srcObject : null;
-					const track = stream && stream.getVideoTracks ? stream.getVideoTracks()[0] : null;
-			
+			const video = document.querySelector('#qrReader video');
+			const stream = video && video.srcObject ? video.srcObject : null;
+			const track = stream && stream.getVideoTracks ? stream.getVideoTracks()[0] : null;
+
 			if (!track) return;
-			
-					await track.applyConstraints({ advanced: [{ torch: !torchOn }] });
-					torchOn = !torchOn;
-					document.getElementById('torchBtn').textContent = torchOn ? 'Torch Off' : 'Torch On';
+
+			await track.applyConstraints({
+				advanced: [{
+					torch: !torchOn
+				}]
+			});
+			torchOn = !torchOn;
+			document.getElementById('torchBtn').textContent = torchOn ? 'Torch Off' : 'Torch On';
 		} catch (err) {
 			console.warn('[QR] Torch not supported:', err);
 		}
@@ -773,6 +783,6 @@
 	document.addEventListener('DOMContentLoaded', function() {
 		loadDashboardData();
 	});
-		</script>
+</script>
 
 <?php include 'Include/footer.php'; ?>
