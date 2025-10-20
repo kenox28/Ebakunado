@@ -5,24 +5,15 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <aside class="sidebar" id="sideNav">
     <nav class="sidebar-nav">
         <div class="sidebar-brand">
-            <img
-                class="brand-mark"
-                src="../../assets/images/ebakunado-logo-without-label.png"
-                alt="eBakunado Logo" />
+            <div class="brand-mark">
+                <img
+                    class="brand-logo"
+                    src="../../assets/images/ebakunado-logo-without-label.png"
+                    alt="eBakunado Logo" />
+            </div>
             <div class="brand-text-block">
                 <h1 class="brand-name">eBakunado</h1>
                 <h2 class="brand-tagline">Immunization Data Management</h2>
-            </div>
-        </div>
-
-        <div class="sidebar-profile">
-            <img
-                class="profile-avatar"
-                src="../../assets/images/user-profile.png"
-                alt="User Profile" />
-            <div class="profile-text-block">
-                <h2 class="profile-name"><?php echo htmlspecialchars($user_fullname);?></h2>
-                <h3 class="profile-role"><?php echo htmlspecialchars($user_type);?></h3>
             </div>
         </div>
 
@@ -53,26 +44,35 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
 
-                <!-- Others (no active state until pages exist/linked) -->
-                <li class="sidebar-menu-item">
-                    <a href="#" class="menu-link">
+                <!-- Child Health Record -->
+                <li class="sidebar-menu-item<?php echo $currentPage === 'child-health-list.php' ? ' active' : ''; ?>">
+                    <a href="../../views/bhw-page/child-health-list.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">child_care</span>
                         <span class="menu-label">Child Health Record</span>
                     </a>
                 </li>
-                <li class="sidebar-menu-item">
-                    <a href="#" class="menu-link">
-                        <span class="menu-icon material-symbols-rounded">description</span>
-                        <span class="menu-label">CHR Doc Requests</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="#" class="menu-link">
+
+                <!-- Target Client List -->
+                <li class="sidebar-menu-item <?php echo $currentPage === 'target-client-list.php' ? ' active' : ''; ?>">
+                    <a href="../../views/bhw-page/target-client-list.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">format_list_bulleted</span>
                         <span class="menu-label">Target Client List</span>
                     </a>
                 </li>
             </ul>
+        </div>
+
+        <div class="sidebar-profile">
+            <div class="profile-avatar-container">
+                <img
+                    class="profile-avatar"
+                    src="../../assets/images/user-profile.png"
+                    alt="User Profile" />
+            </div>
+            <div class="profile-text-block">
+                <h2 class="profile-name"><?php echo htmlspecialchars($user_fullname); ?></h2>
+                <h3 class="profile-role"><?php echo htmlspecialchars($user_type); ?></h3>
+            </div>
         </div>
     </nav>
 </aside>

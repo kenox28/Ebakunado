@@ -1,0 +1,612 @@
+/* =========================================================
+   Child Health Record (CHR) - Professional UI
+   ========================================================= */
+
+/* =========================
+   1) Global layout & tokens
+   ========================= */
+:root {
+    /* fallbacks in case variables.css misses these */
+    --surface: var(--bg-surface, #ffffff);
+    --surface-2: var(--bg-surface-2, #fafafa);
+    --text: var(--fg-default, #111827);
+    --muted: #374151; /* darker for better contrast */
+    --border: var(--border-color, #e5e7eb);
+    --primary: var(--brand, #2563eb);
+    --danger: var(--danger, #dc2626);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.08);
+}
+
+main {
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 1rem;
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+/* page card */
+.child-health-record-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.25rem 1rem 1.5rem;
+}
+
+.chr-section {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+}
+
+/* =========================
+   2) Section header (center)
+   ========================= */
+.chr-header {
+    text-align: center;
+    padding: 1rem 1.25rem;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+}
+
+.chr-header h2 {
+    margin: 0;
+    font-size: 1.35rem; /* larger */
+    letter-spacing: .3px;
+    color: var(--text);
+    text-transform: capitalize; /* capitalize section titles */
+}
+
+.chr-header p {
+    margin: .25rem 0 0;
+    color: var(--muted);
+    font-size: .95rem; /* slightly larger */
+}
+
+/* baseline grid spacing (overridden per section where needed) */
+.chr-grid,
+.feeding-grid,
+.td-grid {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem 1.25rem 1.25rem;
+}
+
+/* =========================
+   3) Profile section
+   - two columns (half/half)
+   - childinfo-column uses grid with good spacing
+   ========================= */
+.profile-section .chr-grid {
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+    align-items: start;
+}
+
+.childinfo-column {
+    display: grid;
+    gap: .6rem;
+}
+
+.childinfo-column label {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    align-items: center;
+    gap: .75rem;
+    padding: .6rem .8rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text); /* darker text */
+    font-size: 1rem;   /* larger */
+    text-transform: capitalize; /* capitalize label text */
+}
+
+.childinfo-column label span {
+    color: var(--text);
+    font-weight: 600;
+    word-break: break-word;
+    text-align: right;
+}
+
+/* =========================
+   4) History section
+   - evenly divided in half using grid
+   ========================= */
+.history-section .chr-grid {
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+}
+
+.history-section .chr-grid > div {
+    display: grid;
+    gap: .6rem;
+}
+
+.history-section .chr-grid > div > div {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: .65rem .8rem;
+    color: var(--text); /* darker */
+    font-size: 1rem;    /* larger */
+    text-transform: capitalize; /* capitalize labels */
+}
+
+.history-section span {
+    color: var(--text);
+    font-weight: 600;
+    margin-left: .25rem;
+    text-transform: none; /* keep values as entered */
+}
+
+/* =========================
+   5) Feeding section
+   - header centered (via .chr-header)
+   - exclusive-breastfeeding: 3 in a row
+   - complementary-feeding: in a column (stacked)
+   ========================= */
+.feeding-grid {
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+    align-items: start;
+    gap: 4.2rem;
+}
+
+.exclusive-breastfeeding h4,
+.complementary-feeding h4 {
+    margin: 0 0 .6rem;
+    color: var(--text);
+    font-size: 1.05rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.exclusive-breastfeeding .checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(100px, 1fr)); /* 3 in a row */
+    gap: .6rem;
+}
+
+.exclusive-breastfeeding .checkbox-grid label {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .55rem .65rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 1rem; /* larger */
+    color: var(--text);
+}
+
+.complementary-feeding .food-inputs {
+    display: grid;
+    grid-template-columns: 1fr; /* stacked in a column */
+    gap: .6rem;
+}
+
+.complementary-feeding .food-inputs label {
+    display: grid;
+    gap: .35rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: .55rem .65rem;
+    color: var(--text);  /* darker */
+    font-size: 1rem;     /* larger */
+    text-transform: capitalize;
+}
+
+.section-btn {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: .5rem;
+    margin-top: .5rem;
+}
+
+.section-btn button {
+    background: var(--primary);
+    color: #fff;
+    border: 1px solid transparent;
+    padding: .6rem .95rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: .98rem;
+    transition: box-shadow .15s ease, transform .05s ease, background .15s ease;
+}
+
+.section-btn button:hover {
+    filter: brightness(1.02);
+    box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+
+.section-btn button:active {
+    transform: translateY(1px);
+}
+
+/* normalize inputs in feeding section */
+.feeding-section input[type="text"] {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 6px;
+    padding: .5rem .6rem;
+    font-size: 1rem;
+    outline: none;
+}
+.feeding-section input[type="text"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+/* =========================
+   6) TD section
+   - 5 in a row
+   ========================= */
+.td-grid {
+    grid-template-columns: repeat(5, minmax(160px, 1fr));
+}
+
+.td-grid label {
+    display: grid;
+    gap: .4rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: .65rem .75rem;
+    color: var(--text);  /* darker */
+    font-size: 1rem;     /* larger */
+    text-transform: capitalize;
+}
+
+.td-grid input[type="date"] {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 6px;
+    padding: .5rem .6rem;
+    font-size: 1rem;
+    outline: none;
+}
+.td-grid input[type="date"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+/* =====================================
+   7) Immunization record (table styling)
+   ===================================== */
+.immunization-record .chr-header {
+    /* already centered by .chr-header */
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 0 1.25rem 1.25rem;
+}
+
+.immunization-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    min-width: 980px; /* keep structure on smaller screens while allowing horizontal scroll */
+}
+
+.immunization-table thead th {
+    position: sticky;
+    top: 0;
+    background: var(--surface-2);
+    color: var(--text);
+    font-weight: 700;
+    text-align: left;
+    padding: .8rem 1rem;
+    border-bottom: 1px solid var(--border);
+    z-index: 1;
+    font-size: 1rem;          /* larger */
+    text-transform: capitalize;/* capitalize headers */
+}
+
+.immunization-table tbody td {
+    padding: .65rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    color: var(--text);
+    background: var(--surface);
+    font-size: .98rem;
+}
+
+.immunization-table tbody tr:nth-child(odd) td {
+    background: color-mix(in srgb, var(--surface) 90%, #000 10%);
+}
+
+.immunization-table tbody tr:hover td {
+    background: color-mix(in srgb, var(--surface) 84%, #000 16%);
+}
+
+/* tighter white-space on some columns */
+.immunization-table td:nth-child(3),
+.immunization-table td:nth-child(4),
+.immunization-table td:nth-child(5),
+.immunization-table td:nth-child(9),
+.immunization-table td:nth-child(11) {
+    white-space: nowrap;
+}
+
+/* ======================================
+   8) Form controls inside the table cells
+   ====================================== */
+.table-input,
+.table-select {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .45rem .6rem;
+    font-size: 1rem; /* larger */
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    min-width: 0;
+}
+
+.table-input.small {
+    max-width: 120px;
+}
+
+.table-input:focus,
+.table-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.btn-delete {
+    background: var(--danger);
+    color: #fff;
+    border: 1px solid transparent;
+    padding: .45rem .75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: .95rem;
+    transition: filter .15s ease, transform .05s ease, box-shadow .15s ease;
+}
+
+.btn-delete:hover {
+    filter: brightness(1.02);
+    box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+
+.btn-delete:active {
+    transform: translateY(1px);
+}
+
+/* =========================
+   9) Utilities
+   ========================= */
+.loading-cell {
+    text-align: center;
+    color: var(--muted);
+    padding: 1rem;
+    font-size: 1rem;
+}
+
+/* =========================
+   10) Responsive tweaks
+   ========================= */
+@media (max-width: 1200px) {
+    .td-grid {
+        grid-template-columns: repeat(4, minmax(160px, 1fr));
+    }
+}
+
+@media (max-width: 992px) {
+    .profile-section .chr-grid,
+    .history-section .chr-grid,
+    .feeding-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .exclusive-breastfeeding .checkbox-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .complementary-feeding .food-inputs {
+        grid-template-columns: 1fr; /* keep stacked on medium screens */
+    }
+
+    .td-grid {
+        grid-template-columns: repeat(3, minmax(160px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .exclusive-breastfeeding .checkbox-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .complementary-feeding .food-inputs {
+        grid-template-columns: 1fr; /* keep stacked */
+    }
+    .td-grid {
+        grid-template-columns: repeat(2, minmax(160px, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .exclusive-breastfeeding .checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+    .td-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   11) Form-look overrides (paper form, values filled-in)
+   ========================================================= */
+
+/* Stronger borders for better contrast on light displays */
+:root {
+    --border-strong: #9ca3af;
+}
+
+/* Headers remain centered; ensure readable contrast */
+.chr-header h2 { color: var(--text); text-transform: capitalize; }
+.chr-header p  { color: var(--muted); }
+
+/* Profile section: labels + value lines (no cards) */
+.profile-section .chr-grid { grid-template-columns: repeat(2, minmax(320px, 1fr)); }
+.childinfo-column { gap: .75rem; }
+
+.childinfo-column label {
+    background: transparent !important;
+    border: none !important;
+    padding: .25rem .25rem !important;
+    grid-template-columns: 1fr 2fr; /* longer value line */
+    color: var(--text);
+    font-size: 1rem;
+    text-transform: capitalize;
+}
+.childinfo-column label span {
+    text-align: left;
+    display: inline-block;
+    min-height: 1.9rem;
+    padding: .1rem 0 .25rem;
+    border-bottom: 2px solid var(--border-strong);
+    font-weight: 600;
+}
+
+/* History section: same “label + line” look */
+.history-section .chr-grid > div > div {
+    background: transparent !important;
+    border: none !important;
+    padding: .25rem .25rem !important;
+    color: var(--text);
+    font-size: 1rem;
+    text-transform: capitalize;
+}
+.history-section .chr-grid > div > div span {
+    display: inline-block;
+    min-width: 220px;
+    min-height: 1.9rem;
+    padding: .1rem 0 .25rem;
+    margin-left: .5rem;
+    border-bottom: 2px solid var(--border-strong);
+    font-weight: 600;
+}
+
+/* Feeding section: keep checkboxes, form-ish chips */
+.exclusive-breastfeeding .checkbox-grid label {
+    background: transparent;
+    border: 2px solid var(--border-strong);
+    border-radius: 8px;
+}
+.exclusive-breastfeeding input[type="checkbox"] {
+    accent-color: var(--primary);
+    transform: scale(1.05);
+}
+
+/* Complementary feeding inputs: one column, underlined field look */
+.complementary-feeding .food-inputs { grid-template-columns: 1fr !important; }
+.complementary-feeding .food-inputs label {
+    background: transparent;
+    border: none;
+    padding: .25rem 0;
+    color: var(--text);
+    font-size: 1rem;
+    text-transform: capitalize;
+}
+.complementary-feeding .food-inputs input[type="text"] {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--border-strong);
+    border-radius: 0;
+    padding: .35rem 0 .25rem;
+    font-size: 1rem;
+    color: var(--text);
+}
+.complementary-feeding .food-inputs input[type="text"]:focus {
+    border-bottom-color: var(--primary);
+    box-shadow: none;
+    outline: none;
+}
+
+/* TD section: labels like form rows; date as underlined value */
+.td-grid label {
+    background: transparent !important;
+    border: none !important;
+    padding: .25rem 0 !important;
+    color: var(--text);
+    font-size: 1rem;
+    text-transform: capitalize;
+}
+.td-grid input[type="date"] {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--border-strong);
+    border-radius: 0;
+    padding: .35rem 0 .25rem;
+    color: var(--text);
+}
+.td-grid input[type="date"]:focus {
+    border-bottom-color: var(--primary);
+    box-shadow: none;
+}
+
+/* Immunization table: ledger + underlined editable cells (not boxy inputs) */
+.immunization-table {
+    border: 1px solid var(--border-strong);
+}
+.immunization-table thead th {
+    background: var(--surface-2);
+    color: var(--text);
+    text-transform: capitalize;
+    border-bottom: 1px solid var(--border-strong);
+}
+.immunization-table tbody td {
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+}
+
+/* Make inputs/selects look like lines */
+.table-input,
+.table-select {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 2px solid var(--border-strong) !important;
+    border-radius: 0 !important;
+    padding: .35rem 0 .25rem !important;
+    color: var(--text) !important;
+}
+.table-input.small { max-width: 140px; }
+.table-input:focus,
+.table-select:focus {
+    border-bottom-color: var(--primary) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Optional: flatter select look */
+.table-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: none;
+}
+
+/* Utilities */
+.loading-cell { color: var(--muted); }
+
+

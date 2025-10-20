@@ -93,7 +93,7 @@ session_start();
 	</main>
 
 		<script src="../../js/auth-handler/password-toggle.js"></script>
-		<script src="../../js/supabase_js/login.js?v=1.0.21"></script>
+		<script src="../../js/supabase_js/login.js?v=1.0.23"></script>
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 		
 	</body>

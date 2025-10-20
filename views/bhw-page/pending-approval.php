@@ -1,10 +1,20 @@
 <?php session_start(); ?>
 <?php
-// Debug BHW session
-if (isset($_SESSION['bhw_id'])) {
-    echo "<!-- BHW Session Active: " . $_SESSION['bhw_id'] . " -->";
+// Handle both BHW and Midwife sessions (but BHW should only see BHW features)
+$user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+$user_types = $_SESSION['user_type']; // Default to bhw for BHW pages
+$user_name = $_SESSION['fname'] ?? 'User';
+$user_fullname = $_SESSION['fname'] . " " . $_SESSION['lname'];
+if ($user_types != 'midwifes') {
+    $user_type = 'Barangay Health Worker';
 } else {
-    echo "<!-- BHW Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
+    $user_type = 'Midwife';
+}
+// Debug session
+if ($user_id) {
+    echo "<!-- Session Active: " . $user_type . " - " . $user_id . " -->";
+} else {
+    echo "<!-- Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
 }
 ?>
 
@@ -28,6 +38,8 @@ if (isset($_SESSION['bhw_id'])) {
 
     <main>
         <section class="pending-approval-section">
+            <h2 class="section-header">Pending Immunization List</h2>
+
             <!-- <div id="qrOverlay">
                 <div class="qr-content">
                     <select id="cameraSelect" onchange="switchCamera(event)"></select>

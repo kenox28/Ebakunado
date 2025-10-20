@@ -2,10 +2,11 @@
   width: 230px;
   height: 100vh;
   background: var(--background-white);
-  border-right: 1px solid #4A4A4A;
-  
+  box-shadow: rgba(0, 0, 0, 0.05) 6px 0px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+
   grid-area: sidebar;
-  height: 100vh;     
+  height: 100vh;
   position: sticky;
   top: 0;
 
@@ -31,14 +32,29 @@ body.sidebar-collapsed .sidebar {
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 0;
+  gap: 0.6rem;
+  padding: 0.45rem 0;
 }
 
 .brand-mark {
   width: 45px;
   height: 45px;
+  /* border: 1px solid #9fc0a7; */
+  background-color: #ebf2ed;
+  box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
+  object-position: center;
 }
 
 .brand-text-block {
@@ -59,51 +75,11 @@ body.sidebar-collapsed .sidebar {
   color: var(--primary-color);
 }
 
-.sidebar-profile {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 10px;
-  background-color: #00562a;
-}
-
-.profile-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.profile-text-block {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.profile-name {
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: #ffffff;
-}
-
-.profile-role {
-  font-size: 1rem;
-  font-weight: 400;
-  color: #ffffff;
-}
-
-.sidebar-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 8px;
-}
-
 .sidebar-section-title {
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-label);
+  margin-bottom: 1rem;
 }
 
 .sidebar-menu {
@@ -118,15 +94,15 @@ body.sidebar-collapsed .sidebar {
 .sidebar-menu-item {
   width: 218px;
   height: 42px;
-  /* container for active border/bg; anchor will fill it */
   display: block;
-  padding: 0; /* moved to anchor to make full area clickable */
-  border-radius: 5px;
+  padding: 0; 
+  border-radius: 4px;
   border-left: 0.6rem solid transparent;
   font-size: 1.4rem;
   font-weight: 600;
   color: var(--sidebar-txt-color);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .menu-link {
@@ -136,13 +112,15 @@ body.sidebar-collapsed .sidebar {
   width: 100%;
   height: 100%;
   padding: 0 1rem;
-  color: inherit;           
-  text-decoration: none;  
+  color: inherit;
+  text-decoration: none;
   border-radius: inherit;
 }
 
 .sidebar-menu-item:hover .menu-link {
-  background-color: rgba(0,0,0,0.04); 
+  background-color: rgba(0, 0, 0, 0.04);
+  transform: translateX(2px);
+
 }
 
 .sidebar-menu-item.active {
@@ -159,4 +137,47 @@ body.sidebar-collapsed .sidebar {
 .menu-label {
   font-size: 1.4rem;
   font-weight: 500;
+}
+
+.sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+  margin-top: auto;
+}
+
+.profile-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-avatar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+}
+
+.profile-text-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.profile-name {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--text-label);
+  text-transform: capitalize;
+}
+
+.profile-role {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--text-label);
 }

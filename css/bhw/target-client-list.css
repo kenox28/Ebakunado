@@ -1,0 +1,203 @@
+main {
+    height: 100vh;            /* fill the viewport */
+    overflow: hidden;         /* prevent page scroll; scroll inside table-container */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Let the section lay out filters + table area */
+.target-client-list-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;             /* allow inner flex child to shrink */
+}
+
+/* Filters stay on top */
+.filters {
+  flex: 0 0 auto;
+}
+
+/* Table area fills the rest and scrolls */
+.table-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;            /* vertical + horizontal scroll inside */
+  width: 100%;
+  scroll-behavior: smooth;   /* smooth scrolling */
+}
+
+/* Clean borders and zebra striping */
+.table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+  border: 1px solid #e5e7eb;
+}
+.table thead th,
+.table tbody td {
+  border-right: 1px solid #e5e7eb;
+}
+.table thead th:last-child,
+.table tbody td:last-child {
+  border-right: 0;
+} 
+.table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: top;
+}
+.table tbody tr:nth-child(even) { background: #fafafa; }
+.table tbody tr:hover { background: #f3f6ff; }
+
+/* Two-row sticky header */
+:root {
+  --tcl-head-row1-h: 50px;   /* first header row height */
+  --tcl-head-border: 1px;    /* header bottom border thickness */
+}
+
+/* Ensure both header rows stack with no gap and no overlap */
+.table thead tr:first-child th {
+  position: sticky;
+  top: 0 !important;                           /* override any generic top:0 */
+  height: var(--tcl-head-row1-h);              /* fix the actual height */
+  background: #f7f7f9;
+  z-index: 3;
+}
+
+.table thead tr:nth-child(2) th {
+  position: sticky;
+  top: calc(var(--tcl-head-row1-h) + var(--tcl-head-border)) !important;
+  background: #f7f7f9;
+  z-index: 3;
+}
+
+/* Keep a clear divider between header rows and data */
+.table thead th {
+  border-bottom: 1px solid #e4e4e7;
+}
+
+/* Make sure the scroll container is the table area */
+.table-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  width: 100%;
+  scroll-behavior: smooth;
+}
+
+/* Filters */
+.filters {
+  margin: 10px 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #333;
+}
+.filters label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.filters input[type="text"],
+.filters select {
+  padding: 4px 6px;
+  font-size: 13px;
+}
+.filters .filter-vaccine {
+  min-width: 160px;
+}
+.btn {
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  background: #f6f6f6;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn:hover {
+  background: #ededed;
+}
+
+/* Table */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+.table {
+  width: max-content;         /* expand to content width */
+  min-width: 100%;            /* but never smaller than viewport width */
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+.table thead th {
+  position: sticky;
+  top: 0;
+  background: #f7f7f9;
+  z-index: 2; /* above cells */
+  border-bottom: 1px solid #e4e4e7;
+  padding: 10px 12px;
+  text-align: left;
+  white-space: nowrap;
+  
+}
+.table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: top;
+}
+.table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+.table tbody tr:hover {
+  background: #f3f6ff;
+}
+
+/* Vaccine status colors */
+.vaccine-completed {
+  color: #28a745;
+  font-weight: bold;
+}
+.vaccine-missed {
+  color: #dc3545;
+  font-weight: bold;
+}
+.vaccine-scheduled {
+  color: #ffc107;
+  font-weight: bold;
+}
+
+/* Utility */
+.text-center {
+  text-align: center;
+}
+.loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+
+/* Root wrapper for this page */
+.tcl-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* allow inner flex child to shrink */
+}
+
+/* Filters stay on top, table area fills the rest */
+.tcl-root .filters {
+  flex: 0 0 auto;
+}
+.table-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;             /* vertical + horizontal scroll inside */
+  width: 100%;
+}

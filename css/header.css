@@ -1,16 +1,17 @@
 .header {
   width: 100%;
   height: 60px;
-  /* padding-left: 1rem;
-  padding-right: 2.6rem; */
-  padding: 0 2.6rem 0 1rem;
+  /* padding: 0 2.6rem 0 1rem; */
+  padding: 0 1.6rem 0 1rem;
   /* margin: 0 auto; */
   margin: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #4A4A4A;
-  grid-area: header; 
+  border-bottom: 1px solid #d9d9d9;
+  position: relative;
+
+  grid-area: header;
 }
 
 .header-left {
@@ -35,7 +36,8 @@
   height: 36px;
 
   border-radius: 8px;
-  transition: background-color 160ms ease, color 160ms ease, transform 60ms ease, box-shadow 160ms ease;
+  transition: background-color 160ms ease, color 160ms ease, transform 60ms ease,
+    box-shadow 160ms ease;
 }
 
 .icon-menu:hover {
@@ -63,6 +65,7 @@
   color: var(--primary-color);
   font-size: 1.6rem;
   font-weight: 600;
+  text-transform: capitalize;
 }
 
 .header-user {
@@ -73,11 +76,11 @@
   border-radius: 10px;
   /* background: #e8e8e8; */
   cursor: pointer;
-  position: relative; 
+  position: relative;
 }
 
 .header-user:hover {
-  background-color: #e8e8e8;
+  background-color: #f3f3f3;
   transition: 0.3s ease;
 }
 
@@ -86,24 +89,51 @@
   height: 30px;
   object-fit: cover;
   border-radius: 50%;
+  border: 2px solid var(--border-color);
 }
 
 .user-display-name {
   font-size: 1.4rem;
   font-weight: 500;
   color: #333333;
+  text-transform: capitalize;
 }
 
 .icon-dropdown {
   font-size: 2rem;
   line-height: 1;
   color: #333333;
+  transition: transform 160ms ease;
+}
+
+.header-user.is-open .icon-dropdown {
+  transform: rotate(180deg);
+}
+
+.header-user {
+  transition: background-color 160ms ease, transform 60ms ease, box-shadow 160ms ease;
+}
+
+.header-user:focus-visible {
+  outline: 2px solid black;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.header-user.is-pressed {
+  /* transform: scale(1); */
+  background-color: #00000012;
+  box-shadow: inset 0 0 0 1px #0000001f;
+}
+
+.header-user.is-open .icon-dropdown {
+  transform: rotate(180deg);
 }
 
 /* User profile menu (popover) */
 .profile-menu {
   position: absolute;
-  top: calc(100% + 8px); 
+  top: calc(100% + 8px);
   right: 0;
   width: 156px;
   height: auto;
@@ -111,7 +141,7 @@
   background: var(--background-white);
   border: 1px solid var(--border-color, #e0e0e0);
   border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
   display: none;
   z-index: 1000;
 }
@@ -134,7 +164,7 @@
   font-weight: 500;
   cursor: pointer;
   text-align: left;
-  text-decoration: none; 
+  text-decoration: none;
 }
 
 .menu-item:hover {

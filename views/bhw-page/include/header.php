@@ -11,7 +11,15 @@
         <h1 class="header-greeting">Welcome, <?php echo htmlspecialchars($user_name);?>!</h1>
     </div>
 
-    <div class="header-user" id="headerUser">
+    <div
+        class="header-user"
+        id="headerUser"
+        role="button"
+        tabindex="0"
+        aria-haspopup="menu"
+        aria-expanded="false"
+        aria-controls="profileMenu"
+    >
         <img
             class="user-avatar"
             src="../../assets/images/user-profile.png"
