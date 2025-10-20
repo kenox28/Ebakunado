@@ -277,7 +277,7 @@ try {
 
 // Table definitions for Supabase (SQL to be run in Supabase SQL editor)
 $table_definitions = [
-    'users' => "CREATE TABLE users (
+    'users' => "CREATE TABLE IF NOT EXISTS public.users (
         id SERIAL PRIMARY KEY,
         user_id VARCHAR(255),
         fname VARCHAR(50),
@@ -286,14 +286,16 @@ $table_definitions = [
         passw VARCHAR(255),
         phone_number VARCHAR(20),
         salt VARCHAR(64),
-        profileImg VARCHAR(255),
+        profileimg VARCHAR(255),
         failed_attempts INTEGER DEFAULT 0,
         lockout_time TIMESTAMP DEFAULT NULL,
         gender VARCHAR(255),
         place VARCHAR(255),
         created_at TIMESTAMP DEFAULT NOW(),
         updated TIMESTAMP DEFAULT NOW(),
-        role VARCHAR(255) DEFAULT 'user'
+        role VARCHAR(255) DEFAULT 'user',
+        philhealth_no VARCHAR(255),
+        nhts VARCHAR(255)
     )",
     
     'midwives' => "CREATE TABLE midwives (
@@ -344,20 +346,20 @@ $table_definitions = [
         updated_at TIMESTAMP DEFAULT NOW()
     )",
     
-    'child_health_records' => "CREATE TABLE child_health_records (
+    'child_health_records' => "CREATE TABLE IF NOT EXISTS public.child_health_records (
         id SERIAL PRIMARY KEY,
         user_id VARCHAR(255) NOT NULL,
         baby_id VARCHAR(255) NOT NULL,
         child_fname VARCHAR(100) NOT NULL,
         child_lname VARCHAR(100) NOT NULL,
-        child_gender VARCHAR(10) CHECK (child_gender IN ('Male', 'Female')),
+        child_gender VARCHAR(10),
         child_birth_date DATE NOT NULL,
         place_of_birth VARCHAR(255),
         mother_name VARCHAR(100) NOT NULL,
         father_name VARCHAR(100),
         address VARCHAR(255) NOT NULL,
-        birth_weight DECIMAL(5,2),
-        birth_height DECIMAL(5,2),
+        birth_weight NUMERIC(5,2),
+        birth_height NUMERIC(5,2),
         birth_attendant VARCHAR(100),
         babys_card VARCHAR(500),
         delivery_type VARCHAR(100),
@@ -365,7 +367,18 @@ $table_definitions = [
         date_created TIMESTAMP DEFAULT NOW(),
         date_updated TIMESTAMP DEFAULT NOW(),
         status VARCHAR(50) DEFAULT 'pending',
-        qr_code VARCHAR(255)
+        qr_code VARCHAR(255),
+        exclusive_breastfeeding_1mo BOOLEAN DEFAULT FALSE,
+        exclusive_breastfeeding_2mo BOOLEAN DEFAULT FALSE,
+        exclusive_breastfeeding_3mo BOOLEAN DEFAULT FALSE,
+        exclusive_breastfeeding_4mo BOOLEAN DEFAULT FALSE,
+        exclusive_breastfeeding_5mo BOOLEAN DEFAULT FALSE,
+        exclusive_breastfeeding_6mo BOOLEAN DEFAULT FALSE,
+        complementary_feeding_6mo VARCHAR(255),
+        complementary_feeding_7mo VARCHAR(255),
+        complementary_feeding_8mo VARCHAR(255),
+        lpm DATE,
+        allergies VARCHAR(255)
     )",
     
     'immunization_records' => "CREATE TABLE immunization_records (
@@ -383,6 +396,18 @@ $table_definitions = [
         administered_by VARCHAR(255),
         created_at TIMESTAMP DEFAULT NOW(),
         updated TIMESTAMP DEFAULT NOW()
+    )",
+
+    'mother_tetanus_doses' => "CREATE TABLE IF NOT EXISTS public.mother_tetanus_doses (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(255),
+        dose1_date DATE,
+        dose2_date DATE,
+        dose3_date DATE,
+        dose4_date DATE,
+        dose5_date DATE,
+        date_created TIMESTAMP DEFAULT NOW(),
+        date_updated TIMESTAMP DEFAULT NOW()
     )",
     
     'admin' => "CREATE TABLE admin (

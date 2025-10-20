@@ -74,7 +74,8 @@ try {
                         'title' => 'Today\'s Vaccination',
                         'message' => $schedule['vaccine_name'] . ' (Dose ' . $schedule['dose_number'] . ') for ' . $child_name . ' is scheduled today',
                         'action' => 'View today\'s schedule',
-                        'action_url' => './upcoming_schedule.php',
+                        'action_url' => './upcoming_schedule.php?baby_id=' . urlencode($baby_id),
+                        'baby_id' => $baby_id,
                         'timestamp' => date('Y-m-d H:i:s', strtotime($schedule['schedule_date'])),
                         'unread' => true,
                         'icon' => '💉'
@@ -111,7 +112,8 @@ try {
                         'title' => 'Tomorrow\'s Vaccination',
                         'message' => $schedule['vaccine_name'] . ' (Dose ' . $schedule['dose_number'] . ') for ' . $child_name . ' is scheduled tomorrow',
                         'action' => 'View upcoming schedule',
-                        'action_url' => './upcoming_schedule.php',
+                        'action_url' => './upcoming_schedule.php?baby_id=' . urlencode($baby_id),
+                        'baby_id' => $baby_id,
                         'timestamp' => date('Y-m-d H:i:s', strtotime($schedule['schedule_date'])),
                         'unread' => true,
                         'icon' => '📅'
@@ -148,7 +150,8 @@ try {
                         'title' => 'Missed Vaccination',
                         'message' => $missed['vaccine_name'] . ' (Dose ' . $missed['dose_number'] . ') for ' . $child_name . ' - ' . round($days_missed) . ' days overdue',
                         'action' => 'View missed vaccinations',
-                        'action_url' => './missed_immunization.php',
+                        'action_url' => './upcoming_schedule.php?baby_id=' . urlencode($baby_id),
+                        'baby_id' => $baby_id,
                         'timestamp' => date('Y-m-d H:i:s', strtotime($missed['schedule_date'])),
                         'unread' => true,
                         'icon' => '⚠️'

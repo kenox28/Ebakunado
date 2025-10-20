@@ -1,7 +1,53 @@
 .childinformation-container {
-    display: none;
+	display: none;
 }
 
 .immunization-record {
-    display: none;
+	display: none;
+}
+/* Immunization Record Modal Popup */
+.immunization-record {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.6);
+	display: none;
+	align-items: center;
+	justify-content: center;
+	z-index: 9999;
+}
+
+.immunization-modal {
+	background: #fff;
+	padding: 12px;
+	width: 720px;
+	max-width: 95vw;
+	max-height: 90vh;
+	overflow: auto;
+	border-radius: 6px;
+}
+
+.immunization-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.immunization-title {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.close-btn {
+	padding: 4px 8px;
+	background: #e0e0e0;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background 0.2s ease;
+}
+
+.close-btn:hover {
+	background: #d0d0d0;
 }

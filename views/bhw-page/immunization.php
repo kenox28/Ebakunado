@@ -1,10 +1,20 @@
 <?php session_start(); ?>
-<?php
-// Debug BHW session
-if (isset($_SESSION['bhw_id'])) {
-    echo "<!-- BHW Session Active: " . $_SESSION['bhw_id'] . " -->";
+<?php 
+// Handle both BHW and Midwife sessions (but BHW should only see BHW features)
+$user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+$user_types = $_SESSION['user_type']; // Default to bhw for BHW pages
+$user_name = $_SESSION['fname'] ?? 'User';
+$user_fullname = $_SESSION['fname'] ." ". $_SESSION['lname'];
+if($user_types != 'midwifes') {   
+    $user_type = 'Barangay Health Worker';
+}else{
+    $user_type = 'Midwife';
+}
+// Debug session
+if ($user_id) {
+    echo "<!-- Session Active: " . $user_type . " - " . $user_id . " -->";
 } else {
-    echo "<!-- BHW Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
+    echo "<!-- Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
 }
 ?>
 
@@ -20,10 +30,11 @@ if (isset($_SESSION['bhw_id'])) {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>BHW Dashboard</title>
-        <link rel="stylesheet" href="/css/main.css" />
-        <link rel="stylesheet" href="/css/header.css" />
-        <link rel="stylesheet" href="/css/sidebar.css" />
-        <link rel="stylesheet" href="/css/bhw/immunization-1style.css">
+        <link rel="stylesheet" href="../../css/main.css?v=1.0.1" />
+        <link rel="stylesheet" href="../../css/header.css?v=1.0.1" />
+        <link rel="stylesheet" href="../../css/sidebar.css?v=1.0.1" />
+        <link rel="stylesheet" href="../../css/bhw/immunization-style.css?v=1.0.1">
+        <link rel="stylesheet" href="../../css/bhw/queries.css?v=1.0.1">
     </head>
 
 <body>
@@ -81,33 +92,13 @@ if (isset($_SESSION['bhw_id'])) {
                 </table>
             </div>
 
-            <div class="childinformation-container">
-                <div class="child-info">
-                    <h1>Child Information</h1>
-                    <p>Child Name: <span id="childName"></span></p>
-                    <p>Child Gender: <span id="childGender"></span></p>
-                    <p>Child Birth Date: <span id="childBirthDate"></span></p>
-                    <p>Child Place of Birth: <span id="childPlaceOfBirth"></span></p>
-                    <p>Child Address: <span id="childAddress"></span></p>
-                    <p>Child Weight: <span id="childWeight"></span></p>
-                    <p>Child Height: <span id="childHeight"></span></p>
-                    <p>Child Mother: <span id="childMother"></span></p>
-                    <p>Child Father: <span id="childFather"></span></p>
-                    <p>Child Birth Attendant: <span id="childBirthAttendant"></span></p>
-                </div>
-
-                <div class="child-image">
-                    <button onclick="closeChildInformation()" id="closeButton">Close</button>
-                    <img src="" alt="" id="childImage">
-                    <button id="acceptButton">Accept</button>
-                </div>
-            </div>
+            
 
             <!-- Immunization Record Overlay -->
             <div class="immunization-record" id="immunizationOverlay">
                 <div class="immunization-modal">
                     <div class="immunization-header">
-                        <h3>Record Immunization</h3>
+                        <h3 class="immunization-title">Record Immunization</h3>
                         <button onclick="closeImmunizationForm()">Close</button>
                     </div>
                     <div id="immunizationFormContainer"></div>

@@ -16,6 +16,9 @@
 				if (data.status === 'success') { window.location.href = '../../views/auth/login.php'; }
 				else { alert('Logout failed: ' + data.message); }
 			}
+
 		</script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 	</body>
 </html>

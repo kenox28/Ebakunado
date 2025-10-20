@@ -35,7 +35,13 @@
 
 	<!-- Children List -->
 	<div class="children-section">
-		<h2>My Children</h2>
+		<div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px;">
+			<h2 style="margin:0;">My Children</h2>
+			<div style="display:flex; gap:8px;">
+				<button id="btnUpcoming" class="btn btn-primary" onclick="selectFilter('upcoming')">Upcoming (<span id="upcomingCount">0</span>)</button>
+				<button id="btnMissed" class="btn" onclick="selectFilter('missed')">Missed (<span id="missedCountBtn">0</span>)</button>
+			</div>
+		</div>
 		<div class="children-list" id="childrenList">
 			<div class="loading">
 				<div style="display: flex; align-items: center; gap: 10px;">
@@ -300,6 +306,86 @@
 </style>
 
 <script>
+    let currentFilter = 'upcoming';
+
+    async function fetchSummary(filter = null){
+        const url = filter ? `../../php/supabase/users/get_children_summary.php?filter=${encodeURIComponent(filter)}`
+                           : `../../php/supabase/users/get_children_summary.php`;
+        const res = await fetch(url);
+        return await res.json();
+    }
+
+    async function refreshCounts(){
+        try{
+            const data = await fetchSummary();
+            if (data && data.status === 'success' && data.data){
+                document.getElementById('upcomingCount').textContent = data.data.upcoming_count || 0;
+                document.getElementById('missedCountBtn').textContent = data.data.missed_count || 0;
+            }
+        }catch(e){ /* silent */ }
+    }
+
+    function setActiveButton(){
+        const up = document.getElementById('btnUpcoming');
+        const mi = document.getElementById('btnMissed');
+        if (currentFilter === 'upcoming'){
+            up.classList.add('btn-primary');
+            mi.classList.remove('btn-primary');
+        } else {
+            mi.classList.add('btn-primary');
+            up.classList.remove('btn-primary');
+        }
+    }
+
+    async function selectFilter(filter){
+        currentFilter = filter;
+        setActiveButton();
+        const list = document.getElementById('childrenList');
+        list.innerHTML = '<div class="loading"><div style="width: 20px; height: 20px; border: 2px solid #f3f3f3; border-top: 2px solid #1976d2; border-radius: 50%; animation: spin 1s linear infinite;"></div><p>Loading...</p></div>';
+        try{
+            const resp = await fetchSummary(filter);
+            if (resp && resp.status === 'success'){
+                renderFilteredList(resp.data.items || []);
+            } else {
+                list.innerHTML = '<div class="no-data"><div class="icon">❌</div><p>Failed to load list</p></div>';
+            }
+        }catch(e){
+            list.innerHTML = '<div class="no-data"><div class="icon">❌</div><p>Network error</p></div>';
+        }
+        // also refresh counts in background
+        refreshCounts();
+    }
+
+    function renderFilteredList(items){
+        const list = document.getElementById('childrenList');
+        if (!items || items.length === 0){
+            list.innerHTML = '<div class="no-data"><div class="icon">👶</div><p>No records</p></div>';
+            return;
+        }
+        let html = '';
+        items.forEach(it => {
+            const name = it.name || 'Unknown Child';
+            const first = name.charAt(0).toUpperCase();
+            const upcoming = it.upcoming_date ? formatDate(it.upcoming_date) : (currentFilter==='upcoming' ? 'No date' : '');
+            const vaccine = it.upcoming_vaccine || '';
+            const badge = currentFilter==='missed' ? `<span class="child-vaccine">Missed: ${it.missed_count||0}</span>` : (vaccine ? `<span class=\"child-vaccine\">${vaccine}</span>` : '');
+            html += `
+                <div class="child-list-item">
+                    <div class="child-avatar">${first}</div>
+                    <div class="child-details">
+                        <h3 class="child-name">${name}</h3>
+                        ${currentFilter==='upcoming' ? `<p class="child-schedule"><strong>Next:</strong> ${upcoming}</p>` : ''}
+                        ${badge}
+                    </div>
+                    <div class="child-actions">
+                        <button class="child-view-btn" onclick="viewChildRecord('${it.baby_id||''}')" ${(it.baby_id?'':'disabled')}>View</button>
+                        <button class="child-schedule-btn" onclick="viewSchedule('${it.baby_id||''}')" ${(it.baby_id?'':'disabled')}>View Schedule</button>
+                    </div>
+                </div>
+            `;
+        });
+        list.innerHTML = html;
+    }
 	async function loadDashboardData() {
 		try {
 			// Show loading state
@@ -311,7 +397,7 @@
 			// Load children data first (this will give us all the stats we need)
 			const childrenResponse = await fetch('../../php/supabase/users/get_accepted_child.php');
 			const childrenData = await childrenResponse.json();
-
+			
 			if (childrenData.status === 'success' && childrenData.data.length > 0) {
 				// Calculate statistics from children data
 				calculateStatsFromChildren(childrenData.data);
@@ -410,9 +496,9 @@
 			const upcomingSchedule = child.schedule_date ? formatDate(child.schedule_date) : 'No upcoming schedule';
 			const vaccineName = child.vaccine || 'No vaccine scheduled';
 			
-			html += `
+				html += `
 				<div class="child-list-item">
-					<div class="child-avatar">${firstLetter}</div>
+						<div class="child-avatar">${firstLetter}</div>
 					<div class="child-details">
 						<h3 class="child-name">${fullName}</h3>
 						<p class="child-schedule"><strong>Next:</strong> ${upcomingSchedule}</p>
@@ -451,23 +537,26 @@
 	}
 
 	function viewChildRecord(babyId) {
-		if (!babyId) return;
-		const encoded = encodeURIComponent(String(babyId));
+	if (!babyId) return;
+	const encoded = encodeURIComponent(String(babyId));
 		window.location.href = `child_health_record.php?baby_id=${encoded}`;
-	}
+}
 
-	function viewSchedule(babyId) {
-		if (!babyId) return;
-		const encoded = encodeURIComponent(String(babyId));
-		window.location.href = `upcoming_schedule.php?baby_id=${encoded}`;
-	}
+function viewSchedule(babyId) {
+	if (!babyId) return;
+	const encoded = encodeURIComponent(String(babyId));
+	window.location.href = `upcoming_schedule.php?baby_id=${encoded}`;
+}
 
 	function addChild() {
 		window.location.href = 'Request.php';
 	}
 
 	// Load data when page loads
-	document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('DOMContentLoaded', async function() {
+		await refreshCounts();
+		setActiveButton();
+		selectFilter('upcoming');
 		loadDashboardData();
 	});
 </script>

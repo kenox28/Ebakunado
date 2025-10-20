@@ -14,7 +14,7 @@
     <div class="header-user" id="headerUser">
         <img
             class="user-avatar"
-            src="/assets/images/user-profile.png"
+            src="../../assets/images/user-profile.png"
             alt="User Profile" />
         <h2 class="user-display-name"><?php echo htmlspecialchars($user_name);?></h2>
         <span class="icon-dropdown material-symbols-rounded">keyboard_arrow_down</span>

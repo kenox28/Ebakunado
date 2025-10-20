@@ -1,0 +1,653 @@
+/* =========================
+   BHW Responsive Media Queries
+   ========================= */
+
+/* =========================
+   Mobile Layout (≤767px)
+   ========================= */
+@media (max-width: 767px) {
+	/* =========================
+	   Body & Grid Layout
+	   ========================= */
+	body {
+		display: block;
+		grid-template-columns: 1fr;
+		grid-template-rows: auto 1fr;
+		grid-template-areas:
+			"header"
+			"main";
+		overflow-x: hidden;
+	}
+
+	/* Mobile sidebar states - no grid changes */
+	body.sidebar-collapsed,
+	body.sidebar-open {
+		grid-template-columns: 1fr;
+	}
+
+	/* =========================
+	   Main Content
+	   ========================= */
+	main {
+		padding: 1rem;
+	}
+
+	/* =========================
+	   Header Responsive
+	   ========================= */
+	.header {
+		padding: 1rem;
+		height: auto;
+		min-height: 60px;
+	}
+
+	.header-left {
+		gap: 1.5rem;
+	}
+
+	.header-greeting {
+		font-size: 1.4rem;
+		display: none; /* Hide on very small screens */
+	}
+
+	.user-display-name {
+		font-size: 1.2rem;
+	}
+
+	.header-user {
+		gap: 0.5rem;
+		padding: 0.3rem 0.8rem;
+	}
+
+	.icon-menu {
+		font-size: 2.8rem;
+		width: 32px;
+		height: 32px;
+		/* Always visible on mobile */
+		display: inline-flex !important;
+	}
+
+	.user-avatar {
+		width: 26px;
+		height: 26px;
+	}
+
+	.icon-dropdown {
+		font-size: 1.8rem;
+	}
+
+	.profile-menu {
+		width: 140px;
+		right: 0.5rem;
+	}
+
+	/* Touch-friendly enhancements */
+	.icon-menu,
+	.header-user,
+	.menu-link {
+		min-height: 44px; /* iOS touch target */
+		min-width: 44px;
+	}
+
+	.header-user {
+		border-radius: 12px; /* Larger touch area */
+	}
+
+	/* Ensure hamburger menu is always visible and touch-friendly */
+	.icon-menu {
+		background-color: transparent;
+		border: none;
+		cursor: pointer;
+		display: inline-flex !important;
+		align-items: center;
+		justify-content: center;
+		border-radius: 8px;
+		transition: background-color 160ms ease;
+	}
+
+	.icon-menu:hover {
+		background-color: rgba(0, 86, 42, 0.1);
+	}
+
+	.icon-menu:active {
+		background-color: rgba(0, 86, 42, 0.2);
+		transform: scale(0.95);
+	}
+
+	/* =========================
+	   Sidebar Mobile Overlay
+	   ========================= */
+	.sidebar {
+		position: fixed;
+		top: 0;
+		left: -100%;
+		width: 280px;
+		height: 100vh;
+		z-index: 1000;
+		border-right: none;
+		box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+		transform: translateX(0);
+		transition: left 300ms ease;
+		/* Sidebar is hidden by default on mobile */
+	}
+
+	body.sidebar-open .sidebar {
+		left: 0;
+	}
+
+	/* Mobile overlay */
+	body.sidebar-open::before {
+		content: "";
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 999;
+	}
+
+	.sidebar-nav {
+		padding: 1rem 0.8rem;
+	}
+
+	.sidebar-brand {
+		padding: 1rem 0;
+	}
+
+	.brand-name {
+		font-size: 1.1rem;
+	}
+
+	.brand-tagline {
+		font-size: 0.9rem;
+	}
+
+	.sidebar-menu-item {
+		width: 100%;
+		height: 48px; /* Larger touch target */
+	}
+
+	.menu-label {
+		font-size: 1.3rem;
+	}
+
+	.sidebar-profile {
+		padding: 1.2rem;
+	}
+
+	.profile-name {
+		font-size: 1.1rem;
+	}
+
+	.profile-role {
+		font-size: 0.9rem;
+	}
+
+	/* =========================
+	   Dashboard Cards
+	   ========================= */
+	.card-wrapper {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+
+	.card {
+		padding: 1.5rem 1rem;
+		flex-direction: row;
+		gap: 1rem;
+	}
+
+	.card-icon .material-symbols-rounded {
+		font-size: 3rem;
+	}
+
+	.card-number {
+		font-size: 2.4rem;
+	}
+
+	.card-title {
+		font-size: 1.2rem;
+	}
+
+	.card-link {
+		font-size: 1.3rem;
+		padding: 0.5rem;
+		border-radius: 8px;
+		transition: background-color 160ms ease;
+	}
+
+	.card-link:hover {
+		background-color: rgba(0, 0, 0, 0.05);
+	}
+
+	.dashboard-heading {
+		font-size: 1.8rem;
+	}
+
+	.dashboard-section {
+		gap: 2rem;
+	}
+
+	.dashboard-overview {
+		gap: 1.2rem;
+	}
+
+	/* =========================
+	   Tables Mobile Responsive
+	   ========================= */
+	.table-container {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		border-radius: 8px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+
+	/* Hide less important columns on mobile */
+	table {
+		min-width: 600px; /* Ensure horizontal scroll when needed */
+		font-size: 1.4rem;
+	}
+
+	th,
+	td {
+		padding: 1rem 0.8rem;
+		white-space: nowrap;
+	}
+
+	/* Stack table as cards on very small screens */
+	.table-responsive-cards {
+		display: block;
+	}
+
+	.table-responsive-cards thead {
+		display: none;
+	}
+
+	.table-responsive-cards tbody {
+		display: block;
+	}
+
+	.table-responsive-cards tr {
+		display: block;
+		margin-bottom: 1.5rem;
+		background: #fff;
+		border: 1px solid #e0e0e0;
+		border-radius: 8px;
+		padding: 1.5rem;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+
+	.table-responsive-cards td {
+		display: block;
+		text-align: left !important;
+		border: none;
+		padding: 0.8rem 0;
+		position: relative;
+		padding-left: 50%;
+		white-space: normal;
+	}
+
+	.table-responsive-cards td:before {
+		content: attr(data-label) ": ";
+		position: absolute;
+		left: 0;
+		width: 45%;
+		padding-right: 1rem;
+		white-space: nowrap;
+		font-weight: 600;
+		color: #333;
+	}
+
+	/* Action buttons in cards */
+	.table-responsive-cards td:last-child {
+		text-align: center !important;
+		padding-left: 0;
+		padding-top: 1.5rem;
+		border-top: 1px solid #e0e0e0;
+		margin-top: 1rem;
+	}
+
+	.table-responsive-cards td:last-child:before {
+		display: none;
+	}
+
+	.table-responsive-cards td:last-child button {
+		margin: 0 0.5rem;
+		padding: 0.8rem 1.5rem;
+		font-size: 1.3rem;
+		min-width: 44px;
+		min-height: 44px;
+	}
+
+	/* Status badges responsive */
+	.table-responsive-cards .status-badge {
+		display: inline-block;
+		padding: 0.4rem 0.8rem;
+		border-radius: 4px;
+		font-size: 1.2rem;
+		font-weight: 500;
+		text-align: center;
+		min-width: 8rem;
+	}
+
+	.table-responsive-cards .status-upcoming {
+		background-color: #fff3cd;
+		color: #856404;
+	}
+
+	.table-responsive-cards .status-completed {
+		background-color: #d4edda;
+		color: #155724;
+	}
+
+	.table-responsive-cards .status-missed {
+		background-color: #f8d7da;
+		color: #721c24;
+	}
+
+	/* =========================
+	   Immunization Form Mobile
+	   ========================= */
+	.immunization-section {
+		padding: 1rem;
+	}
+
+	.filters {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+		margin-bottom: 1.5rem;
+		padding: 1rem;
+		background: #f8f9fa;
+		border-radius: 8px;
+	}
+
+	.filters label {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		font-size: 1.4rem;
+		font-weight: 500;
+	}
+
+	.filters input,
+	.filters select {
+		padding: 0.8rem;
+		border: 1px solid #ddd;
+		border-radius: 6px;
+		font-size: 1.4rem;
+	}
+
+	.filter-actions {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+		margin-top: 0.5rem;
+		grid-column: 1 / -1; /* span full width under inputs */
+	}
+
+	.filter-actions button {
+		flex: 1;
+		padding: 1rem;
+		font-size: 1.4rem;
+		border-radius: 8px;
+		min-height: 44px;
+	}
+
+	/* Modal responsive */
+	.immunization-modal {
+		width: 95vw;
+		max-width: 95vw;
+		margin: 1rem;
+		padding: 1.5rem;
+	}
+
+	.immunization-title {
+		font-size: 1.8rem;
+	}
+}
+
+/* =========================
+   Tablet Layout (768px - 1023px)
+   ========================= */
+@media (min-width: 768px) and (max-width: 1023px) {
+	/* =========================
+	   Main Content
+	   ========================= */
+	main {
+		padding: 1.5rem 2rem;
+	}
+
+	/* =========================
+	   Header
+	   ========================= */
+	.header {
+		padding: 0 2rem 0 1rem;
+	}
+
+	.header-greeting {
+		font-size: 1.5rem;
+	}
+
+	.user-display-name {
+		font-size: 1.3rem;
+	}
+
+	/* =========================
+	   Dashboard Cards
+	   ========================= */
+	.card-wrapper {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1.2rem;
+	}
+
+	.card {
+		padding: 1.8rem 1.4rem;
+	}
+
+	.card-icon .material-symbols-rounded {
+		font-size: 3.6rem;
+	}
+
+	.card-number {
+		font-size: 2.8rem;
+	}
+
+	.card-title {
+		font-size: 1.3rem;
+	}
+
+	.dashboard-heading {
+		font-size: 2.2rem;
+	}
+
+	/* =========================
+	   Tables Tablet Responsive
+	   ========================= */
+	.table-container {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	table {
+		min-width: 800px;
+		font-size: 1.5rem;
+	}
+
+	th,
+	td {
+		padding: 1.2rem 1rem;
+	}
+
+	/* Hide some columns on tablet */
+	.table-hide-on-tablet {
+		display: none;
+	}
+
+	/* =========================
+	   Immunization Form Tablet
+	   ========================= */
+	.filters {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1.5rem;
+		align-items: end;
+	}
+
+	.filter-actions {
+		grid-column: 1 / -1;
+		display: flex;
+		justify-content: flex-end;
+		gap: 1rem;
+		margin-top: 1rem;
+	}
+
+	.filter-actions button {
+		padding: 1rem 2rem;
+		font-size: 1.4rem;
+	}
+}
+
+/* =========================
+   Desktop Layout (≥1024px)
+   ========================= */
+@media (min-width: 1024px) {
+	/* =========================
+	   Tables Desktop
+	   ========================= */
+	.table-container {
+		overflow-x: auto;
+	}
+
+	table {
+		font-size: 1.6rem;
+	}
+
+	th,
+	td {
+		padding: 1.5rem 1.2rem;
+	}
+
+	/* =========================
+	   Immunization Form Desktop
+	   ========================= */
+	.filters {
+		display: flex;
+		flex-direction: row;
+		align-items: end;
+		gap: 2rem;
+		padding: 1.5rem;
+	}
+
+	.filters label {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		min-width: 150px;
+	}
+
+	.filter-actions {
+		display: flex;
+		gap: 1rem;
+		margin-left: auto;
+	}
+
+	.filter-actions button {
+		padding: 0.8rem 1.5rem;
+		font-size: 1.4rem;
+	}
+}
+
+/* =========================
+   Common Responsive Utilities
+   ========================= */
+
+/* Hide elements on mobile */
+@media (max-width: 767px) {
+	.hide-mobile {
+		display: none !important;
+	}
+}
+
+/* Hide elements on tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+	.hide-tablet {
+		display: none !important;
+	}
+}
+
+/* Hide elements on desktop */
+@media (min-width: 1024px) {
+	.hide-desktop {
+		display: none !important;
+	}
+}
+
+/* Show elements only on mobile */
+@media (max-width: 767px) {
+	.show-mobile {
+		display: block !important;
+	}
+}
+
+/* Show elements only on tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+	.show-tablet {
+		display: block !important;
+	}
+}
+
+/* Show elements only on desktop */
+@media (min-width: 1024px) {
+	.show-desktop {
+		display: block !important;
+	}
+}
+
+/* Touch-friendly buttons */
+@media (max-width: 767px) {
+	.touch-friendly {
+		min-height: 44px;
+		min-width: 44px;
+		padding: 0.8rem 1.2rem;
+		font-size: 1.4rem;
+	}
+}
+
+/* Responsive text sizes */
+@media (max-width: 767px) {
+	.text-mobile-sm {
+		font-size: 1.2rem;
+	}
+
+	.text-mobile-base {
+		font-size: 1.4rem;
+	}
+
+	.text-mobile-lg {
+		font-size: 1.6rem;
+	}
+
+	.text-mobile-xl {
+		font-size: 1.8rem;
+	}
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+	.text-tablet-sm {
+		font-size: 1.3rem;
+	}
+
+	.text-tablet-base {
+		font-size: 1.5rem;
+	}
+
+	.text-tablet-lg {
+		font-size: 1.7rem;
+	}
+
+	.text-tablet-xl {
+		font-size: 1.9rem;
+	}
+}

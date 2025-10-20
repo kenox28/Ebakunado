@@ -5,7 +5,7 @@ include '../../../database/DatabaseHelper.php';
 header('Content-Type: application/json');
 
 $baby_id = $_POST['baby_id'];
-$columns = 'id,user_id,baby_id,child_fname,child_lname,child_gender,child_birth_date,place_of_birth,mother_name,father_name,address,birth_weight,birth_height,birth_attendant,babys_card,delivery_type,birth_order,date_created:date_created,date_updated:date_updated,status,qr_code,exclusive_breastfeeding_1mo,exclusive_breastfeeding_2mo,exclusive_breastfeeding_3mo,exclusive_breastfeeding_4mo,exclusive_breastfeeding_5mo,exclusive_breastfeeding_6mo,complementary_feeding_6mo,complementary_feeding_7mo,complementary_feeding_8mo,mother_td_dose1_date,mother_td_dose2_date,mother_td_dose3_date,mother_td_dose4_date,mother_td_dose5_date';
+$columns = 'id,user_id,baby_id,child_fname,child_lname,child_gender,child_birth_date,place_of_birth,mother_name,father_name,address,birth_weight,birth_height,birth_attendant,babys_card,delivery_type,birth_order,date_created:date_created,date_updated:date_updated,status,qr_code,exclusive_breastfeeding_1mo,exclusive_breastfeeding_2mo,exclusive_breastfeeding_3mo,exclusive_breastfeeding_4mo,exclusive_breastfeeding_5mo,exclusive_breastfeeding_6mo,complementary_feeding_6mo,complementary_feeding_7mo,complementary_feeding_8mo,lpm,allergies,blood_type,family_planning';
 $rows = supabaseSelect('child_health_records', $columns, ['baby_id' => $baby_id], 'date_created.desc');
 $child_records = [];
 if ($rows && count($rows) > 0) {
@@ -16,12 +16,29 @@ if ($rows && count($rows) > 0) {
 
     $age = $current_date->diff($birth_date)->y;
 
-    // Fetch family number (use parent phone_number from users table)
+    // Resolve parent's phone and fetch TD using string user_id
     $family_number = '';
+    $philhealth_no = '';
+    $nhts = '';
     if (!empty($child['user_id'])) {
-        $urows = supabaseSelect('users', 'phone_number', ['user_id' => $child['user_id']], null, 1);
+        $urows = supabaseSelect('users', 'phone_number,philhealth_no,nhts', ['user_id' => $child['user_id']], null, 1);
         if ($urows && count($urows) > 0) {
             $family_number = $urows[0]['phone_number'] ?? '';
+            $philhealth_no = $urows[0]['philhealth_no'] ?? '';
+            $nhts = $urows[0]['nhts'] ?? '';
+        }
+    }
+
+    // Fetch Mother's TD doses from mother_tetanus_doses (by string user_id)
+    $dose1 = $dose2 = $dose3 = $dose4 = $dose5 = '';
+    if (!empty($child['user_id'])) {
+        $td = supabaseSelect('mother_tetanus_doses', 'dose1_date,dose2_date,dose3_date,dose4_date,dose5_date', ['user_id' => $child['user_id']], null, 1);
+        if ($td && count($td) > 0) {
+            $dose1 = $td[0]['dose1_date'] ?? '';
+            $dose2 = $td[0]['dose2_date'] ?? '';
+            $dose3 = $td[0]['dose3_date'] ?? '';
+            $dose4 = $td[0]['dose4_date'] ?? '';
+            $dose5 = $td[0]['dose5_date'] ?? '';
         }
     }
 
@@ -45,10 +62,16 @@ $child_records[] = [
     'delivery_type' => $child['delivery_type'] ?? '',
     'birth_order' => $child['birth_order'] ?? '',
     'family_number' => $family_number,
+    'philhealth_no' => $philhealth_no,
+    'nhts' => $nhts,
     'age' => $age,
     'weeks_old' => round($weeks_old, 1),
     'status' => $child['status'],
     'qr_code' => $child['qr_code'],
+    'blood_type' => $child['blood_type'] ?? '',
+    'allergies' => $child['allergies'] ?? '',
+    'lpm' => $child['lpm'] ?? '',
+    'family_planning' => $child['family_planning'] ?? '',
     // Exclusive Breastfeeding
     'exclusive_breastfeeding_1mo' => $child['exclusive_breastfeeding_1mo'] ?? false,
     'exclusive_breastfeeding_2mo' => $child['exclusive_breastfeeding_2mo'] ?? false,
@@ -60,12 +83,12 @@ $child_records[] = [
     'complementary_feeding_6mo' => $child['complementary_feeding_6mo'] ?? '',
     'complementary_feeding_7mo' => $child['complementary_feeding_7mo'] ?? '',
     'complementary_feeding_8mo' => $child['complementary_feeding_8mo'] ?? '',
-    // Mother's TD Status
-    'mother_td_dose1_date' => $child['mother_td_dose1_date'] ?? '',
-    'mother_td_dose2_date' => $child['mother_td_dose2_date'] ?? '',
-    'mother_td_dose3_date' => $child['mother_td_dose3_date'] ?? '',
-    'mother_td_dose4_date' => $child['mother_td_dose4_date'] ?? '',
-    'mother_td_dose5_date' => $child['mother_td_dose5_date'] ?? ''
+    // Mother's TD Status (from mother_tetanus_doses)
+    'mother_td_dose1_date' => $dose1,
+    'mother_td_dose2_date' => $dose2,
+    'mother_td_dose3_date' => $dose3,
+    'mother_td_dose4_date' => $dose4,
+    'mother_td_dose5_date' => $dose5
 ];
 }
 }

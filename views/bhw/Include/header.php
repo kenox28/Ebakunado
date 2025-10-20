@@ -27,12 +27,13 @@ if ($user_id) {
 		margin: 0;
 	}
 
-	body {
-		height: 100vh;
-		width: 100%;
-		background-color: #f0f0f0;
-		display: flex;
-	}
+body {
+    height: 100vh;
+    width: 100%;
+    background-color: #f0f0f0;
+    display: flex;
+    overflow: hidden; /* scroll handled in main */
+}
 
 	header {
 		display: flex;
@@ -144,13 +145,17 @@ if ($user_id) {
 		margin-bottom: 10%;
 	}
 
-	main {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding: 10px;
-		width: 85%;
-	}
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    width: 85%;
+    height: 100vh; /* contain scroll */
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
 
 	/* Notification Styles */
 	.notification-button {
@@ -350,6 +355,10 @@ if ($user_id) {
 			<a href="./child_health_record.php" data-icon="🧒"><span>Child Health Record</span></a>
 			<a href="./target_client.php" data-icon="🎯"><span>Target Client List</span></a>
 			<a href="./profile_management.php" data-icon="👤"><span>Profile Management</span></a>
+			<?php if (isset($_SESSION['midwife_id'])): ?>
+				<a href="./chr-doc-requests.php" data-icon="📋"><span>CHR Doc Requests</span></a>
+				<a href="./system_settings.php" data-icon="⚙️"><span>System Settings</span></a>
+			<?php endif; ?>
 		</aside>
 		<main>
 			<header>
@@ -390,7 +399,7 @@ if ($user_id) {
 						➕
 					</a>
 					
-					<input
+					<!-- <input
 						type="text"
 						id="searchInput"
 						placeholder="Search by Baby ID, Name, or User ID"
@@ -400,7 +409,7 @@ if ($user_id) {
 						onclick="openScanner()"
 						style="padding: 6px 10px; margin-left: 8px">
 						Scan QR
-					</button>
+					</button> -->
 					<div class="notification-button" onclick="toggleNotificationDropdown()">
 						<i class="fas fa-bell"></i>
 						<span class="notification-badge" id="notificationCount" style="display: none;">0</span>

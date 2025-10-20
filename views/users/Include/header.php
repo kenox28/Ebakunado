@@ -28,20 +28,20 @@ $user_fname = $_SESSION['fname'] ?? '';
 		<title>Document</title>
 	</head>
 	<style>
+		
 		* {
 			padding: 0;
 			margin: 0;
 		}
-		body {
-			height: 100vh;
-			width: 100vw;
-			background-color: #f0f0f0;
-			display: flex;
-			margin: 0;
-			padding: 0;
-			overflow-x: hidden;
-			overflow-y: auto;
-		}
+        body {
+            height: 100vh;
+            width: 100vw;
+            background-color: #f0f0f0;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* scroll handled in main */
+        }
 		header {
 			display: flex;
 			justify-content: space-between;
@@ -204,17 +204,17 @@ $user_fname = $_SESSION['fname'] ?? '';
 
 			margin-bottom: 10%;
 		}
-		main {
-			display: flex;
-			flex-direction: column;
-			padding: 0;
-			width: 85%;
-			height: 100vh;
-			transition: width 0.3s ease;
-			overflow-x: hidden;
-			overflow-y: auto;
-			box-sizing: border-box;
-		}   
+        main {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            width: 85%;
+            height: 100vh; /* contain scroll */
+            transition: width 0.3s ease;
+            overflow-x: hidden;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }   
 		.profile-link {
 			display: flex;
 			align-items: center;
@@ -352,7 +352,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 			max-height: 500px;
 			display: flex;
 			flex-direction: column;
-			overflow: hidden;
+			overflow: visible;
 		}
 
 		.notification-header {
@@ -386,10 +386,16 @@ $user_fname = $_SESSION['fname'] ?? '';
 
 		.notification-content {
 			flex: 1;
-			overflow-y: auto;
+			overflow-y: scroll;
+			border: 1px solid #000;
 			padding: 0;
+			scrollbar-gutter: stable;
 			scrollbar-width: thin;
 			scrollbar-color: #ccc #f1f1f1;
+			height: 440px; /* ensure inner scroll area fits within 500px dropdown */
+			overflow-x: hidden;
+			overscroll-behavior: contain;
+			-webkit-overflow-scrolling: touch;
 		}
 
 		/* Webkit scrollbar styles */
@@ -403,6 +409,15 @@ $user_fname = $_SESSION['fname'] ?? '';
 			border-bottom: 1px solid #f0f0f0;
 			cursor: pointer;
 			transition: background-color 0.2s ease;
+		}
+
+		/* Unread/Read highlight states */
+		.notification-item.unread {
+			background-color: #eef6ff;
+			border-left: 3px solid #1976d2;
+		}
+		.notification-item.read {
+			background-color: #ffffff;
 		}
 
 		.notification-item:hover {
@@ -570,10 +585,8 @@ $user_fname = $_SESSION['fname'] ?? '';
 			
 			<nav class="aside-nav">
 				<a href="home.php" data-icon="🏠"><span>Dashboard</span></a>
-				<a href="upcoming_schedule.php" data-icon="📅"><span>Upcoming</span></a>
 				<a href="children_list.php" data-icon="🧒"><span>Child Record</span></a>
 				<a href="approved_requests.php" data-icon="✅"><span>Approved Requests</span></a>
-				<a href="missed_immunization.php" data-icon="⚠️"><span>Missed</span></a>
 				<a href="Request.php" data-icon="➕"><span>Add Child</span></a>
 				<a href="profile_management.php" data-icon="👤"><span>Profile Management</span></a>
 				<a href="#" onclick="logoutUser()" data-icon="🚪"><span>Logout</span></a>
@@ -675,10 +688,16 @@ $user_fname = $_SESSION['fname'] ?? '';
 		}
 
 		function markNotificationAsRead(notificationId) {
-			// Decrease unread count and update badge
-			if (unreadCount > 0) {
-				unreadCount--;
-				updateNotificationBadge(unreadCount);
+			// Update local state: set item to read, decrement badge once
+			const idx = notifications.findIndex(n => n.id === notificationId);
+			if (idx !== -1 && notifications[idx].unread) {
+				notifications[idx].unread = false;
+				if (unreadCount > 0) {
+					unreadCount--;
+					updateNotificationBadge(unreadCount);
+				}
+				// Re-render list to unhighlight the item
+				renderNotifications(notifications);
 			}
 		}
 
@@ -694,9 +713,9 @@ $user_fname = $_SESSION['fname'] ?? '';
 			let html = '';
 			notifications.forEach(notification => {
 				const timeAgo = getTimeAgo(notification.timestamp);
-				
+				const cls = notification.unread ? 'notification-item unread' : 'notification-item read';
 				html += `
-					<div class="notification-item" onclick="handleNotificationClick('${notification.id}')">
+					<div class="${cls}" onclick="handleNotificationClick('${notification.id}')">
 						<h4>${notification.icon} ${notification.title}</h4>
 						<p>${notification.message}</p>
 						<div class="notification-time">${timeAgo}</div>
@@ -712,21 +731,26 @@ $user_fname = $_SESSION['fname'] ?? '';
 		function handleNotificationClick(notificationId) {
 			const notification = notifications.find(n => n.id === notificationId);
 			if (notification) {
-				// Mark as read on server and locally
+				// Mark as read locally and on server
 				markNotificationAsRead(notificationId);
 				try{ const fd=new FormData(); fd.append('id', notificationId); fetch('../../php/supabase/users/mark_notification_read.php', {method:'POST', body:fd}); }catch(e){}
-				
-				// Navigate to the action URL
+				// Navigate to the action URL after UI updates
 				if (notification.action_url) {
-					window.location.href = notification.action_url;
+					setTimeout(() => { window.location.href = notification.action_url; }, 150);
 				}
 			}
 		}
 
 		function markAllAsRead() {
-			// Set unread count to 0 and hide badge, persist on server
+			// Optimistically mark all as read locally
+			if (Array.isArray(notifications)) {
+				notifications = notifications.map(n => ({ ...n, unread: false }));
+				renderNotifications(notifications);
+			}
+			// Zero badge/count immediately
 			unreadCount = 0;
 			updateNotificationBadge(0);
+			// Persist to server
 			try{ fetch('../../php/supabase/users/mark_notifications_read_all.php', {method:'POST'}); }catch(e){}
 		}
 

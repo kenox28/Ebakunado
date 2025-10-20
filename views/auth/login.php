@@ -10,7 +10,7 @@ session_start();
 	<link rel="stylesheet" href="../../css/fonts.css" />
 	<link rel="stylesheet" href="../../css/variables.css" />
 	<link rel="stylesheet" href="../../css/login-style.css?v=1.0.1" />
-	<link rel="stylesheet" href="/css/queries.css" />
+	<link rel="stylesheet" href="../../css/queries.css?v=1.0.1" />
 	<title>Health Worker Portal</title>
 </head>
 
@@ -93,7 +93,7 @@ session_start();
 	</main>
 
 		<script src="../../js/auth-handler/password-toggle.js"></script>
-		<script src="../../js/supabase_js/login.js?v=1.0.21"></script>
+		<script src="../../js/supabase_js/login.js?v=1.0.22"></script>
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 		
 	</body>

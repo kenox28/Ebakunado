@@ -4,7 +4,7 @@ include '../../../database/SupabaseConfig.php';
 include '../../../database/DatabaseHelper.php';
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['bhw_id'])) { echo json_encode(['status'=>'error','message'=>'Unauthorized']); exit(); }
+if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['midwife_id'])) { echo json_encode(['status'=>'error','message'=>'Unauthorized']); exit(); }
 
 $baby_id = $_GET['baby_id'] ?? '';
 if ($baby_id === '') { echo json_encode(['status'=>'error','message'=>'Missing baby_id']); exit(); }

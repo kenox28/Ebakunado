@@ -1,10 +1,20 @@
 <?php session_start(); ?>
-<?php
-// Debug BHW session
-if (isset($_SESSION['bhw_id'])) {
-    echo "<!-- BHW Session Active: " . $_SESSION['bhw_id'] . " -->";
+<?php 
+// Handle both BHW and Midwife sessions (but BHW should only see BHW features)
+$user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+$user_types = $_SESSION['user_type']; // Default to bhw for BHW pages
+$user_name = $_SESSION['fname'] ?? 'User';
+$user_fullname = $_SESSION['fname'] ." ". $_SESSION['lname'];
+if($user_types != 'midwifes') {   
+    $user_type = 'Barangay Health Worker';
+}else{
+    $user_type = 'Midwife';
+}
+// Debug session
+if ($user_id) {
+    echo "<!-- Session Active: " . $user_type . " - " . $user_id . " -->";
 } else {
-    echo "<!-- BHW Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
+    echo "<!-- Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
 }
 ?>
 
@@ -15,10 +25,11 @@ if (isset($_SESSION['bhw_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Approval</title>
-    <link rel="stylesheet" href="/css/main.css" />
-    <link rel="stylesheet" href="/css/header.css" />
-    <link rel="stylesheet" href="/css/sidebar.css" />
-    <link rel="stylesheet" href="/css/bhw/pending-approval-style.css" />
+    <link rel="stylesheet" href="../../css/main.css" />
+    <link rel="stylesheet" href="../../css/header.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/bhw/pending-approval-style.css" />
+    <link rel="stylesheet" href="../../css/bhw/queries.css" />
 </head>
 
 <body>

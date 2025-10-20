@@ -4,7 +4,7 @@ include '../../../database/SupabaseConfig.php';
 include '../../../database/DatabaseHelper.php';
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['bhw_id'])) { echo json_encode(['status'=>'error','message'=>'Unauthorized']); exit(); }
+if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['midwife_id'])) { echo json_encode(['status'=>'error','message'=>'Unauthorized']); exit(); }
 
 $record_id = $_POST['record_id'] ?? '';
 $date_given = $_POST['date_given'] ?? '';

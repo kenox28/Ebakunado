@@ -305,7 +305,7 @@ async function uploadProfilePhoto() {
 	formData.append('photo', file);
 	
 	try {
-		const response = await fetch('/ebakunado/php/supabase/shared/upload_profile_photo.php', {
+		const response = await fetch('../../php/supabase/shared/upload_profile_photo.php', {
 			method: 'POST',
 			body: formData
 		});

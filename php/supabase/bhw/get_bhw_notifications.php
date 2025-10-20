@@ -8,7 +8,7 @@ require_once __DIR__ . '/../../../database/SupabaseConfig.php';
 require_once __DIR__ . '/../../../database/DatabaseHelper.php';
 
 // Check if BHW is logged in
-if (!isset($_SESSION['bhw_id'])) {
+if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['midwife_id'])) {
     header('Content-Type: application/json');
     echo json_encode(['status' => 'error', 'message' => 'Unauthorized - BHW ID not found in session']);
     exit();

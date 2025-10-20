@@ -1,162 +1,162 @@
 .sidebar {
-  width: 230px;
-  height: 100vh;
-  background: var(--background-white);
-  border-right: 1px solid #4A4A4A;
-  
-  grid-area: sidebar;
-  height: 100vh;     
-  position: sticky;
-  top: 0;
+	width: 230px;
+	height: 100vh;
+	background: var(--background-white);
+	border-right: 1px solid #4a4a4a;
 
-  transform: translateX(0);
-  transition: transform 300ms ease;
-  will-change: transform;
+	grid-area: sidebar;
+	height: 100vh;
+	position: sticky;
+	top: 0;
+
+	transform: translateX(0);
+	transition: transform 300ms ease;
+	will-change: transform;
 }
 
 body.sidebar-collapsed .sidebar {
-  transform: translateX(-100%);
-  pointer-events: none;
+	transform: translateX(-100%);
+	pointer-events: none;
 }
 
 .sidebar-nav {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 0.5rem 0.6rem;
-  gap: 1rem;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	padding: 0.5rem 0.6rem;
+	gap: 1rem;
 }
 
 .sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 0;
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.5rem 0;
 }
 
 .brand-mark {
-  width: 45px;
-  height: 45px;
-  object-fit: contain;
+	width: 45px;
+	height: 45px;
+	object-fit: contain;
 }
 
 .brand-text-block {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
 }
 
 .brand-name {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--primary-color);
+	font-size: 1.2rem;
+	font-weight: 700;
+	color: var(--primary-color);
 }
 
 .brand-tagline {
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--primary-color);
+	font-size: 1rem;
+	font-weight: 500;
+	color: var(--primary-color);
 }
 
 .sidebar-profile {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 10px;
-  background-color: #00562a;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1rem;
+	border-radius: 10px;
+	background-color: #00562a;
 }
 
 .profile-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  object-fit: cover;
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	object-fit: cover;
 }
 
 .profile-text-block {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
 }
 
 .profile-name {
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: #ffffff;
+	font-size: 1.2rem;
+	font-weight: 500;
+	color: #ffffff;
 }
 
 .profile-role {
-  font-size: 1rem;
-  font-weight: 400;
-  color: #ffffff;
+	font-size: 1rem;
+	font-weight: 400;
+	color: #ffffff;
 }
 
 .sidebar-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	margin-top: 8px;
 }
 
 .sidebar-section-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text-label);
+	font-size: 1.2rem;
+	font-weight: 600;
+	color: var(--text-label);
 }
 
 .sidebar-menu {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  padding: 0;
-  margin: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+	padding: 0;
+	margin: 0;
 }
 
 .sidebar-menu-item {
-  width: 218px;
-  height: 42px;
-  /* container for active border/bg; anchor will fill it */
-  display: block;
-  padding: 0; /* moved to anchor to make full area clickable */
-  border-radius: 5px;
-  border-left: 0.6rem solid transparent;
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: var(--sidebar-txt-color);
-  cursor: pointer;
+	width: 218px;
+	height: 42px;
+	/* container for active border/bg; anchor will fill it */
+	display: block;
+	padding: 0; /* moved to anchor to make full area clickable */
+	border-radius: 5px;
+	border-left: 0.6rem solid transparent;
+	font-size: 1.4rem;
+	font-weight: 600;
+	color: var(--sidebar-txt-color);
+	cursor: pointer;
 }
 
 .menu-link {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  width: 100%;
-  height: 100%;
-  padding: 0 1rem;
-  color: inherit;           
-  text-decoration: none;  
-  border-radius: inherit;
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	width: 100%;
+	height: 100%;
+	padding: 0 1rem;
+	color: inherit;
+	text-decoration: none;
+	border-radius: inherit;
 }
 
 .sidebar-menu-item:hover .menu-link {
-  background-color: rgba(0,0,0,0.04); 
+	background-color: rgba(0, 0, 0, 0.04);
 }
 
 .sidebar-menu-item.active {
-  border-left-color: var(--primary-color);
-  background-color: #d8e6db;
-  color: var(--primary-color);
+	border-left-color: var(--primary-color);
+	background-color: #d8e6db;
+	color: var(--primary-color);
 }
 
 .menu-icon {
-  font-size: 2rem;
-  line-height: 1;
+	font-size: 2rem;
+	line-height: 1;
 }
 
 .menu-label {
-  font-size: 1.4rem;
-  font-weight: 500;
+	font-size: 1.4rem;
+	font-weight: 500;
 }

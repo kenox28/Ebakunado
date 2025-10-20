@@ -56,18 +56,32 @@ async function loadChrRequests(){
 }
 
 async function approveChr(requestId, requestType){
-	if (!confirm('Approve this request and generate DOCX?')) return;
+	if (!confirm('Approve this request and generate PDF?')) return;
 	try{
-		const fd = new FormData(); fd.append('request_id', requestId); if (requestType) fd.append('request_type', requestType);
-		const res = await fetch('/ebakunado/php/supabase/bhw/approve_chr_doc.php', { method:'POST', body: fd });
+		const fd = new FormData(); 
+		fd.append('request_id', requestId); 
+		if (requestType) fd.append('request_type', requestType);
+		
+		const res = await fetch('../../php/supabase/bhw/approve_chr_doc.php', { 
+			method:'POST', 
+			body: fd 
+		});
+		
+		if (!res.ok) {
+			throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+		}
+		
 		const j = await res.json();
 		if (j.status === 'success'){
-			alert('Approved. DOCX generated.');
+			alert('Approved. PDF generated.');
 			loadChrRequests();
 		} else {
 			alert('Approve failed: ' + (j.message||'Unknown error'));
 		}
-	}catch(e){ alert('Network error approving request'); }
+	}catch(e){ 
+		console.error('Approve error:', e);
+		alert('Network error approving request: ' + e.message); 
+	}
 }
 </script>
 

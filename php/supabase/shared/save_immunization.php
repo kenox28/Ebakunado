@@ -117,27 +117,31 @@ try {
             $feeding_update[$field_name] = $update_complementary_feeding;
         }
         
-        // Handle Mother's TD Status update
+        // Handle Mother's TD Status update (via mother_tetanus_doses)
         if ($update_td_dose_date !== '') {
-            // Get current TD status to determine which dose to update
-            $current_td = supabaseSelect('child_health_records', 'mother_td_dose1_date,mother_td_dose2_date,mother_td_dose3_date,mother_td_dose4_date,mother_td_dose5_date', ['baby_id' => $record['baby_id']], null, 1);
-            
-            if ($current_td && count($current_td) > 0) {
-                $td_record = $current_td[0];
-                $next_dose = 1;
-                
-                // Find the next dose that needs to be updated
-                for ($i = 1; $i <= 5; $i++) {
-                    $field_name = 'mother_td_dose' . $i . '_date';
-                    if (empty($td_record[$field_name])) {
-                        $next_dose = $i;
-                        break;
+            // Use string users.user_id directly (matches schema)
+            $child_row = supabaseSelect('child_health_records', 'user_id', ['baby_id' => $record['baby_id']], null, 1);
+            $string_user_id = ($child_row && count($child_row) > 0) ? ($child_row[0]['user_id'] ?? '') : '';
+
+            if ($string_user_id !== '') {
+                $tdRows = supabaseSelect('mother_tetanus_doses', 'id,dose1_date,dose2_date,dose3_date,dose4_date,dose5_date', ['user_id' => $string_user_id], null, 1);
+                if ($tdRows && count($tdRows) > 0) {
+                    $td = $tdRows[0];
+                    $next = null;
+                    for ($i=1; $i<=5; $i++) {
+                        $k = 'dose'.$i.'_date';
+                        if (empty($td[$k])) { $next = $k; break; }
                     }
-                }
-                
-                if ($next_dose <= 5) {
-                    $td_field_name = 'mother_td_dose' . $next_dose . '_date';
-                    $feeding_update[$td_field_name] = $update_td_dose_date;
+                    if ($next) {
+                        supabaseUpdate('mother_tetanus_doses', [ $next => $update_td_dose_date, 'date_updated' => date('Y-m-d H:i:s') ], ['id' => $td['id']]);
+                    }
+                } else {
+                    supabaseInsert('mother_tetanus_doses', [
+                        'user_id' => $string_user_id,
+                        'dose1_date' => $update_td_dose_date,
+                        'date_created' => date('Y-m-d H:i:s'),
+                        'date_updated' => date('Y-m-d H:i:s')
+                    ]);
                 }
             }
         }

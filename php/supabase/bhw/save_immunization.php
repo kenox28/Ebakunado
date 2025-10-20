@@ -7,8 +7,15 @@ error_reporting(0);
 ini_set('display_errors', 0);
 header('Content-Type: application/json');
 
+session_start();
 require_once __DIR__ . '/../../../database/SupabaseConfig.php';
 require_once __DIR__ . '/../../../database/DatabaseHelper.php';
+
+// Check authorization
+if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['midwife_id'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
+    exit();
+}
 
 try {
     // Read inputs

@@ -7,7 +7,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <div class="sidebar-brand">
             <img
                 class="brand-mark"
-                src="/assets/images/ebakunado-logo-without-label.png"
+                src="../../assets/images/ebakunado-logo-without-label.png"
                 alt="eBakunado Logo" />
             <div class="brand-text-block">
                 <h1 class="brand-name">eBakunado</h1>
@@ -18,7 +18,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <div class="sidebar-profile">
             <img
                 class="profile-avatar"
-                src="/assets/images/user-profile.png"
+                src="../../assets/images/user-profile.png"
                 alt="User Profile" />
             <div class="profile-text-block">
                 <h2 class="profile-name"><?php echo htmlspecialchars($user_fullname);?></h2>
@@ -31,7 +31,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <ul class="sidebar-menu">
                 <!-- Dashboard -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'dashboard.php' ? ' active' : ''; ?>">
-                    <a href="/views/bhw-page/dashboard.php" class="menu-link">
+                    <a href="../../views/bhw-page/dashboard.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">dashboard</span>
                         <span class="menu-label">Dashboard</span>
                     </a>
@@ -39,7 +39,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
                 <!-- Immunization -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'immunization.php' ? ' active' : ''; ?>">
-                    <a href="/views/bhw-page/immunization.php" class="menu-link">
+                    <a href="../../views/bhw-page/immunization.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">vaccines</span>
                         <span class="menu-label">Immunization Form</span>
                     </a>
@@ -47,7 +47,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
                 <!-- Pending Approval -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'pending-approval.php' ? ' active' : ''; ?>">
-                    <a href="/views/bhw-page/pending-approval.php" class="menu-link">
+                    <a href="../../views/bhw-page/pending-approval.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">hourglass_top</span>
                         <span class="menu-label">Pending Approval</span>
                     </a>
