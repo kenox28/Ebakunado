@@ -1,13 +1,13 @@
 <?php session_start(); ?>
-<?php 
+<?php
 // Handle both BHW and Midwife sessions (but BHW should only see BHW features)
 $user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
 $user_types = $_SESSION['user_type']; // Default to bhw for BHW pages
 $user_name = $_SESSION['fname'] ?? 'User';
-$user_fullname = $_SESSION['fname'] ." ". $_SESSION['lname'];
-if($user_types != 'midwifes') {   
+$user_fullname = $_SESSION['fname'] . " " . $_SESSION['lname'];
+if ($user_types != 'midwifes') {
     $user_type = 'Barangay Health Worker';
-}else{
+} else {
     $user_type = 'Midwife';
 }
 // Debug session
@@ -26,10 +26,10 @@ if ($user_id) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Approval</title>
     <link rel="stylesheet" href="../../css/main.css" />
+    <link rel="stylesheet" href="../../css/variables.css" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/bhw/pending-approval-style.css" />
-    <link rel="stylesheet" href="../../css/bhw/queries.css" />
 </head>
 
 <body>
@@ -38,6 +38,8 @@ if ($user_id) {
 
     <main>
         <section class="pending-approval-section">
+            <h2 class="section-header">Pending Immunization List</h2>
+
             <!-- <div id="qrOverlay">
                 <div class="qr-content">
                     <select id="cameraSelect" onchange="switchCamera(event)"></select>

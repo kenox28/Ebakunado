@@ -56,6 +56,7 @@
 </div>
 <div class="childinformation-container" style="display: none; height:100%; width:100%; background-color: gray;">
 	<div style="width: 50%;">
+		
 		<h1>Child Information</h1>
 		<p>Child Name: <span id="childName"></span></p>
 		<p>Child Gender: <span id="childGender"></span></p>
@@ -90,12 +91,12 @@
 
 			async function getChildHealthRecord() {
 				const body = document.querySelector('#childhealthrecordBody');
-				body.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+				body.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
 				try {
 					const res = await fetch('/ebakunado/php/supabase/bhw/get_immunization_view.php');
 					const data = await res.json();
-					if (data.status !== 'success') { body.innerHTML = '<tr><td colspan="4">Failed to load records</td></tr>'; return; }
-					if (!data.data || data.data.length === 0){ body.innerHTML = '<tr><td colspan="4">No records found</td></tr>'; chrRecords = []; return; }
+					if (data.status !== 'success') { body.innerHTML = '<tr><td colspan="6">Failed to load records</td></tr>'; return; }
+					if (!data.data || data.data.length === 0){ body.innerHTML = '<tr><td colspan="6">No records found</td></tr>'; chrRecords = []; return; }
 					chrRecords = data.data;
 					renderTable(chrRecords);
 					populateVaccineDropdown();
@@ -105,7 +106,7 @@
                     const statusSelEl = document.getElementById('filterStatus');
                     if (statusSelEl) { statusSelEl.value = 'upcoming'; }
 					applyFilters();
-				} catch (e) { body.innerHTML = '<tr><td colspan="4">Error loading records</td></tr>'; }
+				} catch (e) { body.innerHTML = '<tr><td colspan="6">Error loading records</td></tr>'; }
 			}
 
 	function openImmunizationForm(btn) {

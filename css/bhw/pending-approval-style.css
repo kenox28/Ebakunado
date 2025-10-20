@@ -1,6 +1,12 @@
 main {
-    max-height: 100vh;
-    overflow-y: auto;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.pending-approval-section {
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+    padding: 1rem;
 }
 
 .btn {
@@ -16,13 +22,14 @@ main {
 }
 
 .view-btn {
+  font-size: 1.2rem;
   background-color: var(--primary-color);
   color: #ffffff;
   transition: background-color 0.3s ease;
 }
 
 .view-btn .material-symbols-rounded {
-  font-size: 2rem;
+  font-size: 1.6rem;
 }
 
 .childinformation-container {

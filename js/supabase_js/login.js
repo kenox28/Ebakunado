@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 async function generateCSRFToken() {
 	try {
 		// Supabase: const response = await fetch("/php/supabase/generate_csrf.php");
-		const response = await fetch("/ebakunado/php/supabase/generate_csrf.php");
+		const response = await fetch("../../php/supabase/generate_csrf.php");
 
 		const data = await response.json();
 		document.getElementById("csrf_token").value = data.csrf_token;
@@ -61,7 +61,7 @@ async function loginFun(e) {
 	try {
 		console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 		// Supabase: const res = await fetch("/php/supabase/login.php", {
-		const res = await fetch("/ebakunado/php/supabase/login.php", {
+		const res = await fetch("../../php/supabase/login.php", {
 			method: "POST",
 			body: formdata,
 		});

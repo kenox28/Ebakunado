@@ -25,14 +25,12 @@ if ($user_id) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BHW Dashboard</title>
-    <link rel="stylesheet" href="../../css/fonts.css?v=1.0.1" />
+    <link rel="stylesheet" href="imm/css/fonts.css" />
     <!-- <link rel="stylesheet" href="/css/base.css" /> -->
-    <link rel="stylesheet" href="../../css/main.css?v=1.0.1" />
-    <link rel="stylesheet" href="../../css/variables.css?v=1.0.1" />
-    <link rel="stylesheet" href="../../css/header.css?v=1.0.1" />
-    <link rel="stylesheet" href="../../css/sidebar.css?v=1.0.1" />
-    <link rel="stylesheet" href="../../css/bhw/dashboard.css?v=1.0.1" />
-    <link rel="stylesheet" href="../../css/bhw/queries.css?v=1.0.1" />
+    <link rel="stylesheet" href="../../css/main.css" />
+    <link rel="stylesheet" href="../../css/header.css" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/bhw/dashboard.css" />
 </head>
 
 <body>

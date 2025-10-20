@@ -11,7 +11,15 @@
         <h1 class="header-greeting">Welcome, <?php echo htmlspecialchars($user_name);?>!</h1>
     </div>
 
-    <div class="header-user" id="headerUser">
+    <div
+        class="header-user"
+        id="headerUser"
+        role="button"
+        tabindex="0"
+        aria-haspopup="menu"
+        aria-expanded="false"
+        aria-controls="profileMenu"
+    >
         <img
             class="user-avatar"
             src="../../assets/images/user-profile.png"
@@ -21,7 +29,7 @@
 
         <!-- Popover Menu -->
         <div id="profileMenu" class="profile-menu" role="menu" aria-hidden="true">
-            <a class="menu-item" href="#" role="menuitem">
+            <a class="menu-item" href="./profile-management.php" role="menuitem">
                 <span class="material-symbols-rounded">person</span>
                 Account
             </a>

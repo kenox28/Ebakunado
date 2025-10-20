@@ -1,13 +1,13 @@
 <?php session_start(); ?>
-<?php 
+<?php
 // Handle both BHW and Midwife sessions (but BHW should only see BHW features)
 $user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
 $user_types = $_SESSION['user_type']; // Default to bhw for BHW pages
 $user_name = $_SESSION['fname'] ?? 'User';
-$user_fullname = $_SESSION['fname'] ." ". $_SESSION['lname'];
-if($user_types != 'midwifes') {   
+$user_fullname = $_SESSION['fname'] . " " . $_SESSION['lname'];
+if ($user_types != 'midwifes') {
     $user_type = 'Barangay Health Worker';
-}else{
+} else {
     $user_type = 'Midwife';
 }
 // Debug session
@@ -30,11 +30,11 @@ if ($user_id) {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>BHW Dashboard</title>
-        <link rel="stylesheet" href="../../css/main.css?v=1.0.1" />
-        <link rel="stylesheet" href="../../css/header.css?v=1.0.1" />
-        <link rel="stylesheet" href="../../css/sidebar.css?v=1.0.1" />
-        <link rel="stylesheet" href="../../css/bhw/immunization-style.css?v=1.0.1">
-        <link rel="stylesheet" href="../../css/bhw/queries.css?v=1.0.1">
+        <link rel="stylesheet" href="../../css/main.css" />
+        <link rel="stylesheet" href="../../css/variables.css" />
+        <link rel="stylesheet" href="../../css/header.css" />
+        <link rel="stylesheet" href="../../css/sidebar.css" />
+        <link rel="stylesheet" href="../../css/bhw/immunization-style.css">
     </head>
 
 <body>
@@ -92,16 +92,14 @@ if ($user_id) {
                 </table>
             </div>
 
-            
-
             <!-- Immunization Record Overlay -->
             <div class="immunization-record" id="immunizationOverlay">
                 <div class="immunization-modal">
                     <div class="immunization-header">
                         <h3 class="immunization-title">Record Immunization</h3>
-                        <button onclick="closeImmunizationForm()">Close</button>
+                        <button class="close-btn" onclick="closeImmunizationForm()">Close</button>
                     </div>
-                    <div id="immunizationFormContainer"></div>
+                    <div class="immunization-form" id="immunizationFormContainer"></div>
                 </div>
             </div>
 
@@ -115,16 +113,16 @@ if ($user_id) {
 
         async function getChildHealthRecord() {
             const body = document.querySelector('#childhealthrecordBody');
-            body.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+            body.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
             try {
                 const res = await fetch('../../php/supabase/bhw/get_immunization_view.php');
                 const data = await res.json();
                 if (data.status !== 'success') {
-                    body.innerHTML = '<tr><td colspan="4">Failed to load records</td></tr>';
+                    body.innerHTML = '<tr><td colspan="6">Failed to load records</td></tr>';
                     return;
                 }
                 if (!data.data || data.data.length === 0) {
-                    body.innerHTML = '<tr><td colspan="4">No records found</td></tr>';
+                    body.innerHTML = '<tr><td colspan="6">No records found</td></tr>';
                     chrRecords = [];
                     return;
                 }
@@ -142,7 +140,7 @@ if ($user_id) {
                 }
                 applyFilters();
             } catch (e) {
-                body.innerHTML = '<tr><td colspan="4">Error loading records</td></tr>';
+                body.innerHTML = '<tr><td colspan="6">Error loading records</td></tr>';
             }
         }
 
@@ -227,12 +225,26 @@ if ($user_id) {
             }
 
             function getMotherTDStatus() {
-                const tdDoses = [
-                    { dose: 1, date: feedingData.tdDose1 },
-                    { dose: 2, date: feedingData.tdDose2 },
-                    { dose: 3, date: feedingData.tdDose3 },
-                    { dose: 4, date: feedingData.tdDose4 },
-                    { dose: 5, date: feedingData.tdDose5 }
+                const tdDoses = [{
+                        dose: 1,
+                        date: feedingData.tdDose1
+                    },
+                    {
+                        dose: 2,
+                        date: feedingData.tdDose2
+                    },
+                    {
+                        dose: 3,
+                        date: feedingData.tdDose3
+                    },
+                    {
+                        dose: 4,
+                        date: feedingData.tdDose4
+                    },
+                    {
+                        dose: 5,
+                        date: feedingData.tdDose5
+                    }
                 ];
 
                 const completedDoses = tdDoses.filter(d => d.date && d.date !== '');
@@ -251,32 +263,32 @@ if ($user_id) {
             const motherTDStatus = getMotherTDStatus();
 
             const html = `
-                    <div>
-                        <div>
-                            <label>Child Name</label>
-                            <input type="text" id="im_child_name" value="${childName}" readonly />
+                        <div class="form-container">
+                            <div class="form-group row-1">
+                                <label>
+                                    Child Name:
+                                    <input type="text" id="im_child_name" value="${childName}" readonly disabled />
+                                </label>
+                                <label>
+                                    Vaccine:
+                                    <input type="text" id="im_vaccine_name" value="${vaccineName}" readonly disabled />
+                                </label>
+                            </div>
+                            <div class="form-group row-2">
+                                <input  type="hidden" id="im_schedule_date" value="${scheduleDate}" readonly />
+                                ${catchUpDate ? `
+                                <label>
+                                    Catch-up Date:
+                                    <input type="date" id="im_catch_up_date" value="${catchUpDate}" readonly disabled />
+                                </label>
+                            </div>` : ''}
+                            <div class="form-group row-3">
+                                <input type="hidden" id="im_date_taken" value="${dateToday}" />
+                            </div>
                         </div>
-                        <div>
-                            <label>Vaccine</label>
-                            <input type="text" id="im_vaccine_name" value="${vaccineName}" readonly />
-                        </div>
-                        <div>
-                            <label>Scheduled Date</label>
-                            <input type="date" id="im_schedule_date" value="${scheduleDate}" readonly />
-                        </div>
-                        ${catchUpDate ? `
-                        <div>
-                            <label>Catch-up Date</label>
-                            <input type=\"date\" id=\"im_catch_up_date\" value=\"${catchUpDate}\" readonly />
-                        </div>` : ''}
-                        <div>
-                            <label>Date Taken</label>
-                            <input type="date" id="im_date_taken" value="${dateToday}" />
-                        </div>
-                    </div>
 
                     ${feedingStatus ? `
-                    <div>
+                    <div class="form-group row-4">
                         <h4>Update Feeding Status for ${vaccineName}</h4>
                         <div>
                             <span>${feedingStatus.text}:</span>
@@ -292,7 +304,7 @@ if ($user_id) {
                         </div>
                     </div>` : ''}
 
-                    <div>
+                    <div class="form-group row-5">
                         <h4>Mother's TD (Tetanus-Diphtheria) Status</h4>
                         <div>
                             <span>Completed Doses: ${motherTDStatus.completed}/5</span>
@@ -307,41 +319,43 @@ if ($user_id) {
                         <div>✓ All TD doses completed</div>
                         `}
                     </div>
-
-                    <div>
-                        <div>
-                            <label>Temperature (°C)</label>
-                            <input type="number" step="0.1" id="im_temperature" placeholder="e.g. 36.8" />
+                        <div class="form-group row-6">
+                            <label>
+                                Temperature (°C)
+                                <input type="number" step="0.1" id="im_temperature" placeholder="e.g. 36.8" />
+                            </label>
+                            <label>
+                                Height (cm)
+                                <input type="number" step="0.1" id="im_height" placeholder="e.g. 60" />
+                            </label>
+                            <label>
+                                Weight (kg)
+                                <input type="number" step="0.01" id="im_weight" placeholder="e.g. 6.5" />
+                            </label>
                         </div>
-                        <div>
-                            <label>Height (cm)</label>
-                            <input type="number" step="0.1" id="im_height" placeholder="e.g. 60" />
-                        </div>
-                        <div>
-                            <label>Weight (kg)</label>
-                            <input type="number" step="0.01" id="im_weight" placeholder="e.g. 6.5" />
-                        </div>
-                    </div>
 
                     <!-- Dose and Lot fields removed: dose is auto-determined from record, lot/site not in schema -->
-
-                    <div>
-                        <div>
-                            <label>Administered By</label>
-                            <input type="text" id="im_administered_by" placeholder="Name" />
+                        <div class="form-group row-7">
+                            <label>
+                                Administered By
+                                <input type="text" id="im_administered_by" placeholder="Name" />
+                            </label>
+                            <label>
+                                Remarks
+                                <textarea id="im_remarks" rows="3"></textarea>
+                            </label>
+                            
                         </div>
-                        <div>
-                            <input type="checkbox" id="im_mark_completed" />
-                            <label for="im_mark_completed">Mark as Taken</label>
+                    
+                        <div class="form-group row-8">
+                            <label for="im_mark_completed">
+                                <input type="checkbox" id="im_mark_completed" />
+                                Mark as Taken
+                            </label>
                         </div>
                     </div>
 
-                    <div>
-                        <label>Remarks</label>
-                        <textarea id="im_remarks" rows="3"></textarea>
-                    </div>
-
-                    <div>
+                    <div class="form-actions">
                         <button onclick="closeImmunizationForm()">Cancel</button>
                         <button onclick="submitImmunizationForm()">Save</button>
                     </div>

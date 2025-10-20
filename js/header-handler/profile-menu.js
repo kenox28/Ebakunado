@@ -7,27 +7,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const willOpen = typeof force === 'boolean' ? force : !menu.classList.contains('open');
     menu.classList.toggle('open', willOpen);
     menu.setAttribute('aria-hidden', String(!willOpen));
+    headerUser.classList.toggle('is-open', willOpen);
+    headerUser.setAttribute('aria-expanded', String(willOpen));
   }
 
-  // Toggle when clicking the header user area (but not when clicking inside the menu)
+  // Press feedback (mouse/touch)
+  headerUser.addEventListener('pointerdown', () => headerUser.classList.add('is-pressed'));
+  headerUser.addEventListener('pointerup',   () => headerUser.classList.remove('is-pressed'));
+  headerUser.addEventListener('pointerleave',() => headerUser.classList.remove('is-pressed'));
+  headerUser.addEventListener('pointercancel',() => headerUser.classList.remove('is-pressed'));
+
+  // Toggle with click
   headerUser.addEventListener('click', (e) => {
     if (menu.contains(e.target)) return;
     toggleMenu();
   });
 
-  // Clicks inside the menu: stop bubbling, close after selecting an item
+  // Keyboard support + press feedback
+  headerUser.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      headerUser.classList.add('is-pressed');
+      e.preventDefault();
+    }
+  });
+  headerUser.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      headerUser.classList.remove('is-pressed');
+      toggleMenu();
+      e.preventDefault();
+    }
+  });
+
+  // Menu interactions
   menu.addEventListener('click', (e) => {
     e.stopPropagation();
     const item = e.target.closest('.menu-item');
     if (item) toggleMenu(false);
   });
 
-  // Close on outside click
+  // Close on outside click / Esc
   document.addEventListener('click', (e) => {
     if (!headerUser.contains(e.target)) toggleMenu(false);
   });
-
-  // Close on Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') toggleMenu(false);
   });
