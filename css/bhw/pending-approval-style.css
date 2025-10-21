@@ -49,7 +49,7 @@ main {
 .childinfo-header {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* push Edit button to the right */
+  justify-content: space-between; 
   gap: 0.5rem;
 }
 
