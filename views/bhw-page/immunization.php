@@ -90,6 +90,14 @@ if ($user_id) {
                         </tr>
                     </tbody>
                 </table>
+                <div id="pager" style="display:flex; align-items:center; justify-content: space-between; gap: 8px; margin-top: 8px;">
+                    <div id="pageInfo" style="font-size: 12px; color: #555;">&nbsp;</div>
+                    <div style="display:flex; gap:4px; align-items:center;">
+                        <button id="prevBtn" type="button">Prev</button>
+                        <span id="pageButtons" style="display:inline-flex; align-items:center; gap:4px;"></span>
+                        <button id="nextBtn" type="button">Next</button>
+                    </div>
+                </div>
             </div>
 
             <!-- Immunization Record Overlay -->
@@ -109,38 +117,60 @@ if ($user_id) {
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script>
+        // spinner CSS (scoped)
+        const style = document.createElement('style');
+        style.textContent = `.pager-spinner{width:16px;height:16px;border:2px solid #ccc;border-top-color:#1976d2;border-radius:50%;display:inline-block;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}`;
+        document.head.appendChild(style);
         let chrRecords = [];
+        let currentPage = 1;
+        const pageSize = 10; // fixed to 10 per request
 
-        async function getChildHealthRecord() {
+        async function getChildHealthRecord(page = 1, opts = {}) {
             const body = document.querySelector('#childhealthrecordBody');
-            body.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
+            const keepRows = opts.keep === true;
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const btnWrap = document.getElementById('pageButtons');
+            const prevMarkup = btnWrap ? btnWrap.innerHTML : '';
+            if (!keepRows) {
+                body.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
+            } else {
+                if (btnWrap) btnWrap.innerHTML = `<span class="pager-spinner" aria-label="Loading" role="status"></span>`;
+                if (prevBtn) prevBtn.disabled = true;
+                if (nextBtn) nextBtn.disabled = true;
+            }
             try {
-                const res = await fetch('../../php/supabase/bhw/get_immunization_view.php');
+                const params = new URLSearchParams();
+                params.set('page', page);
+                params.set('limit', pageSize);
+                // include current filter values for server-side filtering
+                const dateSel = (document.getElementById('filterDate').value || '').trim();
+                const statusSel = document.getElementById('filterStatus').value;
+                const vaccineSel = document.getElementById('filterVaccine').value;
+                const purokQ = (document.getElementById('filterPurok').value || '').trim();
+                if (dateSel) params.set('date', dateSel);
+                if (statusSel) params.set('status', statusSel);
+                if (vaccineSel) params.set('vaccine', vaccineSel);
+                if (purokQ) params.set('purok', purokQ);
+
+                const res = await fetch(`../../php/supabase/bhw/get_immunization_view.php?${params.toString()}`);
                 const data = await res.json();
                 if (data.status !== 'success') {
                     body.innerHTML = '<tr><td colspan="6">Failed to load records</td></tr>';
+                    updatePagination(0, 0, 0);
                     return;
                 }
-                if (!data.data || data.data.length === 0) {
-                    body.innerHTML = '<tr><td colspan="6">No records found</td></tr>';
-                    chrRecords = [];
-                    return;
-                }
-                chrRecords = data.data;
+                chrRecords = data.data || [];
                 renderTable(chrRecords);
                 populateVaccineDropdown();
-                // Default date to today and status to upcoming; apply filters on first load
-                const dateInput = document.getElementById('filterDate');
-                if (dateInput && !dateInput.value) {
-                    dateInput.value = normalizeDateStr(new Date());
-                }
-                const statusSelEl = document.getElementById('filterStatus');
-                if (statusSelEl) {
-                    statusSelEl.value = 'upcoming';
-                }
-                applyFilters();
+                updatePagination(data.total, data.page || 1, data.limit || pageSize, data.has_more === true);
+                currentPage = data.page || 1;
             } catch (e) {
                 body.innerHTML = '<tr><td colspan="6">Error loading records</td></tr>';
+                updatePagination(0, 0, 0);
+            }
+            finally {
+                if (btnWrap && prevMarkup && !keepRows) btnWrap.innerHTML = prevMarkup;
             }
         }
 
@@ -541,65 +571,34 @@ if ($user_id) {
         }
 
         function applyFilters() {
-            if (!chrRecords || chrRecords.length === 0) {
-                renderTable([]);
-                return;
-            }
-            const dateSel = (document.getElementById('filterDate').value || '').trim();
-            const statusSel = document.getElementById('filterStatus').value;
-            const vaccineSel = document.getElementById('filterVaccine').value;
-            const purokQ = (document.getElementById('filterPurok').value || '').trim().toLowerCase();
-
-            const today = new Date();
-            const todayStr = normalizeDateStr(today);
-
-            const filtered = chrRecords.filter(item => {
-                // Purok filter
-                if (purokQ) {
-                    const addr = String(item.address || '').toLowerCase();
-                    if (!addr.includes(purokQ)) return false;
-                }
-
-                // Vaccine filter
-                if (vaccineSel !== 'all') {
-                    const vaccine = String(item.vaccine_name || '');
-                    if (vaccine !== vaccineSel) return false;
-                }
-
-                // Date filter
-                if (dateSel !== '') {
-                    const scheduleDate = item.schedule_date || '';
-                    const catchUpDate = item.catch_up_date || '';
-                    if (scheduleDate !== dateSel && catchUpDate !== dateSel) return false;
-                }
-
-                // Status filter
-                if (statusSel !== 'all') {
-                    const status = String(item.status || '');
-                    if (statusSel === 'upcoming') {
-                        const dueDate = item.catch_up_date || item.schedule_date || '';
-                        if (dueDate === '' || dueDate < todayStr || status === 'taken') return false;
-                    } else if (statusSel === 'missed') {
-                        const dueDate = item.catch_up_date || item.schedule_date || '';
-                        if (dueDate === '' || dueDate >= todayStr || status === 'taken') return false;
-                    } else if (statusSel === 'completed') {
-                        if (status !== 'taken') return false;
-                    }
-                }
-
-                return true;
-            });
-
-            renderTable(filtered);
+            // server-side filtering; always reset to page 1 for speed
+            getChildHealthRecord(1);
         }
 
         function clearFilters() {
-            document.getElementById('filterDate').value = normalizeDateStr(new Date());
+            document.getElementById('filterDate').value = '';
             document.getElementById('filterStatus').value = 'upcoming';
             document.getElementById('filterVaccine').value = 'all';
             document.getElementById('filterPurok').value = '';
-            renderTable(chrRecords);
-            applyFilters();
+            getChildHealthRecord(1);
+        }
+
+        function updatePagination(total, page, limit, hasMore = null) {
+            const info = document.getElementById('pageInfo');
+            const btnWrap = document.getElementById('pageButtons');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            if (!info || !btnWrap || !prevBtn || !nextBtn) return;
+            const start = (page - 1) * limit + 1;
+            const end = start + (chrRecords?.length || 0) - 1;
+            info.textContent = chrRecords && chrRecords.length ? `Showing ${start}-${end}` : '';
+            // keep pagination minimal for speed
+            btnWrap.innerHTML = `<button type="button" data-page="${page}" disabled>${page}</button>`;
+            prevBtn.disabled = page <= 1;
+            const canNext = hasMore === true || (chrRecords && chrRecords.length === limit);
+            nextBtn.disabled = !canNext;
+            prevBtn.onclick = () => { if (page > 1) getChildHealthRecord(page - 1, { keep: true }); };
+            nextBtn.onclick = () => { if (canNext) getChildHealthRecord(page + 1, { keep: true }); };
         }
 
         function viewChrImage(urlEnc) {
@@ -655,7 +654,14 @@ if ($user_id) {
 
 
 
-        window.addEventListener('DOMContentLoaded', getChildHealthRecord);
+        window.addEventListener('DOMContentLoaded', () => {
+            // set defaults like before then load page 1
+            const dateInput = document.getElementById('filterDate');
+            if (dateInput) dateInput.value = '';
+            const statusSelEl = document.getElementById('filterStatus');
+            if (statusSelEl) statusSelEl.value = 'upcoming';
+            getChildHealthRecord(1);
+        });
         window.addEventListener('DOMContentLoaded', function() {
             const applyBtn = document.getElementById('applyFiltersBtn');
             const clearBtn = document.getElementById('clearFiltersBtn');

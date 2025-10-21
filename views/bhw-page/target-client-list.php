@@ -51,18 +51,7 @@ if ($user_id) {
                         <option value="TRANSFERRED">Transferred</option>
                     </select>
                 </label>
-                <label>Vaccine:
-                    <select id="filterVaccine" class="filter-vaccine">
-                        <option value="all">All</option>
-                        <option value="BCG">BCG</option>
-                        <option value="HEPAB1">HEPAB1</option>
-                        <option value="Pentavalent">Pentavalent</option>
-                        <option value="OPV">OPV</option>
-                        <option value="Rota">Rota Virus</option>
-                        <option value="PCV">PCV</option>
-                        <option value="MCV">MCV</option>
-                    </select>
-                </label>
+                
                 <label>Purok:
                     <input id="filterPurok" type="text" placeholder="e.g. Purok 1">
                 </label>
@@ -124,40 +113,72 @@ if ($user_id) {
     </tr>
 </tbody>
                 </table>
+
             </div>
         </section>
+                <div id="tclPager" style="position: sticky; bottom: 0; background: #fff; display:flex; align-items:center; justify-content: flex-end; gap: 8px; margin-top: 8px; z-index: 5; padding: 6px 0;">
+                    <button id="tclPrevBtn" type="button">Prev</button>
+                    <span id="tclPageButtons" style="display:inline-flex; align-items:center; gap:4px;"></span>
+                    <button id="tclNextBtn" type="button">Next</button>
+                </div>
     </main>
+
 
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script>
-        let tclRecords = [];
+        // pager spinner CSS
+        (function(){ const s=document.createElement('style'); s.textContent='.pager-spinner{width:16px;height:16px;border:2px solid #ccc;border-top-color:#1976d2;border-radius:50%;display:inline-block;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}'; document.head.appendChild(s); })();
 
-        async function loadTCLData() {
+        let tclRecords = [];
+        let tclPage = 1;
+        const tclLimit = 10;
+
+        async function loadTCLData(page=1, opts={}) {
             const body = document.querySelector('#tclBody');
-            body.innerHTML = '<tr><td colspan="26">Loading...</td></tr>';
+            const keep = opts.keep === true;
+            const prevBtn = document.getElementById('tclPrevBtn');
+            const nextBtn = document.getElementById('tclNextBtn');
+            const pagerSpan = document.getElementById('tclPageButtons');
+            const prevMarkup = pagerSpan.innerHTML;
+            if (!keep) {
+                console.log('Loading...');
+                body.innerHTML = '<tr><td colspan="26">Loading...</td></tr>';
+            } else {
+                console.log('Loading... (keep)');
+                pagerSpan.innerHTML = '<span class="pager-spinner" aria-label="Loading" role="status"></span>';
+                prevBtn.disabled = true; nextBtn.disabled = true;
+            }
 
             try {
-                const res = await fetch('../../php/supabase/bhw/get_tcl_data.php');
-                const data = await res.json();
+                const params = new URLSearchParams();
+                params.set('page', page);
+                params.set('limit', tclLimit);
+                // filters
+                const search = document.getElementById('searchInput').value.trim();
+                const status = document.getElementById('filterStatus').value;
+                const purok = document.getElementById('filterPurok').value.trim();
+                if (search) params.set('search', search);
+                if (status) params.set('status', status);
+                if (purok) params.set('purok', purok);
 
+                const res = await fetch(`../../php/supabase/bhw/get_target_client_list.php?${params.toString()}`);
+                const data = await res.json();
                 if (data.status !== 'success') {
                     body.innerHTML = '<tr><td colspan="26">Failed to load TCL data</td></tr>';
+                    updateTclPager(1, false);
                     return;
                 }
-
-                if (!data.data || data.data.length === 0) {
-                    body.innerHTML = '<tr><td colspan="26">No TCL data found</td></tr>';
-                    tclRecords = [];
-                    return;
-                }
-
-                tclRecords = data.data;
+                tclRecords = data.data || [];
                 renderTCLTable(tclRecords);
-
+                tclPage = data.page || page;
+                updateTclPager(tclPage, data.has_more === true);
             } catch (e) {
                 console.error('Error loading TCL data:', e);
                 body.innerHTML = '<tr><td colspan="26">Error loading TCL data</td></tr>';
+                updateTclPager(1, false);
+            } finally {
+                if (keep) { prevBtn.disabled = false; nextBtn.disabled = false; }
             }
         }
 
@@ -222,78 +243,35 @@ if ($user_id) {
             return `<span class="${className}">${cleanStatus}</span>`;
         }
 
-        function filterTable() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('filterStatus').value;
-            const vaccineFilter = document.getElementById('filterVaccine').value;
-            const purokFilter = document.getElementById('filterPurok').value.toLowerCase();
+        function filterTable() { loadTCLData(1); }
 
-            if (!tclRecords || tclRecords.length === 0) return;
-
-            const filtered = tclRecords.filter(item => {
-                // Search filter
-                if (searchTerm) {
-                    const searchText = [
-                        item.child_name,
-                        item.mother_name,
-                        item.address
-                    ].join(' ').toLowerCase();
-
-                    if (!searchText.includes(searchTerm)) return false;
-                }
-
-                // Status filter
-                if (statusFilter !== 'all' && item.status !== statusFilter) return false;
-
-                // Purok filter
-                if (purokFilter && !item.address.toLowerCase().includes(purokFilter)) return false;
-
-                // Vaccine filter
-                if (vaccineFilter !== 'all') {
-                    const hasVaccineStatus = [
-                        item.BCG,
-                        item['HEPAB1_w_in_24hrs'],
-                        item['HEPAB1_more_than_24hrs'],
-                        item['Penta 1'],
-                        item['Penta 2'],
-                        item['Penta 3'],
-                        item['OPV 1'],
-                        item['OPV 2'],
-                        item['OPV 3'],
-                        item['Rota 1'],
-                        item['Rota 2'],
-                        item['PCV 1'],
-                        item['PCV 2'],
-                        item['PCV 3'],
-                        item['MCV1_AMV'],
-                        item['MCV2_MMR']
-                    ].some(status => {
-                        if (!status) return false;
-                        // Check if status contains the vaccine filter (handles checkmarks, X marks, and SCHEDULED)
-                        return status.toLowerCase().includes(vaccineFilter.toLowerCase()) ||
-                            status.includes('✓') || status.includes('✗') || status === 'SCHEDULED';
-                    });
-
-                    if (!hasVaccineStatus) return false;
-                }
-
-                return true;
-            });
-
-            renderTCLTable(filtered);
-        }
-
-        function applyFilters() {
-            filterTable();
-        }
+        function applyFilters() { filterTable(); }
 
         function clearFilters() {
             document.getElementById('searchInput').value = '';
             document.getElementById('filterStatus').value = 'all';
-            document.getElementById('filterVaccine').value = 'all';
             document.getElementById('filterPurok').value = '';
-            renderTCLTable(tclRecords);
+            loadTCLData(1);
         }
+
+        function updateTclPager(page, hasMore) {
+            const prevBtn = document.getElementById('tclPrevBtn');
+            const nextBtn = document.getElementById('tclNextBtn');
+            const pageSpan = document.getElementById('tclPageButtons');
+            prevBtn.disabled = page <= 1;
+            nextBtn.disabled = !hasMore;
+            pageSpan.innerHTML = String(page);
+            console.log('Updating pager:', page, hasMore);
+        }
+
+        document.getElementById('tclPrevBtn').addEventListener('click', (e) => {
+            console.log('TCL Prev clicked', { currentPage: tclPage });
+            if (tclPage > 1) loadTCLData(tclPage - 1, { keep: true });
+        });
+        document.getElementById('tclNextBtn').addEventListener('click', (e) => {
+            console.log('TCL Next clicked', { currentPage: tclPage });
+            loadTCLData(tclPage + 1, { keep: true });
+        });
 
         function exportToCSV() {
             if (!tclRecords || tclRecords.length === 0) {
@@ -438,7 +416,7 @@ if ($user_id) {
         document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
 
         // Load data on page load
-        window.addEventListener('DOMContentLoaded', loadTCLData);
+        window.addEventListener('DOMContentLoaded', () => loadTCLData(1));
     </script>
 </body>
 

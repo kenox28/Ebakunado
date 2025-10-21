@@ -15,11 +15,11 @@ function getSupabase() {
 }
 
 // Helper function for SELECT queries
-function supabaseSelect($table, $columns = '*', $where = [], $orderBy = null, $limit = null) {
+function supabaseSelect($table, $columns = '*', $where = [], $orderBy = null, $limit = null, $offset = null) {
     $supabase = getSupabase();
     if (!$supabase) return false;
     
-    return $supabase->select($table, $columns, $where, $orderBy, $limit);
+    return $supabase->select($table, $columns, $where, $orderBy, $limit, $offset);
 }
 
 // Helper function for INSERT queries
