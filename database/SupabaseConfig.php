@@ -71,7 +71,7 @@ class SupabaseDB {
     }
     
     // SELECT query with WHERE conditions
-    public function select($table, $columns = '*', $conditions = [], $orderBy = null, $limit = null) {
+    public function select($table, $columns = '*', $conditions = [], $orderBy = null, $limit = null, $offset = null) {
         $endpoint = $table . '?';
         
         // Add column selection
@@ -97,10 +97,9 @@ class SupabaseDB {
             $endpoint .= 'order=' . $orderBy . '&';
         }
         
-        // Add LIMIT
-        if ($limit) {
-            $endpoint .= 'limit=' . $limit . '&';
-        }
+        // Add LIMIT/OFFSET
+        if ($limit) { $endpoint .= 'limit=' . (int)$limit . '&'; }
+        if ($offset) { $endpoint .= 'offset=' . (int)$offset . '&'; }
         
         $endpoint = rtrim($endpoint, '&');
         
@@ -378,7 +377,9 @@ $table_definitions = [
         complementary_feeding_7mo VARCHAR(255),
         complementary_feeding_8mo VARCHAR(255),
         lpm DATE,
-        allergies VARCHAR(255)
+        allergies VARCHAR(255),
+        blood_type VARCHAR(10),
+        family_planning VARCHAR(255)
     )",
     
     'immunization_records' => "CREATE TABLE immunization_records (
