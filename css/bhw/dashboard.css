@@ -1,15 +1,15 @@
 .dashboard-section {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
+	display: flex;
+	flex-direction: column;
+	gap: 3rem;
 }
 
 .dashboard-overview,
 .activity-section,
 .tasks-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.6rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.6rem;
 }
 
 /* .dashboard-heading {
@@ -19,68 +19,61 @@
 } */
 
 .card-wrapper {
-  display: grid;
-  gap: 1.2rem;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  align-items: stretch;
-  width: 100%;
-}
-
-.card-wrapper {
-  display: grid;
-  gap: 1.2rem;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  width: 100%;
+	display: grid;
+	gap: 1.2rem;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	align-items: stretch;
+	width: 100%;
 }
 
 .card {
-  background: var(--background-white);
-  border-radius: 15px;
-  /* box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+	background: var(--background-white);
+	border-radius: 15px;
+	/* box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px; */
   box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
     rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
 
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2rem 1.5rem;
-  gap: 1.5rem;
-  color: var(--text-label);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 2rem 1.5rem;
+	gap: 1.5rem;
+	color: var(--text-label);
 
-  width: auto;
-  height: auto;
-  max-width: none;
-  min-width: 0;
-  transition: box-shadow 160ms ease, transform 120ms ease;
+	width: auto;
+	height: auto;
+	max-width: none;
+	min-width: 0;
+	transition: box-shadow 160ms ease, transform 120ms ease;
 }
 
 /* .card-1 {
   background-color: var(--card-1-bg);
 }
 .card-2 {
-  background-color: var(--card-2-bg);
+	background-color: var(--card-2-bg);
 }
 .card-3 {
-  background-color: var(--card-3-bg);
+	background-color: var(--card-3-bg);
 }
 .card-4 {
-  background-color: var(--card-4-bg);
+	background-color: var(--card-4-bg);
 }
 
 .card-1 .card-icon {
-    background-color: #6986be;
-    color: var(--card-1-bg);
+	background-color: #6986be;
+	color: var(--card-1-bg);
 }
 
 .card-2 .card-icon {
-    background-color: #7a9778;
-    color: var(--card-2-bg);
+	background-color: #7a9778;
+	color: var(--card-2-bg);
 }
 
 .card-3 .card-icon {
-    background-color: #bdbe70;
-    color: var(--card-3-bg);
+	background-color: #bdbe70;
+	color: var(--card-3-bg);
 }
 
 .card-4 .card-icon {
@@ -89,23 +82,23 @@
 } */
 
 .card-1 .card-icon {
-  border: 2px solid #6986be;
-  color: #6986be;
+	border: 2px solid #6986be;
+	color: #6986be;
 }
 
 .card-2 .card-icon {
-  border: 2px solid #7a9778;
-  color: #7a9778;
+	border: 2px solid #7a9778;
+	color: #7a9778;
 }
 
 .card-3 .card-icon {
-  border: 2px solid #bdbe70;
-  color: #bdbe70;
+	border: 2px solid #bdbe70;
+	color: #bdbe70;
 }
 
 .card-4 .card-icon {
-  border: 2px solid #82a8be;
-  color: #82a8be;
+	border: 2px solid #82a8be;
+	color: #82a8be;
 }
 
 .card-icon {
@@ -118,35 +111,35 @@
 }
 
 .card-icon .material-symbols-rounded {
-  font-size: 4.2rem;
-  line-height: 1;
-  flex: 0 0 auto;
+	font-size: 4.2rem;
+	line-height: 1;
+	flex: 0 0 auto;
 }
 
 .card-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  /* gap: 0.8rem; */
-  gap: 1rem;
-  min-width: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	/* gap: 0.8rem; */
+	gap: 1rem;
+	min-width: 0;
 }
 
 .card-title {
-  font-size: 1.4rem;
-  font-weight: 500;
-  color: var(--text-label);
-  line-height: 1.3;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+	font-size: 1.4rem;
+	font-weight: 500;
+	color: var(--text-label);
+	line-height: 1.3;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .card-number {
-  font-size: 3.2rem;
-  font-weight: 600;
-  color: var(--text-label);
-  line-height: 1;
+	font-size: 3.2rem;
+	font-weight: 600;
+	color: var(--text-label);
+	line-height: 1;
 }
 
 .card-link {
@@ -191,29 +184,29 @@
 
 /* Activity and Tasks Section */
 .activity-task-container {
-  border: 1px solid black;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-  align-items: start;
+	border: 1px solid black;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1rem;
+	align-items: start;
 }
 
 .activity-section,
 .tasks-section {
-  border: 1px solid black;
-  padding: 0;
-  border-radius: 12px;
+	border: 1px solid black;
+	padding: 0;
+	border-radius: 12px;
 }
 
 .activity-section {
-  height: auto;
+	height: auto;
 }
 
 .activity-list {
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }

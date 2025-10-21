@@ -36,28 +36,22 @@
 				</td>
 
 
-			</tr>
-			<tr>
-		</tbody>
-	</table>
-</div>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<script>
-	async function getChildHealthRecord() {
-		const body = document.querySelector('#childhealthrecordBody');
-		body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
-		try {
-			// const res = await fetch('/ebakunado/php/bhw/get_child_health_records.php');
-			const res = await fetch('/ebakunado/php/supabase/bhw/get_child_health_record.php');
-			const data = await res.json();
-			if (data.status !== 'success') {
-				body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>';
-				return;
-			}
-			if (!data.data || data.data.length === 0) {
-				body.innerHTML = '<tr><td colspan="21">No records found</td></tr>';
-				return;
-			}
+                            </tr>
+                            <tr>
+                        </tbody>
+                    </table>
+    </div>
+        <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+		<script>
+			async function getChildHealthRecord() {
+				const body = document.querySelector('#childhealthrecordBody');
+				body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
+				try {
+					// const res = await fetch('/ebakunado/php/bhw/get_child_health_records.php');
+					const res = await fetch('../../php/supabase/bhw/get_child_health_record.php');
+					const data = await res.json();
+					if (data.status !== 'success') { body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>'; return; }
+					if (!data.data || data.data.length === 0){ body.innerHTML = '<tr><td colspan="21">No records found</td></tr>'; return; }
 
 			let rows = '';
 			data.data.forEach(item => {
@@ -71,7 +65,7 @@
 							<td>${item.status || ''}</td>
 							<td>
 								<button onclick=\"viewSchedule('${item.baby_id}', this)\">View Schedule</button>
-								<button onclick=\"window.open('bhw_child_health_record.php?baby_id=${encodeURIComponent(item.baby_id)}', '_blank')\" style="margin-left:4px; background: #007bff; color: white; border: none; padding: 4px 8px; border-radius: 3px;">View CHR</button>
+                                <button onclick=\"location.href='bhw_child_health_record.php?baby_id=${encodeURIComponent(item.baby_id)}'\" style="margin-left:4px; background: #007bff; color: white; border: none; padding: 4px 8px; border-radius: 3px;">View CHR</button>
 							</td>
 						</tr>`;
 			});
@@ -116,21 +110,14 @@
 		}
 	}
 
-	async function acceptRecord(baby_id) {
-		const formData = new FormData();
-		formData.append('baby_id', baby_id);
-		// const response = await fetch('/ebakunado/php/bhw/accept_chr.php', { method: 'POST', body: formData });
-		const response = await fetch('/ebakunado/php/supabase/bhw/accept_chr.php', {
-			method: 'POST',
-			body: formData
-		});
-		const data = await response.json();
-		if (data.status === 'success') {
-			getChildHealthRecord();
-		} else {
-			alert('Record not accepted: ' + data.message);
-		}
-	}
+			async function acceptRecord(baby_id){
+				const formData = new FormData(); formData.append('baby_id', baby_id);
+				// const response = await fetch('/ebakunado/php/bhw/accept_chr.php', { method: 'POST', body: formData });
+				const response = await fetch('../../php/supabase/bhw/accept_chr.php', { method: 'POST', body: formData });
+				const data = await response.json();
+				if (data.status === 'success') { getChildHealthRecord(); }
+				else { alert('Record not accepted: ' + data.message); }
+			}
 
 	async function rejectRecord(baby_id) {
 		const formData = new FormData();

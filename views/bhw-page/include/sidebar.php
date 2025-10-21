@@ -59,6 +59,40 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                         <span class="menu-label">Target Client List</span>
                     </a>
                 </li>
+                
+                <!-- Add Child -->
+                <li class="sidebar-menu-item<?php echo $currentPage === 'add-child.php' ? ' active' : ''; ?>">
+                    <a href="../../views/bhw-page/add-child.php" class="menu-link">
+                        <span class="menu-icon material-symbols-rounded">add_circle</span>
+                        <span class="menu-label">Add Child</span>
+                    </a>
+                </li>
+
+                <!-- Profile Management -->
+                <li class="sidebar-menu-item<?php echo $currentPage === 'profile-management.php' ? ' active' : ''; ?>">
+                    <a href="../../views/bhw-page/profile-management.php" class="menu-link">
+                        <span class="menu-icon material-symbols-rounded">person</span>
+                        <span class="menu-label">Profile Management</span>
+                    </a>
+                </li>
+
+                <?php if (isset($_SESSION['midwife_id'])): ?>
+                <!-- CHR Doc Requests (Midwife only) -->
+                <li class="sidebar-menu-item<?php echo $currentPage === 'chr-doc-requests.php' ? ' active' : ''; ?>">
+                    <a href="../../views/bhw-page/chr-doc-requests.php" class="menu-link">
+                        <span class="menu-icon material-symbols-rounded">description</span>
+                        <span class="menu-label">CHR Doc Requests</span>
+                    </a>
+                </li>
+
+                <!-- System Settings (Midwife only) -->
+                <li class="sidebar-menu-item<?php echo $currentPage === 'system-settings.php' ? ' active' : ''; ?>">
+                    <a href="../../views/bhw-page/system-settings.php" class="menu-link">
+                        <span class="menu-icon material-symbols-rounded">settings</span>
+                        <span class="menu-label">System Settings</span>
+                    </a>
+                </li>
+                <?php endif; ?>
             </ul>
         </div>
 

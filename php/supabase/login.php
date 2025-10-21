@@ -272,7 +272,7 @@ try {
             $redirect_url = '../../views/bhw/home.php';
             break;
         case 'midwife':
-            $redirect_url = '../../views/midwives/home.php';
+            $redirect_url = '../../views/bhw/home.php';
             break;
         case 'super_admin':
             $redirect_url = '../../views/super_admin/dashboard.php';

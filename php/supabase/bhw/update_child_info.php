@@ -5,7 +5,7 @@ include '../../../database/DatabaseHelper.php';
 
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['bhw_id'])) {
+if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['midwife_id'])) {
     echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
     exit();
 }
@@ -31,6 +31,10 @@ $updateData = [
     'birth_attendant' => $_POST['birth_attendant'] ?? '',
     'delivery_type' => $_POST['delivery_type'] ?? '',
     'birth_order' => $_POST['birth_order'] ?? '',
+    'blood_type' => isset($_POST['blood_type']) && $_POST['blood_type'] !== '' ? $_POST['blood_type'] : null,
+    'allergies' => isset($_POST['allergies']) && $_POST['allergies'] !== '' ? $_POST['allergies'] : null,
+    'lpm' => isset($_POST['lpm']) && $_POST['lpm'] !== '' ? $_POST['lpm'] : null,
+    'family_planning' => isset($_POST['family_planning']) && $_POST['family_planning'] !== '' ? $_POST['family_planning'] : null,
     'date_updated' => date('Y-m-d H:i:s')
 ];
 

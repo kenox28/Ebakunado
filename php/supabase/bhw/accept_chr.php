@@ -7,6 +7,9 @@ header('Content-Type: application/json');
 $baby_id = $_POST['baby_id'] ?? '';
 if ($baby_id === '') { echo json_encode(['status'=>'error','message'=>'Missing baby_id']); exit(); }
 
+// Check authorization
+if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['midwife_id'])) { echo json_encode(['status'=>'error','message'=>'Unauthorized']); exit(); }
+
 // 1) Mark CHR accepted
 $ok = supabaseUpdate('child_health_records', [
 	'status' => 'accepted', 

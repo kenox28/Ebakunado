@@ -282,15 +282,14 @@
 							<span style="font-weight:bold;">Completed Doses: ${motherTDStatus.completed}/5</span>
 							${motherTDStatus.lastDose ? `<span style="margin-left:8px;">Last dose: ${motherTDStatus.lastDose.date}</span>` : ''}
 						</div>
-						${motherTDStatus.nextDose ? `
-						<div style="display:flex; align-items:center; gap:8px;">
-							<span style="font-size:12px; color:#0c5460; font-weight:bold;">TD ${motherTDStatus.nextDose.dose} dose date:</span>
-							<input type="date" id="update_td_dose" value="${motherTDStatus.nextDose.date}" 
-								style="padding:4px 6px; font-size:12px;">
-						</div>
-						` : `
-						<div style="font-size:12px; color:#28a745; font-weight:bold;">✓ All TD doses completed</div>
-						`}
+                        ${motherTDStatus.allCompleted ? `
+                            <div style=\"font-size:12px; color:#28a745; font-weight:bold;\">✓ All TD doses completed</div>
+                        ` : `
+                            <div style=\"display:flex; align-items:center; gap:8px;\">
+                                <input type=\"checkbox\" id=\"update_td_today\" style=\"margin:0;\" />
+                                <label for=\"update_td_today\" style=\"font-size:12px; color:#0c5460;\">Record next TD dose today</label>
+                            </div>
+                        `}
 					</div>
 
 					<div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
@@ -310,16 +309,12 @@
 
 					<!-- Dose and Lot fields removed: dose is auto-determined from record, lot/site not in schema -->
 
-					<div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
-						<div>
-							<label style="font-size:12px; color:#333;">Administered By</label>
-							<input type="text" id="im_administered_by" placeholder="Name" style="width:100%; padding:6px 8px;" />
-						</div>
-						<div style="display:flex; align-items:flex-end; gap:8px;">
-                            <input type="checkbox" id="im_mark_completed" />
-                            <label for="im_mark_completed" style="font-size:12px; color:#333;">Mark as Taken</label>
-						</div>
-					</div>
+                    <div style="display:grid; grid-template-columns: 1fr; gap:10px; margin-top:10px;">
+                        <div>
+                            <label style="font-size:12px; color:#333;">Administered By</label>
+                            <input type="text" id="im_administered_by" placeholder="Name" style="width:100%; padding:6px 8px;" />
+                        </div>
+                    </div>
 
 					<div style="margin-top:10px;">
 						<label style="font-size:12px; color:#333;">Remarks</label>
@@ -358,12 +353,17 @@
 		formData.append('weight_kg', document.getElementById('im_weight').value || '');
 		// dose_number, lot_number, site removed - dose inferred from existing record
 		formData.append('administered_by', document.getElementById('im_administered_by').value || '');
-		formData.append('remarks', document.getElementById('im_remarks').value || '');
-		formData.append('mark_completed', document.getElementById('im_mark_completed').checked ? '1' : '0');
-		const cu = document.getElementById('im_catch_up_date');
+        formData.append('remarks', document.getElementById('im_remarks').value || '');
+        const tdTodayCb = document.getElementById('update_td_today');
+        if (tdTodayCb && tdTodayCb.checked) {
+            formData.append('update_td_dose_date', normalizeDateStr(new Date()));
+        }
+        // Always mark as taken on save
+        formData.append('mark_completed', '1');
+        const cu = document.getElementById('im_catch_up_date');
 		if (cu && cu.value) formData.append('catch_up_date', cu.value);
 
-		// Add feeding status updates if available
+        // Add feeding status updates if available
 		const feedingCheckbox = document.getElementById('update_feeding_status');
 		const feedingInput = document.getElementById('update_complementary_feeding');
 		if (feedingCheckbox) {
@@ -373,14 +373,9 @@
 			formData.append('update_complementary_feeding', feedingInput.value || '');
 		}
 
-		// Add Mother's TD Status update if available
-		const tdDoseInput = document.getElementById('update_td_dose');
-		if (tdDoseInput && tdDoseInput.value) {
-			formData.append('update_td_dose_date', tdDoseInput.value);
-		}
 
 				try{
-					const res = await fetch('/ebakunado/php/supabase/bhw/save_immunization.php', { method: 'POST', body: formData });
+                const res = await fetch('/ebakunado/php/supabase/shared/save_immunization.php', { method: 'POST', body: formData });
 					const data = await res.json().catch(() => ({ status: 'error', message: 'Invalid server response' }));
 					if (data.status === 'success'){
 						closeImmunizationForm();

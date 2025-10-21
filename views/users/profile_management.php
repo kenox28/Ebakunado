@@ -61,6 +61,17 @@
 				</div>
 			</div>
 
+			<div class="form-row">
+				<div class="form-group">
+					<label for="philhealth_no">PhilHealth No.</label>
+					<input type="text" id="philhealth_no" name="philhealth_no" placeholder="Optional">
+				</div>
+				<div class="form-group">
+					<label for="nhts">NHTS</label>
+					<input type="text" id="nhts" name="nhts" placeholder="Optional (Yes/No or ID)">
+				</div>
+			</div>
+
 			<!-- Password Change Section -->
 			<div class="password-section">
 				<h4>Change Password</h4>
@@ -282,6 +293,8 @@ async function loadProfileData() {
 			document.getElementById('phone_number').value = profile.phone_number || '';
 			document.getElementById('gender').value = profile.gender || '';
 			document.getElementById('place').value = profile.place || '';
+			document.getElementById('philhealth_no').value = profile.philhealth_no || '';
+			document.getElementById('nhts').value = profile.nhts || '';
 			
 			// Update profile image
 			if (profile.profileimg && profile.profileimg !== 'noprofile.png') {

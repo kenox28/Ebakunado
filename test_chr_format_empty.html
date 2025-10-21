@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>CHR Format Preview - No Data</title>
+		<style>
+			@page {
+				size: 8.5in 13in;
+				margin: 0.5in;
+			}
+			body {
+				font-family: "Times New Roman", serif;
+				padding: 20px;
+				background: #f0f0f0;
+				margin: 0;
+			}
+			.page {
+				width: 8.5in;
+				min-height: 13in;
+				background: white;
+				padding: 0.5in;
+				margin: 0 auto;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+				box-sizing: border-box;
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+			}
+			.info-table td {
+				font-size: 11pt;
+				padding: 2px 0;
+				vertical-align: top;
+			}
+			.ledger-table {
+				border: 1px solid #000;
+				margin-top: 10px;
+				width: 100%;
+			}
+			.ledger-table th,
+			.ledger-table td {
+				border: 1px solid #000;
+				padding: 4px 2px;
+				font-size: 9pt;
+				text-align: center;
+				height: 18px;
+			}
+			.ledger-table th {
+				background: #fff;
+				font-weight: bold;
+				font-size: 8pt;
+			}
+			h2 {
+				text-align: center;
+				font-size: 16pt;
+				font-weight: bold;
+				margin: 0 0 2px 0;
+			}
+			h3 {
+				text-align: center;
+				font-size: 12pt;
+				text-decoration: underline;
+				font-weight: bold;
+				margin: 10px 0 6px 0;
+			}
+			p {
+				margin: 2px 0;
+				font-size: 11pt;
+			}
+			.subtitle {
+				text-align: center;
+				font-size: 9pt;
+				margin: 0 0 10px 0;
+			}
+			.feeding-table td {
+				font-size: 9pt;
+				padding: 2px 4px;
+			}
+			.feeding-table .header-cell {
+				font-weight: bold;
+				text-decoration: underline;
+				font-size: 9pt;
+			}
+			/* Added spacing for readability in preview */
+			.section p {
+				line-height: 1.5;
+				margin: 6px 0 8px 0;
+			}
+			.section {
+				margin-bottom: 8px;
+			}
+			.immun p {
+				line-height: 1.35;
+				margin: 3px 0 5px 0;
+			}
+			h3 {
+				margin: 12px 0 8px 0;
+			}
+			/* 3-column layout for immunization */
+			.immun-3col {
+				display: flex;
+				gap: 20px;
+				margin: 4px 0;
+				font-size: 11pt;
+			}
+			.immun-col {
+				flex: 1;
+			}
+			.immun-wide {
+				display: flex;
+				gap: 15px;
+				margin: 4px 0;
+				font-size: 11pt;
+			}
+			.immun-item {
+				flex: 1;
+			}
+			.immun-long {
+				width: 100%;
+				margin: 4px 0;
+				font-size: 11pt;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="page">
+			<h2>CHILD HEALTH RECORD</h2>
+			<p class="subtitle">City Health Department, Ormoc City</p>
+
+			<!-- Personal Information -->
+			<table
+				class="info-table"
+				cellpadding="0"
+				cellspacing="0"
+				style="margin-bottom: 6px">
+				<tr>
+					<td style="width: 50%">Name of Child:</td>
+					<td style="width: 50%">Family Number:</td>
+				</tr>
+				<tr>
+					<td>Gender:</td>
+					<td>Philhealth No.:</td>
+				</tr>
+				<tr>
+					<td>Date of Birth:</td>
+					<td>NHTS:</td>
+				</tr>
+				<tr>
+					<td>Place of Birth:</td>
+					<td>Non-NHTS:</td>
+				</tr>
+				<tr>
+					<td>Birth Weight:</td>
+					<td>Father's Name:</td>
+				</tr>
+				<tr>
+					<td>Birth Length:</td>
+					<td>Mother's Name:</td>
+				</tr>
+				<tr>
+					<td>Address:</td>
+					<td>LMP:</td>
+				</tr>
+				<tr>
+					<td>Allergies:</td>
+					<td>Family Planning:</td>
+				</tr>
+				<tr>
+					<td>Blood Type:</td>
+					<td></td>
+				</tr>
+			</table>
+
+			<!-- Child History -->
+			<h3>CHILD HISTORY</h3>
+			<div class="section">
+				<div style="display: flex; gap: 40px; margin: 0">
+					<div style="flex: 1">
+						<p style="font-size: 11pt; margin: 0">
+							Date of Newbornscreening: __________
+						</p>
+					</div>
+					<div style="flex: 1">
+						<p style="font-size: 11pt; margin: 0">
+							Place of Newbornscreening: __________
+						</p>
+					</div>
+				</div>
+				<div style="display: flex; gap: 20px; margin: 0">
+					<p style="font-size: 11pt; margin: 0">Type of Delivery: ( ) Normal</p>
+					<p style="font-size: 11pt; margin: 0">
+						( ) Caesarean Section (put a check mark)
+					</p>
+				</div>
+				<div style="display: flex; gap: 20px; margin: 0">
+					<p style="font-size: 11pt; margin: 0">Birth Order: ( ) Single</p>
+					<p style="font-size: 11pt; margin: 0">( ) Twin (put a check mark)</p>
+				</div>
+				<div style="display: flex; gap: 20px; margin: 0">
+					<p style="font-size: 11pt; margin: 0">
+						Attended by: ( ) Doctor ( ) Midwife ( ) Nurse ( ) Hilot
+					</p>
+					<p style="font-size: 11pt; margin: 0">( ) Others: __________</p>
+				</div>
+			</div>
+
+			<!-- Feeding & TD Status -->
+			<table
+				class="feeding-table"
+				cellpadding="0"
+				cellspacing="0"
+				style="margin-bottom: 6px">
+				<tr>
+					<td colspan="2" class="header-cell">
+						Exclusive Breastfeeding/Complimentary Feeding:
+					</td>
+					<td colspan="2" class="header-cell">TD Status (date pls.)</td>
+				</tr>
+				<tr>
+					<td style="width: 25%">1st mo. 4th mo.</td>
+					<td style="width: 25%">6th mo. food:</td>
+					<td style="width: 25%">TD 1st dose:</td>
+					<td style="width: 25%">TD 4th dose:</td>
+				</tr>
+				<tr>
+					<td>2nd mo. 5th mo.</td>
+					<td>7th mo. food:</td>
+					<td>TD 2nd dose:</td>
+					<td>TD 5th dose:</td>
+				</tr>
+				<tr>
+					<td>3rd mo. 6th mo.</td>
+					<td>8th mo. food:</td>
+					<td colspan="2">TD 3rd dose:</td>
+				</tr>
+			</table>
+
+			<!-- Immunization Record -->
+			<h3>IMMUNIZATION RECORD (pls. put the date)</h3>
+			<div class="immun">
+				<div class="immun-wide">
+					<div class="immun-item">BCG:</div>
+					<div class="immun-item">Scar: (yes/no)</div>
+				</div>
+				<div class="immun-wide">
+					<div class="immun-item">Hepa B within 24 hrs:</div>
+					<div class="immun-item">Hepa B more than 24 hrs:</div>
+				</div>
+				<div class="immun-3col">
+					<div class="immun-col">Pentavalent 1st dose:</div>
+					<div class="immun-col">Pentavalent 2nd dose:</div>
+					<div class="immun-col">Pentavalent 3rd dose:</div>
+				</div>
+				<div class="immun-wide">
+					<div class="immun-item">bOPV 1st dose:</div>
+					<div class="immun-item">bOPV 2nd dose:</div>
+					<div class="immun-item">bOPV 3rd dose:</div>
+					<div class="immun-item">IPV:</div>
+				</div>
+				<div class="immun-3col">
+					<div class="immun-col">PCV 1st dose:</div>
+					<div class="immun-col">PCV 2nd dose:</div>
+					<div class="immun-col">PCV 3rd dose:</div>
+				</div>
+				<div class="immun-wide">
+					<div class="immun-item">MMR 1st dose:</div>
+					<div class="immun-item">MMR 2nd dose:</div>
+					<div class="immun-item">CIC:</div>
+					<div class="immun-item">FIC:</div>
+				</div>
+				<div class="immun-long">Other Vaccines:</div>
+			</div>
+
+			<!-- Ledger Table -->
+			<table class="ledger-table">
+				<tr>
+					<th style="width: 7%">Date</th>
+					<th style="width: 9%">Purpose</th>
+					<th style="width: 4%">HT</th>
+					<th style="width: 4%">WT</th>
+					<th style="width: 5%">MUAC</th>
+					<th style="width: 6%">STATUS</th>
+					<th style="width: 15%">Condition of Baby</th>
+					<th style="width: 15%">Advice Given</th>
+					<th style="width: 8%">Next Sched Date</th>
+					<th style="width: 10%">Remarks</th>
+				</tr>
+				<!-- 18 empty rows -->
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

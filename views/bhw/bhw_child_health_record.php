@@ -1,14 +1,20 @@
 <?php include 'Include/header.php'; ?>
+<style>
+.chr-paper { width: 13.5in; max-width: 100%; box-sizing: border-box; min-height: 13in; margin:0 auto; background:#fff; border:1px solid #e0e0e0; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:0.6in; font-size:16px; line-height:1.7; }
+.block-header { text-align:center; font-weight:700; font-size:16px; margin:0 0 8px 0; }
+.boxed { border:1px solid #000 !important; padding:8px; }
+@media print { .chr-paper{ box-shadow:none; border:1px solid #000; } .content{ padding:0; } }
+</style>
 
-<div class="content" style="padding: 16px;">
-	<div id="chrRoot">
-		<div style="text-align:center; margin-bottom: 12px;">
+<div class="content" style="padding: 24px 16px;">
+    <div id="chrRoot" class="chr-paper">
+        <div style="text-align:center; margin-bottom: 12px;">
 			<h2 style="margin:0;">CHILD HEALTH RECORD</h2>
 			<p style="margin:4px 0;">City Health Department, Ormoc City</p>
 		</div>
 
 		<!-- Child Profile Header (Read-Only for BHW) -->
-		<div id="childProfile" style="font-size: 13px; line-height: 1.6; margin-bottom: 12px; background: #f8f9fa; padding: 12px; border-radius: 4px;">
+        <div id="childProfile" style="font-size: inherit; line-height: 1.7; margin-bottom: 12px; background: #f8f9fa; padding: 12px; border-radius: 4px;">
 			<div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
 				<div>
 					<div>Name of Child: <span id="f_name"></span></div>
@@ -23,6 +29,7 @@
 				</div>
 				<div>
 					<div>Family Number: <span id="f_family_no"></span></div>
+					<div>LMP: <span id="f_lpm"></span></div>
 					<div>PhilHealth No.: <span id="f_philhealth"></span></div>
 					<div>NHTS: <span id="f_nhts"></span></div>
 					<div>Non-NHTS: <span id="f_non_nhts"></span></div>
@@ -35,7 +42,8 @@
 		</div>
 
 		<!-- Child History (Read-Only for BHW) -->
-		<div id="childHistory" style="font-size: 13px; line-height: 1.6; margin: 8px 0 16px 0; background: #f8f9fa; padding: 12px; border-radius: 4px;">
+        <div id="childHistory" style="font-size: inherit; line-height: 1.7; margin: 8px 0 16px 0; background: #f8f9fa; padding: 12px; border-radius: 4px;">
+            <div class="block-header" style="font-size:14px;">CHILD HISTORY</div>
 			<div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
 				<div>
 					<div>Date of Newborn Screening: <span id="f_nbs_date"></span></div>
@@ -50,12 +58,12 @@
 		</div>
 
 		<!-- Exclusive Breastfeeding & Complementary Feeding (Editable) -->
-		<div id="feedingSection" style="font-size: 13px; line-height: 1.6; margin: 8px 0 16px 0; border: 1px solid #ddd; padding: 8px;">
-			<h3 style="margin: 0 0 8px 0; font-size: 14px; text-align: center;">Exclusive Breastfeeding & Complementary Feeding</h3>
+        <div id="feedingSection" class="boxed" style="font-size: inherit; line-height: 1.7; margin: 8px 0 16px 0; padding: 8px;">
+            <h3 style="margin: 0 0 8px 0; font-size: 18px; text-align: center;">Exclusive Breastfeeding & Complementary Feeding</h3>
 			<div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
 				<div>
-					<h4 style="margin: 0 0 4px 0; font-size: 13px;">Exclusive Breastfeeding:</h4>
-					<div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:4px; font-size: 12px;">
+                    <h4 style="margin: 0 0 4px 0; font-size: 16px;">Exclusive Breastfeeding:</h4>
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:4px; font-size: 16px;">
 						<label><input type="checkbox" id="eb_1mo"> 1st mo</label>
 						<label><input type="checkbox" id="eb_2mo"> 2nd mo</label>
 						<label><input type="checkbox" id="eb_3mo"> 3rd mo</label>
@@ -65,8 +73,8 @@
 					</div>
 				</div>
 				<div>
-					<h4 style="margin: 0 0 4px 0; font-size: 13px;">Complementary Feeding:</h4>
-					<div style="font-size: 12px;">
+                    <h4 style="margin: 0 0 4px 0; font-size: 16px;">Complementary Feeding:</h4>
+                    <div style="font-size: 16px;">
 						<div>6th mo food: <input type="text" id="cf_6mo" style="width: 100%; padding: 2px;"></div>
 						<div>7th mo food: <input type="text" id="cf_7mo" style="width: 100%; padding: 2px;"></div>
 						<div>8th mo food: <input type="text" id="cf_8mo" style="width: 100%; padding: 2px;"></div>
@@ -79,9 +87,9 @@
 		</div>
 
 		<!-- Mother's TD Status (Editable) -->
-		<div id="tdSection" style="font-size: 13px; line-height: 1.6; margin: 8px 0 16px 0; border: 1px solid #ddd; padding: 8px;">
-			<h3 style="margin: 0 0 8px 0; font-size: 14px; text-align: center;">Mother's TD (Tetanus-Diphtheria) Status</h3>
-			<div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; font-size: 12px;">
+        <div id="tdSection" class="boxed" style="font-size: inherit; line-height: 1.7; margin: 8px 0 16px 0; padding: 8px;">
+            <h3 style="margin: 0 0 8px 0; font-size: 18px; text-align: center;">Mother's TD (Tetanus-Diphtheria) Status</h3>
+            <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; font-size: 16px;">
 				<div>TD 1st dose: <input type="date" id="td_dose1" style="width: 100%; padding: 2px;"></div>
 				<div>TD 2nd dose: <input type="date" id="td_dose2" style="width: 100%; padding: 2px;"></div>
 				<div>TD 3rd dose: <input type="date" id="td_dose3" style="width: 100%; padding: 2px;"></div>
@@ -93,10 +101,10 @@
 			</div>
 		</div>
 
-		<!-- Immunization Record (Editable) -->
+        <!-- Immunization Record (Read-only) -->
 		<div>
 			<h3 style="margin: 0 0 8px 0; font-size: 14px; text-align: center;">Immunization Record</h3>
-			<table style="width:100%; border-collapse:collapse; font-size:12px;" border="1">
+            <table style="width:100%; border-collapse:collapse; font-size:16px;" border="1">
 				<thead>
 					<tr>
 						<th style="padding:4px;">Date</th>
@@ -108,13 +116,12 @@
 						<th style="padding:4px;">Condition of Baby</th>
 						<th style="padding:4px;">Advice Given</th>
 						<th style="padding:4px;">Next Sched Date</th>
-						<th style="padding:4px;">Remarks</th>
-						<th style="padding:4px;">Action</th>
+                        <th style="padding:4px;">Remarks</th>
 					</tr>
 				</thead>
-				<tbody id="ledgerBody">
-					<tr><td colspan="11" style="text-align:center; padding:10px;">Loading...</td></tr>
-				</tbody>
+                <tbody id="ledgerBody">
+                    <tr><td colspan="10" style="text-align:center; padding:10px;">Loading...</td></tr>
+                </tbody>
 			</table>
 		</div>
 	</div>
@@ -153,7 +160,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 		const childJson = await childRes.json();
 		const child = (childJson && childJson.status==='success' && childJson.data && childJson.data[0]) ? childJson.data[0] : {};
 
-		// Fill header (read-only)
+        // Fill header (read-only)
 		document.getElementById('f_name').textContent = child.name || [(child.child_fname||''),(child.child_lname||'')].filter(Boolean).join(' ');
 		document.getElementById('f_gender').textContent = child.child_gender || child.gender || '';
 		document.getElementById('f_birth_date').textContent = child.child_birth_date || '';
@@ -161,23 +168,59 @@ document.addEventListener('DOMContentLoaded', async function(){
 		document.getElementById('f_birth_weight').textContent = child.birth_weight || '';
 		document.getElementById('f_birth_height').textContent = child.birth_height || '';
 		document.getElementById('f_address').textContent = child.address || '';
-		document.getElementById('f_allergies').textContent = '';
-		document.getElementById('f_blood_type').textContent = '';
+        document.getElementById('f_allergies').textContent = child.allergies || '';
+        document.getElementById('f_lpm').textContent = child.lpm || '';
+        document.getElementById('f_blood_type').textContent = child.blood_type || '';
         document.getElementById('f_family_no').textContent = child.family_number || '';
-		document.getElementById('f_philhealth').textContent = '';
-		document.getElementById('f_nhts').textContent = '';
+        document.getElementById('f_philhealth').textContent = child.philhealth_no || '';
+        document.getElementById('f_nhts').textContent = child.nhts || '';
 		document.getElementById('f_non_nhts').textContent = '';
 		document.getElementById('f_father').textContent = child.father_name || '';
 		document.getElementById('f_mother').textContent = child.mother_name || '';
 		document.getElementById('f_nb_screen').textContent = '';
-		document.getElementById('f_fp').textContent = '';
+        document.getElementById('f_fp').textContent = child.family_planning || '';
 		document.getElementById('f_nbs_date').textContent = '';
         document.getElementById('f_delivery_type').textContent = child.delivery_type || '';
         document.getElementById('f_birth_order').textContent = child.birth_order || '';
 		document.getElementById('f_nbs_place').textContent = '';
 		document.getElementById('f_attended_by').textContent = child.birth_attendant || '';
 
-		// Fill editable feeding data
+        // Set defaults for editable new fields
+        const bt = document.createElement('div');
+        bt.innerHTML = `\
+        <div class="form-grid" style="margin:8px 0;">\
+            <div>Blood Type: <input type="text" id="edit_blood_type" value="${child.blood_type||''}" style="padding:4px; width:120px;"></div>\
+            <div>Allergies: <input type="text" id="edit_allergies" value="${child.allergies||''}" style="padding:4px; width:200px;"></div>\
+            <div>LMP: <input type="date" id="edit_lpm" value="${child.lpm||''}" style="padding:4px; width:160px;"></div>\
+            <div>Family Planning: <input type="text" id="edit_family_planning" value="${child.family_planning||''}" style="padding:4px; width:200px;"></div>\
+            <div style="grid-column:1/-1; text-align:center; margin-top:6px;">\
+                <button id="saveNewFields" style="padding:6px 12px; background:#17a2b8; color:white; border:none; border-radius:4px;">Save Child Info</button>\
+            </div>\
+        </div>`;
+        document.getElementById('childProfile').appendChild(bt);
+
+        document.getElementById('saveNewFields').onclick = async () => {
+            try{
+                const params = new URLSearchParams(window.location.search);
+                const babyId = params.get('baby_id') || '';
+                const fd = new FormData();
+                fd.append('baby_id', babyId);
+                fd.append('blood_type', document.getElementById('edit_blood_type').value);
+                fd.append('allergies', document.getElementById('edit_allergies').value);
+                fd.append('lpm', document.getElementById('edit_lpm').value);
+                fd.append('family_planning', document.getElementById('edit_family_planning').value);
+                const res = await fetch('/ebakunado/php/supabase/bhw/update_child_info.php', { method:'POST', body: fd });
+                const j = await res.json();
+                if (j.status==='success'){
+                    alert('Child info updated');
+                    location.reload();
+                } else {
+                    alert('Update failed: ' + (j.message||'Unknown error'));
+                }
+            }catch(e){ alert('Network error: ' + e.message); }
+        };
+
+        // Fill editable feeding data
 		document.getElementById('eb_1mo').checked = child.exclusive_breastfeeding_1mo || false;
 		document.getElementById('eb_2mo').checked = child.exclusive_breastfeeding_2mo || false;
 		document.getElementById('eb_3mo').checked = child.exclusive_breastfeeding_3mo || false;
@@ -200,38 +243,30 @@ document.addEventListener('DOMContentLoaded', async function(){
         const schedJson = await schedRes.json();
         const allRows = (schedJson && schedJson.status==='success' && Array.isArray(schedJson.data)) ? schedJson.data : [];
 
-        // Build editable ledger with all immunization records
+        // Build read-only ledger with all immunization records
         let ledgerHtml = '';
         if (allRows.length === 0) {
-            ledgerHtml = '<tr><td colspan="11" style="text-align:center; padding:10px;">No immunization records found</td></tr>';
+            ledgerHtml = '<tr><td colspan="10" style="text-align:center; padding:10px;">No immunization records found</td></tr>';
         } else {
             allRows.forEach(row => {
                 const date = row.date_given || row.schedule_date || '';
                 const ht = row.height || row.height_cm || '';
                 const wt = row.weight || row.weight_kg || '';
                 const status = row.status || 'scheduled';
-                const statusText = status === 'taken' ? 'Taken' : (status === 'completed' ? 'Completed' : 'Scheduled');
-                
+                const statusText = status === 'taken' ? 'Taken' : (status === 'completed' ? 'Completed' : (status === 'missed' ? 'Missed' : 'Scheduled'));
+
                 ledgerHtml += `
                     <tr>
-                        <td style="padding:4px;"><input type="date" value="${date}" style="width: 100%; padding: 2px; font-size: 11px;" onchange="updateImmunizationDate(${row.id}, this.value)"></td>
+                        <td style="padding:4px;">${formatDate(date)}</td>
                         <td style="padding:4px;">${row.vaccine_name || ''}</td>
-                        <td style="padding:4px;"><input type="text" value="${ht}" placeholder="cm" style="width: 60px; padding: 2px; font-size: 11px;" onchange="updateImmunizationHeight(${row.id}, this.value)"></td>
-                        <td style="padding:4px;"><input type="text" value="${wt}" placeholder="kg" style="width: 60px; padding: 2px; font-size: 11px;" onchange="updateImmunizationWeight(${row.id}, this.value)"></td>
-                        <td style="padding:4px;"><input type="text" value="" placeholder="cm" style="width: 60px; padding: 2px; font-size: 11px;"></td>
-                        <td style="padding:4px;">
-                            <select style="width: 100%; padding: 2px; font-size: 11px;" onchange="updateImmunizationStatus(${row.id}, this.value)">
-                                <option value="scheduled" ${status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
-                                <option value="taken" ${status === 'taken' ? 'selected' : ''}>Taken</option>
-                                <option value="completed" ${status === 'completed' ? 'selected' : ''}>Completed</option>
-                                <option value="missed" ${status === 'missed' ? 'selected' : ''}>Missed</option>
-                            </select>
-                        </td>
-                        <td style="padding:4px;"><input type="text" value="" placeholder="Good" style="width: 100%; padding: 2px; font-size: 11px;"></td>
-                        <td style="padding:4px;"><input type="text" value="" placeholder="Continue feeding" style="width: 100%; padding: 2px; font-size: 11px;"></td>
-                        <td style="padding:4px;"><input type="date" value="${row.catch_up_date || ''}" style="width: 100%; padding: 2px; font-size: 11px;" onchange="updateNextScheduleDate(${row.id}, this.value)"></td>
-                        <td style="padding:4px;"><input type="text" value="" placeholder="Notes" style="width: 100%; padding: 2px; font-size: 11px;"></td>
-                        <td style="padding:4px;"><button onclick="deleteImmunizationRecord(${row.id})" style="padding: 2px 6px; font-size: 10px; background: #dc3545; color: white; border: none; border-radius: 2px;">Delete</button></td>
+                        <td style="padding:4px;">${ht}</td>
+                        <td style="padding:4px;">${wt}</td>
+                        <td style="padding:4px;"></td>
+                        <td style="padding:4px;">${statusText}</td>
+                        <td style="padding:4px;"></td>
+                        <td style="padding:4px;"></td>
+                        <td style="padding:4px;">${formatDate(row.catch_up_date || '')}</td>
+                        <td style="padding:4px;"></td>
                     </tr>`;
             });
         }

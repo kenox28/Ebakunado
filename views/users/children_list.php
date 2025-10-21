@@ -28,8 +28,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 	const filterSelect = document.getElementById('chrFilter');
 	
 	// Load children data and CHR status data
-	await loadChildrenData();
-	await loadChrStatusData();
+    await Promise.all([loadChildrenData(), loadChrStatusData()]);
 	
 	// Render the table
 	renderChildrenTable();
@@ -54,7 +53,7 @@ async function loadChildrenData() {
 
 async function loadChrStatusData() {
 	try {
-		const res = await fetch('../../php/supabase/users/get_children_chr_status.php');
+        const res = await fetch('../../php/supabase/users/get_child_list.php');
 		const data = await res.json();
 		allChrStatusData = (data && data.status === 'success' && Array.isArray(data.data)) ? data.data : [];
 	} catch(err) {

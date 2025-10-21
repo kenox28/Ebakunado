@@ -20,6 +20,8 @@ try {
     $phone_number = $_POST['phone_number'] ?? '';
     $gender = $_POST['gender'] ?? '';
     $place = $_POST['place'] ?? '';
+    $philhealth_no = $_POST['philhealth_no'] ?? '';
+    $nhts = $_POST['nhts'] ?? '';
     $current_password = $_POST['current_password'] ?? '';
     $new_password = $_POST['new_password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
@@ -32,6 +34,8 @@ try {
         'phone_number' => $phone_number,
         'gender' => $gender,
         'place' => $place,
+        'philhealth_no' => $philhealth_no !== '' ? $philhealth_no : null,
+        'nhts' => $nhts !== '' ? $nhts : null,
         'updated' => date('c')
     ];
     
@@ -67,16 +71,29 @@ try {
     // Update user data
     $result = supabaseUpdate('users', $updateData, ['user_id' => $user_id]);
     
+    // Fallback: if columns philhealth_no/nhts don't exist, retry without them
+    if ($result === false) {
+        $lastErr = isset($supabase) && method_exists($supabase, 'getLastError') ? (string)$supabase->getLastError() : '';
+        $mayBeSchemaIssue = stripos($lastErr, 'philhealth_no') !== false || stripos($lastErr, 'nhts') !== false || stripos($lastErr, 'column') !== false;
+        if ($mayBeSchemaIssue) {
+            unset($updateData['philhealth_no'], $updateData['nhts']);
+            $result = supabaseUpdate('users', $updateData, ['user_id' => $user_id]);
+        }
+    }
+    
     if ($result !== false) {
         // Update session data
         $_SESSION['fname'] = $fname;
         $_SESSION['lname'] = $lname;
         $_SESSION['email'] = $email;
         $_SESSION['phone_number'] = $phone_number;
+        if (isset($updateData['philhealth_no'])) { $_SESSION['philhealth_no'] = $philhealth_no; }
+        if (isset($updateData['nhts'])) { $_SESSION['nhts'] = $nhts; }
         
         echo json_encode(['status' => 'success', 'message' => 'Profile updated successfully']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to update profile']);
+        $err = isset($supabase) && method_exists($supabase, 'getLastError') ? $supabase->getLastError() : null;
+        echo json_encode(['status' => 'error', 'message' => 'Failed to update profile', 'debug' => $err]);
     }
     
 } catch (Exception $e) {

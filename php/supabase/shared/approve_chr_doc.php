@@ -369,11 +369,11 @@ Configuration::instance([
 ]);
 
 $uploadApi = new UploadApi();
-$public_id = 'chr_docs/chr_' . $req['baby_id'] . '_' . time();
+$public_id = 'chr_' . $req['baby_id'] . '_' . time();
 $result = $uploadApi->upload($tmp, [
     'public_id' => $public_id,
     'folder' => 'ebakunado/chr_docs',
-    'resource_type' => 'raw'
+    'resource_type' => 'image'
 ]);
 $doc_url = $result['secure_url'] ?? '';
 

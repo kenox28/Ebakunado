@@ -1,0 +1,7 @@
+[2025-10-18 03:50:29] === Daily Notification Cron Job Started ===
+[2025-10-18 03:50:29] Starting REMINDER notifications (1 day before)...
+[2025-10-18 03:50:30] REMINDER notifications completed
+[2025-10-18 03:50:30] Starting SAME-DAY notifications (today)...
+[2025-10-18 03:50:30] SAME-DAY notifications completed
+[2025-10-18 03:50:30] All notification services completed successfully
+[2025-10-18 03:50:30] === Daily Notification Cron Job Completed ===

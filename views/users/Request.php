@@ -284,6 +284,14 @@
                     <label for="birth_height">Birth Height (cm)</label>
                     <input type="text" name="birth_height" placeholder="e.g., 50">
                 </div>
+            <div class="form-group">
+                <label for="blood_type">Blood Type</label>
+                <input type="text" name="blood_type" placeholder="e.g., O+">
+            </div>
+            <div class="form-group">
+                <label for="allergies">Allergies</label>
+                <input type="text" name="allergies" placeholder="e.g., None">
+            </div>
             </div>
 
             <!-- Gender Selection -->
@@ -320,6 +328,17 @@
                         <input value="example" type="text" name="father_name" placeholder="Enter father's name">
                     </div>
                 <?php endif; ?>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="lpm">LMP (Last Menstrual Period)</label>
+                    <input type="date" name="lpm">
+                </div>
+                <div class="form-group">
+                    <label for="family_planning">Family Planning</label>
+                    <input type="text" name="family_planning" placeholder="e.g., Natural, Pills, IUD">
+                </div>
             </div>
 
             <!-- Birth Details -->

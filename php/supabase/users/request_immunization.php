@@ -38,6 +38,12 @@ $birth_height = $_POST['birth_height'] ?? null;
 $birth_attendant = $_POST['birth_attendant'] ?? '';
 $vaccines_received = $_POST['vaccines_received'] ?? [];
 
+// Optional new fields
+$blood_type = $_POST['blood_type'] ?? '';
+$allergies = $_POST['allergies'] ?? '';
+$lpm = $_POST['lpm'] ?? null;
+$family_planning = $_POST['family_planning'] ?? '';
+
 // Child History fields
 $delivery_type = $_POST['delivery_type'] ?? '';
 $birth_order = $_POST['birth_order'] ?? '';
@@ -99,6 +105,10 @@ $insert = supabaseInsert('child_health_records', [
     'babys_card' => $babys_card,
     'delivery_type' => $delivery_type,
     'birth_order' => $birth_order,
+    'blood_type' => $blood_type !== '' ? $blood_type : null,
+    'allergies' => $allergies !== '' ? $allergies : null,
+    'lpm' => $lpm ?: null,
+    'family_planning' => $family_planning !== '' ? $family_planning : null,
     'status' => 'pending',
     'date_created' => date('Y-m-d H:i:s')
 ]);

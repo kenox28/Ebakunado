@@ -1,14 +1,43 @@
 <?php include 'Include/header.php'; ?>
+<style>
+/* Bond-paper style container */
+.chr-paper {
+    width: 13.5in;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-height: 13in;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 0.6in;
+    font-size: 18px;
+    line-height: 1.7;
+}
+.block-header {
+    text-align: center;
+    font-weight: 700;
+    font-size: 16px;
+    margin: 0 0 8px 0;
+}
+.boxed { border: 1px solid #000 !important; padding: 8px; }
+@media print {
+  body { background: #fff; }
+  .chr-paper { box-shadow: none; border: 1px solid #000; }
+  .content { padding: 0; }
+}
+</style>
 
-<div class="content" style="padding: 16px;">
-	<div id="chrRoot">
-		<div style="text-align:center; margin-bottom: 12px;">
+<div class="content" style="padding: 24px 16px;">
+    <div id="chrRoot">
+        <div class="chr-paper">
+        <div style="text-align:center; margin-bottom: 12px;">
 			<h2 style="margin:0;">CHILD HEALTH RECORD</h2>
 			<p style="margin:4px 0;">City Health Department, Ormoc City</p>
 		</div>
 
 		<!-- Child Profile Header -->
-		<div id="childProfile" style="font-size: 13px; line-height: 1.6; margin-bottom: 12px;">
+        <div id="childProfile" style="font-size: inherit; line-height: 1.6; margin-bottom: 12px;">
 			<div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
 				<div>
 					<div>Name of Child: <span id="f_name"></span></div>
@@ -23,6 +52,7 @@
 				</div>
 				<div>
 	                    <div>Family Number: <span id="f_family_no"></span></div>
+						<div>LMP: <span id="f_lpm"></span></div>
 					<div>PhilHealth No.: <span id="f_philhealth"></span></div>
 					<div>NHTS: <span id="f_nhts"></span></div>
 					<div>Non-NHTS: <span id="f_non_nhts"></span></div>
@@ -35,7 +65,8 @@
 		</div>
 
 		<!-- Child History -->
-		<div id="childHistory" style="font-size: 13px; line-height: 1.6; margin: 8px 0 16px 0;">
+        <div id="childHistory" style="font-size: inherit; line-height: 1.6; margin: 8px 0 16px 0;">
+            <div class="block-header">CHILD HISTORY</div>
 			<div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
 				<div>
 					<div>Date of Newborn Screening: <span id="f_nbs_date"></span></div>
@@ -50,12 +81,12 @@
 		</div>
 
 		<!-- Exclusive Breastfeeding & Complementary Feeding -->
-		<div id="feedingSection" style="font-size: 13px; line-height: 1.6; margin: 8px 0 16px 0; border: 1px solid #ddd; padding: 8px;">
-			<h3 style="margin: 0 0 8px 0; font-size: 14px; text-align: center;">Exclusive Breastfeeding & Complementary Feeding</h3>
+        <div id="feedingSection" class="boxed" style="font-size: inherit; line-height: 1.6; margin: 8px 0 16px 0; padding: 8px;">
+            <h3 style="margin: 0 0 8px 0; font-size: 18px; text-align: center;">Exclusive Breastfeeding & Complementary Feeding</h3>
 			<div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
 				<div>
-					<h4 style="margin: 0 0 4px 0; font-size: 13px;">Exclusive Breastfeeding:</h4>
-					<div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:4px; font-size: 12px;">
+                    <h4 style="margin: 0 0 4px 0; font-size: 16px;">Exclusive Breastfeeding:</h4>
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:4px; font-size: 16px;">
 						<div>1st mo: <span id="f_eb_1mo"></span></div>
 						<div>2nd mo: <span id="f_eb_2mo"></span></div>
 						<div>3rd mo: <span id="f_eb_3mo"></span></div>
@@ -65,8 +96,8 @@
 					</div>
 				</div>
 				<div>
-					<h4 style="margin: 0 0 4px 0; font-size: 13px;">Complementary Feeding:</h4>
-					<div style="font-size: 12px;">
+                    <h4 style="margin: 0 0 4px 0; font-size: 16px;">Complementary Feeding:</h4>
+                    <div style="font-size: 16px;">
 						<div>6th mo food: <span id="f_cf_6mo"></span></div>
 						<div>7th mo food: <span id="f_cf_7mo"></span></div>
 						<div>8th mo food: <span id="f_cf_8mo"></span></div>
@@ -76,9 +107,9 @@
 		</div>
 
 		<!-- Mother's TD Status -->
-		<div id="tdSection" style="font-size: 13px; line-height: 1.6; margin: 8px 0 16px 0; border: 1px solid #ddd; padding: 8px;">
-			<h3 style="margin: 0 0 8px 0; font-size: 14px; text-align: center;">Mother's TD (Tetanus-Diphtheria) Status</h3>
-			<div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; font-size: 12px;">
+        <div id="tdSection" class="boxed" style="font-size: inherit; line-height: 1.6; margin: 8px 0 16px 0; padding: 8px;">
+            <h3 style="margin: 0 0 8px 0; font-size: 18px; text-align: center;">Mother's TD (Tetanus-Diphtheria) Status</h3>
+            <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; font-size: 16px;">
 				<div>TD 1st dose: <span id="f_td_dose1"></span></div>
 				<div>TD 2nd dose: <span id="f_td_dose2"></span></div>
 				<div>TD 3rd dose: <span id="f_td_dose3"></span></div>
@@ -89,7 +120,7 @@
 
 		<!-- Compact Ledger: One row per taken vaccine -->
 		<div>
-			<table style="width:100%; border-collapse:collapse; font-size:12px;" border="1">
+            <table style="width:100%; border-collapse:collapse; font-size:16px;" border="1">
 				<thead>
 					<tr>
 						<th style="padding:4px;">Date</th>
@@ -110,10 +141,11 @@
 			</table>
 		</div>
 
-		<div style="margin-top:12px; text-align:right;">
+        <div style="margin-top:12px; text-align:right;">
 			<button id="reqTransferBtn" style="padding:6px 12px;">Request Transfer Copy</button>
 			<button id="reqSchoolBtn" style="padding:6px 12px; margin-left:8px;">Request School Copy</button>
 		</div>
+        </div>
 	</div>
 </div>
 
@@ -160,16 +192,17 @@ document.addEventListener('DOMContentLoaded', async function(){
 		document.getElementById('f_birth_weight').textContent = child.birth_weight || '';
 		document.getElementById('f_birth_height').textContent = child.birth_height || '';
 		document.getElementById('f_address').textContent = child.address || '';
-		document.getElementById('f_allergies').textContent = '';
-		document.getElementById('f_blood_type').textContent = '';
+        document.getElementById('f_allergies').textContent = child.allergies || '';
+        document.getElementById('f_lpm').textContent = child.lpm || '';
+        document.getElementById('f_blood_type').textContent = child.blood_type || '';
         document.getElementById('f_family_no').textContent = child.family_number || '';
-		document.getElementById('f_philhealth').textContent = '';
-		document.getElementById('f_nhts').textContent = '';
+        document.getElementById('f_philhealth').textContent = child.philhealth_no || '';
+        document.getElementById('f_nhts').textContent = child.nhts || '';
 		document.getElementById('f_non_nhts').textContent = '';
 		document.getElementById('f_father').textContent = child.father_name || '';
 		document.getElementById('f_mother').textContent = child.mother_name || '';
-		document.getElementById('f_nb_screen').textContent = '';
-		document.getElementById('f_fp').textContent = '';
+        document.getElementById('f_nb_screen').textContent = '';
+        document.getElementById('f_fp').textContent = child.family_planning || '';
 		document.getElementById('f_nbs_date').textContent = '';
         document.getElementById('f_delivery_type').textContent = child.delivery_type || '';
         document.getElementById('f_birth_order').textContent = child.birth_order || '';

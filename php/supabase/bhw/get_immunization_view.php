@@ -5,14 +5,14 @@ include '../../../database/DatabaseHelper.php';
 
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['bhw_id'])) {
+if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['midwife_id'])) {
 	echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
 	exit();
 }
 
 try {
 	// Get all accepted children with feeding status
-$children = supabaseSelect('child_health_records', 'id,user_id,baby_id,child_fname,child_lname,address,exclusive_breastfeeding_1mo,exclusive_breastfeeding_2mo,exclusive_breastfeeding_3mo,exclusive_breastfeeding_4mo,exclusive_breastfeeding_5mo,exclusive_breastfeeding_6mo,complementary_feeding_6mo,complementary_feeding_7mo,complementary_feeding_8mo,mother_td_dose1_date,mother_td_dose2_date,mother_td_dose3_date,mother_td_dose4_date,mother_td_dose5_date', ['status' => 'accepted'], 'child_fname.asc');
+$children = supabaseSelect('child_health_records', 'id,user_id,baby_id,child_fname,child_lname,address,exclusive_breastfeeding_1mo,exclusive_breastfeeding_2mo,exclusive_breastfeeding_3mo,exclusive_breastfeeding_4mo,exclusive_breastfeeding_5mo,exclusive_breastfeeding_6mo,complementary_feeding_6mo,complementary_feeding_7mo,complementary_feeding_8mo', ['status' => 'accepted'], 'child_fname.asc');
 	if (!$children) $children = [];
 	
     // Get all immunization records (include id and dose_number for actions)
@@ -35,7 +35,13 @@ $children = supabaseSelect('child_health_records', 'id,user_id,baby_id,child_fna
 		$babyId = $child['baby_id'];
 		$childImmunizations = $immunizationsByBaby[$babyId] ?? [];
 		
-		if (empty($childImmunizations)) {
+        if (empty($childImmunizations)) {
+            // Load TD doses from mother_tetanus_doses using string user_id
+            $dose1=$dose2=$dose3=$dose4=$dose5='';
+            if (!empty($child['user_id'])) {
+                $td = supabaseSelect('mother_tetanus_doses','dose1_date,dose2_date,dose3_date,dose4_date,dose5_date',['user_id'=>$child['user_id']],null,1);
+                if ($td && count($td)>0){ $dose1=$td[0]['dose1_date']??''; $dose2=$td[0]['dose2_date']??''; $dose3=$td[0]['dose3_date']??''; $dose4=$td[0]['dose4_date']??''; $dose5=$td[0]['dose5_date']??''; }
+            }
 			// Child with no vaccines - show one row
 			$rows[] = [
 				'id' => $child['id'],
@@ -58,16 +64,21 @@ $children = supabaseSelect('child_health_records', 'id,user_id,baby_id,child_fna
 				'complementary_feeding_6mo' => $child['complementary_feeding_6mo'] ?? '',
 				'complementary_feeding_7mo' => $child['complementary_feeding_7mo'] ?? '',
 				'complementary_feeding_8mo' => $child['complementary_feeding_8mo'] ?? '',
-				// Mother's TD Status
-				'mother_td_dose1_date' => $child['mother_td_dose1_date'] ?? '',
-				'mother_td_dose2_date' => $child['mother_td_dose2_date'] ?? '',
-				'mother_td_dose3_date' => $child['mother_td_dose3_date'] ?? '',
-				'mother_td_dose4_date' => $child['mother_td_dose4_date'] ?? '',
-				'mother_td_dose5_date' => $child['mother_td_dose5_date'] ?? ''
+                // Mother's TD Status
+                'mother_td_dose1_date' => $dose1,
+                'mother_td_dose2_date' => $dose2,
+                'mother_td_dose3_date' => $dose3,
+                'mother_td_dose4_date' => $dose4,
+                'mother_td_dose5_date' => $dose5
 			];
 		} else {
 			// Child with vaccines - show one row per vaccine
             foreach ($childImmunizations as $immunization) {
+                $dose1=$dose2=$dose3=$dose4=$dose5='';
+                if (!empty($child['user_id'])) {
+                    $td = supabaseSelect('mother_tetanus_doses','dose1_date,dose2_date,dose3_date,dose4_date,dose5_date',['user_id'=>$child['user_id']],null,1);
+                    if ($td && count($td)>0){ $dose1=$td[0]['dose1_date']??''; $dose2=$td[0]['dose2_date']??''; $dose3=$td[0]['dose3_date']??''; $dose4=$td[0]['dose4_date']??''; $dose5=$td[0]['dose5_date']??''; }
+                }
 				$rows[] = [
                     // child record id
                     'id' => $child['id'],
@@ -94,12 +105,12 @@ $children = supabaseSelect('child_health_records', 'id,user_id,baby_id,child_fna
 					'complementary_feeding_6mo' => $child['complementary_feeding_6mo'] ?? '',
 					'complementary_feeding_7mo' => $child['complementary_feeding_7mo'] ?? '',
 					'complementary_feeding_8mo' => $child['complementary_feeding_8mo'] ?? '',
-					// Mother's TD Status
-					'mother_td_dose1_date' => $child['mother_td_dose1_date'] ?? '',
-					'mother_td_dose2_date' => $child['mother_td_dose2_date'] ?? '',
-					'mother_td_dose3_date' => $child['mother_td_dose3_date'] ?? '',
-					'mother_td_dose4_date' => $child['mother_td_dose4_date'] ?? '',
-					'mother_td_dose5_date' => $child['mother_td_dose5_date'] ?? ''
+                    // Mother's TD Status
+                    'mother_td_dose1_date' => $dose1,
+                    'mother_td_dose2_date' => $dose2,
+                    'mother_td_dose3_date' => $dose3,
+                    'mother_td_dose4_date' => $dose4,
+                    'mother_td_dose5_date' => $dose5
 				];
 			}
 		}

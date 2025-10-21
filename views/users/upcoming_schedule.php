@@ -87,7 +87,16 @@
                 const child = data.data[0];
                 const ageText = child.age == 0 ? child.weeks_old + ' weeks old' : child.age + ' years old';
                 document.getElementById('childAge').textContent = ageText;
-                document.getElementById('childGender').textContent = child.gender || 'Unknown';
+                // Normalize gender from API (uses child_gender key)
+                const rawGender = child.child_gender || child.gender || '';
+                let prettyGender = 'Unknown';
+                if (rawGender) {
+                    const g = String(rawGender).toLowerCase();
+                    if (g.startsWith('m')) prettyGender = 'Male';
+                    else if (g.startsWith('f')) prettyGender = 'Female';
+                    else prettyGender = rawGender; // keep whatever custom value
+                }
+                document.getElementById('childGender').textContent = prettyGender;
                 
                 // Set QR code image
                 if (child.qr_code) {

@@ -6,7 +6,7 @@ include '../../../database/DatabaseHelper.php';
 header('Content-Type: application/json');
 
 // Check if user is authorized (BHW, Admin, or Super Admin)
-if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['admin_id']) && !isset($_SESSION['super_admin_id'])) {
+if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['midwife_id']) && !isset($_SESSION['admin_id']) && !isset($_SESSION['super_admin_id'])) {
     echo json_encode(['status' => 'error', 'message' => 'Unauthorized access']);
     exit();
 }

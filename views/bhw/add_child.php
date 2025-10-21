@@ -280,6 +280,14 @@
                     <label for="birth_height">Birth Height (cm)</label>
                     <input type="text" id="birth_height" name="birth_height" placeholder="e.g., 50">
                 </div>
+                <div class="form-group">
+                    <label for="blood_type">Blood Type</label>
+                    <input type="text" id="blood_type" name="blood_type" placeholder="e.g., O+">
+                </div>
+                <div class="form-group">
+                    <label for="allergies">Allergies</label>
+                    <input type="text" id="allergies" name="allergies" placeholder="e.g., None">
+                </div>
             </div>
 
             <!-- Gender Selection -->
@@ -376,6 +384,17 @@
                         <input type="radio" name="birth_attendant" value="Others">
                         Other: <input type="text" name="birth_attendant_others" placeholder="Specify" style="margin-left: 10px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; width: 120px;">
                     </label>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="lpm">LMP (Last Menstrual Period)</label>
+                    <input type="date" id="lpm" name="lpm">
+                </div>
+                <div class="form-group">
+                    <label for="family_planning">Family Planning</label>
+                    <input type="text" id="family_planning" name="family_planning" placeholder="e.g., Natural, Pills, IUD">
                 </div>
             </div>
         </div>
