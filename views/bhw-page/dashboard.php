@@ -40,7 +40,7 @@ if ($user_id) {
     <main>
         <section class="dashboard-section">
             <div class="dashboard-overview">
-                <h2 class="dashboard-heading">Dashboard Overview</h2>
+                <h2 class="dashboard section-heading">Dashboard Overview</h2>
                 <div class="card-wrapper">
                     <div class="card card-1">
                         <div class="card-icon">

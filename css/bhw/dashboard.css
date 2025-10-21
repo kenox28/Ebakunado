@@ -12,11 +12,11 @@
   gap: 1.6rem;
 }
 
-.dashboard-heading {
+/* .dashboard-heading {
   font-size: 2rem;
   font-weight: 600;
   color: var(--primary-color);
-}
+} */
 
 .card-wrapper {
   display: grid;
@@ -38,7 +38,8 @@
   border-radius: 15px;
   /* box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px; */
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
 
   display: flex;
   justify-content: space-between;
@@ -108,12 +109,12 @@
 }
 
 .card-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    padding: 1rem;
-    border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 1rem;
+  border-radius: 100%;
 }
 
 .card-icon .material-symbols-rounded {
@@ -154,29 +155,30 @@
   gap: 0.35rem;
   font-size: 1.2rem;
   color: var(--text-label);
-  text-decoration: none;          
+  text-decoration: none;
   opacity: 0.95;
-  padding: 0.25rem 0.5rem;         
+  padding: 0.25rem 0.5rem;
   border-radius: 8px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+  transition: background-color 160ms ease, color 160ms ease,
+    box-shadow 160ms ease, opacity 160ms ease;
 }
 
 .card-link .material-symbols-rounded {
   font-size: 1.6rem;
   line-height: 1;
-  transition: color 160ms ease;    
+  transition: color 160ms ease;
 }
 
 .card-link:hover {
   color: var(--primary-color);
-  background-color: #00562a14;     
+  background-color: #00562a14;
   opacity: 1;
 }
 
 .card-link:active {
-  background-color: #00562a21;   
+  background-color: #00562a21;
   box-shadow: inset 0 0 0 1px #00562a40;
 }
 
@@ -184,7 +186,7 @@
   outline: none;
   color: var(--primary-color);
   background-color: #00562a14;
-  box-shadow: 0 0 0 2px #00562a33; 
+  box-shadow: 0 0 0 2px #00562a33;
 }
 
 /* Activity and Tasks Section */

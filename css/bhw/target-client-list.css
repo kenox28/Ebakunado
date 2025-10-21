@@ -5,13 +5,13 @@ main {
     flex-direction: column;
 }
 
-/* Let the section lay out filters + table area */
-.target-client-list-section {
+
+/* .target-client-list-section {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-  min-height: 0;             /* allow inner flex child to shrink */
-}
+  min-height: 0;             
+} */
 
 /* Filters stay on top */
 .filters {

@@ -3,12 +3,6 @@ main {
   overflow-y: auto;
 }
 
-.pending-approval-section {
-  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
-    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-    padding: 1rem;
-}
-
 .btn {
   display: flex;
   justify-content: center;
@@ -32,20 +26,7 @@ main {
   font-size: 1.6rem;
 }
 
-.childinformation-container {
-  padding: 0;
-  background-color: #ffffff;
-  border-radius: 8px;
-  /* border: #bebebe 1px solid; */
-
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-
-  display: none;
-}
-
-.childinfo-header {
+.child-information {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -55,15 +36,53 @@ main {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.2rem;
+  min-width: 0;
 }
 
 .childinfo-details {
-  /* width: 50%; */
+  padding: 1.5rem;
+  border-radius: 10px;
   border: 1px solid #ccc;
+  background-color: #ffffff;
 }
 
-.childinfo-details h2 {
+.childinfo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* push Edit button to the right */
+  gap: 0.5rem;
+}
+
+.childinfo-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.childinfo-header,
+.vaccination-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-color);
   margin-bottom: 1.2rem;
+}
+
+.childinfo-header .material-symbols-rounded,
+.vaccination-header .material-symbols-rounded {
+  font-size: 2rem;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+}
+
+.section-heading .material-symbols-rounded {
+  font-size: 2.8rem;
+  margin-right: 0.5rem;
 }
 
 .childinfo-grid {
@@ -92,11 +111,19 @@ main {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-family: inherit;
+  text-transform: capitalize; 
 }
 
 .childinfo-row input:focus,
 .childinfo-row select:focus {
   border-color: #007bff;
+}
+
+.childinfo-row input::placeholder {
+  text-transform: capitalize;
+}
+.childinfo-row select option {
+  text-transform: capitalize;
 }
 
 /* Buttons section styling */
@@ -139,9 +166,10 @@ main {
   transform: scale(0.97);
 }
 
-/* Child information image styling */
 .childinfo-image {
-  /* width: 50%; */
+  padding: 1.5rem;
+  border-radius: 10px;
+  background-color: #ffffff;
   border: 1px solid #ccc;
 }
 
@@ -158,5 +186,260 @@ main {
 
 .vaccination-section {
   width: 100%;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 10px;
   border: 1px solid #ccc;
+  overflow: auto;
 }
+
+.table-container {
+  overflow: auto;
+  margin-top: 1rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  /* background: #fff; */
+  min-width: 1200px;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #f2f2f2;
+}
+
+.table thead th {
+  padding: 0.75rem;
+  text-align: left;
+  background-color: #f2f2f2;
+  color: #1a1a1a;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 1.3rem;
+  text-transform: capitalize;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.table tbody td {
+  padding: 0.75rem;
+  text-align: left;
+  color: #1a1a1a;
+  font-size: 1.3rem;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+.table tbody td:first-child {
+  font-weight: 500;
+  text-align: left;
+  width: 60px;
+  min-width: 60px;
+}
+
+/* Column width adjustments for better spacing */
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  min-width: 120px; /* Child Firstname */
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  min-width: 120px; /* Child Lastname */
+}
+
+.table th:nth-child(4),
+.table td:nth-child(4) {
+  min-width: 80px; /* Gender */
+}
+
+.table th:nth-child(5),
+.table td:nth-child(5) {
+  min-width: 120px; /* Birth Date */
+}
+
+.table th:nth-child(6),
+.table td:nth-child(6) {
+  min-width: 150px; /* Place of Birth */
+}
+
+.table th:nth-child(7),
+.table td:nth-child(7) {
+  min-width: 150px; /* Mother's Name */
+}
+
+.table th:nth-child(8),
+.table td:nth-child(8) {
+  min-width: 150px; /* Father's Name */
+}
+
+.table th:nth-child(9),
+.table td:nth-child(9) {
+  min-width: 200px; /* Address */
+}
+
+.table th:nth-child(10),
+.table td:nth-child(10) {
+  min-width: 80px; /* Weight */
+}
+
+.table th:nth-child(11),
+.table td:nth-child(11) {
+  min-width: 80px; /* Height */
+}
+
+.table th:nth-child(12),
+.table td:nth-child(12) {
+  min-width: 120px; /* Birth Attendant */
+}
+
+.table th:nth-child(13),
+.table td:nth-child(13) {
+  min-width: 100px; /* Status */
+}
+
+.table th:nth-child(14),
+.table td:nth-child(14) {
+  min-width: 100px; /* Action */
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+  font-size: 1.4rem;
+}
+
+.loading i {
+  font-size: 2.4rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+/* Action button styling */
+.view-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.view-btn:hover {
+  background-color: #005529;
+  transform: translateY(-1px);
+}
+
+.view-btn .material-symbols-rounded {
+  font-size: 1.6rem;
+}
+
+.pending-approval-panel {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.childinformation-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+
+  display: none;
+}
+
+.childinfo-main {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+  min-width: 0;
+}
+
+.pending-approval-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Disabled (read-only) look for inputs and buttons inside details */
+.childinfo-details input:disabled,
+.childinfo-details select:disabled {
+  background-color: #f5f5f5;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.childinfo-details .childinfo-buttons button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Edit button style */
+.edit-btn {
+  background-color: #006c35;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.edit-btn:hover {
+  background-color: #005d2d;
+}
+
+/* .edit-btn:focus,
+.edit-btn:focus-visible {
+  outline: 3px solid #7fd6a9;
+  outline-offset: 3px;
+}
+
+.edit-btn:active {
+  transform: scale(0.98);
+} */
+
+

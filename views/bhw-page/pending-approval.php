@@ -38,8 +38,6 @@ if ($user_id) {
 
     <main>
         <section class="pending-approval-section">
-            <h2 class="section-header">Pending Immunization List</h2>
-
             <!-- <div id="qrOverlay">
                 <div class="qr-content">
                     <select id="cameraSelect" onchange="switchCamera(event)"></select>
@@ -56,50 +54,68 @@ if ($user_id) {
                 </div>
             </div> -->
 
-            <div class="table-container">
-                <table class="table table-hover" id="childhealthrecord">
-                    <thead>
-                        <tr>
-                            <th>Child Firstname</th>
-                            <th>Child Lastname</th>
-                            <th>Gender</th>
-                            <th>Birth Date</th>
-                            <th>Place of Birth</th>
-                            <th>Mother's Name</th>
-                            <th>Father's Name</th>
-                            <th>Address</th>
-                            <th>Weight</th>
-                            <th>Height</th>
-                            <th>Birth Attendant</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="childhealthrecordBody">
-                        <tr>
-                            <td colspan="21" class="text-center">
-                                <div class="loading">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                    <p>Loading records...</p>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="pending-approval-panel">
+                <h2 class="pending-approval section-heading">Pending Immunization List</h2>
+                <div class="table-container">
+                    <table class="table table-hover" id="childhealthrecord">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Child First Name</th>
+                                <th>Child Last Name</th>
+                                <th>Gender</th>
+                                <th>Birth Date</th>
+                                <th>Place of Birth</th>
+                                <th>Mother's Name</th>
+                                <th>Father's Name</th>
+                                <th>Address</th>
+                                <th>Weight</th>
+                                <th>Height</th>
+                                <th>Birth Attendant</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="childhealthrecordBody">
+                            <tr>
+                                <td colspan="14" class="text-center">
+                                    <div class="loading">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <p>Loading records...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="childinformation-container">
-                <div class="childinfo-header">
-                    <h1>Child Information Review</h1>
+                <div class="child-information childinfo-header">
+                    <h1 class="section-heading">
+                        <span class="material-symbols-rounded">
+                            article_person
+                        </span>
+                        Child Information Review
+                    </h1>
                     <div class="childinfo-actions">
-                        <button onclick="closeChildInformation()" id="closeButton">Close</button>
+                        <button onclick="backToList()" id="closeButton">Back</button>
                         <button id="acceptButton">Accept Record</button>
                     </div>
                 </div>
 
                 <div class="childinfo-main">
                     <div class="childinfo-details">
-                        <h2>Child Details <small>(Click to edit)</small></h2>
+                        <h2 class="childinfo-header">
+                            <div class="childinfo-title">
+                                <span class="material-symbols-rounded">person</span>
+                                <span>Child Details</span>
+                            </div>
+                            <button type="button" class="btn edit-btn" id="editChildInfoBtn" onclick="toggleChildInfoEditing()">
+                                <span class="material-symbols-rounded">edit</span>
+                                <span class="btn-text">Edit</span>
+                            </button>
+                        </h2>
                         <div class="childinfo-grid">
                             <div class="childinfo-row">
                                 <label>
@@ -190,14 +206,24 @@ if ($user_id) {
                     </div>
 
                     <div class="childinfo-image">
-                        <h2>Baby Card Image</h2>
+                        <h2 class="childinfo-header">
+                            <div class="childinfo-title">
+                                <span class="material-symbols-rounded">image</span>
+                                <span>Baby's Card Image
+                            </div>
+                        </h2>
                         <img src="" alt="Baby Card" id="childImage">
                     </div>
                 </div>
 
                 <div class="vaccination-section">
-                    <h2>Vaccination Records</h2>
-                    <div id="vaccinationRecordsContainer">
+                    <h2 class="vaccination-header">
+                        <span class="material-symbols-rounded">
+                            syringe
+                        </span>
+                        Vaccination Records
+                    </h2>
+                    <div class="vaccination-record-list" id="vaccinationRecordsContainer">
                         <div class="loading">
                             <i class="fas fa-spinner fa-spin"></i>
                             <p>Loading vaccination records...</p>
@@ -214,23 +240,24 @@ if ($user_id) {
     <script>
         async function getChildHealthRecord() {
             const body = document.querySelector('#childhealthrecordBody');
-            body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
+            body.innerHTML = '<tr><td colspan="14">Loading...</td></tr>';
             try {
                 // const res = await fetch('../../php/bhw/get_child_health_records.php');
                 const res = await fetch('../../php/supabase/bhw/pending_chr.php');
                 const data = await res.json();
                 if (data.status !== 'success') {
-                    body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>';
+                    body.innerHTML = '<tr><td colspan="14">Failed to load records</td></tr>';
                     return;
                 }
                 if (!data.data || data.data.length === 0) {
-                    body.innerHTML = '<tr><td colspan="21">No records found</td></tr>';
+                    body.innerHTML = '<tr><td colspan="14">No records found</td></tr>';
                     return;
                 }
 
                 let rows = '';
-                data.data.forEach(item => {
+                data.data.forEach((item, index) => {
                     rows += `<tr>
+							<td>${index + 1}</td>
 							<td hidden>${item.id || ''}</td>
 							<td hidden>${item.user_id || ''}</td>
 							<td hidden>${item.baby_id || ''}</td>
@@ -255,7 +282,7 @@ if ($user_id) {
                 });
                 body.innerHTML = rows;
             } catch (e) {
-                body.innerHTML = '<tr><td colspan="21">Error loading records</td></tr>';
+                body.innerHTML = '<tr><td colspan="14">Error loading records</td></tr>';
             }
         }
 
@@ -303,16 +330,19 @@ if ($user_id) {
                 // Load vaccination records
                 await loadVaccinationRecords(baby_id);
 
+                // Default to read-only on open
+                setChildInfoEditing(false);
+
                 document.querySelector('.childinformation-container').style.display = 'flex';
-                document.querySelector('.table-container').style.display = 'none';
+                document.querySelector('.pending-approval-panel').style.display = 'none';
             } else {
                 console.log(data.message);
             }
         }
 
-        function closeChildInformation() {
+        function backToList() {
             document.querySelector('.childinformation-container').style.display = 'none';
-            document.querySelector('.table-container').style.display = 'block';
+            document.querySelector('.pending-approval-panel').style.display = 'block';
         }
 
         async function loadVaccinationRecords(baby_id) {
@@ -364,12 +394,13 @@ if ($user_id) {
             rows.forEach(tr => {
                 const tds = tr.querySelectorAll('td');
                 if (!tds || tds.length === 0) return;
-                const id = (tds[0].textContent || '').toLowerCase();
-                const userId = (tds[1].textContent || '').toLowerCase();
-                const babyId = (tds[2].textContent || '').toLowerCase();
-                const fname = (tds[3].textContent || '').toLowerCase();
-                const lname = (tds[4].textContent || '').toLowerCase();
-                const childName = (tds[5].textContent || '').toLowerCase();
+                // Skip the "No." column (index 0) and hidden columns (1, 2, 3)
+                const id = (tds[1].textContent || '').toLowerCase();
+                const userId = (tds[2].textContent || '').toLowerCase();
+                const babyId = (tds[3].textContent || '').toLowerCase();
+                const fname = (tds[4].textContent || '').toLowerCase();
+                const lname = (tds[5].textContent || '').toLowerCase();
+                const childName = (tds[6].textContent || '').toLowerCase();
                 const text = [id, userId, babyId, fname, lname, childName].join(' ');
                 tr.style.display = text.includes(q) ? '' : 'none';
             });
@@ -407,7 +438,7 @@ if ($user_id) {
             } else {
                 alert('Record not accepted: ' + data.message);
             }
-            closeChildInformation();
+            backToList();
         }
 
         async function rejectRecord(baby_id) {
@@ -561,8 +592,8 @@ if ($user_id) {
             const rows = document.querySelectorAll('#childhealthrecordBody tr');
             for (const tr of rows) {
                 const tds = tr.querySelectorAll('td');
-                if (!tds || tds.length < 3) continue;
-                const val = (tds[2].textContent || '').trim();
+                if (!tds || tds.length < 4) continue;
+                const val = (tds[3].textContent || '').trim(); // baby_id is now at index 3
                 if (val === babyId) {
                     tr.scrollIntoView({
                         behavior: 'smooth',
@@ -705,6 +736,45 @@ if ($user_id) {
             } else {
                 alert('Logout failed: ' + data.message);
             }
+        }
+
+        // Add helpers to enable/disable the form
+        function setChildInfoEditing(editing) {
+            const details = document.querySelector('.childinfo-details');
+            if (!details) return;
+
+            // Inputs and selects
+            details.querySelectorAll('input, select').forEach(el => {
+                el.disabled = !editing;
+            });
+
+            // Action buttons inside the details panel (save/reset)
+            details.querySelectorAll('.childinfo-buttons button').forEach(btn => {
+                btn.disabled = !editing;
+            });
+
+            // Update Edit button label/icon
+            const btn = document.getElementById('editChildInfoBtn');
+            if (btn) {
+                const icon = btn.querySelector('.material-symbols-rounded');
+                const text = btn.querySelector('.btn-text');
+                if (editing) {
+                    icon.textContent = 'done';
+                    text.textContent = 'Done';
+                    btn.classList.add('active');
+                } else {
+                    icon.textContent = 'edit';
+                    text.textContent = 'Edit';
+                    btn.classList.remove('active');
+                }
+            }
+
+            details.classList.toggle('editing', editing);
+        }
+
+        function toggleChildInfoEditing() {
+            const isEditing = document.querySelector('.childinfo-details')?.classList.contains('editing');
+            setChildInfoEditing(!isEditing);
         }
     </script>
 </body>
