@@ -7,9 +7,6 @@ html {
 
 html,
 body {
-  height: 100%;
-html,
-body {
 	height: 100%;
 }
 
@@ -135,6 +132,8 @@ td {
   border: 1px solid var(--border-color);
   padding: 0.75rem;
   text-align: left;
+}
+
 th,
 td {
 	border: 1px solid #c6c6c6;
