@@ -39,6 +39,14 @@ if ($user_id) {
     <main>
         <section class="pending-approval-section">
             <h2 class="section-header">Pending Immunization List</h2>
+            <div id="paFilters" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin: 8px 0 12px;">
+                <input id="paSearch" type="text" placeholder="Search name" style="padding:6px 10px; border:1px solid #ddd; border-radius:6px; min-width:220px;">
+                <select id="paStatus" style="padding:6px 10px; border:1px solid #ddd; border-radius:6px;">
+                    <option value="pending">Pending</option>
+                    <option value="transfer">Transfer</option>
+                </select>
+                <button id="paClear" type="button" style="padding:6px 10px; border-radius:6px; border:1px solid #ccc; background:#f6f6f6;">Clear</button>
+            </div>
 
             <!-- <div id="qrOverlay">
                 <div class="qr-content">
@@ -86,7 +94,17 @@ if ($user_id) {
                         </tr>
                     </tbody>
                 </table>
+                <div id="paPagerWrap" style="display:flex; align-items:center; justify-content: space-between; gap: 8px; margin-top: 8px;">
+                    <div id="paPageInfo" style="font-size: 12px; color: #555;">&nbsp;</div>
+                    <div style="display:flex; gap:4px; align-items:center;">
+                        <button id="paPrevBtn" type="button">Prev</button>
+                        <span id="paPageButtons" style="display:inline-flex; align-items:center; gap:4px;"></span>
+                        <button id="paNextBtn" type="button">Next</button>
+                    </div>
+                </div>
             </div>
+
+
 
             <div class="childinformation-container">
                 <div class="childinfo-header">
@@ -206,12 +224,131 @@ if ($user_id) {
                 </div>
             </div>
         </section>
+        
     </main>
 
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script>
+        // Pager spinner CSS
+        (function ensureSpinnerCss(){
+            if (document.getElementById('pagerSpinnerCss')) return;
+            const style = document.createElement('style');
+            style.id = 'pagerSpinnerCss';
+            style.textContent = `.mini-spinner{width:16px;height:16px;border:2px solid #e3e3e3;border-top-color:#2b7cff;border-radius:50%;display:inline-block;animation:paSpin .7s linear infinite}@keyframes paSpin{to{transform:rotate(360deg)}}`;
+            document.head.appendChild(style);
+        })();
+
+        // Blue pager styles like immunization.php
+        (function ensurePagerNumCss(){
+            if (document.getElementById('pagerNumCss')) return;
+            const style = document.createElement('style');
+            style.id = 'pagerNumCss';
+            style.textContent = '.pa-page-num{background:#1976d2;color:#fff;border:none;border-radius:8px;padding:6px 10px;min-width:28px;text-align:center;font-weight:600}'+
+                                 '#paPrevBtn,#paNextBtn{background:#1976d2;color:#fff;border:none;border-radius:8px;padding:6px 10px}'+
+                                 '#paPrevBtn:disabled,#paNextBtn:disabled{opacity:.6;cursor:not-allowed}';
+            document.head.appendChild(style);
+        })();
+
+        const paState = { page: 1, limit: 10, loading: false };
+
+        async function loadPending(page = 1, opts = { keep: true }) {
+            const body = document.querySelector('#childhealthrecordBody');
+            const prevBtn = document.getElementById('paPrevBtn');
+            const nextBtn = document.getElementById('paNextBtn');
+            const pageButtons = document.getElementById('paPageButtons');
+
+            const search = (document.getElementById('paSearch').value || '').trim();
+            const status = (document.getElementById('paStatus').value || 'pending');
+            const limit = paState.limit;
+
+            paState.page = page;
+            paState.loading = true;
+
+            prevBtn.disabled = true; nextBtn.disabled = true;
+            pageButtons.innerHTML = '<span class="mini-spinner"></span>';
+
+            if (!opts || !opts.keep) {
+                body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
+            }
+
+            try {
+                const qs = new URLSearchParams({ page: String(page), limit: String(limit), status, search });
+                const res = await fetch('../../php/supabase/bhw/pending_chr.php?' + qs.toString());
+                const data = await res.json();
+
+                if (data.status !== 'success') {
+                    body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>';
+                    updatePaPager({ page, has_more: false });
+                    return;
+                }
+
+                const rowsData = Array.isArray(data.data) ? data.data : [];
+                const count = rowsData.length;
+                if (count === 0) {
+                    body.innerHTML = '<tr><td colspan="21">No records found</td></tr>';
+                    updatePaPager({ page, has_more: false });
+                    updatePaInfo(page, limit, 0);
+                    return;
+                }
+
+                let rows = '';
+                rowsData.forEach(item => {
+                    rows += `<tr>
+                            <td hidden>${item.id || ''}</td>
+                            <td hidden>${item.user_id || ''}</td>
+                            <td hidden>${item.baby_id || ''}</td>
+                            <td>${item.child_fname || ''}</td>
+                            <td>${item.child_lname || ''}</td>
+                            <td>${item.child_gender || ''}</td>
+                            <td>${item.child_birth_date || ''}</td>
+                            <td>${item.place_of_birth || ''}</td>
+                            <td>${item.mother_name || ''}</td>
+                            <td>${item.father_name || ''}</td>
+                            <td>${item.address || ''}</td>
+                            <td>${item.birth_weight || ''}</td>
+                            <td>${item.birth_height || ''}</td>
+                            <td>${item.birth_attendant || ''}</td>
+                            <td>${item.status || ''}</td>
+                            <td><button class="btn view-btn" onclick=\"viewChildInformation('${item.baby_id}')\">
+                                <span class="material-symbols-rounded">visibility</span>
+                                View</button>
+                            </td>
+                        </tr>`;
+                });
+                body.innerHTML = rows;
+
+                updatePaPager({ page: data.page || page, has_more: !!data.has_more });
+                updatePaInfo(data.page || page, data.limit || limit, count);
+            } catch (e) {
+                body.innerHTML = '<tr><td colspan="21">Error loading records</td></tr>';
+                updatePaPager({ page, has_more: false });
+                updatePaInfo(page, limit, 0);
+            } finally {
+                paState.loading = false;
+            }
+        }
+
+        function updatePaPager(meta){
+            const prevBtn = document.getElementById('paPrevBtn');
+            const nextBtn = document.getElementById('paNextBtn');
+            const pageButtons = document.getElementById('paPageButtons');
+            const page = meta.page || 1;
+            const hasMore = !!meta.has_more;
+            prevBtn.disabled = page <= 1;
+            nextBtn.disabled = !hasMore;
+            pageButtons.innerHTML = `<span class="pa-page-num">${page}</span>`;
+        }
+
+        function updatePaInfo(page, limit, count){
+            const info = document.getElementById('paPageInfo');
+            if (!info) return;
+            const start = (page - 1) * limit + 1;
+            const end = start + Math.max(0, count) - 1;
+            info.textContent = count > 0 ? `Showing ${start}-${end}` : '';
+        }
+
         async function getChildHealthRecord() {
             const body = document.querySelector('#childhealthrecordBody');
             body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
@@ -358,22 +495,8 @@ if ($user_id) {
         }
 
 
-        function filterTable() {
-            const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
-            const rows = document.querySelectorAll('#childhealthrecordBody tr');
-            rows.forEach(tr => {
-                const tds = tr.querySelectorAll('td');
-                if (!tds || tds.length === 0) return;
-                const id = (tds[0].textContent || '').toLowerCase();
-                const userId = (tds[1].textContent || '').toLowerCase();
-                const babyId = (tds[2].textContent || '').toLowerCase();
-                const fname = (tds[3].textContent || '').toLowerCase();
-                const lname = (tds[4].textContent || '').toLowerCase();
-                const childName = (tds[5].textContent || '').toLowerCase();
-                const text = [id, userId, babyId, fname, lname, childName].join(' ');
-                tr.style.display = text.includes(q) ? '' : 'none';
-            });
-        }
+        // Deprecated client-side filter (replaced by server-side loadPending)
+        function filterTable() {}
 
         function viewChrImage(urlEnc) {
             const url = decodeURIComponent(urlEnc);
@@ -426,7 +549,28 @@ if ($user_id) {
         }
 
 
-        window.addEventListener('DOMContentLoaded', getChildHealthRecord);
+        // Wire filters and pager
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('paPrevBtn').addEventListener('click', () => {
+                if (paState.loading) return; 
+                const nextPage = Math.max(1, (paState.page||1) - 1);
+                loadPending(nextPage, { keep: true });
+            });
+            document.getElementById('paNextBtn').addEventListener('click', () => {
+                if (paState.loading) return; 
+                const nextPage = (paState.page||1) + 1;
+                loadPending(nextPage, { keep: true });
+            });
+            document.getElementById('paSearch').addEventListener('input', () => loadPending(1, { keep: true }));
+            document.getElementById('paStatus').addEventListener('change', () => loadPending(1, { keep: true }));
+            document.getElementById('paClear').addEventListener('click', () => {
+                document.getElementById('paSearch').value = '';
+                document.getElementById('paStatus').value = 'pending';
+                loadPending(1, { keep: true });
+            });
+
+            loadPending(1, { keep: true });
+        });
 
         let html5QrcodeInstance = null;
         async function openScanner() {

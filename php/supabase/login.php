@@ -2,7 +2,9 @@
 // Set Philippines timezone
 date_default_timezone_set('Asia/Manila');
 ini_set('date.timezone', 'Asia/Manila');
-
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 session_start();
 include "../../database/SupabaseConfig.php";
 include "../../database/DatabaseHelper.php";

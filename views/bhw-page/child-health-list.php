@@ -39,6 +39,17 @@ if ($user_id) {
 
     <main>
         <section class="child-health-list-section">
+            <div class="filters" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
+                <label>Search:
+                    <input id="chlSearchInput" type="text" placeholder="Search by name, mother, address">
+                </label>
+                <label>Purok:
+                    <input id="chlPurok" type="text" placeholder="e.g. Purok 1">
+                </label>
+                <button id="chlApplyFiltersBtn" class="btn" type="button">Apply</button>
+                <button id="chlClearFiltersBtn" class="btn" type="button">Clear</button>
+            </div>
+
             <div class="table-container">
                 <table class="table table-hover" id="childhealthrecord">
                     <thead>
@@ -67,6 +78,14 @@ if ($user_id) {
                         <tr>
                     </tbody>
                 </table>
+                <div id="chlPager" style="display:flex; align-items:center; justify-content: space-between; gap: 8px; margin-top: 8px;">
+                    <div id="chlPageInfo" style="font-size: 12px; color: #555;">&nbsp;</div>
+                    <div style="display:flex; gap:4px; align-items:center;">
+                        <button id="chlPrevBtn" type="button">Prev</button>
+                        <span id="chlPageButtons" style="display:inline-flex; align-items:center; gap:4px;"></span>
+                        <button id="chlNextBtn" type="button">Next</button>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -74,24 +93,44 @@ if ($user_id) {
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script>
-        async function getChildHealthRecord() {
-            const body = document.querySelector('#childhealthrecordBody');
-            body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
-            try {
-                // const res = await fetch('/ebakunado/php/bhw/get_child_health_records.php');
-                const res = await fetch('../../php/supabase/bhw/get_child_health_record.php');
-                const data = await res.json();
-                if (data.status !== 'success') {
-                    body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>';
-                    return;
-                }
-                if (!data.data || data.data.length === 0) {
-                    body.innerHTML = '<tr><td colspan="21">No records found</td></tr>';
-                    return;
-                }
+        // pager CSS
+        (function(){
+            const s=document.createElement('style');
+            s.textContent = '.chl-spinner{width:16px;height:16px;border:2px solid #ccc;border-top-color:#1976d2;border-radius:50%;display:inline-block;animation:spin .8s linear infinite}'+
+                            '.chl-page-num{background:#1976d2;color:#fff;border:none;border-radius:8px;padding:6px 10px;min-width:28px;text-align:center;font-weight:600}'+
+                            '#chlPrevBtn,#chlNextBtn{background:#1976d2;color:#fff;border:none;border-radius:8px;padding:6px 10px}'+
+                            '#chlPrevBtn:disabled,#chlNextBtn:disabled{opacity:.6;cursor:not-allowed}'+
+                            '@keyframes spin{to{transform:rotate(360deg)}}';
+            document.head.appendChild(s);
+        })();
 
+        let chlPage = 1; const chlLimit = 10;
+
+        async function getChildHealthRecord(page=1, opts={}) {
+            const body = document.querySelector('#childhealthrecordBody');
+            const keep = opts.keep === true;
+            const prevBtn = document.getElementById('chlPrevBtn');
+            const nextBtn = document.getElementById('chlNextBtn');
+            const pageSpan = document.getElementById('chlPageButtons');
+            if (!keep) {
+                body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
+            } else {
+                if (pageSpan) pageSpan.innerHTML = '<span class="chl-spinner" aria-label="Loading" role="status"></span>';
+                if (prevBtn) prevBtn.disabled = true; if (nextBtn) nextBtn.disabled = true;
+            }
+            try {
+                const qs = new URLSearchParams({ page: String(page), limit: String(chlLimit) });
+                const searchVal = (document.getElementById('chlSearchInput')?.value||'').trim();
+                const purokVal = (document.getElementById('chlPurok')?.value||'').trim();
+                if (searchVal) qs.set('search', searchVal);
+                if (purokVal) qs.set('purok', purokVal);
+                const res = await fetch('../../php/supabase/bhw/get_child_health_record.php?'+qs.toString());
+                const data = await res.json();
+                if (data.status !== 'success') { body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>'; updateChlPager(1,false); updateChlInfo(1,chlLimit,0); return; }
+                const rowsData = Array.isArray(data.data)?data.data:[];
+                if (rowsData.length === 0) { body.innerHTML = '<tr><td colspan="21">No records found</td></tr>'; updateChlPager(page,false); updateChlInfo(page, chlLimit, 0); return; }
                 let rows = '';
-                data.data.forEach(item => {
+                rowsData.forEach(item => {
                     rows += `<tr>
                                 <td>${item.child_fname || ''} ${item.child_lname || ''}</td>
                                 <td>${item.child_gender || ''}</td>
@@ -102,16 +141,35 @@ if ($user_id) {
                                 <td>${item.status || ''}</td>
                                 <td>
                                     <button onclick="viewSchedule('${item.baby_id}', this)">View Schedule</button>
-                                    <a class="viewCHR-btn" href="child-health-record.php?baby_id=${encodeURIComponent(item.baby_id)}">
-                                        View CHR
-                                    </a>
+                                    <a class="viewCHR-btn" href="child-health-record.php?baby_id=${encodeURIComponent(item.baby_id)}">View CHR</a>
                                 </td>
                             </tr>`;
                 });
                 body.innerHTML = rows;
+                chlPage = data.page || page;
+                updateChlPager(chlPage, !!data.has_more);
+                updateChlInfo(chlPage, data.limit || chlLimit, rowsData.length);
             } catch (e) {
                 body.innerHTML = '<tr><td colspan="21">Error loading records</td></tr>';
+                updateChlPager(page,false); updateChlInfo(page, chlLimit, 0);
+            } finally {
+                if (prevBtn) prevBtn.disabled = false; if (nextBtn) nextBtn.disabled = false;
             }
+        }
+
+        function updateChlPager(page, hasMore){
+            const prevBtn = document.getElementById('chlPrevBtn');
+            const nextBtn = document.getElementById('chlNextBtn');
+            const pageSpan = document.getElementById('chlPageButtons');
+            if (!prevBtn || !nextBtn || !pageSpan) return;
+            prevBtn.disabled = page <= 1; nextBtn.disabled = !hasMore;
+            pageSpan.innerHTML = `<button type="button" data-page="${page}" disabled class="chl-page-num">${page}</button>`;
+        }
+
+        function updateChlInfo(page, limit, count){
+            const info = document.getElementById('chlPageInfo');
+            if (!info) return; const start = (page-1)*limit + 1; const end = start + Math.max(0, count) - 1;
+            info.textContent = count>0 ? `Showing ${start}-${end}` : '';
         }
 
         function filterTable() {
@@ -210,7 +268,21 @@ if ($user_id) {
         }
 
 
-        window.addEventListener('DOMContentLoaded', getChildHealthRecord);
+        window.addEventListener('DOMContentLoaded', () => getChildHealthRecord(1));
+        document.addEventListener('DOMContentLoaded', () => {
+            const prevBtn = document.getElementById('chlPrevBtn');
+            const nextBtn = document.getElementById('chlNextBtn');
+            if (prevBtn) prevBtn.addEventListener('click', () => { if (chlPage>1) getChildHealthRecord(chlPage-1, { keep: true }); });
+            if (nextBtn) nextBtn.addEventListener('click', () => { getChildHealthRecord(chlPage+1, { keep: true }); });
+            const applyBtn = document.getElementById('chlApplyFiltersBtn');
+            const clearBtn = document.getElementById('chlClearFiltersBtn');
+            if (applyBtn) applyBtn.addEventListener('click', () => getChildHealthRecord(1, { keep: true }));
+            if (clearBtn) clearBtn.addEventListener('click', () => { 
+                const si=document.getElementById('chlSearchInput'); if (si) si.value='';
+                const pk=document.getElementById('chlPurok'); if (pk) pk.value='';
+                getChildHealthRecord(1, { keep: true });
+            });
+        });
 
 
         let html5QrcodeInstance = null;

@@ -114,13 +114,17 @@ if ($user_id) {
 </tbody>
                 </table>
 
+                <div id="pager" style="display:flex; align-items:center; justify-content: space-between; gap: 8px; margin-top: 8px;">
+                    <div id="pageInfo" style="font-size: 12px; color: #555;">&nbsp;</div>
+                    <div style="display:flex; gap:4px; align-items:center;">
+                        <button id="tclPrevBtn" type="button">Prev</button>
+                        <span id="tclPageButtons" style="display:inline-flex; align-items:center; gap:4px;"></span>
+                        <button id="tclNextBtn" type="button">Next</button>
+                    </div>
+                </div>
+
             </div>
         </section>
-                <div id="tclPager" style="position: sticky; bottom: 0; background: #fff; display:flex; align-items:center; justify-content: flex-end; gap: 8px; margin-top: 8px; z-index: 5; padding: 6px 0;">
-                    <button id="tclPrevBtn" type="button">Prev</button>
-                    <span id="tclPageButtons" style="display:inline-flex; align-items:center; gap:4px;"></span>
-                    <button id="tclNextBtn" type="button">Next</button>
-                </div>
     </main>
 
 
@@ -128,7 +132,17 @@ if ($user_id) {
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script>
         // pager spinner CSS
-        (function(){ const s=document.createElement('style'); s.textContent='.pager-spinner{width:16px;height:16px;border:2px solid #ccc;border-top-color:#1976d2;border-radius:50%;display:inline-block;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}'; document.head.appendChild(s); })();
+        (function(){
+            const s=document.createElement('style');
+            s.textContent =
+                '.pager-spinner{width:16px;height:16px;border:2px solid #ccc;border-top-color:#1976d2;border-radius:50%;display:inline-block;animation:spin .8s linear infinite}'+
+                '.tcl-page-num{background:#1976d2;color:#fff;border:none;border-radius:8px;padding:6px 10px;min-width:28px;text-align:center;font-weight:600}'+
+                '.tcl-page-num[disabled]{opacity:1;cursor:default}'+
+                '#tclPrevBtn,#tclNextBtn{background:#1976d2;color:#fff;border:none;border-radius:8px;padding:6px 10px}'+
+                '#tclPrevBtn:disabled,#tclNextBtn:disabled{opacity:.6;cursor:not-allowed}'+
+                '@keyframes spin{to{transform:rotate(360deg)}}';
+            document.head.appendChild(s);
+        })();
 
         let tclRecords = [];
         let tclPage = 1;
@@ -173,6 +187,7 @@ if ($user_id) {
                 renderTCLTable(tclRecords);
                 tclPage = data.page || page;
                 updateTclPager(tclPage, data.has_more === true);
+                updateTclInfo(tclPage, tclLimit, tclRecords.length);
             } catch (e) {
                 console.error('Error loading TCL data:', e);
                 body.innerHTML = '<tr><td colspan="26">Error loading TCL data</td></tr>';
@@ -258,10 +273,19 @@ if ($user_id) {
             const prevBtn = document.getElementById('tclPrevBtn');
             const nextBtn = document.getElementById('tclNextBtn');
             const pageSpan = document.getElementById('tclPageButtons');
+            if (!prevBtn || !nextBtn || !pageSpan) return; // guard if pager not in DOM yet
             prevBtn.disabled = page <= 1;
             nextBtn.disabled = !hasMore;
-            pageSpan.innerHTML = String(page);
+            pageSpan.innerHTML = `<button type="button" data-page="${page}" disabled class="tcl-page-num">${page}</button>`;
             console.log('Updating pager:', page, hasMore);
+        }
+
+        function updateTclInfo(page, limit, count) {
+            const info = document.getElementById('pageInfo');
+            if (!info) return;
+            const start = (page - 1) * limit + 1;
+            const end = start + Math.max(0, count) - 1;
+            info.textContent = count > 0 ? `Showing ${start}-${end}` : '';
         }
 
         document.getElementById('tclPrevBtn').addEventListener('click', (e) => {
