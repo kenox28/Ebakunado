@@ -1,19 +1,12 @@
 services:
   - type: web
     name: ebakunado-api
-    env: php
+    env: docker
     plan: free
-    buildCommand: |
-      composer install --no-dev --optimize-autoloader
-      # If you have any build steps for assets, add them here
-    startCommand: |
-      # Start PHP built-in web server with index.php as entry point
-      php -S 0.0.0.0:$PORT index.php
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: PHP_VERSION
         value: 8.1
-      - key: NODE_VERSION
-        value: 18
       # Add your Supabase credentials as environment variables
       - key: SUPABASE_URL
         sync: false # This means you'll set this manually in Render dashboard

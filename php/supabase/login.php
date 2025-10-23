@@ -81,53 +81,66 @@ try {
     $user_type = null;
 
     $is_email = filter_var($email_or_phone, FILTER_VALIDATE_EMAIL);
+    
+    if ($is_email) {
+        // Match exactly what create_account.php does: FILTER_SANITIZE_EMAIL
+        $email_or_phone = filter_var($email_or_phone, FILTER_SANITIZE_EMAIL);
+    }
 
     if ($is_email) {
-        // super_admin
-        $rows = supabaseSelect('super_admin', '*', ['email' => $email_or_phone]);
-        if ($rows && count($rows) > 0) {
-            $user_data = $rows[0];
-            $user_type = 'super_admin';
-            $user_found = true;
-        }
+        // Try multiple email variations for compatibility with older records
+        $email_variations = [
+            $email_or_phone, // sanitized version
+            strtolower(trim($_POST['Email_number'] ?? '')), // original lowercase
+            trim($_POST['Email_number'] ?? '') // original as-is
+        ];
+        
+        foreach ($email_variations as $email_to_try) {
+            if ($user_found) break;
+            
+            // super_admin
+            $rows = supabaseSelect('super_admin', '*', ['email' => $email_to_try]);
+            if ($rows && count($rows) > 0) {
+                $user_data = $rows[0];
+                $user_type = 'super_admin';
+                $user_found = true;
+                break;
+            }
 
-        // admin
-        if (!$user_found) {
-            $rows = supabaseSelect('admin', '*', ['email' => $email_or_phone]);
+            // admin
+            $rows = supabaseSelect('admin', '*', ['email' => $email_to_try]);
             if ($rows && count($rows) > 0) {
                 $user_data = $rows[0];
                 $user_type = 'admin';
                 $user_found = true;
+                break;
             }
-        }
 
-        // bhw
-        if (!$user_found) {
-            $rows = supabaseSelect('bhw', '*', ['email' => $email_or_phone]);
+            // bhw
+            $rows = supabaseSelect('bhw', '*', ['email' => $email_to_try]);
             if ($rows && count($rows) > 0) {
                 $user_data = $rows[0];
                 $user_type = 'bhw';
                 $user_found = true;
+                break;
             }
-        }
 
-        // midwives
-        if (!$user_found) {
-            $rows = supabaseSelect('midwives', '*', ['email' => $email_or_phone]);
+            // midwives
+            $rows = supabaseSelect('midwives', '*', ['email' => $email_to_try]);
             if ($rows && count($rows) > 0) {
                 $user_data = $rows[0];
                 $user_type = 'midwife';
                 $user_found = true;
+                break;
             }
-        }
 
-        // users
-        if (!$user_found) {
-            $rows = supabaseSelect('users', '*', ['email' => $email_or_phone]);
+            // users
+            $rows = supabaseSelect('users', '*', ['email' => $email_to_try]);
             if ($rows && count($rows) > 0) {
                 $user_data = $rows[0];
                 $user_type = 'user';
                 $user_found = true;
+                break;
             }
         }
     } else {
@@ -161,7 +174,11 @@ try {
     if (!$user_found) {
         echo json_encode([
             "status" => "failed",
-            "message" => "Invalid email/phone or password"
+            "message" => "Email/phone not found. Please check your credentials.",
+            "debug" => [
+                "searched_email" => $is_email ? $email_or_phone : null,
+                "is_email" => $is_email
+            ]
         ]);
         exit();
     }
@@ -203,7 +220,7 @@ try {
     if (!$password_valid) {
         echo json_encode([
             "status" => "failed",
-            "message" => "Invalid email/phone or password"
+            "message" => "Incorrect password. Please try again."
         ]);
         exit();
     }
