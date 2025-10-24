@@ -37,25 +37,15 @@ if ($user_id) {
     <?php include 'include/sidebar.php'; ?>
 
     <main>
+        <section class="section-container">
+            <h2 class="pending-approval section-title">
+                <span class="material-symbols-rounded">pending_actions</span>
+                Pending Child List Approval
+            </h2>
+        </section>
         <section class="pending-approval-section">
-            <!-- <div id="qrOverlay">
-                <div class="qr-content">
-                    <select id="cameraSelect" onchange="switchCamera(event)"></select>
-                    <div id="qrReader"></div>
-                    <div class="qr-controls">
-                        <span class="qr-instruction">Point camera at QR code</span>
-                        <label class="qr-upload">
-                            <span>or Upload Image:</span>
-                            <input type="file" id="qrImageInput" accept="image/*" onchange="scanFromImage(event)" />
-                        </label>
-                        <button id="torchBtn" onclick="toggleTorch()">Torch On</button>
-                        <button onclick="closeScanner()">Close</button>
-                    </div>
-                </div>
-            </div> -->
-
+            <!-- Pending list panel -->
             <div class="pending-approval-panel">
-                <h2 class="pending-approval section-heading">Pending Immunization List</h2>
                 <div class="table-container">
                     <table class="table table-hover" id="childhealthrecord">
                         <thead>
@@ -90,6 +80,7 @@ if ($user_id) {
                 </div>
             </div>
 
+            <!-- Child details + vaccination panel -->
             <div class="childinformation-container">
                 <div class="child-information childinfo-header">
                     <h1 class="section-heading">
@@ -221,7 +212,7 @@ if ($user_id) {
                         <span class="material-symbols-rounded">
                             syringe
                         </span>
-                        Vaccination Records
+                        Child's Vaccination Records
                     </h2>
                     <div class="vaccination-record-list" id="vaccinationRecordsContainer">
                         <div class="loading">
@@ -333,8 +324,11 @@ if ($user_id) {
                 // Default to read-only on open
                 setChildInfoEditing(false);
 
+                // Show details, hide list + header section
                 document.querySelector('.childinformation-container').style.display = 'flex';
                 document.querySelector('.pending-approval-panel').style.display = 'none';
+                const headerSection = document.querySelector('.section-container');
+                if (headerSection) headerSection.style.display = 'none';
             } else {
                 console.log(data.message);
             }
@@ -343,6 +337,8 @@ if ($user_id) {
         function backToList() {
             document.querySelector('.childinformation-container').style.display = 'none';
             document.querySelector('.pending-approval-panel').style.display = 'block';
+            const headerSection = document.querySelector('.section-container');
+            if (headerSection) headerSection.style.display = '';
         }
 
         async function loadVaccinationRecords(baby_id) {
@@ -691,10 +687,10 @@ if ($user_id) {
                 if (data.status === 'success') {
                     alert('Child information updated successfully!');
                     // Update original data for reset functionality
-                    originalChildData = {
-                        ...originalChildData,
-                        ...updateData
-                    };
+                    originalChildData = { ...originalChildData, ...updateData };
+
+                    // Exit edit mode and show Edit button again
+                    setChildInfoEditing(false);
                 } else {
                     alert('Failed to update child information: ' + data.message);
                 }
@@ -704,13 +700,12 @@ if ($user_id) {
             }
         }
 
-        // Reset child information to original values
+        // Reset acts as Cancel: restore values and exit edit mode
         function resetChildInfo() {
             if (!originalChildData || Object.keys(originalChildData).length === 0) {
                 alert('No original data to reset to');
                 return;
             }
-
             document.querySelector('#childName').value = originalChildData.child_fname + ' ' + originalChildData.child_lname;
             document.querySelector('#childGender').value = originalChildData.child_gender;
             document.querySelector('#childBirthDate').value = originalChildData.child_birth_date;
@@ -723,6 +718,9 @@ if ($user_id) {
             document.querySelector('#childBirthAttendant').value = originalChildData.birth_attendant;
             document.querySelector('#childDeliveryType').value = originalChildData.delivery_type || 'Normal';
             document.querySelector('#childBirthOrder').value = originalChildData.birth_order || 'Single';
+
+            // Exit edit mode and show Edit button again
+            setChildInfoEditing(false);
         }
 
         async function logoutBhw() {
@@ -738,38 +736,28 @@ if ($user_id) {
             }
         }
 
-        // Add helpers to enable/disable the form
+        // Edit mode controls: hide Edit during editing; show Save/Cancel via CSS
         function setChildInfoEditing(editing) {
             const details = document.querySelector('.childinfo-details');
             if (!details) return;
 
-            // Inputs and selects
             details.querySelectorAll('input, select').forEach(el => {
                 el.disabled = !editing;
             });
 
-            // Action buttons inside the details panel (save/reset)
+            // Toggle editing class (controls Save/Cancel visibility via CSS)
+            details.classList.toggle('editing', editing);
+
+            // Toggle Edit button visibility (no "Done" state)
+            const editBtn = document.getElementById('editChildInfoBtn');
+            if (editBtn) {
+                editBtn.style.display = editing ? 'none' : '';
+            }
+
+            // Also enable/disable Save/Reset buttons
             details.querySelectorAll('.childinfo-buttons button').forEach(btn => {
                 btn.disabled = !editing;
             });
-
-            // Update Edit button label/icon
-            const btn = document.getElementById('editChildInfoBtn');
-            if (btn) {
-                const icon = btn.querySelector('.material-symbols-rounded');
-                const text = btn.querySelector('.btn-text');
-                if (editing) {
-                    icon.textContent = 'done';
-                    text.textContent = 'Done';
-                    btn.classList.add('active');
-                } else {
-                    icon.textContent = 'edit';
-                    text.textContent = 'Edit';
-                    btn.classList.remove('active');
-                }
-            }
-
-            details.classList.toggle('editing', editing);
         }
 
         function toggleChildInfoEditing() {

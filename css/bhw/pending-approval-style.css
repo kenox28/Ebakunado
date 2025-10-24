@@ -1,8 +1,10 @@
+/* =Base: page/main scroll boundary */
 main {
   max-height: 100vh;
   overflow-y: auto;
 }
 
+/* =Buttons: minimal base (legacy) */
 .btn {
   display: flex;
   justify-content: center;
@@ -10,28 +12,124 @@ main {
   gap: 0.4rem;
   padding: 0.5rem 1rem;
 }
-
 .btn:hover {
   background-color: #005d2d;
 }
 
-.view-btn {
-  font-size: 1.2rem;
-  background-color: var(--primary-color);
-  color: #ffffff;
-  transition: background-color 0.3s ease;
+/* =Buttons: full base + states */
+.btn,
+.childinfo-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: none;
+  background: var(--primary-color);
+  color: #fff;
+  font-weight: 500;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.btn:hover,
+.childinfo-actions button:hover {
+  background: #005d2d;
+}
+.btn:active,
+.childinfo-actions button:active {
+  background: #005129;
 }
 
-.view-btn .material-symbols-rounded {
-  font-size: 1.6rem;
+/* =Buttons: focus outline (match Immunization) */
+.btn:focus,
+.btn:focus-visible,
+.childinfo-actions button:focus,
+.childinfo-actions button:focus-visible,
+.childinfo-buttons .save-btn:focus,
+.childinfo-buttons .save-btn:focus-visible,
+.childinfo-buttons .reset-btn:focus,
+.childinfo-buttons .reset-btn:focus-visible,
+.view-btn:focus,
+.view-btn:focus-visible {
+  outline: 2px solid #00250e;
+  outline-offset: 1px;
 }
 
+/* =Action: Back button (border-only) */
+.childinfo-actions #closeButton {
+  background: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+.childinfo-actions #closeButton:hover {
+  background: #f9fafb;
+  border-color: #157347;
+}
+.childinfo-actions #closeButton:active {
+  background: #f3f4f6;
+}
+
+/* =Form actions: container + buttons */
+.childinfo-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.childinfo-buttons button {
+  padding: 0.8rem 1.6rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.05s ease;
+  border: 1px solid transparent;
+}
+.childinfo-buttons button:active {
+  transform: scale(0.97);
+}
+
+/* =Form actions: Save button (primary) */
+.save-btn {
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+}
+.save-btn:hover {
+  background: #005d2d;
+  border-color: #005d2d;
+}
+.save-btn:active {
+  background: #005129;
+  transform: scale(0.98);
+}
+
+/* =Form actions: Reset button (border-only) */
+.reset-btn,
+.childinfo-buttons .reset-btn {
+  background: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+.reset-btn:hover {
+  background: #f9fafb;
+  border-color: #157347;
+}
+.reset-btn:active {
+  background: #f3f4f6;
+  transform: scale(0.98);
+}
+
+/* =Child info: header bar (title + actions) */
 .child-information {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+/* =Child info: main two-column layout */
 .childinfo-main {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -39,6 +137,7 @@ main {
   min-width: 0;
 }
 
+/* =Child info: details card */
 .childinfo-details {
   padding: 1.5rem;
   border-radius: 10px;
@@ -46,19 +145,20 @@ main {
   background-color: #ffffff;
 }
 
+/* =Child info: details header (title + edit) */
 .childinfo-header {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
+  justify-content: space-between;
   gap: 0.5rem;
 }
-
 .childinfo-title {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
 }
 
+/* =Headings: shared heading styles */
 .childinfo-header,
 .vaccination-header {
   display: flex;
@@ -69,34 +169,32 @@ main {
   color: var(--primary-color);
   margin-bottom: 1.2rem;
 }
-
 .childinfo-header .material-symbols-rounded,
 .vaccination-header .material-symbols-rounded {
   font-size: 2rem;
 }
 
+/* =Section heading (page title) */
 .section-heading {
   display: flex;
   align-items: center;
 }
-
 .section-heading .material-symbols-rounded {
   font-size: 2.8rem;
   margin-right: 0.5rem;
 }
 
+/* =Child info: form grid */
 .childinfo-grid {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
 }
-
 .childinfo-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
-
 .childinfo-row label {
   display: flex;
   flex-direction: column;
@@ -104,21 +202,23 @@ main {
   color: #333;
 }
 
+/* =Inputs/selects: base + focus */
 .childinfo-row input,
 .childinfo-row select {
   margin-top: 4px;
-  padding: 6px;
+  padding: 6px 10px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
   font-family: inherit;
-  text-transform: capitalize; 
+  text-transform: capitalize;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-
 .childinfo-row input:focus,
 .childinfo-row select:focus {
-  border-color: #007bff;
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
 }
-
 .childinfo-row input::placeholder {
   text-transform: capitalize;
 }
@@ -126,57 +226,16 @@ main {
   text-transform: capitalize;
 }
 
-/* Buttons section styling */
-.childinfo-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.childinfo-buttons button {
-  padding: 0.8rem 1.6rem;
-  font-size: 1.4rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-/* Button colors */
-.save-btn {
-  background-color: #007bff;
-  color: white;
-}
-
-.save-btn:hover {
-  background-color: #0056b3;
-}
-
-.reset-btn {
-  background-color: #6c757d;
-  color: white;
-}
-
-.reset-btn:hover {
-  background-color: #5a6268;
-}
-
-.childinfo-buttons button:active {
-  transform: scale(0.97);
-}
-
+/* =Child info: image panel */
 .childinfo-image {
   padding: 1.5rem;
   border-radius: 10px;
   background-color: #ffffff;
   border: 1px solid #ccc;
 }
-
 .childinfo-image h2 {
   margin-bottom: 1.2rem;
 }
-
 .childinfo-image img {
   width: 100%;
   height: 48rem;
@@ -184,6 +243,7 @@ main {
   border-radius: 8px;
 }
 
+/* =Vaccination section: container */
 .vaccination-section {
   width: 100%;
   padding: 1.5rem;
@@ -193,6 +253,29 @@ main {
   overflow: auto;
 }
 
+/* =Vaccination section: horizontal scrolling table */
+.vaccination-section .vaccination-record-list {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+}
+.vaccination-section .vaccination-record-list table {
+  min-width: 900px;
+  border-collapse: collapse;
+}
+.vaccination-section .vaccination-record-list th,
+.vaccination-section .vaccination-record-list td {
+  white-space: nowrap;
+}
+.vaccination-section .vaccination-record-list thead {
+  position: static;
+  top: auto;
+  z-index: auto;
+}
+
+/* =Data table: container */
 .table-container {
   overflow: auto;
   margin-top: 1rem;
@@ -201,20 +284,18 @@ main {
   overflow-x: auto;
 }
 
+/* =Data table: base */
 .table {
   width: 100%;
   border-collapse: collapse;
-  /* background: #fff; */
   min-width: 1200px;
 }
-
 .table thead {
   position: sticky;
   top: 0;
   z-index: 10;
   background: #f2f2f2;
 }
-
 .table thead th {
   padding: 0.75rem;
   text-align: left;
@@ -225,20 +306,16 @@ main {
   font-size: 1.3rem;
   text-transform: capitalize;
 }
-
 .table tbody tr {
   border-bottom: 1px solid #e2e8f0;
   transition: background-color 0.2s ease;
 }
-
 .table tbody tr:hover {
   background-color: #f8fafc;
 }
-
 .table tbody tr:last-child {
   border-bottom: none;
 }
-
 .table tbody td {
   padding: 0.75rem;
   text-align: left;
@@ -248,7 +325,6 @@ main {
   white-space: nowrap;
   text-transform: capitalize;
 }
-
 .table tbody td:first-child {
   font-weight: 500;
   text-align: left;
@@ -256,73 +332,35 @@ main {
   min-width: 60px;
 }
 
-/* Column width adjustments for better spacing */
+/* =Data table: column width hints */
 .table th:nth-child(2),
-.table td:nth-child(2) {
-  min-width: 120px; /* Child Firstname */
-}
-
+.table td:nth-child(2) { min-width: 120px; }
 .table th:nth-child(3),
-.table td:nth-child(3) {
-  min-width: 120px; /* Child Lastname */
-}
-
+.table td:nth-child(3) { min-width: 120px; }
 .table th:nth-child(4),
-.table td:nth-child(4) {
-  min-width: 80px; /* Gender */
-}
-
+.table td:nth-child(4) { min-width: 80px; }
 .table th:nth-child(5),
-.table td:nth-child(5) {
-  min-width: 120px; /* Birth Date */
-}
-
+.table td:nth-child(5) { min-width: 120px; }
 .table th:nth-child(6),
-.table td:nth-child(6) {
-  min-width: 150px; /* Place of Birth */
-}
-
+.table td:nth-child(6) { min-width: 150px; }
 .table th:nth-child(7),
-.table td:nth-child(7) {
-  min-width: 150px; /* Mother's Name */
-}
-
+.table td:nth-child(7) { min-width: 150px; }
 .table th:nth-child(8),
-.table td:nth-child(8) {
-  min-width: 150px; /* Father's Name */
-}
-
+.table td:nth-child(8) { min-width: 150px; }
 .table th:nth-child(9),
-.table td:nth-child(9) {
-  min-width: 200px; /* Address */
-}
-
+.table td:nth-child(9) { min-width: 200px; }
 .table th:nth-child(10),
-.table td:nth-child(10) {
-  min-width: 80px; /* Weight */
-}
-
+.table td:nth-child(10) { min-width: 80px; }
 .table th:nth-child(11),
-.table td:nth-child(11) {
-  min-width: 80px; /* Height */
-}
-
+.table td:nth-child(11) { min-width: 80px; }
 .table th:nth-child(12),
-.table td:nth-child(12) {
-  min-width: 120px; /* Birth Attendant */
-}
-
+.table td:nth-child(12) { min-width: 120px; }
 .table th:nth-child(13),
-.table td:nth-child(13) {
-  min-width: 100px; /* Status */
-}
-
+.table td:nth-child(13) { min-width: 100px; }
 .table th:nth-child(14),
-.table td:nth-child(14) {
-  min-width: 100px; /* Action */
-}
+.table td:nth-child(14) { min-width: 100px; }
 
-/* Loading state */
+/* =Loading placeholder */
 .loading {
   display: flex;
   flex-direction: column;
@@ -332,14 +370,13 @@ main {
   color: var(--text-secondary);
   font-size: 1.4rem;
 }
-
 .loading i {
   font-size: 2.4rem;
   margin-bottom: 1rem;
   color: var(--primary-color);
 }
 
-/* Action button styling */
+/* =Action: View button in table */
 .view-btn {
   background-color: var(--primary-color);
   color: white;
@@ -353,16 +390,15 @@ main {
   align-items: center;
   gap: 0.4rem;
 }
-
 .view-btn:hover {
   background-color: #005529;
   transform: translateY(-1px);
 }
-
 .view-btn .material-symbols-rounded {
   font-size: 1.6rem;
 }
 
+/* =Panels: list (left/initial) */
 .pending-approval-panel {
   height: 100vh;
   display: flex;
@@ -370,22 +406,41 @@ main {
   gap: 1rem;
 }
 
+/* =Panels: details (scrollable) */
 .childinformation-container {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-
   flex: 1 1 auto;
   min-height: 0;
   overflow: auto;
-
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-
   display: none;
 }
 
+/* =Section wrapper: flex fix to allow inner scroll */
+.pending-approval-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* =Details panel: scroll behavior overrides */
+.childinformation-container {
+  display: none;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* =Details main grid override (safe) */
 .childinfo-main {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -393,53 +448,17 @@ main {
   min-width: 0;
 }
 
-.pending-approval-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  overflow: hidden;
-  min-height: 0;
+/* =Vaccination overflow override (safe) */
+.vaccination-section {
+  margin-top: 1rem;
+  flex: 0 0 auto;
+  overflow: visible;
 }
 
-/* Disabled (read-only) look for inputs and buttons inside details */
-.childinfo-details input:disabled,
-.childinfo-details select:disabled {
-  background-color: #f5f5f5;
-  color: #666;
-  cursor: not-allowed;
-}
-
-.childinfo-details .childinfo-buttons button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Edit button style */
-.edit-btn {
-  background-color: #006c35;
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.edit-btn:hover {
-  background-color: #005d2d;
-}
-
-/* .edit-btn:focus,
-.edit-btn:focus-visible {
-  outline: 3px solid #7fd6a9;
-  outline-offset: 3px;
-}
-
-.edit-btn:active {
-  transform: scale(0.98);
-} */
+/* =Edit mode visibility rules */
+.childinfo-buttons { display: none; gap: 12px; }
+.childinfo-details.editing .childinfo-buttons { display: flex; }
+.childinfo-details .edit-btn { display: inline-flex; }
+.childinfo-details.editing .edit-btn { display: none; }
 
 

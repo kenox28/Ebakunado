@@ -1,146 +1,615 @@
 main {
-	max-height: 100vh;
-	overflow-y: auto;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.immunization-section {
+  height: 100vh;
 }
 
 .childinformation-container {
-	display: none;
+  display: none;
+}
+
+/* Filters */
+.immunization-section .filters {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  padding: 12px 0;
+  font-size: 12px;
+  align-items: center;
+  align-content: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+/* Controls */
+.immunization-section .filters .select-with-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+
+.immunization-section .filters .btn {
+  flex: 0 0 auto;
+}
+
+.immunization-section .filters input[type="date"],
+.immunization-section .filters input[type="text"],
+.immunization-section .filters select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #4a4a4a;
+  border-radius: 8px;
+  background: #fff;
+  color: #111827;
+  min-height: 40px;
+  line-height: 1.2;
+  font: inherit;
+  font-size: 12px;
+  text-transform: capitalize;
+  transition: border-color 0.2s ease, background-color 0.2s ease,
+    box-shadow 0.2s ease;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Icon */
+.immunization-section .filters .select-with-icon .material-symbols-rounded {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #000;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 2;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+.immunization-section .filters .select-with-icon input[type="date"],
+.immunization-section .filters .select-with-icon input[type="text"],
+.immunization-section .filters .select-with-icon select {
+  padding-right: 36px;
+}
+
+/* Date native picker overrides */
+.immunization-section .filters input[type="date"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none;
+  position: relative;
+}
+
+/* Chromium/Edge/Safari */
+.immunization-section
+  .filters
+  input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 8px;
+  width: 1.8em;
+  height: 1.8em;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Firefox */
+@-moz-document url-prefix() {
+  .immunization-section .filters .select-with-icon {
+    position: relative;
+  }
+  .immunization-section .filters .select-with-icon::after {
+    content: "";
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.8em;
+    height: 1.8em;
+    background: #fff;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+/* Uppercase date text */
+.immunization-section .filters input[type="date"],
+.form-group input[type="date"] {
+  text-transform: uppercase;
+}
+.immunization-section .filters input[type="date"]::-webkit-datetime-edit,
+.form-group input[type="date"]::-webkit-datetime-edit {
+  text-transform: uppercase;
+}
+
+/* Focus */
+.immunization-section .filters input[type="date"]:focus,
+.immunization-section .filters input[type="text"]:focus,
+.immunization-section .filters select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
+}
+
+.immunization-section .filters .select-with-icon:focus-within select,
+.immunization-section .filters .select-with-icon:focus-within input {
+  color: var(--primary-color);
+}
+.immunization-section
+  .filters
+  .select-with-icon:focus-within
+  .material-symbols-rounded {
+  color: var(--primary-color);
+}
+
+/* Hover */
+.immunization-section .filters select:not(:focus):hover,
+.immunization-section .filters .select-with-icon select:not(:focus):hover,
+.immunization-section .filters input[type="text"]:not(:focus):hover,
+.immunization-section .filters input[type="date"]:not(:focus):hover {
+  border-color: #76a582;
+  background-color: #fff;
+  box-shadow: none;
+  outline: none;
+}
+
+/* Buttons */
+.immunization-section .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: none;
+  background: var(--primary-color);
+  color: #fff;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.immunization-section .btn:hover {
+  background: #005d2d;
+}
+.immunization-section .btn:active {
+  background: #005129;
+}
+.immunization-section .btn:focus,
+.immunization-section .btn:focus-visible {
+  outline: 2px solid #00250e;
+  outline-offset: 1px;
+}
+
+/* Keep view button consistent */
+.immunization-section .view-btn {
+  font-size: 1.2rem;
+  background-color: var(--primary-color);
+  color: #ffffff;
+  transition: background-color 0.3s ease;
+}
+.immunization-section .view-btn .material-symbols-rounded {
+  font-size: 1.6rem;
+}
+
+/* Loading state (align with pending style) */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+  font-size: 1.4rem;
+}
+.loading i {
+  font-size: 2.4rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+/* Table styles (aligned with pending-approval-style.css) */
+.table-container {
+  overflow: auto;
+  margin-top: 1rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.table thead {
+  /* removed sticky behavior */
+  position: static;
+  top: auto;
+  z-index: auto;
+  background: #f2f2f2;
+}
+
+.table thead th {
+  padding: 0.75rem;
+  text-align: left;
+  background-color: #f2f2f2;
+  color: #1a1a1a;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 1.3rem; /* requested size */
+  text-transform: capitalize;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.table tbody td {
+  padding: 0.75rem;
+  text-align: left;
+  color: #1a1a1a;
+  font-size: 1.3rem;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+/* Column width hints for readability */
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  min-width: 180px;
+} /* Fullname */
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  min-width: 200px;
+} /* Address */
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  min-width: 150px;
+} /* Vaccine */
+.table th:nth-child(4),
+.table td:nth-child(4) {
+  min-width: 140px;
+} /* Schedule Date */
+.table th:nth-child(5),
+.table td:nth-child(5) {
+  min-width: 130px;
+} /* Status */
+.table th:nth-child(6),
+.table td:nth-child(6) {
+  min-width: 120px;
+} /* Action */
+
+/* View button hover (keep consistent) */
+.view-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.view-btn:hover {
+  background-color: #005529;
+  transform: translateY(-1px);
+}
+.view-btn .material-symbols-rounded {
+  font-size: 1.6rem;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-top: 1.6rem;
+}
+
+.pager .page-info {
+  font-size: 12px;
+  color: #555;
+}
+
+.pager .pager-controls {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.pager .page-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pager button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease;
+  font: inherit;
+  font-size: 12px;
+}
+
+.pager button:hover:not(:disabled) {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.pager button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pager .page-buttons button {
+  min-width: 36px;
+  justify-content: center;
+}
+
+.pager .page-buttons button[disabled] {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+  opacity: 1;
+}
+
+.pager .material-symbols-rounded {
+  font-size: 18px;
+}
+
+/* Optional: spinner class if you want it in CSS instead of injected */
+.pager-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ccc;
+  border-top-color: #1976d2;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Immunization Record Modal Popup */
 .immunization-record {
-	position: fixed;
-	inset: 0;
-	display: none;
-	align-items: center;
-	justify-content: center;
-	background: rgba(0, 0, 0, 0.6);
-	z-index: 9999;
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
 }
 
 .immunization-modal {
-	background: #fff;
-	width: 760px;
-	max-width: 95vw;
-	max-height: 90vh;
-	overflow: auto;
-	border-radius: 10px;
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-	padding: 16px 18px;
-	animation: modalIn 0.18s ease-out;
+  background: #fff;
+  width: 760px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  padding: 16px 18px;
+  animation: modalIn 0.18s ease-out;
 }
 
 @keyframes modalIn {
-	from {
-		transform: translateY(4px);
-		opacity: 0;
-	}
-	to {
-		transform: translateY(0);
-		opacity: 1;
-	}
+  from {
+    transform: translateY(4px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .immunization-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.6rem;
 }
 
 .immunization-title {
-	margin: 0;
-	font-size: 16px;
-	font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary-color);
 }
 
 .close-btn {
-	padding: 4px 8px;
-	background: #e0e0e0;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-	transition: background 0.2s ease;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-btn:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.close-btn .material-symbols-rounded {
+  display: inline-block;
+  font-size: 22px;
+  color: #1a1a1a;
+  transition: color 0.15s ease, transform 0.1s ease;
 }
 
 .close-btn:hover {
-	background: #d0d0d0;
+  background: transparent;
 }
 
-/* Immunization Form Styles */
-.immunization-form {
-	/* border: 1px solid #eee;
-  border-radius: 8px;
+.close-btn .material-symbols-rounded:hover {
+  color: var(--primary-color);
+}
+
+.close-btn:active .material-symbols-rounded {
+  transform: scale(0.95);
+}
+
+/* Form: base layout */
+.immunization-form .form-container {
+  display: grid;
+  gap: 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   padding: 12px;
-  background: #fafafa; */
 }
 
-.form-container {
-	display: grid;
-	gap: 12px;
-	border: 1px solid #ddd;
+/* Default two-column for form-group */
+.immunization-form .form-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.form-group {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 12px;
+/* Row-specific layouts */
+.immunization-form .form-group.row-1,
+.immunization-form .form-group.row-2,
+.immunization-form .form-group.row-3,
+.immunization-form .form-group.row-4,
+.immunization-form .form-group.row-5 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.form-group > label {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-	font-size: 13px;
-	color: #333;
+.immunization-form .form-group.row-6 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.form-group input[type="text"],
-.form-group input[type="date"],
-.form-group input[type="number"],
-.form-group textarea,
-.form-group select {
-	width: 100%;
-	padding: 8px 10px;
-	border: 1px solid #ddd;
-	border-radius: 6px;
-	font-size: 14px;
-	outline: none;
-	background: #fff;
+.immunization-form .form-group.row-7 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.form-group input[type="text"]:focus,
-.form-group input[type="date"]:focus,
-.form-group input[type="number"]:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-	border-color: #3b82f6;
-	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+/* Labels and fields */
+.immunization-form .form-group > label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #333;
 }
 
-.form-actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: 8px;
-	margin-top: 10px;
+/* Inputs styling */
+.immunization-form .form-group input[type="text"],
+.immunization-form .form-group input[type="date"],
+.immunization-form .form-group input[type="number"],
+.immunization-form .form-group textarea,
+.immunization-form .form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.form-actions > button {
-	padding: 8px 12px;
-	border-radius: 6px;
-	border: 1px solid #ddd;
-	background: #f6f6f6;
-	cursor: pointer;
+/* Focus state for inputs (no outline/offset) */
+.immunization-form .form-group input[type="text"]:focus,
+.immunization-form .form-group input[type="date"]:focus,
+.immunization-form .form-group input[type="number"]:focus,
+.immunization-form .form-group textarea:focus,
+.immunization-form .form-group select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.15);
 }
 
-.form-actions > button:last-child {
-	background: #3b82f6;
-	color: #fff;
-	border-color: #3b82f6;
+/* Form actions: buttons */
+.immunization-form .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
 }
 
-@media (max-width: 600px) {
-	.form-group {
-		grid-template-columns: 1fr;
-	}
+.immunization-form .form-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.05s ease;
+}
+
+/* Cancel: border-only */
+.immunization-form .form-actions .cancel-btn {
+  background: #ffffff;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+.immunization-form .form-actions .cancel-btn:hover {
+  background: #f9fafb;
+  border-color: #157347;
+}
+.immunization-form .form-actions .cancel-btn:active {
+  transform: scale(0.98);
+}
+.immunization-form .form-actions .cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Save: primary */
+.immunization-form .form-actions .save-btn {
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+}
+.immunization-form .form-actions .save-btn:hover {
+  background: #005d2d;
+  border-color: #005d2d;
+}
+.immunization-form .form-actions .save-btn:active {
+  background: #005129;
+  transform: scale(0.98);
+}
+.immunization-form .form-actions .save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

@@ -38,6 +38,12 @@ if ($user_id) {
     <?php include 'include/sidebar.php'; ?>
 
     <main>
+        <section>
+            <h2 class="section-title">
+                <span class="material-symbols-rounded">group</span>
+                Target Client List (TCL)
+            </h2>
+        </section>
         <section class="target-client-list-section">
             <div class="filters">
                 <label>Search/QR:

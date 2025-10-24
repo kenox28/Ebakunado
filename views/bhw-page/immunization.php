@@ -42,29 +42,45 @@ if ($user_id) {
     <?php include 'include/sidebar.php'; ?>
 
     <main>
+        <section class="section-container">
+            <h2 class="section-title">
+                <span class="material-symbols-rounded">syringe</span>
+                Immunization Records
+            </h2>
+        </section>
         <section class="immunization-section">
             <div class="filters">
-                <label>Date:
-                    <input id="filterDate" type="date">
-                </label>
-                <label>Status:
+                <div class="select-with-icon">
+                    <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
+                    <input id="filterDate" type="date" />
+                </div>
+
+                <div class="select-with-icon">
+                    <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
                     <select id="filterStatus">
+                        <option value="" disabled selected>Status</option>
                         <option value="all">All</option>
                         <option value="upcoming">Upcoming</option>
                         <option value="missed">Missed</option>
                         <option value="completed">Completed</option>
                     </select>
-                </label>
-                <label>Vaccine:
+                </div>
+
+                <div class="select-with-icon">
+                    <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
                     <select id="filterVaccine">
+                        <option value="" disabled selected>Vaccines</option>
                         <option value="all">All</option>
                     </select>
-                </label>
-                <label>Purok:
-                    <input id="filterPurok" type="text" placeholder="e.g. Purok 1">
-                </label>
-                <button id="applyFiltersBtn">Apply</button>
-                <button id="clearFiltersBtn">Clear</button>
+                </div>
+
+                <div class="select-with-icon">
+                    <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
+                    <input id="filterPurok" type="text" placeholder="e.g. Purok 1" />
+                </div>
+
+                <button class="btn btn-primary" id="applyFiltersBtn">Apply</button>
+                <button class="btn btn-secondary" id="clearFiltersBtn">Clear</button>
             </div>
 
             <div class="table-container">
@@ -90,12 +106,18 @@ if ($user_id) {
                         </tr>
                     </tbody>
                 </table>
-                <div id="pager" style="display:flex; align-items:center; justify-content: space-between; gap: 8px; margin-top: 8px;">
-                    <div id="pageInfo" style="font-size: 12px; color: #555;">&nbsp;</div>
-                    <div style="display:flex; gap:4px; align-items:center;">
-                        <button id="prevBtn" type="button">Prev</button>
-                        <span id="pageButtons" style="display:inline-flex; align-items:center; gap:4px;"></span>
-                        <button id="nextBtn" type="button">Next</button>
+                <div class="pager" id="pager">
+                    <div id="pageInfo" class="page-info">&nbsp;</div>
+                    <div class="pager-controls">
+                        <button id="prevBtn" type="button" class="pager-btn">
+                            <span class="material-symbols-rounded">chevron_backward</span>
+                            Prev
+                        </button>
+                        <span id="pageButtons" class="page-buttons"></span>
+                        <button id="nextBtn" type="button" class="pager-btn">
+                            Next
+                            <span class="material-symbols-rounded">chevron_forward</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -104,8 +126,13 @@ if ($user_id) {
             <div class="immunization-record" id="immunizationOverlay">
                 <div class="immunization-modal">
                     <div class="immunization-header">
-                        <h3 class="immunization-title">Record Immunization</h3>
-                        <button class="close-btn" onclick="closeImmunizationForm()">Close</button>
+                        <h3 class="immunization-title">
+                            <span class="material-symbols-rounded">assignment</span>
+                            Record Immunization
+                        </h3>
+                        <button class="close-btn" onclick="closeImmunizationForm()">
+                            <span class="material-symbols-rounded">close</span>
+                        </button>
                     </div>
                     <div class="immunization-form" id="immunizationFormContainer"></div>
                 </div>
@@ -168,8 +195,7 @@ if ($user_id) {
             } catch (e) {
                 body.innerHTML = '<tr><td colspan="6">Error loading records</td></tr>';
                 updatePagination(0, 0, 0);
-            }
-            finally {
+            } finally {
                 if (btnWrap && prevMarkup && !keepRows) btnWrap.innerHTML = prevMarkup;
             }
         }
@@ -374,10 +400,6 @@ if ($user_id) {
                                 Remarks
                                 <textarea id="im_remarks" rows="3"></textarea>
                             </label>
-                            
-                        </div>
-                    
-                        <div class="form-group row-8">
                             <label for="im_mark_completed">
                                 <input type="checkbox" id="im_mark_completed" />
                                 Mark as Taken
@@ -386,8 +408,8 @@ if ($user_id) {
                     </div>
 
                     <div class="form-actions">
-                        <button onclick="closeImmunizationForm()">Cancel</button>
-                        <button onclick="submitImmunizationForm()">Save</button>
+                        <button class="btn cancel-btn" onclick="closeImmunizationForm()">Cancel</button>
+                        <button class="btn save-btn" onclick="submitImmunizationForm()">Save</button>
                     </div>
 
                     <input type="hidden" id="im_record_id" value="${recordId}" />
@@ -479,7 +501,7 @@ if ($user_id) {
                         <td>${item.schedule_date || ''}</td>
                         <td>${item.status === 'taken' && item.date_given ? ('taken (' + item.date_given + ')') : (item.status || '')}</td>
                             <td>
-                                <button onclick="openImmunizationForm(this)"
+                                <button class="btn view-btn" onclick="openImmunizationForm(this)"
                                     data-record-id="${item.immunization_id || ''}"
                                     data-user-id="${item.user_id || ''}"
                                     data-baby-id="${item.baby_id || ''}"
@@ -501,6 +523,7 @@ if ($user_id) {
                                     data-td-dose3="${item.mother_td_dose3_date || ''}"
                                     data-td-dose4="${item.mother_td_dose4_date || ''}"
                                     data-td-dose5="${item.mother_td_dose5_date || ''}">
+                                    <span class="material-symbols-rounded">visibility</span>
                                     Record
                                 </button>
                             </td>
@@ -597,8 +620,16 @@ if ($user_id) {
             prevBtn.disabled = page <= 1;
             const canNext = hasMore === true || (chrRecords && chrRecords.length === limit);
             nextBtn.disabled = !canNext;
-            prevBtn.onclick = () => { if (page > 1) getChildHealthRecord(page - 1, { keep: true }); };
-            nextBtn.onclick = () => { if (canNext) getChildHealthRecord(page + 1, { keep: true }); };
+            prevBtn.onclick = () => {
+                if (page > 1) getChildHealthRecord(page - 1, {
+                    keep: true
+                });
+            };
+            nextBtn.onclick = () => {
+                if (canNext) getChildHealthRecord(page + 1, {
+                    keep: true
+                });
+            };
         }
 
         function viewChrImage(urlEnc) {
@@ -651,9 +682,6 @@ if ($user_id) {
             }
         }
 
-
-
-
         window.addEventListener('DOMContentLoaded', () => {
             // set defaults like before then load page 1
             const dateInput = document.getElementById('filterDate');
@@ -667,6 +695,17 @@ if ($user_id) {
             const clearBtn = document.getElementById('clearFiltersBtn');
             if (applyBtn) applyBtn.addEventListener('click', applyFilters);
             if (clearBtn) clearBtn.addEventListener('click', clearFilters);
+
+            // Make the custom calendar icon open the date picker
+            const dateInput = document.getElementById('filterDate');
+            const dateIcon = dateInput?.closest('.select-with-icon')?.querySelector('.material-symbols-rounded');
+            if (dateInput && dateIcon) {
+                dateIcon.style.cursor = 'pointer';
+                dateIcon.addEventListener('click', () => {
+                    if (typeof dateInput.showPicker === 'function') dateInput.showPicker();
+                    dateInput.focus();
+                });
+            }
         });
 
         // Removed QR scanner functionality and dependencies

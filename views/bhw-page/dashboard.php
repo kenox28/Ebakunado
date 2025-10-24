@@ -1,13 +1,13 @@
 <?php session_start(); ?>
-<?php 
+<?php
 // Handle both BHW and Midwife sessions (but BHW should only see BHW features)
 $user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
 $user_types = $_SESSION['user_type']; // Default to bhw for BHW pages
 $user_name = $_SESSION['fname'] ?? 'User';
-$user_fullname = $_SESSION['fname'] ." ". $_SESSION['lname'];
-if($user_types != 'midwifes') {   
+$user_fullname = $_SESSION['fname'] . " " . $_SESSION['lname'];
+if ($user_types != 'midwifes') {
     $user_type = 'Barangay Health Worker';
-}else{
+} else {
     $user_type = 'Midwife';
 }
 // Debug session
@@ -38,9 +38,14 @@ if ($user_id) {
     <?php include 'include/sidebar.php'; ?>
 
     <main>
+        <section class="section-container">
+            <h2 class="dashboard section-title">
+                <span class="material-symbols-rounded">dashboard</span>
+                Dashboard Overview
+            </h2>
+        </section>
         <section class="dashboard-section">
             <div class="dashboard-overview">
-                <h2 class="dashboard section-heading">Dashboard Overview</h2>
                 <div class="card-wrapper">
                     <div class="card card-1">
                         <div class="card-icon">
@@ -99,7 +104,7 @@ if ($user_id) {
                     </div>
                 </div>
             </div>
-            
+
             <!-- <div class="activity-task-container" >
                 <div class="activity-section">
                     <h2 class="dashboard-heading">Recent Activities</h2>
@@ -380,11 +385,16 @@ if ($user_id) {
         });
 
         async function logoutBhw() {
-				// const response = await fetch('/ebakunado/php/bhw/logout.php', { method: 'POST' });
-				const response = await fetch('/ebakunado/php/supabase/bhw/logout.php', { method: 'POST' });
-				const data = await response.json();
-				if (data.status === 'success') { window.location.href = '../../views/auth/login.php'; }
-				else { alert('Logout failed: ' + data.message); }
+            // const response = await fetch('/ebakunado/php/bhw/logout.php', { method: 'POST' });
+            const response = await fetch('/ebakunado/php/supabase/bhw/logout.php', {
+                method: 'POST'
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                window.location.href = '../../views/auth/login.php';
+            } else {
+                alert('Logout failed: ' + data.message);
+            }
         }
     </script>
 </body>

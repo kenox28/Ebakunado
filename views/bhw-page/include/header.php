@@ -31,7 +31,7 @@
         <div id="profileMenu" class="profile-menu" role="menu" aria-hidden="true">
             <a class="menu-item" href="./profile-management.php" role="menuitem">
                 <span class="material-symbols-rounded">person</span>
-                Account
+                My Account
             </a>
             <a class="menu-item" href="#" role="menuitem" onclick="logoutBhw()">
                 <span class="material-symbols-rounded">logout</span>

@@ -68,14 +68,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
 
-                <!-- Profile Management -->
-                <li class="sidebar-menu-item<?php echo $currentPage === 'profile-management.php' ? ' active' : ''; ?>">
-                    <a href="../../views/bhw-page/profile-management.php" class="menu-link">
-                        <span class="menu-icon material-symbols-rounded">person</span>
-                        <span class="menu-label">Profile Management</span>
-                    </a>
-                </li>
-
                 <?php if (isset($_SESSION['midwife_id'])): ?>
                 <!-- CHR Doc Requests (Midwife only) -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'chr-doc-requests.php' ? ' active' : ''; ?>">

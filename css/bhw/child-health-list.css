@@ -1,4 +1,159 @@
+/* =Base: page/main scroll boundary */
 main {
     max-height: 100vh;
     overflow-y: auto;
+}
+
+/* =Section: child-health-list wrapper */
+.child-health-list-section .table-container {
+  overflow: auto;
+  max-height: 100vh;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+/* =Table: base */
+.child-health-list-section .table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+.child-health-list-section .table thead {
+  position: static;
+  top: auto;
+  z-index: auto;
+  background: #f2f2f2;
+}
+.child-health-list-section .table thead th {
+  padding: 0.75rem;
+  text-align: left;
+  background-color: #f2f2f2;
+  color: #1a1a1a;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 1.3rem;
+  text-transform: capitalize;
+}
+.child-health-list-section .table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.2s ease;
+}
+.child-health-list-section .table tbody tr:hover {
+  background-color: #f8fafc;
+}
+.child-health-list-section .table tbody tr:last-child {
+  border-bottom: none;
+}
+.child-health-list-section .table tbody td {
+  padding: 0.75rem;
+  text-align: left;
+  color: #1a1a1a;
+  font-size: 1.3rem;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+/* =Actions: buttons inside table cells */
+.child-health-list-section .table tbody td .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.05s ease;
+  border: 1px solid transparent;
+}
+.child-health-list-section .table tbody td .btn + .btn {
+  margin-left: 8px;
+}
+
+/* =Actions: button icons */
+.child-health-list-section .table .btn .material-symbols-rounded.btn-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+.child-health-list-section .table .btn .material-symbols-rounded.btn-chevron {
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+/* =Action: Schedule button (outline) */
+.child-health-list-section .view-schedule-btn {
+  background: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+.child-health-list-section .view-schedule-btn:hover {
+  background: #f9fafb;
+  border-color: #157347;
+}
+.child-health-list-section .view-schedule-btn:active {
+  background: #f3f4f6;
+  transform: scale(0.98);
+}
+.child-health-list-section .view-schedule-btn:active .btn-chevron {
+  transform: rotate(180deg);
+}
+.child-health-list-section .view-schedule-btn[aria-expanded="true"] .btn-chevron {
+  transform: rotate(180deg);
+}
+.child-health-list-section .table tbody td .view-schedule-btn {
+  border: 1px solid var(--primary-color);
+}
+.child-health-list-section .view-schedule-btn:focus,
+.child-health-list-section .view-schedule-btn:focus-visible {
+  outline: 2px solid #00250e;
+  outline-offset: 1px;
+}
+
+/* =Action: CHR button (filled) */
+.child-health-list-section .viewCHR-btn {
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+  text-decoration: none;
+}
+.child-health-list-section .viewCHR-btn:hover {
+  background: #005d2d;
+  border-color: #005d2d;
+}
+.child-health-list-section .viewCHR-btn:active {
+  background: #005129;
+  transform: scale(0.98);
+}
+.child-health-list-section .viewCHR-btn:focus,
+.child-health-list-section .viewCHR-btn:focus-visible {
+  outline: 2px solid #00250e;
+  outline-offset: 1px;
+}
+
+/* =Schedule row: nested table container */
+.child-health-list-section .table tr.sched-row > td {
+  padding: 0.5rem;
+  background: #fff;
+}
+
+/* =Schedule row: nested table */
+.child-health-list-section .table tr.sched-row > td > table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.child-health-list-section .table tr.sched-row > td > table th,
+.child-health-list-section .table tr.sched-row > td > table td {
+  padding: 0.5rem 0.75rem;
+  white-space: nowrap;
+}
+.child-health-list-section .table tr.sched-row > td > table thead {
+  background: #f2f2f2;
+  position: static;
+  top: auto;
+  z-index: auto;
 }

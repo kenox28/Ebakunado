@@ -1,30 +1,19 @@
 main {
-    height: 100vh;            /* fill the viewport */
-    overflow: hidden;         /* prevent page scroll; scroll inside table-container */
-    display: flex;
-    flex-direction: column;
+  max-height: 100vh;
+  overflow-y: auto;
 }
 
-
-/* .target-client-list-section {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  min-height: 0;             
-} */
-
-/* Filters stay on top */
-.filters {
-  flex: 0 0 auto;
+.target-client-list-section {
+  height: 100vh;
 }
 
 /* Table area fills the rest and scrolls */
 .table-container {
   flex: 1 1 auto;
   min-height: 0;
-  overflow: auto;            /* vertical + horizontal scroll inside */
+  overflow: auto; /* vertical + horizontal scroll inside */
   width: 100%;
-  scroll-behavior: smooth;   /* smooth scrolling */
+  scroll-behavior: smooth; /* smooth scrolling */
 }
 
 /* Clean borders and zebra striping */
@@ -43,35 +32,35 @@ main {
 .table thead th:last-child,
 .table tbody td:last-child {
   border-right: 0;
-} 
+}
 .table tbody td {
   padding: 10px 12px;
   border-bottom: 1px solid #f0f0f0;
   vertical-align: top;
 }
-.table tbody tr:nth-child(even) { background: #fafafa; }
-.table tbody tr:hover { background: #f3f6ff; }
+.table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+.table tbody tr:hover {
+  background: #f3f6ff;
+}
 
 /* Two-row sticky header */
 :root {
-  --tcl-head-row1-h: 50px;   /* first header row height */
-  --tcl-head-border: 1px;    /* header bottom border thickness */
+  --tcl-head-row1-h: 50px; /* first header row height */
+  --tcl-head-border: 1px; /* header bottom border thickness */
 }
 
 /* Ensure both header rows stack with no gap and no overlap */
 .table thead tr:first-child th {
-  position: sticky;
-  top: 0 !important;                           /* override any generic top:0 */
-  height: var(--tcl-head-row1-h);              /* fix the actual height */
+  /* removed sticky header */
   background: #f7f7f9;
-  z-index: 3;
+  height: var(--tcl-head-row1-h);
 }
 
 .table thead tr:nth-child(2) th {
-  position: sticky;
-  top: calc(var(--tcl-head-row1-h) + var(--tcl-head-border)) !important;
+  /* removed sticky header */
   background: #f7f7f9;
-  z-index: 3;
 }
 
 /* Keep a clear divider between header rows and data */
@@ -128,23 +117,21 @@ main {
   overflow-x: auto;
 }
 .table {
-  width: max-content;         /* expand to content width */
-  min-width: 100%;            /* but never smaller than viewport width */
+  width: max-content; /* expand to content width */
+  min-width: 100%; /* but never smaller than viewport width */
   border-collapse: separate;
   border-spacing: 0;
   font-size: 13px;
 }
 .table thead th {
-  position: sticky;
-  top: 0;
+  /* not sticky anymore */
   background: #f7f7f9;
-  z-index: 2; /* above cells */
   border-bottom: 1px solid #e4e4e7;
   padding: 10px 12px;
   text-align: left;
   white-space: nowrap;
-  
 }
+
 .table tbody td {
   padding: 10px 12px;
   border-bottom: 1px solid #f0f0f0;
@@ -181,8 +168,6 @@ main {
   gap: 8px;
 }
 
-
-
 /* Root wrapper for this page */
 .tcl-root {
   height: 100%;
@@ -198,6 +183,15 @@ main {
 .table-container {
   flex: 1 1 auto;
   min-height: 0;
-  overflow: auto;             /* vertical + horizontal scroll inside */
+  overflow: auto; /* vertical + horizontal scroll inside */
   width: 100%;
+}
+
+/* Safety override to ensure no sticky headers remain */
+.table thead th,
+.table thead tr:first-child th,
+.table thead tr:nth-child(2) th {
+  position: static !important;
+  top: auto !important;
+  z-index: auto !important;
 }

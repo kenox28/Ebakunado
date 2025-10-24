@@ -24,7 +24,7 @@ if ($user_id) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Child Health Lists</title>
+    <title>Child Health Record Lists</title>
     <!-- <link rel="stylesheet" href="/css/base.css" /> -->
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="../../css/variables.css" />
@@ -38,6 +38,12 @@ if ($user_id) {
     <?php include 'include/sidebar.php'; ?>
 
     <main>
+        <section>
+            <h2 class="section-title">
+                <span class="material-symbols-rounded">medical_information</span>
+                Child Health Record Lists (CHRLs)
+            </h2>
+        </section>
         <section class="child-health-list-section">
             <div class="table-container">
                 <table class="table table-hover" id="childhealthrecord">
@@ -61,8 +67,6 @@ if ($user_id) {
                                     <p>Loading records...</p>
                                 </div>
                             </td>
-
-
                         </tr>
                         <tr>
                     </tbody>
@@ -101,9 +105,17 @@ if ($user_id) {
                                 <td>${item.address || ''}</td>
                                 <td>${item.status || ''}</td>
                                 <td>
-                                    <button onclick="viewSchedule('${item.baby_id}', this)">View Schedule</button>
-                                    <a class="viewCHR-btn" href="child-health-record.php?baby_id=${encodeURIComponent(item.baby_id)}">
-                                        View CHR
+                                    <button class="btn view-schedule-btn"
+                                            onclick="viewSchedule('${item.baby_id}', this)"
+                                            aria-expanded="false">
+                                        <span class="material-symbols-rounded btn-icon">calendar_month</span>
+                                        <span class="btn-text">Schedule</span>
+                                        <span class="material-symbols-rounded btn-chevron">expand_more</span>
+                                    </button>
+                                    <a class="btn viewCHR-btn"
+                                       href="child-health-record.php?baby_id=${encodeURIComponent(item.baby_id)}">
+                                        <span class="material-symbols-rounded btn-icon">visibility</span>
+                                        <span class="btn-text">CHR</span>
                                     </a>
                                 </td>
                             </tr>`;
@@ -182,31 +194,65 @@ if ($user_id) {
 
         async function viewSchedule(baby_id, btn) {
             const tr = btn.closest('tr');
+            const isExpanded = btn.getAttribute('aria-expanded') === 'true';
             const next = tr.nextElementSibling;
-            if (next && next.classList.contains('sched-row')) {
+            const hasSchedRow = next && next.classList.contains('sched-row');
+
+            // If already loading, ignore repeated clicks
+            if (btn.dataset.loading === '1') return;
+
+            // Toggle close if expanded and row exists
+            if (isExpanded && hasSchedRow) {
                 next.remove();
+                btn.setAttribute('aria-expanded', 'false');
                 return;
             }
-            const res = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
-            const data = await res.json();
-            let html = '<tr class="sched-row"><td colspan="21">';
-            if (data.status !== 'success' || !data.data || data.data.length === 0) {
-                html += '<div class="small">No schedule</div>';
-            } else {
-                html += '<table class="small"><tr><th>Vaccine</th><th>Dose #</th><th>Due</th><th>Date Given</th><th>Status</th></tr>';
-                data.data.forEach(r => {
-                    html += `<tr>
-							<td>${r.vaccine_name}</td>
-							<td>${r.dose_number}</td>
-							<td>${r.schedule_date || ''}</td>
-							<td>${r.date_given || ''}</td>
-							<td>${r.status}</td>
-						</tr>`;
-                });
-                html += '</table>';
+
+            // Clean any stray sched-row before loading (race-condition guard)
+            if (hasSchedRow) next.remove();
+
+            btn.dataset.loading = '1';
+
+            try {
+                const res = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
+                const data = await res.json();
+
+                // Re-check just before insert in case another insert happened
+                const curNext = tr.nextElementSibling;
+                if (curNext && curNext.classList.contains('sched-row')) {
+                    curNext.remove();
+                }
+
+                const colspan = tr.cells.length || 21;
+                let html = `<tr class="sched-row"><td colspan="${colspan}">`;
+
+                if (data.status !== 'success' || !data.data || data.data.length === 0) {
+                    html += '<div class="small">No schedule</div>';
+                } else {
+                    html += '<table class="small"><tr><th>Vaccine</th><th>Dose #</th><th>Due</th><th>Date Given</th><th>Status</th></tr>';
+                    data.data.forEach(r => {
+                        html += `<tr>
+                            <td>${r.vaccine_name}</td>
+                            <td>${r.dose_number}</td>
+                            <td>${r.schedule_date || ''}</td>
+                            <td>${r.date_given || ''}</td>
+                            <td>${r.status}</td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                }
+
+                html += '</td></tr>';
+                tr.insertAdjacentHTML('afterend', html);
+
+                // Mark expanded (keeps chevron rotated via CSS)
+                btn.setAttribute('aria-expanded', 'true');
+            } catch (e) {
+                console.error('Error loading schedule:', e);
+                btn.setAttribute('aria-expanded', 'false');
+            } finally {
+                delete btn.dataset.loading;
             }
-            html += '</td></tr>';
-            tr.insertAdjacentHTML('afterend', html);
         }
 
 
