@@ -1,9 +1,6 @@
 <?php
 session_start();
 
-// Enable error reporting for debugging
-
-
 // Start output buffering to prevent any accidental output
 ob_start();
 
@@ -154,7 +151,7 @@ try {
         ob_clean();
         echo json_encode([
             'status' => 'error',
-            'message' => 'Email not found in our system'
+            'message' => 'Account not found in our system'
         ]);
         exit();
     }
@@ -182,18 +179,14 @@ try {
     $_SESSION['reset_otp_time'] = time();
     $_SESSION['reset_otp_expires'] = time() + 300; // 5 minutes
     
-    if (!empty($email)) {
-        // EMAIL: send random OTP via email
-        $destination_email = $email ?: ($user_data['email'] ?? null);
-        if (empty($destination_email)) {
-            ob_clean();
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'No email address available for this account'
-            ]);
-            exit();
-        }
-        
+    // NEW: Send to BOTH email AND SMS
+    $email_sent = false;
+    $sms_sent = false;
+    $errors = [];
+    
+    // 1. SEND EMAIL (if email available)
+    $destination_email = $user_data['email'] ?? null;
+    if (!empty($destination_email)) {
         $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
         try {
             $mail->isSMTP();
@@ -220,27 +213,15 @@ try {
             ";
             
             $mail->send();
-            
-            ob_clean();
-            echo json_encode([
-                'status' => 'success',
-                'message' => 'OTP sent to your email address',
-                'user_type' => $user_type,
-                'contact_type' => 'email',
-                'expires_in' => 300
-            ]);
+            $email_sent = true;
         } catch (Exception $e) {
-            ob_clean();
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Failed to send OTP. Please try again later.',
-                'debug' => $e->getMessage()
-            ]);
+            $errors[] = 'Email: ' . $e->getMessage();
         }
-    } else {
-        // PHONE: send SMS OTP
-        $phone_number = $user_data['phone_number'] ?? '';
-        
+    }
+    
+    // 2. SEND SMS (if phone available)
+    $phone_number = $user_data['phone_number'] ?? '';
+    if (!empty($phone_number)) {
         // Clean phone number
         $phone_number = preg_replace('/[^0-9+]/', '', $phone_number);
         
@@ -285,57 +266,60 @@ try {
         $curlError = curl_error($ch);
         curl_close($ch);
         
-        // Check for cURL errors
-        if ($curlError) {
-            ob_clean();
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Failed to send SMS. Please try again.',
-                'debug' => $curlError
-            ]);
-            exit();
-        }
-        
-        // Parse response
-        $responseData = json_decode($response, true);
-        
-        // Check for successful response
-        if ($httpCode === 200 || $httpCode === 201) {
-            $isSuccess = false;
-            
-            if ($responseData && isset($responseData['data']['success']) && $responseData['data']['success'] === true) {
-                $isSuccess = true;
-            } elseif ($responseData && isset($responseData['success']) && $responseData['success'] === true) {
-                $isSuccess = true;
-            } elseif ($httpCode === 200 || $httpCode === 201) {
-                $isSuccess = true;
-            }
-            
-            if ($isSuccess) {
-                ob_clean();
-                echo json_encode([
-                    'status' => 'success',
-                    'message' => 'OTP sent to your phone number',
-                    'user_type' => $user_type,
-                    'contact_type' => 'phone',
-                    'expires_in' => 300
-                ]);
+        // Check for success
+        if (!$curlError && ($httpCode === 200 || $httpCode === 201)) {
+            $responseData = json_decode($response, true);
+            if ($responseData && 
+                (isset($responseData['data']['success']) && $responseData['data']['success'] === true ||
+                 isset($responseData['success']) && $responseData['success'] === true ||
+                 $httpCode === 200 || $httpCode === 201)) {
+                $sms_sent = true;
             } else {
-                ob_clean();
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'SMS API returned unexpected response format',
-                    'debug' => $responseData
-                ]);
+                $errors[] = 'SMS: Unexpected response format';
             }
         } else {
-            ob_clean();
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Failed to send SMS. Please check your phone number.',
-                'debug' => 'HTTP Code: ' . $httpCode . ', Response: ' . $response
-            ]);
+            $errors[] = 'SMS: ' . ($curlError ?: 'HTTP ' . $httpCode);
         }
+    }
+    
+    // 3. SEND RESPONSE
+    if ($email_sent && $sms_sent) {
+        // Both sent successfully
+        ob_clean();
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'OTP sent to your email and phone number',
+            'user_type' => $user_type,
+            'contact_type' => 'both',
+            'expires_in' => 300
+        ]);
+    } elseif ($email_sent) {
+        // Only email sent
+        ob_clean();
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'OTP sent to your email address',
+            'user_type' => $user_type,
+            'contact_type' => 'email',
+            'expires_in' => 300
+        ]);
+    } elseif ($sms_sent) {
+        // Only SMS sent
+        ob_clean();
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'OTP sent to your phone number',
+            'user_type' => $user_type,
+            'contact_type' => 'phone',
+            'expires_in' => 300
+        ]);
+    } else {
+        // Neither sent
+        ob_clean();
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Failed to send OTP. ' . implode(', ', $errors)
+        ]);
     }
     
 } catch (Exception $e) {
