@@ -25,9 +25,7 @@ if ($user_id) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Child Health Record</title>
-    <!-- <link rel="stylesheet" href="/css/base.css" /> -->
     <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/variables.css" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/bhw/child-health-record.css" />
@@ -47,8 +45,11 @@ if ($user_id) {
 
             <!-- Child Profile -->
             <div id="childProfile" class="chr-section profile-section">
-                <div class="chr-header ">
-                    <h2>CHILD INFORMATION</h2>
+                <div class="chr-subheader">
+                    <h2>
+                        <span class="material-symbols-rounded" aria-hidden="true">person</span>
+                        Child Information
+                    </h2>
                 </div>
                 <div class="chr-grid">
                     <div class="childinfo-column">
@@ -79,8 +80,11 @@ if ($user_id) {
 
             <!-- Child History -->
             <div id="childHistory" class="chr-section history-section">
-                <div class="chr-header ">
-                    <h2>CHILD HISTORY</h2>
+                <div class="chr-subheader">
+                    <h2>
+                        <span class="material-symbols-rounded" aria-hidden="true">history</span>
+                        Child History
+                    </h2>
                 </div>
 
                 <div class="chr-grid">
@@ -98,8 +102,11 @@ if ($user_id) {
 
             <!-- Feeding Section -->
             <div id="feedingSection" class="chr-section feeding-section">
-                <div class="chr-header">
-                    <h2>Exclusive Breastfeeding & Complementary Feeding</h2>
+                <div class="chr-subheader">
+                    <h2>
+                        <span class="material-symbols-rounded" aria-hidden="true">restaurant</span>
+                        Exclusive Breastfeeding & Complementary Feeding
+                    </h2>
                 </div>
                 <div class="feeding-grid">
                     <div class="exclusive-breastfeeding">
@@ -130,8 +137,11 @@ if ($user_id) {
 
             <!-- Mother's TD Status -->
             <div id="tdSection" class="chr-section td-section">
-                <div class="chr-header">
-                    <h2>Mother's TD (Tetanus-Diphtheria) Status</h2>
+                <div class="chr-subheader">
+                    <h2>
+                        <span class="material-symbols-rounded" aria-hidden="true">vaccines</span>
+                        Mother's TD (Tetanus-Diphtheria) Status
+                    </h2>
                 </div>
                 <div class="td-grid">
                     <label>TD 1st dose: <input type="date" id="td_dose1"></label>
@@ -147,8 +157,11 @@ if ($user_id) {
 
             <!-- Immunization Record -->
             <div class="immunization-record">
-                <div class="chr-header">
-                    <h2>IMMUNIZATION RECORD</h2>
+                <div class="chr-subheader">
+                    <h2>
+                        <span class="material-symbols-rounded" aria-hidden="true">assignment</span>
+                        Immunization Record
+                    </h2>
                 </div>
                 <div class="table-container">
                     <table class="immunization-table">

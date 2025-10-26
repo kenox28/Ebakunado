@@ -1,83 +1,167 @@
+/* =Base: page/main scroll boundary */
 main {
   max-height: 100vh;
   overflow-y: auto;
 }
 
-.pending-approval-section {
-  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
-    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-    padding: 1rem;
-}
-
-.btn {
+/* =Buttons: full base + states */
+.childinfo-actions {
   display: flex;
-  justify-content: center;
+  gap: 1rem;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 1rem;
 }
-
-.btn:hover {
-  background-color: #005d2d;
-}
-
-.view-btn {
-  font-size: 1.2rem;
-  background-color: var(--primary-color);
-  color: #ffffff;
-  transition: background-color 0.3s ease;
-}
-
-.view-btn .material-symbols-rounded {
-  font-size: 1.6rem;
-}
-
-.childinformation-container {
-  padding: 0;
-  background-color: #ffffff;
+.childinfo-actions button {
+  padding: 8px 20px;
   border-radius: 8px;
-  /* border: #bebebe 1px solid; */
-
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-
-  display: none;
+  border: none;
+  background: var(--primary-color);
+  color: #fff;
+  font-weight: 500;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease;
 }
 
-.childinfo-header {
+/* =Action: Back button (border-only) */
+.childinfo-actions .back-btn {
+  background: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+.childinfo-actions #closeButton:hover {
+  background: #f9fafb;
+  border-color: #157347;
+}
+.childinfo-actions #closeButton:active {
+  background: #f3f4f6;
+}
+
+/* =Form actions: container + buttons */
+.childinfo-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.childinfo-buttons button {
+  padding: 0.8rem 1.6rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease, transform 0.05s ease;
+  border: 1px solid transparent;
+}
+.childinfo-buttons button:active {
+  transform: scale(0.97);
+}
+
+/* =Form actions: Save button (primary) */
+.save-btn {
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+}
+.save-btn:hover {
+  background: #005d2d;
+  border-color: #005d2d;
+}
+.save-btn:active {
+  background: #005129;
+  transform: scale(0.98);
+}
+
+/* =Form actions: Reset button (border-only) */
+.cancel-btn,
+.childinfo-buttons .cancel-btn {
+  background: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+.cancel-btn:hover {
+  background: #f9fafb;
+  border-color: #157347;
+}
+.cancel-btn:active {
+  background: #f3f4f6;
+  transform: scale(0.98);
+}
+
+/* =Child info: header bar (title + actions) */
+.child-information {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+/* =Child info: main two-column layout */
 .childinfo-main {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.2rem;
+  min-width: 0;
 }
 
+/* =Child info: details card */
 .childinfo-details {
-  /* width: 50%; */
+  padding: 1.5rem;
+  border-radius: 10px;
   border: 1px solid #ccc;
+  background-color: #ffffff;
 }
 
-.childinfo-details h2 {
+/* =Child info: details header (title + edit) */
+.childinfo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.childinfo-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* =Headings: shared heading styles */
+.childinfo-header,
+.vaccination-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-color);
   margin-bottom: 1.2rem;
 }
+.childinfo-header .material-symbols-rounded,
+.vaccination-header .material-symbols-rounded {
+  font-size: 2rem;
+}
 
+/* =Section heading (page title) */
+.section-heading {
+  display: flex;
+  align-items: center;
+}
+.section-heading .material-symbols-rounded {
+  font-size: 2.8rem;
+  margin-right: 0.5rem;
+}
+
+/* =Child info: form grid */
 .childinfo-grid {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
 }
-
 .childinfo-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
-
 .childinfo-row label {
   display: flex;
   flex-direction: column;
@@ -85,70 +169,40 @@ main {
   color: #333;
 }
 
+/* =Inputs/selects: base + focus */
 .childinfo-row input,
 .childinfo-row select {
   margin-top: 4px;
-  padding: 6px;
+  padding: 6px 10px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
   font-family: inherit;
+  text-transform: capitalize;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-
 .childinfo-row input:focus,
 .childinfo-row select:focus {
-  border-color: #007bff;
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
+}
+.childinfo-row input::placeholder {
+  text-transform: capitalize;
+}
+.childinfo-row select option {
+  text-transform: capitalize;
 }
 
-/* Buttons section styling */
-.childinfo-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.childinfo-buttons button {
-  padding: 0.8rem 1.6rem;
-  font-size: 1.4rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-/* Button colors */
-.save-btn {
-  background-color: #007bff;
-  color: white;
-}
-
-.save-btn:hover {
-  background-color: #0056b3;
-}
-
-.reset-btn {
-  background-color: #6c757d;
-  color: white;
-}
-
-.reset-btn:hover {
-  background-color: #5a6268;
-}
-
-.childinfo-buttons button:active {
-  transform: scale(0.97);
-}
-
-/* Child information image styling */
+/* =Child info: image panel */
 .childinfo-image {
-  /* width: 50%; */
+  padding: 1.5rem;
+  border-radius: 10px;
+  background-color: #ffffff;
   border: 1px solid #ccc;
 }
-
 .childinfo-image h2 {
   margin-bottom: 1.2rem;
 }
-
 .childinfo-image img {
   width: 100%;
   height: 48rem;
@@ -156,7 +210,426 @@ main {
   border-radius: 8px;
 }
 
+/* =Vaccination section: container */
 .vaccination-section {
   width: 100%;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 10px;
   border: 1px solid #ccc;
+  overflow: auto;
+}
+
+/* =Vaccination section: horizontal scrolling table */
+.vaccination-section .vaccination-record-list {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+}
+.vaccination-section .vaccination-record-list table {
+  min-width: 900px;
+  border-collapse: collapse;
+}
+.vaccination-section .vaccination-record-list th,
+.vaccination-section .vaccination-record-list td {
+  white-space: nowrap;
+}
+.vaccination-section .vaccination-record-list thead {
+  position: static;
+  top: auto;
+  z-index: auto;
+}
+
+/* =Data table: container */
+.table-container {
+  overflow: auto;
+  max-height: 60vh;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+/* =Data table: base */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px;
+}
+.table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #f2f2f2;
+}
+.table thead th {
+  padding: 0.75rem;
+  text-align: left;
+  background-color: #f2f2f2;
+  color: #1a1a1a;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 1.3rem;
+  text-transform: capitalize;
+}
+.table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.2s ease;
+}
+.table tbody tr:hover {
+  background-color: #f8fafc;
+}
+.table tbody tr:last-child {
+  border-bottom: none;
+}
+.table tbody td {
+  padding: 0.75rem;
+  text-align: left;
+  color: #1a1a1a;
+  font-size: 1.3rem;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+.table tbody td:first-child {
+  font-weight: 500;
+  text-align: left;
+  width: 60px;
+  min-width: 60px;
+}
+
+/* =Data table: column width hints */
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  min-width: 120px;
+}
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  min-width: 120px;
+}
+.table th:nth-child(4),
+.table td:nth-child(4) {
+  min-width: 80px;
+}
+.table th:nth-child(5),
+.table td:nth-child(5) {
+  min-width: 120px;
+}
+.table th:nth-child(6),
+.table td:nth-child(6) {
+  min-width: 150px;
+}
+.table th:nth-child(7),
+.table td:nth-child(7) {
+  min-width: 150px;
+}
+.table th:nth-child(8),
+.table td:nth-child(8) {
+  min-width: 150px;
+}
+.table th:nth-child(9),
+.table td:nth-child(9) {
+  min-width: 200px;
+}
+.table th:nth-child(10),
+.table td:nth-child(10) {
+  min-width: 80px;
+}
+.table th:nth-child(11),
+.table td:nth-child(11) {
+  min-width: 80px;
+}
+.table th:nth-child(12),
+.table td:nth-child(12) {
+  min-width: 120px;
+}
+.table th:nth-child(13),
+.table td:nth-child(13) {
+  min-width: 100px;
+}
+.table th:nth-child(14),
+.table td:nth-child(14) {
+  min-width: 100px;
+}
+
+/* Center the Action column */
+.table th:last-child,
+.table td:last-child {
+  text-align: center;
+}
+
+/* =Loading placeholder */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+  font-size: 1.4rem;
+}
+.loading i {
+  font-size: 2.4rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+/* =Action: View button in table */
+.view-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.view-btn:hover {
+  background-color: #005529;
+  transform: translateY(-1px);
+}
+.view-btn .material-symbols-rounded {
+  font-size: 1.6rem;
+}
+
+/* =Panels: list (left/initial) */
+.pending-approval-panel {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* =Panels: details (scrollable) */
+.childinformation-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  display: none;
+}
+
+/* =Section wrapper: flex fix to allow inner scroll */
+.pending-approval-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* =Details panel: scroll behavior overrides */
+.childinformation-container {
+  display: none;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* =Details main grid override (safe) */
+.childinfo-main {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+  min-width: 0;
+}
+
+/* =Vaccination overflow override (safe) */
+.vaccination-section {
+  margin-top: 1rem;
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+/* =Edit mode visibility rules */
+.childinfo-buttons {
+  display: none;
+  gap: 12px;
+}
+.childinfo-details.editing .childinfo-buttons {
+  display: flex;
+}
+.childinfo-details .edit-btn {
+  display: inline-flex;
+}
+.childinfo-details.editing .edit-btn {
+  display: none;
+}
+
+/* Filters (match Immunization styles) */
+.pending-approval-section .filters {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  padding: 12px 0;
+  font-size: 12px;
+  align-items: center;
+  align-content: flex-start;
+}
+.pending-approval-panel .filters-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+.pending-approval-panel .filters-header .material-symbols-rounded {
+  font-size: 1.8rem;
+  color: #1a1a1a;
+}
+
+/* Filters bar: label + controls in one row */
+.pending-approval-panel .filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end; 
+}
+.pending-approval-panel .filters-bar .filters {
+  flex: 0 0 auto; 
+}
+.pending-approval-panel .filters-header {
+  margin-right: 1.2rem;
+}
+
+/* Ensure 1px border on filters (matches immunization) */
+.pending-approval-section .filters input[type="text"],
+.pending-approval-section .filters select {
+  border: 1px solid #1a1a1a;
+}
+.pending-approval-section .filters .select-with-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+.pending-approval-section .filters .btn {
+  flex: 0 0 auto;
+}
+.pending-approval-section .filters input[type="text"],
+.pending-approval-section .filters select {
+  width: 100%;
+  height: 34px;
+  min-height: 34px;
+  line-height: 34px;
+  padding: 0 12px;
+  border: 0.5px solid #1a1a1a;
+  border-radius: 8px;
+  background: #fff;
+  color: #111827;
+  font: inherit;
+  font-size: 1.2rem;
+  text-transform: capitalize;
+  transition: border-color 0.2s ease, background-color 0.2s ease,
+    box-shadow 0.2s ease;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+.pending-approval-section .filters .select-with-icon .material-symbols-rounded {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #000;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 2;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+.pending-approval-section .filters .select-with-icon input[type="text"],
+.pending-approval-section .filters .select-with-icon select {
+  padding-right: 36px;
+}
+.pending-approval-section .filters input[type="text"]:focus,
+.pending-approval-section .filters select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
+}
+.pending-approval-section .filters .select-with-icon:focus-within select,
+.pending-approval-section .filters .select-with-icon:focus-within input {
+  color: var(--primary-color);
+}
+.pending-approval-section
+  .filters
+  .select-with-icon:focus-within
+  .material-symbols-rounded {
+  color: var(--primary-color);
+}
+/* Hover parity with Immunization */
+.pending-approval-section .filters select:not(:focus):hover,
+.pending-approval-section .filters .select-with-icon select:not(:focus):hover,
+.pending-approval-section .filters input[type="text"]:not(:focus):hover {
+  border-color: #76a582;
+  background-color: #fff;
+  box-shadow: none;
+  outline: none;
+}
+
+/* Fixed widths for filters */
+.pending-approval-section .filters .select-with-icon {
+  flex: 0 0 auto;
+}
+
+.pending-approval-section .filters #paSearch {
+  width: 300px;
+}
+
+.pending-approval-section .filters #paStatus {
+  width: 200px;
+}
+
+/* =Vaccination section: no records message */
+.vaccination-section .no-vaccination-records {
+  text-align: center;
+  color: #666;
+  padding: 1.25rem;
+  font-size: 1.3rem;
+  border: 1px dashed #e5e7eb;
+  border-radius: 8px;
+  background: #fafafa;
+  margin-top: 0.5rem;
+}
+
+.vaccination-section .no-vaccination-error {
+  text-align: center;
+  color: #dc3545;
+  padding: 1.25rem;
+  font-size: 1.3rem;
+  border: 1px dashed #f3c2c6;
+  border-radius: 8px;
+  background: #fff5f5;
+  margin-top: 0.5rem;
+}
+
+.btn-secondary {
+  background: transparent !important;
+  color: var(--primary-color) !important;
+  border: 1px solid var(--primary-color) !important;
+  box-shadow: none !important;
+}
+
+.btn-secondary:hover {
+  background: none !important;
+  color: var(--primary-color) !important;
+  box-shadow: none !important;
 }

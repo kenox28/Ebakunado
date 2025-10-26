@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/test1.css" />
+    <link rel="stylesheet" href="../../css/main.css" />
+    <!-- Material Symbols (icons) -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="filters">
+      <label>Date:
+        <input id="filterDate" type="date" />
+      </label>
+
+      <label>Status:
+        <div class="select-with-icon">
+          <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
+          <select id="filterStatus">
+            <option value="all">All</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="missed">Missed</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </label>
+
+      <label>Vaccine:
+        <div class="select-with-icon">
+          <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
+          <select id="filterVaccine">
+            <option value="all">All</option>
+          </select>
+        </div>
+      </label>
+
+      <label>Purok:
+        <input id="filterPurok" type="text" placeholder="e.g. Purok 1" />
+      </label>
+
+      <button class="btn btn-primary" id="applyFiltersBtn">Apply</button>
+      <button class="btn btn-secondary" id="clearFiltersBtn">Clear</button>
+    </div>
+  </body>
+</html>

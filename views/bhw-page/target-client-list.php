@@ -25,9 +25,7 @@ if ($user_id) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Target Client List</title>
-    <!-- <link rel="stylesheet" href="/css/base.css" /> -->
     <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/variables.css" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/bhw/target-client-list.css" />
@@ -38,34 +36,62 @@ if ($user_id) {
     <?php include 'include/sidebar.php'; ?>
 
     <main>
+        <section>
+            <h2 class="section-title">
+                <div class="title-left">
+                    <span class="material-symbols-rounded">format_list_bulleted</span>
+                    Target Client List (TCL)
+                </div>
+                <div class="title-actions">
+                    <button id="openScannerBtn" class="btn btn-outline-primary" onclick="openScanner()">
+                        <span class="material-symbols-rounded" aria-hidden="true">qr_code_scanner</span>
+                        Scan QR
+                    </button>
+                    <button class="btn" onclick="exportToCSV()">
+                        <span class="material-symbols-rounded" aria-hidden="true">file_download</span>
+                        Export CSV
+                    </button>
+                </div>
+            </h2>
+        </section>
+
         <section class="target-client-list-section">
-            <div class="filters">
-                <label>Search/QR:
-                    <input id="searchInput" type="text" placeholder="Search by name, mother, address" oninput="filterTable()">
-                </label>
-                <label>Status:
-                    <select id="filterStatus">
-                        <option value="all">All</option>
-                        <option value="SCHEDULED">Scheduled</option>
-                        <option value="MISSED">Missed</option>
-                        <option value="TRANSFERRED">Transferred</option>
-                    </select>
-                </label>
-                
-                <label>Purok:
-                    <input id="filterPurok" type="text" placeholder="e.g. Purok 1">
-                </label>
-                <button id="applyFiltersBtn" class="btn">Apply</button>
-                <button id="clearFiltersBtn" class="btn">Clear</button>
-                <button id="openScannerBtn" class="btn" onclick="openScanner()">Scan QR</button>
-                <button class="btn" onclick="exportToCSV()">Export CSV</button>
+            <div class="filters-bar">
+                <div class="filters-header">
+                    <span class="material-symbols-rounded" aria-hidden="true">tune</span>
+                    <span>Filters:</span>
+                </div>
+
+                <div class="filters">
+                    <div class="select-with-icon">
+                        <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                        <input id="searchInput" type="text" placeholder="Search by name, mother, address" oninput="filterTable()">
+                    </div>
+
+                    <div class="select-with-icon">
+                        <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
+                        <select id="filterStatus">
+                            <option value="all">All</option>
+                            <option value="SCHEDULED">Scheduled</option>
+                            <option value="MISSED">Missed</option>
+                            <option value="TRANSFERRED">Transferred</option>
+                        </select>
+                    </div>
+
+                    <div class="select-with-icon">
+                        <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
+                        <input id="filterPurok" type="text" placeholder="e.g. Purok 1">
+                    </div>
+
+                    <button id="applyFiltersBtn" class="btn">Apply</button>
+                    <button id="clearFiltersBtn" class="btn">Clear</button>
+                </div>
             </div>
 
             <div class="table-container">
                 <table class="table" id="tclTable">
                     <thead>
                         <tr>
-                            <th rowspan="2">#</th>
                             <th rowspan="2">Name of Child</th>
                             <th rowspan="2">Sex</th>
                             <th rowspan="2">Date of Birth</th>
@@ -103,72 +129,58 @@ if ($user_id) {
                         </tr>
                     </thead>
                     <tbody id="tclBody">
-    <tr>
-        <td colspan="26" class="text-center">
-            <div class="loading">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Loading TCL data...</p>
-            </div>
-        </td>
-    </tr>
-</tbody>
+                        <tr>
+                            <td colspan="25" class="text-center">
+                                <div class="loading">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Loading TCL data...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
+            </div>
 
-                <div id="pager" style="display:flex; align-items:center; justify-content: space-between; gap: 8px; margin-top: 8px;">
-                    <div id="pageInfo" style="font-size: 12px; color: #555;">&nbsp;</div>
-                    <div style="display:flex; gap:4px; align-items:center;">
-                        <button id="tclPrevBtn" type="button">Prev</button>
-                        <span id="tclPageButtons" style="display:inline-flex; align-items:center; gap:4px;"></span>
-                        <button id="tclNextBtn" type="button">Next</button>
-                    </div>
+            <div class="pager" id="pager">
+                <div id="pageInfo" class="page-info">&nbsp;</div>
+                <div class="pager-controls">
+                    <button id="tclPrevBtn" type="button" class="pager-btn">
+                        <span class="material-symbols-rounded">chevron_backward</span>
+                        Prev
+                    </button>
+                    <span id="tclPageButtons" class="page-buttons"></span>
+                    <button id="tclNextBtn" type="button" class="pager-btn">
+                        Next
+                        <span class="material-symbols-rounded">chevron_forward</span>
+                    </button>
                 </div>
-
             </div>
         </section>
     </main>
 
-
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script>
-        // pager spinner CSS
-        (function(){
-            const s=document.createElement('style');
-            s.textContent =
-                '.pager-spinner{width:16px;height:16px;border:2px solid #ccc;border-top-color:#1976d2;border-radius:50%;display:inline-block;animation:spin .8s linear infinite}'+
-                '.tcl-page-num{background:#1976d2;color:#fff;border:none;border-radius:8px;padding:6px 10px;min-width:28px;text-align:center;font-weight:600}'+
-                '.tcl-page-num[disabled]{opacity:1;cursor:default}'+
-                '#tclPrevBtn,#tclNextBtn{background:#1976d2;color:#fff;border:none;border-radius:8px;padding:6px 10px}'+
-                '#tclPrevBtn:disabled,#tclNextBtn:disabled{opacity:.6;cursor:not-allowed}'+
-                '@keyframes spin{to{transform:rotate(360deg)}}';
-            document.head.appendChild(s);
-        })();
-
         let tclRecords = [];
         let tclPage = 1;
         const tclLimit = 10;
 
         async function loadTCLData(page=1, opts={}) {
             const body = document.querySelector('#tclBody');
-            const keep = opts.keep === true;
             const prevBtn = document.getElementById('tclPrevBtn');
             const nextBtn = document.getElementById('tclNextBtn');
             const pagerSpan = document.getElementById('tclPageButtons');
-            const prevMarkup = pagerSpan.innerHTML;
-            if (!keep) {
-                console.log('Loading...');
-                body.innerHTML = '<tr><td colspan="26">Loading...</td></tr>';
-            } else {
-                console.log('Loading... (keep)');
-                pagerSpan.innerHTML = '<span class="pager-spinner" aria-label="Loading" role="status"></span>';
-                prevBtn.disabled = true; nextBtn.disabled = true;
-            }
+
+            if (pagerSpan) pagerSpan.innerHTML = `<span class="pager-spinner" aria-label="Loading" role="status"></span>`;
+            if (prevBtn) prevBtn.disabled = true;
+            if (nextBtn) nextBtn.disabled = true;
+
+            body.innerHTML = '<tr><td colspan="25">Loading...</td></tr>';
 
             try {
                 const params = new URLSearchParams();
                 params.set('page', page);
                 params.set('limit', tclLimit);
-                // filters
                 const search = document.getElementById('searchInput').value.trim();
                 const status = document.getElementById('filterStatus').value;
                 const purok = document.getElementById('filterPurok').value.trim();
@@ -179,65 +191,75 @@ if ($user_id) {
                 const res = await fetch(`../../php/supabase/bhw/get_target_client_list.php?${params.toString()}`);
                 const data = await res.json();
                 if (data.status !== 'success') {
-                    body.innerHTML = '<tr><td colspan="26">Failed to load TCL data</td></tr>';
+                    body.innerHTML = '<tr><td colspan="25">Failed to load TCL data</td></tr>';
                     updateTclPager(1, false);
+                    updateTclInfo(0, 0, 0, 0);
                     return;
                 }
                 tclRecords = data.data || [];
                 renderTCLTable(tclRecords);
                 tclPage = data.page || page;
                 updateTclPager(tclPage, data.has_more === true);
-                updateTclInfo(tclPage, tclLimit, tclRecords.length);
+                updateTclInfo(tclPage, tclLimit, tclRecords.length, data.total || tclRecords.length);
             } catch (e) {
                 console.error('Error loading TCL data:', e);
-                body.innerHTML = '<tr><td colspan="26">Error loading TCL data</td></tr>';
+                body.innerHTML = '<tr><td colspan="25">Error loading TCL data</td></tr>';
                 updateTclPager(1, false);
-            } finally {
-                if (keep) { prevBtn.disabled = false; nextBtn.disabled = false; }
+                updateTclInfo(0, 0, 0, 0);
             }
         }
 
         function renderTCLTable(records) {
             const body = document.querySelector('#tclBody');
             if (!records || records.length === 0) {
-                body.innerHTML = '<tr><td colspan="26">No records found</td></tr>';
+                body.innerHTML = '<tr><td colspan="25">No records found</td></tr>';
                 return;
             }
 
             let rows = '';
             records.forEach(item => {
                 rows += `
-				<tr>
-					<td>${item.id || ''}</td>
-					<td>${item.child_name || ''}</td>
-					<td>${item.sex || ''}</td>
-					<td>${item.date_of_birth || ''}</td>
-					<td>${item.mother_name || ''}</td>
-					<td>${item.address || ''}</td>
-					<td>${getVaccineCell(item.BCG)}</td>
-					<td>${getVaccineCell(item['HEPAB1_w_in_24hrs'])}</td>
-					<td>${getVaccineCell(item['HEPAB1_more_than_24hrs'])}</td>
-					<td>${getVaccineCell(item['Penta 1'])}</td>
-					<td>${getVaccineCell(item['Penta 2'])}</td>
-					<td>${getVaccineCell(item['Penta 3'])}</td>
-					<td>${getVaccineCell(item['OPV 1'])}</td>
-					<td>${getVaccineCell(item['OPV 2'])}</td>
-					<td>${getVaccineCell(item['OPV 3'])}</td>
-					<td>${getVaccineCell(item['Rota 1'])}</td>
-					<td>${getVaccineCell(item['Rota 2'])}</td>
-					<td>${getVaccineCell(item['PCV 1'])}</td>
-					<td>${getVaccineCell(item['PCV 2'])}</td>
-					<td>${getVaccineCell(item['PCV 3'])}</td>
-					<td>${getVaccineCell(item['MCV1_AMV'])}</td>
-					<td>${getVaccineCell(item['MCV2_MMR'])}</td>
-					<td>${item.weight || ''}</td>
-					<td>${item.height || ''}</td>
-					<td>${item.status || ''}</td>
-					<td>${item.remarks || ''}</td>
-				</tr>
-			`;
+                <tr>
+                    <td>${item.child_name || ''}</td>
+                    <td>${item.sex || ''}</td>
+                    <td>${item.date_of_birth || ''}</td>
+                    <td>${item.mother_name || ''}</td>
+                    <td>${item.address || ''}</td>
+                    <td>${getVaccineCell(item.BCG)}</td>
+                    <td>${getVaccineCell(item['HEPAB1_w_in_24hrs'])}</td>
+                    <td>${getVaccineCell(item['HEPAB1_more_than_24hrs'])}</td>
+                    <td>${getVaccineCell(item['Penta 1'])}</td>
+                    <td>${getVaccineCell(item['Penta 2'])}</td>
+                    <td>${getVaccineCell(item['Penta 3'])}</td>
+                    <td>${getVaccineCell(item['OPV 1'])}</td>
+                    <td>${getVaccineCell(item['OPV 2'])}</td>
+                    <td>${getVaccineCell(item['OPV 3'])}</td>
+                    <td>${getVaccineCell(item['Rota 1'])}</td>
+                    <td>${getVaccineCell(item['Rota 2'])}</td>
+                    <td>${getVaccineCell(item['PCV 1'])}</td>
+                    <td>${getVaccineCell(item['PCV 2'])}</td>
+                    <td>${getVaccineCell(item['PCV 3'])}</td>
+                    <td>${getVaccineCell(item['MCV1_AMV'])}</td>
+                    <td>${getVaccineCell(item['MCV2_MMR'])}</td>
+                    <td>${item.weight || ''}</td>
+                    <td>${item.height || ''}</td>
+                    <td>${statusChip(item.status)}</td>
+                    <td>${item.remarks || ''}</td>
+                </tr>
+            `;
             });
             body.innerHTML = rows;
+        }
+
+        function statusChip(status) {
+            const s = String(status || '').trim().toLowerCase();
+            const label = status || '—';
+            if (s === 'missed') return `<span class="chip chip--missed">${label}</span>`;
+            if (s === 'completed' || s === 'done') return `<span class="chip chip--completed">${label}</span>`;
+            if (s === 'scheduled' || s === 'upcoming') return `<span class="chip chip--upcoming">${label}</span>`;
+            if (s === 'transferred' || s === 'transfer') return `<span class="chip chip--transferred">${label}</span>`;
+            if (s === 'taken') return `<span class="chip chip--taken">${label}</span>`;
+            return `<span class="chip chip--default">${label}</span>`;
         }
 
         function getVaccineCell(status) {
@@ -252,7 +274,6 @@ if ($user_id) {
                 className = 'vaccine-scheduled';
             }
 
-            // Remove check and cross symbols from the displayed text only
             const cleanStatus = String(status).replace(/✓|✗/g, '').trim();
 
             return `<span class="${className}">${cleanStatus}</span>`;
@@ -273,19 +294,21 @@ if ($user_id) {
             const prevBtn = document.getElementById('tclPrevBtn');
             const nextBtn = document.getElementById('tclNextBtn');
             const pageSpan = document.getElementById('tclPageButtons');
-            if (!prevBtn || !nextBtn || !pageSpan) return; // guard if pager not in DOM yet
+            if (!prevBtn || !nextBtn || !pageSpan) return;
             prevBtn.disabled = page <= 1;
             nextBtn.disabled = !hasMore;
             pageSpan.innerHTML = `<button type="button" data-page="${page}" disabled class="tcl-page-num">${page}</button>`;
             console.log('Updating pager:', page, hasMore);
         }
 
-        function updateTclInfo(page, limit, count) {
+        function updateTclInfo(page, limit, count, total) {
             const info = document.getElementById('pageInfo');
             if (!info) return;
             const start = (page - 1) * limit + 1;
             const end = start + Math.max(0, count) - 1;
-            info.textContent = count > 0 ? `Showing ${start}-${end}` : '';
+            const endClamped = Math.max(0, end);
+            const totalNum = typeof total === 'number' ? total : (count || 0);
+            info.textContent = count > 0 ? `Showing ${start}-${endClamped} of ${totalNum} entries` : '';
         }
 
         document.getElementById('tclPrevBtn').addEventListener('click', (e) => {
@@ -304,7 +327,7 @@ if ($user_id) {
             }
 
             const headers = [
-                '#', 'Child Name', 'Sex', 'Date of Birth', 'Mother\'s Name', 'Address',
+                'Child Name', 'Sex', 'Date of Birth', 'Mother\'s Name', 'Address',
                 'BCG', 'HEPAB1 (w/in 24hrs)', 'HEPAB1 (More than 24hrs)', 'Penta 1', 'Penta 2', 'Penta 3',
                 'OPV 1', 'OPV 2', 'OPV 3', 'Rota 1', 'Rota 2', 'PCV 1', 'PCV 2', 'PCV 3',
                 'MCV1 (AMV)', 'MCV2 (MMR)', 'Weight (kg)', 'Height (cm)', 'Status', 'Remarks'
@@ -313,7 +336,6 @@ if ($user_id) {
             const csvContent = [
                 headers.join(','),
                 ...tclRecords.map(item => [
-                    item.id,
                     `"${item.child_name}"`,
                     item.sex,
                     item.date_of_birth,
@@ -355,27 +377,28 @@ if ($user_id) {
             window.URL.revokeObjectURL(url);
         }
 
-        // QR Code Scanner Functions
         let html5QrcodeInstance = null;
 
         async function openScanner() {
             const overlay = document.getElementById('qrOverlay');
-            overlay.style.display = 'flex';
+            if (overlay) overlay.style.display = 'flex';
 
             try {
                 const devices = await Html5Qrcode.getCameras();
                 const camSel = document.getElementById('cameraSelect');
-                camSel.innerHTML = '';
+                if (camSel) camSel.innerHTML = '';
 
                 if (devices && devices.length > 0) {
-                    devices.forEach((d, idx) => {
-                        const opt = document.createElement('option');
-                        opt.value = d.id;
-                        opt.textContent = d.label || ('Camera ' + (idx + 1));
-                        camSel.appendChild(opt);
-                    });
-                    camSel.style.display = 'inline-block';
-                } else {
+                    if (camSel) {
+                        devices.forEach((d, idx) => {
+                            const opt = document.createElement('option');
+                            opt.value = d.id;
+                            opt.textContent = d.label || ('Camera ' + (idx + 1));
+                            camSel.appendChild(opt);
+                        });
+                        camSel.style.display = 'inline-block';
+                    }
+                } else if (camSel) {
                     camSel.style.display = 'none';
                 }
 
@@ -402,7 +425,7 @@ if ($user_id) {
 
         function closeScanner() {
             const overlay = document.getElementById('qrOverlay');
-            overlay.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
 
             try {
                 if (html5QrcodeInstance) {
@@ -410,7 +433,6 @@ if ($user_id) {
                     html5QrcodeInstance.clear();
                 }
             } catch (e) {
-                // Ignore
             }
         }
 
@@ -418,7 +440,6 @@ if ($user_id) {
             console.log('QR Scan success:', decodedText);
             closeScanner();
 
-            // Try to extract baby_id from QR code
             const match = decodedText.match(/baby_id=([^&\s]+)/i);
             if (match && match[1]) {
                 document.getElementById('searchInput').value = decodeURIComponent(match[1]);
@@ -426,20 +447,16 @@ if ($user_id) {
                 return;
             }
 
-            // Otherwise use the decoded text as search term
             document.getElementById('searchInput').value = decodedText;
             filterTable();
         }
 
         function onScanFailure(err) {
-            // Ignore scan failures
         }
 
-        // Event listeners
         document.getElementById('applyFiltersBtn').addEventListener('click', applyFilters);
         document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
 
-        // Load data on page load
         window.addEventListener('DOMContentLoaded', () => loadTCLData(1));
     </script>
 </body>

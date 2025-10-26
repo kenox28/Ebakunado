@@ -1,0 +1,179 @@
+/* 1) Fonts and variables */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+
+:root {
+  --brand: #006c35;
+  --brand-dark: #005d2d;
+  --focus: #7fd6a9;
+  --border: #cbd5e1;
+  --primary-color: #006c35;
+}
+
+/* 2) Filters container */
+.filters {
+  display: flex;
+  flex-direction: row;
+  gap: 12px 16px;
+  padding: 12px 0;
+  font-size: 12px;
+}
+
+.filters label {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: #1f2937;
+}
+
+/* 3) Inputs (date, text, select) */
+.filters input[type="date"],
+.filters input[type="text"],
+.filters select {
+  padding: 10px 12px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: #111827;
+  min-height: 40px;
+  line-height: 1.2;
+  font: inherit;
+  font-size: 12px;
+  text-transform: capitalize;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* 4) Date input specifics */
+.filters input[type="date"] {
+  font-family: "Poppins", "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.filters input[type="date"]::-webkit-datetime-edit,
+.filters input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+.filters input[type="date"]::-webkit-datetime-edit-text,
+.filters input[type="date"]::-webkit-datetime-edit-month-field,
+.filters input[type="date"]::-webkit-datetime-edit-day-field,
+.filters input[type="date"]::-webkit-datetime-edit-year-field {
+  font-family: "Poppins", "Segoe UI", Roboto, Arial, sans-serif;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.filters input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+/* 5) Input/select focus */
+.filters input[type="date"]:focus,
+.filters input[type="text"]:focus,
+.filters select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
+}
+
+.filters .select-with-icon select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
+}
+
+/* 6) Select with right icon */
+.filters .select-with-icon {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 220px;
+}
+
+.filters .select-with-icon .material-symbols-rounded {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #000;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.filters .select-with-icon select {
+  padding-right: 36px;
+  padding-left: 12px;
+  background-image: none !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* 7) Select states and options */
+.filters select:not(:focus):hover,
+.filters .select-with-icon select:not(:focus):hover {
+  border-color: #76a582;
+  background-color: #fff;
+  box-shadow: none;
+  outline: none;
+}
+
+.filters .select-with-icon:focus-within select {
+  color: var(--primary-color);
+}
+
+.filters .select-with-icon:focus-within .material-symbols-rounded {
+  color: var(--primary-color);
+}
+
+.filters select option,
+.filters .select-with-icon select option,
+.filters select optgroup {
+  color: #111827 !important;
+  padding-left: 0 !important;
+  padding-inline-start: 0 !important;
+  text-indent: 0 !important;
+}
+
+/* 8) Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: none;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease; 
+}
+
+.btn:hover {
+  background: #005d2d;
+}
+
+.btn:active {
+  transform: scale(0.98);
+  background: #005129;
+}
+
+.btn:focus,
+.btn:focus-visible {
+  outline: 2px solid #00250e;
+  outline-offset: 1px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 9) Material Symbols */
+.material-symbols-rounded {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}

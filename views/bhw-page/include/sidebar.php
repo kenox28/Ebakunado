@@ -39,7 +39,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <!-- Pending Approval -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'pending-approval.php' ? ' active' : ''; ?>">
                     <a href="../../views/bhw-page/pending-approval.php" class="menu-link">
-                        <span class="menu-icon material-symbols-rounded">hourglass_top</span>
+                        <span class="menu-icon material-symbols-rounded">pending_actions</span>
                         <span class="menu-label">Pending Approval</span>
                     </a>
                 </li>
@@ -47,7 +47,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <!-- Child Health Record -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'child-health-list.php' ? ' active' : ''; ?>">
                     <a href="../../views/bhw-page/child-health-list.php" class="menu-link">
-                        <span class="menu-icon material-symbols-rounded">child_care</span>
+                        <span class="menu-icon material-symbols-rounded">description</span>
                         <span class="menu-label">Child Health Record</span>
                     </a>
                 </li>
@@ -65,14 +65,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <a href="../../views/bhw-page/add-child.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">add_circle</span>
                         <span class="menu-label">Add Child</span>
-                    </a>
-                </li>
-
-                <!-- Profile Management -->
-                <li class="sidebar-menu-item<?php echo $currentPage === 'profile-management.php' ? ' active' : ''; ?>">
-                    <a href="../../views/bhw-page/profile-management.php" class="menu-link">
-                        <span class="menu-icon material-symbols-rounded">person</span>
-                        <span class="menu-label">Profile Management</span>
                     </a>
                 </li>
 
