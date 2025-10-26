@@ -26,7 +26,6 @@ if ($user_id) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Approval</title>
     <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/variables.css" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/bhw/pending-approval-style.css" />
@@ -39,20 +38,39 @@ if ($user_id) {
     <main>
         <section class="section-container">
             <h2 class="pending-approval section-title">
-                <span class="material-symbols-rounded">pending_actions</span>
-                Pending Child List Approval
+                <span class="material-symbols-rounded">hourglass_top</span>
+                Pending Immunization List
             </h2>
         </section>
         <section class="pending-approval-section">
-            <!-- Pending list panel -->
             <div class="pending-approval-panel">
+                <div class="filters-bar">
+                    <div class="filters-header">
+                        <span class="material-symbols-rounded" aria-hidden="true">tune</span>
+                        <span>Filters:</span>
+                    </div>
+                    <div class="filters">
+                        <div class="select-with-icon">
+                            <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                            <input id="paSearch" type="text" placeholder="Search name" />
+                        </div>
+                        <div class="select-with-icon">
+                            <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
+                            <select id="paStatus">
+                                <option value="pending">Pending</option>
+                                <option value="transfer">Transfer</option>
+                            </select>
+                        </div>
+                        <button id="paClear" type="button" class="btn btn-secondary">Clear</button>
+                    </div>
+                </div>
+
                 <div class="table-container">
                     <table class="table table-hover" id="childhealthrecord">
                         <thead>
                             <tr>
-                                <th>No.</th>
-                                <th>Child First Name</th>
-                                <th>Child Last Name</th>
+                                <th>Child Firstname</th>
+                                <th>Child Lastname</th>
                                 <th>Gender</th>
                                 <th>Birth Date</th>
                                 <th>Place of Birth</th>
@@ -68,7 +86,7 @@ if ($user_id) {
                         </thead>
                         <tbody id="childhealthrecordBody">
                             <tr>
-                                <td colspan="14" class="text-center">
+                                <td colspan="21" class="text-center">
                                     <div class="loading">
                                         <i class="fas fa-spinner fa-spin"></i>
                                         <p>Loading records...</p>
@@ -80,7 +98,22 @@ if ($user_id) {
                 </div>
             </div>
 
-            <!-- Child details + vaccination panel -->
+            <!-- Moved pager outside the scrollable table-container -->
+            <div class="pager" id="paPager">
+                <div id="paPageInfo" class="page-info">&nbsp;</div>
+                <div class="pager-controls">
+                    <button id="paPrevBtn" type="button" class="pager-btn">
+                        <span class="material-symbols-rounded">chevron_backward</span>
+                        Prev
+                    </button>
+                    <span id="paPageButtons" class="page-buttons"></span>
+                    <button id="paNextBtn" type="button" class="pager-btn">
+                        Next
+                        <span class="material-symbols-rounded">chevron_forward</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="childinformation-container">
                 <div class="child-information childinfo-header">
                     <h1 class="section-heading">
@@ -90,8 +123,8 @@ if ($user_id) {
                         Child Information Review
                     </h1>
                     <div class="childinfo-actions">
-                        <button onclick="backToList()" id="closeButton">Back</button>
-                        <button id="acceptButton">Accept Record</button>
+                        <button class="btn back-btn" onclick="backToList()" id="closeButton">Back</button>
+                        <button class="btn accept-btn" id="acceptButton">Accept Record</button>
                     </div>
                 </div>
 
@@ -191,8 +224,8 @@ if ($user_id) {
                         </div>
 
                         <div class="childinfo-buttons">
-                            <button onclick="saveChildInfo()" class="save-btn">Save Changes</button>
-                            <button onclick="resetChildInfo()" class="reset-btn">Reset</button>
+                            <button onclick="saveChildInfo()" class="btn save-btn">Save Changes</button>
+                            <button onclick="cancelEdit()" class="btn cancel-btn">Cancel</button>
                         </div>
                     </div>
 
@@ -223,12 +256,129 @@ if ($user_id) {
                 </div>
             </div>
         </section>
+        
     </main>
 
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script>
+        // Pager spinner CSS (primary color)
+        (function ensureSpinnerCss(){
+            if (document.getElementById('pagerSpinnerCss')) return;
+            const style = document.createElement('style');
+            style.id = 'pagerSpinnerCss';
+            style.textContent = `.pager-spinner{width:16px;height:16px;border:2px solid #e3e3e3;border-top-color:var(--primary-color);border-radius:50%;display:inline-block;animation:paSpin .7s linear infinite}@keyframes paSpin{to{transform:rotate(360deg)}}`;
+            document.head.appendChild(style);
+        })();
+
+        const paState = { page: 1, limit: 10, loading: false };
+
+        async function loadPending(page = 1, opts = { keep: true }) {
+            const body = document.querySelector('#childhealthrecordBody');
+            const prevBtn = document.getElementById('paPrevBtn');
+            const nextBtn = document.getElementById('paNextBtn');
+            const pageButtons = document.getElementById('paPageButtons');
+
+            const search = (document.getElementById('paSearch').value || '').trim();
+            const status = (document.getElementById('paStatus').value || 'pending');
+            const limit = paState.limit;
+
+            paState.page = page;
+            paState.loading = true;
+
+            if (pageButtons) pageButtons.innerHTML = '<span class="pager-spinner" aria-label="Loading" role="status"></span>';
+            if (prevBtn) prevBtn.disabled = true;
+            if (nextBtn) nextBtn.disabled = true;
+
+            if (!opts || !opts.keep) {
+                body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
+            }
+
+            try {
+                const qs = new URLSearchParams({ page: String(page), limit: String(limit), status, search });
+                const res = await fetch('../../php/supabase/bhw/pending_chr.php?' + qs.toString());
+                const data = await res.json();
+
+                if (data.status !== 'success') {
+                    body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>';
+                    updatePaPager({ page, has_more: false });
+                    updatePaInfo(page, limit, 0, 0);
+                    return;
+                }
+
+                const rowsData = Array.isArray(data.data) ? data.data : [];
+                const count = rowsData.length;
+
+                if (count === 0) {
+                    body.innerHTML = '<tr><td colspan="21">No records found</td></tr>';
+                    updatePaPager({ page: data.page || page, has_more: false });
+                    updatePaInfo(data.page || page, data.limit || limit, 0);
+                    return;
+                }
+
+                let rows = '';
+                rowsData.forEach(item => {
+                    rows += `<tr>
+                            <td hidden>${item.id || ''}</td>
+                            <td hidden>${item.user_id || ''}</td>
+                            <td hidden>${item.baby_id || ''}</td>
+                            <td>${item.child_fname || ''}</td>
+                            <td>${item.child_lname || ''}</td>
+                            <td>${item.child_gender || ''}</td>
+                            <td>${item.child_birth_date || ''}</td>
+                            <td>${item.place_of_birth || ''}</td>
+                            <td>${item.mother_name || ''}</td>
+                            <td>${item.father_name || ''}</td>
+                            <td>${item.address || ''}</td>
+                            <td>${item.birth_weight || ''}</td>
+                            <td>${item.birth_height || ''}</td>
+                            <td>${item.birth_attendant || ''}</td>
+                            <td>${item.status || ''}</td>
+                            <td><button class="btn view-btn" onclick="viewChildInformation('${item.baby_id}')">
+                                <span class="material-symbols-rounded">visibility</span>
+                                View</button>
+                            </td>
+                        </tr>`;
+                });
+                body.innerHTML = rows;
+
+                updatePaPager({ page: data.page || page, has_more: !!data.has_more || count === (data.limit || limit) });
+                updatePaInfo(data.page || page, data.limit || limit, count, data.total || 0);
+            } catch (e) {
+                body.innerHTML = '<tr><td colspan="21">Error loading records</td></tr>';
+                updatePaPager({ page, has_more: false });
+                updatePaInfo(page, limit, 0, 0);
+            } finally {
+                paState.loading = false;
+            }
+        }
+
+        function updatePaPager(meta){
+            const prevBtn = document.getElementById('paPrevBtn');
+            const nextBtn = document.getElementById('paNextBtn');
+            const pageButtons = document.getElementById('paPageButtons');
+            const page = meta.page || 1;
+            const hasMore = !!meta.has_more;
+
+            if (pageButtons) pageButtons.innerHTML = `<button type="button" data-page="${page}" disabled>${page}</button>`;
+            if (prevBtn) prevBtn.disabled = page <= 1;
+            if (nextBtn) nextBtn.disabled = !hasMore;
+
+            if (prevBtn) prevBtn.onclick = () => { if (page > 1) loadPending(page - 1, { keep: true }); };
+            if (nextBtn) nextBtn.onclick = () => { if (hasMore) loadPending(page + 1, { keep: true }); };
+        }
+
+        function updatePaInfo(page, limit, count, total){
+            const info = document.getElementById('paPageInfo');
+            if (!info) return;
+            const start = (page - 1) * limit + 1;
+            const end = start + Math.max(0, count) - 1;
+            const endClamped = Math.max(0, end);
+            const totalNum = typeof total === 'number' ? total : (count || 0);
+            info.textContent = count > 0 ? `Showing ${start}-${endClamped} of ${totalNum} entries` : '';
+        }
+
         async function getChildHealthRecord() {
             const body = document.querySelector('#childhealthrecordBody');
             body.innerHTML = '<tr><td colspan="14">Loading...</td></tr>';
@@ -278,7 +428,7 @@ if ($user_id) {
         }
 
 
-        // Store original data for reset functionality
+        // Store original data for cancel functionality
         let originalChildData = {};
 
         async function viewChildInformation(baby_id) {
@@ -292,7 +442,7 @@ if ($user_id) {
             if (data.status === 'success') {
                 console.log(data.data);
 
-                // Store original data for reset functionality
+                // Store original data for cancel functionality
                 originalChildData = data.data[0];
 
                 // Populate input fields
@@ -335,10 +485,23 @@ if ($user_id) {
         }
 
         function backToList() {
-            document.querySelector('.childinformation-container').style.display = 'none';
-            document.querySelector('.pending-approval-panel').style.display = 'block';
-            const headerSection = document.querySelector('.section-container');
-            if (headerSection) headerSection.style.display = '';
+            // Restore header, filters/table panel, and pager
+            if (typeof showDetailsView === 'function') {
+                showDetailsView(false);
+            } else {
+                // Fallback if showDetailsView isn’t available
+                const header = document.querySelector('.section-container');
+                const listPanel = document.querySelector('.pending-approval-panel');
+                const pager = document.getElementById('paPager');
+                const details = document.querySelector('.childinformation-container');
+                if (header) header.style.display = '';
+                if (listPanel) listPanel.style.display = '';
+                if (pager) pager.style.display = ''; // show pager again
+                if (details) details.style.display = 'none';
+            }
+
+            // Refresh current page (keeps filters and pager state)
+            loadPending((paState && paState.page) ? paState.page : 1, { keep: true });
         }
 
         async function loadVaccinationRecords(baby_id) {
@@ -350,7 +513,7 @@ if ($user_id) {
                 const data = await response.json();
 
                 if (data.status !== 'success' || !data.data || data.data.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: #666;">No vaccination records found</p>';
+                    container.innerHTML = '<p class="no-vaccination-records">No vaccination records found</p>';
                     return;
                 }
 
@@ -379,28 +542,13 @@ if ($user_id) {
 
             } catch (error) {
                 console.error('Error loading vaccination records:', error);
-                container.innerHTML = '<p style="text-align: center; color: #dc3545;">Error loading vaccination records</p>';
+                container.innerHTML = '<p class="no-vaccination-error">Error loading vaccination records</p>';
             }
         }
 
 
-        function filterTable() {
-            const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
-            const rows = document.querySelectorAll('#childhealthrecordBody tr');
-            rows.forEach(tr => {
-                const tds = tr.querySelectorAll('td');
-                if (!tds || tds.length === 0) return;
-                // Skip the "No." column (index 0) and hidden columns (1, 2, 3)
-                const id = (tds[1].textContent || '').toLowerCase();
-                const userId = (tds[2].textContent || '').toLowerCase();
-                const babyId = (tds[3].textContent || '').toLowerCase();
-                const fname = (tds[4].textContent || '').toLowerCase();
-                const lname = (tds[5].textContent || '').toLowerCase();
-                const childName = (tds[6].textContent || '').toLowerCase();
-                const text = [id, userId, babyId, fname, lname, childName].join(' ');
-                tr.style.display = text.includes(q) ? '' : 'none';
-            });
-        }
+        // Deprecated client-side filter (replaced by server-side loadPending)
+        function filterTable() {}
 
         function viewChrImage(urlEnc) {
             const url = decodeURIComponent(urlEnc);
@@ -453,7 +601,39 @@ if ($user_id) {
         }
 
 
-        window.addEventListener('DOMContentLoaded', getChildHealthRecord);
+        // Wire filters and pager
+        document.addEventListener('DOMContentLoaded', () => {
+            // existing bindings
+            document.getElementById('paPrevBtn').addEventListener('click', () => {
+                if (paState.loading) return; 
+                const nextPage = Math.max(1, (paState.page||1) - 1);
+                loadPending(nextPage, { keep: true });
+            });
+            document.getElementById('paNextBtn').addEventListener('click', () => {
+                if (paState.loading) return; 
+                const nextPage = (paState.page||1) + 1;
+                loadPending(nextPage, { keep: true });
+            });
+            document.getElementById('paSearch').addEventListener('input', () => loadPending(1, { keep: true }));
+            document.getElementById('paStatus').addEventListener('change', () => loadPending(1, { keep: true }));
+            document.getElementById('paClear').addEventListener('click', () => {
+                document.getElementById('paSearch').value = '';
+                document.getElementById('paStatus').value = 'pending';
+                loadPending(1, { keep: true });
+            });
+
+            // Icon click focuses the corresponding input/select
+            document.querySelectorAll('.pending-approval-section .filters .select-with-icon').forEach(w => {
+                const icon = w.querySelector('.material-symbols-rounded');
+                const ctrl = w.querySelector('input, select');
+                if (icon && ctrl) {
+                    icon.style.cursor = 'pointer';
+                    icon.addEventListener('click', () => ctrl.focus());
+                }
+            });
+
+            loadPending(1, { keep: true });
+        });
 
         let html5QrcodeInstance = null;
         async function openScanner() {
@@ -700,26 +880,25 @@ if ($user_id) {
             }
         }
 
-        // Reset acts as Cancel: restore values and exit edit mode
-        function resetChildInfo() {
-            if (!originalChildData || Object.keys(originalChildData).length === 0) {
-                alert('No original data to reset to');
+        // Cancel = revert values and exit edit mode (replaces reset function)
+        function cancelEdit() {
+            const orig = window.originalChildData || originalChildData || null;
+            if (!orig || Object.keys(orig).length === 0) {
+                setChildInfoEditing(false);
                 return;
             }
-            document.querySelector('#childName').value = originalChildData.child_fname + ' ' + originalChildData.child_lname;
-            document.querySelector('#childGender').value = originalChildData.child_gender;
-            document.querySelector('#childBirthDate').value = originalChildData.child_birth_date;
-            document.querySelector('#childPlaceOfBirth').value = originalChildData.place_of_birth;
-            document.querySelector('#childAddress').value = originalChildData.address;
-            document.querySelector('#childWeight').value = originalChildData.birth_weight;
-            document.querySelector('#childHeight').value = originalChildData.birth_height;
-            document.querySelector('#childMother').value = originalChildData.mother_name;
-            document.querySelector('#childFather').value = originalChildData.father_name;
-            document.querySelector('#childBirthAttendant').value = originalChildData.birth_attendant;
-            document.querySelector('#childDeliveryType').value = originalChildData.delivery_type || 'Normal';
-            document.querySelector('#childBirthOrder').value = originalChildData.birth_order || 'Single';
-
-            // Exit edit mode and show Edit button again
+            document.querySelector('#childName').value = (orig.child_fname || '') + ' ' + (orig.child_lname || '');
+            document.querySelector('#childGender').value = orig.child_gender || '';
+            document.querySelector('#childBirthDate').value = orig.child_birth_date || '';
+            document.querySelector('#childPlaceOfBirth').value = orig.place_of_birth || '';
+            document.querySelector('#childAddress').value = orig.address || '';
+            document.querySelector('#childWeight').value = orig.birth_weight || '';
+            document.querySelector('#childHeight').value = orig.birth_height || '';
+            document.querySelector('#childMother').value = orig.mother_name || '';
+            document.querySelector('#childFather').value = orig.father_name || '';
+            document.querySelector('#childBirthAttendant').value = orig.birth_attendant || '';
+            document.querySelector('#childDeliveryType').value = orig.delivery_type || 'Normal';
+            document.querySelector('#childBirthOrder').value = orig.birth_order || 'Single';
             setChildInfoEditing(false);
         }
 
@@ -764,6 +943,93 @@ if ($user_id) {
             const isEditing = document.querySelector('.childinfo-details')?.classList.contains('editing');
             setChildInfoEditing(!isEditing);
         }
+
+        function showDetailsView(show) {
+            const header = document.querySelector('.section-container');
+            const listPanel = document.querySelector('.pending-approval-panel');
+            const pager = document.getElementById('paPager');
+            const details = document.querySelector('.childinformation-container');
+
+            if (show) {
+                if (header) header.style.display = 'none';
+                if (listPanel) listPanel.style.display = 'none';
+                if (pager) pager.style.display = 'none';
+                if (details) details.style.display = 'flex';
+            } else {
+                if (header) header.style.display = '';
+                if (listPanel) listPanel.style.display = '';
+                if (pager) pager.style.display = '';
+                if (details) details.style.display = 'none';
+            }
+        }
+
+        // Ensure View shows details-only AFTER data is fetched and placed
+        async function viewChildInformation(baby_id) {
+            const formData = new FormData();
+            formData.append('baby_id', baby_id);
+
+            try {
+                const response = await fetch('../../php/supabase/bhw/child_information.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.status !== 'success' || !Array.isArray(data.data) || data.data.length === 0) {
+                    alert('Unable to load child information.');
+                    return;
+                }
+
+                const row = data.data[0];
+                window.originalChildData = row;
+
+                document.querySelector('#childName').value = `${row.child_fname || ''} ${row.child_lname || ''}`.trim();
+                document.querySelector('#childGender').value = row.child_gender || '';
+                document.querySelector('#childBirthDate').value = row.child_birth_date || '';
+                document.querySelector('#childPlaceOfBirth').value = row.place_of_birth || '';
+                document.querySelector('#childAddress').value = row.address || '';
+                document.querySelector('#childWeight').value = row.birth_weight || '';
+                document.querySelector('#childHeight').value = row.birth_height || '';
+                document.querySelector('#childMother').value = row.mother_name || '';
+                document.querySelector('#childFather').value = row.father_name || '';
+                document.querySelector('#childBirthAttendant').value = row.birth_attendant || '';
+                document.querySelector('#childDeliveryType').value = row.delivery_type || 'Normal';
+                document.querySelector('#childBirthOrder').value = row.birth_order || 'Single';
+                document.querySelector('#childImage').src = row.babys_card || '';
+
+                document.querySelector('.childinformation-container').dataset.babyId = baby_id;
+
+                await loadVaccinationRecords(baby_id);
+                setChildInfoEditing(false);
+                showDetailsView(true);
+            } catch (err) {
+                console.error('Error loading child info:', err);
+                alert('Error loading child information.');
+            }
+        }
+
+        // Cancel = revert values and exit edit mode
+        function cancelEdit() {
+            const orig = window.originalChildData || originalChildData || null;
+            if (!orig || Object.keys(orig).length === 0) {
+                setChildInfoEditing(false);
+                return;
+            }
+            document.querySelector('#childName').value = (orig.child_fname || '') + ' ' + (orig.child_lname || '');
+            document.querySelector('#childGender').value = orig.child_gender || '';
+            document.querySelector('#childBirthDate').value = orig.child_birth_date || '';
+            document.querySelector('#childPlaceOfBirth').value = orig.place_of_birth || '';
+            document.querySelector('#childAddress').value = orig.address || '';
+            document.querySelector('#childWeight').value = orig.birth_weight || '';
+            document.querySelector('#childHeight').value = orig.birth_height || '';
+            document.querySelector('#childMother').value = orig.mother_name || '';
+            document.querySelector('#childFather').value = orig.father_name || '';
+            document.querySelector('#childBirthAttendant').value = orig.birth_attendant || '';
+            document.querySelector('#childDeliveryType').value = orig.delivery_type || 'Normal';
+            document.querySelector('#childBirthOrder').value = orig.birth_order || 'Single';
+            setChildInfoEditing(false);
+        }
+
     </script>
 </body>
 

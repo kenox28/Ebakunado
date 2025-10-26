@@ -31,7 +31,6 @@ if ($user_id) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>BHW Dashboard</title>
         <link rel="stylesheet" href="../../css/main.css" />
-        <link rel="stylesheet" href="../../css/variables.css" />
         <link rel="stylesheet" href="../../css/header.css" />
         <link rel="stylesheet" href="../../css/sidebar.css" />
         <link rel="stylesheet" href="../../css/bhw/immunization-style.css">
@@ -49,6 +48,10 @@ if ($user_id) {
             </h2>
         </section>
         <section class="immunization-section">
+            <div class="filters-header">
+                <span class="material-symbols-rounded" aria-hidden="true">tune</span>
+                <span>Filters:</span>
+            </div>
             <div class="filters">
                 <div class="select-with-icon">
                     <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
@@ -75,7 +78,7 @@ if ($user_id) {
                 </div>
 
                 <div class="select-with-icon">
-                    <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
+                    <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
                     <input id="filterPurok" type="text" placeholder="e.g. Purok 1" />
                 </div>
 
@@ -106,19 +109,19 @@ if ($user_id) {
                         </tr>
                     </tbody>
                 </table>
-                <div class="pager" id="pager">
-                    <div id="pageInfo" class="page-info">&nbsp;</div>
-                    <div class="pager-controls">
-                        <button id="prevBtn" type="button" class="pager-btn">
-                            <span class="material-symbols-rounded">chevron_backward</span>
-                            Prev
-                        </button>
-                        <span id="pageButtons" class="page-buttons"></span>
-                        <button id="nextBtn" type="button" class="pager-btn">
-                            Next
-                            <span class="material-symbols-rounded">chevron_forward</span>
-                        </button>
-                    </div>
+            </div>
+            <div class="pager" id="pager">
+                <div id="pageInfo" class="page-info">&nbsp;</div>
+                <div class="pager-controls">
+                    <button id="prevBtn" type="button" class="pager-btn">
+                        <span class="material-symbols-rounded">chevron_backward</span>
+                        Prev
+                    </button>
+                    <span id="pageButtons" class="page-buttons"></span>
+                    <button id="nextBtn" type="button" class="pager-btn">
+                        Next
+                        <span class="material-symbols-rounded">chevron_forward</span>
+                    </button>
                 </div>
             </div>
 
@@ -146,7 +149,7 @@ if ($user_id) {
     <script>
         // spinner CSS (scoped)
         const style = document.createElement('style');
-        style.textContent = `.pager-spinner{width:16px;height:16px;border:2px solid #ccc;border-top-color:#1976d2;border-radius:50%;display:inline-block;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}`;
+        style.textContent = `.pager-spinner{width:16px;height:16px;border:2px solid #e3e3e3;border-top-color:var(--primary-color);border-radius:50%;display:inline-block;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}`;
         document.head.appendChild(style);
         let chrRecords = [];
         let currentPage = 1;
@@ -158,13 +161,14 @@ if ($user_id) {
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             const btnWrap = document.getElementById('pageButtons');
-            const prevMarkup = btnWrap ? btnWrap.innerHTML : '';
+
+            // Always show pager spinner while fetching (like pending-approval)
+            if (btnWrap) btnWrap.innerHTML = `<span class="pager-spinner" aria-label="Loading" role="status"></span>`;
+            if (prevBtn) prevBtn.disabled = true;
+            if (nextBtn) nextBtn.disabled = true;
+
             if (!keepRows) {
                 body.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
-            } else {
-                if (btnWrap) btnWrap.innerHTML = `<span class="pager-spinner" aria-label="Loading" role="status"></span>`;
-                if (prevBtn) prevBtn.disabled = true;
-                if (nextBtn) nextBtn.disabled = true;
             }
             try {
                 const params = new URLSearchParams();
@@ -495,11 +499,11 @@ if ($user_id) {
                             <td hidden>${item.id || ''}</td>
                             <td hidden>${item.user_id || ''}</td>
                             <td hidden>${item.baby_id || ''}</td>
-                        <td>${(item.child_fname || '') + ' ' + (item.child_lname || '')}</td>
+                            <td>${(item.child_fname || '') + ' ' + (item.child_lname || '')}</td>
                             <td>${item.address || ''}</td>
-                        <td>${item.vaccine_name || ''}</td>
-                        <td>${item.schedule_date || ''}</td>
-                        <td>${item.status === 'taken' && item.date_given ? ('taken (' + item.date_given + ')') : (item.status || '')}</td>
+                            <td>${item.vaccine_name || ''}</td>
+                            <td>${item.schedule_date || ''}</td>
+                            <td>${statusChip(item.status, item.date_given)}</td>
                             <td>
                                 <button class="btn view-btn" onclick="openImmunizationForm(this)"
                                     data-record-id="${item.immunization_id || ''}"
@@ -532,6 +536,22 @@ if ($user_id) {
             body.innerHTML = rows;
         }
 
+        function statusChip(status, dateGiven) {
+            const s = String(status || '').toLowerCase();
+            if (s === 'taken') {
+                return `<span class="chip chip--taken">${dateGiven ? `Taken (${dateGiven})` : 'Taken'}</span>`;
+            }
+            if (s === 'missed') {
+                return `<span class="chip chip--missed">Missed</span>`;
+            }
+            if (s === 'upcoming' || s === 'scheduled') {
+                return `<span class="chip chip--upcoming">Upcoming</span>`;
+            }
+            if (s === 'completed') {
+                return `<span class="chip chip--completed">Completed</span>`;
+            }
+            return `<span class="chip chip--default">${status || '—'}</span>`;
+        }
 
         async function viewChildInformation(baby_id) {
             formData = new FormData();
@@ -614,21 +634,17 @@ if ($user_id) {
             if (!info || !btnWrap || !prevBtn || !nextBtn) return;
             const start = (page - 1) * limit + 1;
             const end = start + (chrRecords?.length || 0) - 1;
-            info.textContent = chrRecords && chrRecords.length ? `Showing ${start}-${end}` : '';
-            // keep pagination minimal for speed
+            const endClamped = Math.min(end, total || end);
+            info.textContent = chrRecords && chrRecords.length ? `Showing ${start}-${endClamped} of ${total || 0} entries` : '';
             btnWrap.innerHTML = `<button type="button" data-page="${page}" disabled>${page}</button>`;
             prevBtn.disabled = page <= 1;
             const canNext = hasMore === true || (chrRecords && chrRecords.length === limit);
             nextBtn.disabled = !canNext;
             prevBtn.onclick = () => {
-                if (page > 1) getChildHealthRecord(page - 1, {
-                    keep: true
-                });
+                if (page > 1) getChildHealthRecord(page - 1, { keep: true });
             };
             nextBtn.onclick = () => {
-                if (canNext) getChildHealthRecord(page + 1, {
-                    keep: true
-                });
+                if (canNext) getChildHealthRecord(page + 1, { keep: true });
             };
         }
 

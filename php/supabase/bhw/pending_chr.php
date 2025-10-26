@@ -11,9 +11,61 @@ if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['midwife_id'])) {
 }
 
 $columns = 'id,user_id,baby_id,child_fname,child_lname,child_gender,child_birth_date,place_of_birth,mother_name,father_name,address,birth_weight,birth_height,birth_attendant,babys_card,date_created,date_updated,status';
-$rows = supabaseSelect('child_health_records', $columns, ['status' => 'pending'], 'date_created.desc');
 
-echo json_encode(['status' => 'success', 'data' => $rows ?: []]);
+// Inputs
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$limit = isset($_GET['limit']) ? max(1, min(100, (int)$_GET['limit'])) : 10;
+$status = isset($_GET['status']) && in_array(strtolower($_GET['status']), ['pending','transfer']) ? strtolower($_GET['status']) : 'pending';
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+// Base where
+$where = ['status' => $status];
+
+// Fetch all matching (for search) then slice OR use paginated when no search
+// Note: SupabaseConfig select supports limit and offset; we compute offset here
+$offset = ($page - 1) * $limit;
+
+if ($search !== '') {
+    // Simple client-side search on fname/lname since PostgREST ilike not wired in helper
+    $all = supabaseSelect('child_health_records', $columns, $where, 'date_created.desc');
+    $filtered = [];
+    $q = strtolower($search);
+    if (is_array($all)) {
+        foreach ($all as $r) {
+            $name = strtolower(($r['child_fname'] ?? '') . ' ' . ($r['child_lname'] ?? ''));
+            if ($q === '' || strpos($name, $q) !== false) {
+                $filtered[] = $r;
+            }
+        }
+    }
+    $total = count($filtered);
+    $data = array_slice($filtered, $offset, $limit);
+    $has_more = ($offset + count($data)) < $total;
+    echo json_encode([
+        'status' => 'success',
+        'data' => $data,
+        'total' => $total,
+        'page' => $page,
+        'limit' => $limit,
+        'has_more' => $has_more
+    ]);
+    exit;
+}
+
+// No search: use direct pagination
+$totalRows = supabaseSelect('child_health_records', 'id', $where);
+$total = is_array($totalRows) ? count($totalRows) : 0;
+$rows = supabaseSelect('child_health_records', $columns, $where, 'date_created.desc', $limit, $offset);
+$has_more = ($offset + (is_array($rows) ? count($rows) : 0)) < $total;
+
+echo json_encode([
+    'status' => 'success',
+    'data' => $rows ?: [],
+    'total' => $total,
+    'page' => $page,
+    'limit' => $limit,
+    'has_more' => $has_more
+]);
 ?>
 
 

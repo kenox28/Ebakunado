@@ -4,61 +4,27 @@ main {
   overflow-y: auto;
 }
 
-/* =Buttons: minimal base (legacy) */
-.btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 1rem;
-}
-.btn:hover {
-  background-color: #005d2d;
-}
-
 /* =Buttons: full base + states */
-.btn,
-.childinfo-actions button {
-  display: inline-flex;
+.childinfo-actions {
+  display: flex;
+  gap: 1rem;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+}
+.childinfo-actions button {
   padding: 8px 20px;
   border-radius: 8px;
   border: none;
   background: var(--primary-color);
   color: #fff;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 1.4rem;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-}
-.btn:hover,
-.childinfo-actions button:hover {
-  background: #005d2d;
-}
-.btn:active,
-.childinfo-actions button:active {
-  background: #005129;
-}
-
-/* =Buttons: focus outline (match Immunization) */
-.btn:focus,
-.btn:focus-visible,
-.childinfo-actions button:focus,
-.childinfo-actions button:focus-visible,
-.childinfo-buttons .save-btn:focus,
-.childinfo-buttons .save-btn:focus-visible,
-.childinfo-buttons .reset-btn:focus,
-.childinfo-buttons .reset-btn:focus-visible,
-.view-btn:focus,
-.view-btn:focus-visible {
-  outline: 2px solid #00250e;
-  outline-offset: 1px;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 /* =Action: Back button (border-only) */
-.childinfo-actions #closeButton {
+.childinfo-actions .back-btn {
   background: transparent;
   color: var(--primary-color);
   border: 1px solid var(--primary-color);
@@ -84,7 +50,8 @@ main {
   font-weight: 500;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.05s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease, transform 0.05s ease;
   border: 1px solid transparent;
 }
 .childinfo-buttons button:active {
@@ -107,17 +74,17 @@ main {
 }
 
 /* =Form actions: Reset button (border-only) */
-.reset-btn,
-.childinfo-buttons .reset-btn {
+.cancel-btn,
+.childinfo-buttons .cancel-btn {
   background: transparent;
   color: var(--primary-color);
   border: 1px solid var(--primary-color);
 }
-.reset-btn:hover {
+.cancel-btn:hover {
   background: #f9fafb;
   border-color: #157347;
 }
-.reset-btn:active {
+.cancel-btn:active {
   background: #f3f4f6;
   transform: scale(0.98);
 }
@@ -278,7 +245,6 @@ main {
 /* =Data table: container */
 .table-container {
   overflow: auto;
-  margin-top: 1rem;
   max-height: 60vh;
   overflow-y: auto;
   overflow-x: auto;
@@ -334,31 +300,63 @@ main {
 
 /* =Data table: column width hints */
 .table th:nth-child(2),
-.table td:nth-child(2) { min-width: 120px; }
+.table td:nth-child(2) {
+  min-width: 120px;
+}
 .table th:nth-child(3),
-.table td:nth-child(3) { min-width: 120px; }
+.table td:nth-child(3) {
+  min-width: 120px;
+}
 .table th:nth-child(4),
-.table td:nth-child(4) { min-width: 80px; }
+.table td:nth-child(4) {
+  min-width: 80px;
+}
 .table th:nth-child(5),
-.table td:nth-child(5) { min-width: 120px; }
+.table td:nth-child(5) {
+  min-width: 120px;
+}
 .table th:nth-child(6),
-.table td:nth-child(6) { min-width: 150px; }
+.table td:nth-child(6) {
+  min-width: 150px;
+}
 .table th:nth-child(7),
-.table td:nth-child(7) { min-width: 150px; }
+.table td:nth-child(7) {
+  min-width: 150px;
+}
 .table th:nth-child(8),
-.table td:nth-child(8) { min-width: 150px; }
+.table td:nth-child(8) {
+  min-width: 150px;
+}
 .table th:nth-child(9),
-.table td:nth-child(9) { min-width: 200px; }
+.table td:nth-child(9) {
+  min-width: 200px;
+}
 .table th:nth-child(10),
-.table td:nth-child(10) { min-width: 80px; }
+.table td:nth-child(10) {
+  min-width: 80px;
+}
 .table th:nth-child(11),
-.table td:nth-child(11) { min-width: 80px; }
+.table td:nth-child(11) {
+  min-width: 80px;
+}
 .table th:nth-child(12),
-.table td:nth-child(12) { min-width: 120px; }
+.table td:nth-child(12) {
+  min-width: 120px;
+}
 .table th:nth-child(13),
-.table td:nth-child(13) { min-width: 100px; }
+.table td:nth-child(13) {
+  min-width: 100px;
+}
 .table th:nth-child(14),
-.table td:nth-child(14) { min-width: 100px; }
+.table td:nth-child(14) {
+  min-width: 100px;
+}
+
+/* Center the Action column */
+.table th:last-child,
+.table td:last-child {
+  text-align: center;
+}
 
 /* =Loading placeholder */
 .loading {
@@ -456,9 +454,182 @@ main {
 }
 
 /* =Edit mode visibility rules */
-.childinfo-buttons { display: none; gap: 12px; }
-.childinfo-details.editing .childinfo-buttons { display: flex; }
-.childinfo-details .edit-btn { display: inline-flex; }
-.childinfo-details.editing .edit-btn { display: none; }
+.childinfo-buttons {
+  display: none;
+  gap: 12px;
+}
+.childinfo-details.editing .childinfo-buttons {
+  display: flex;
+}
+.childinfo-details .edit-btn {
+  display: inline-flex;
+}
+.childinfo-details.editing .edit-btn {
+  display: none;
+}
 
+/* Filters (match Immunization styles) */
+.pending-approval-section .filters {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  padding: 12px 0;
+  font-size: 12px;
+  align-items: center;
+  align-content: flex-start;
+}
+.pending-approval-panel .filters-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+.pending-approval-panel .filters-header .material-symbols-rounded {
+  font-size: 1.8rem;
+  color: #1a1a1a;
+}
 
+/* Filters bar: label + controls in one row */
+.pending-approval-panel .filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end; 
+}
+.pending-approval-panel .filters-bar .filters {
+  flex: 0 0 auto; 
+}
+.pending-approval-panel .filters-header {
+  margin-right: 1.2rem;
+}
+
+/* Ensure 1px border on filters (matches immunization) */
+.pending-approval-section .filters input[type="text"],
+.pending-approval-section .filters select {
+  border: 1px solid #1a1a1a;
+}
+.pending-approval-section .filters .select-with-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+.pending-approval-section .filters .btn {
+  flex: 0 0 auto;
+}
+.pending-approval-section .filters input[type="text"],
+.pending-approval-section .filters select {
+  width: 100%;
+  height: 34px;
+  min-height: 34px;
+  line-height: 34px;
+  padding: 0 12px;
+  border: 0.5px solid #1a1a1a;
+  border-radius: 8px;
+  background: #fff;
+  color: #111827;
+  font: inherit;
+  font-size: 1.2rem;
+  text-transform: capitalize;
+  transition: border-color 0.2s ease, background-color 0.2s ease,
+    box-shadow 0.2s ease;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+.pending-approval-section .filters .select-with-icon .material-symbols-rounded {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #000;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 2;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+.pending-approval-section .filters .select-with-icon input[type="text"],
+.pending-approval-section .filters .select-with-icon select {
+  padding-right: 36px;
+}
+.pending-approval-section .filters input[type="text"]:focus,
+.pending-approval-section .filters select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
+}
+.pending-approval-section .filters .select-with-icon:focus-within select,
+.pending-approval-section .filters .select-with-icon:focus-within input {
+  color: var(--primary-color);
+}
+.pending-approval-section
+  .filters
+  .select-with-icon:focus-within
+  .material-symbols-rounded {
+  color: var(--primary-color);
+}
+/* Hover parity with Immunization */
+.pending-approval-section .filters select:not(:focus):hover,
+.pending-approval-section .filters .select-with-icon select:not(:focus):hover,
+.pending-approval-section .filters input[type="text"]:not(:focus):hover {
+  border-color: #76a582;
+  background-color: #fff;
+  box-shadow: none;
+  outline: none;
+}
+
+/* Fixed widths for filters */
+.pending-approval-section .filters .select-with-icon {
+  flex: 0 0 auto;
+}
+
+.pending-approval-section .filters #paSearch {
+  width: 300px;
+}
+
+.pending-approval-section .filters #paStatus {
+  width: 200px;
+}
+
+/* =Vaccination section: no records message */
+.vaccination-section .no-vaccination-records {
+  text-align: center;
+  color: #666;
+  padding: 1.25rem;
+  font-size: 1.3rem;
+  border: 1px dashed #e5e7eb;
+  border-radius: 8px;
+  background: #fafafa;
+  margin-top: 0.5rem;
+}
+
+.vaccination-section .no-vaccination-error {
+  text-align: center;
+  color: #dc3545;
+  padding: 1.25rem;
+  font-size: 1.3rem;
+  border: 1px dashed #f3c2c6;
+  border-radius: 8px;
+  background: #fff5f5;
+  margin-top: 0.5rem;
+}
+
+.btn-secondary {
+  background: transparent !important;
+  color: var(--primary-color) !important;
+  border: 1px solid var(--primary-color) !important;
+  box-shadow: none !important;
+}
+
+.btn-secondary:hover {
+  background: none !important;
+  color: var(--primary-color) !important;
+  box-shadow: none !important;
+}

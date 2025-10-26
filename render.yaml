@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: ebakunado-api
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PHP_VERSION
+        value: 8.1
+      # Add your Supabase credentials as environment variables
+      - key: SUPABASE_URL
+        sync: false # This means you'll set this manually in Render dashboard
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      # Add any other environment variables your app needs
+      - key: API_KEY
+        value: "iquen" # Your current API key
+        sync: false

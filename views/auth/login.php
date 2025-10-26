@@ -11,6 +11,41 @@ session_start();
 	<link rel="stylesheet" href="../../css/variables.css" />
 	<link rel="stylesheet" href="../../css/login-style.css?v=1.0.1" />
 	<link rel="stylesheet" href="../../css/queries.css?v=1.0.1" />
+	<style>
+		/* Forgot Password Form Styling */
+		#forgotPasswordForm {
+			animation: fadeIn 0.3s ease-in-out;
+		}
+		
+		.cancel-wrapper {
+			margin-top: 16px;
+			text-align: center;
+		}
+		
+		.btn-secondary {
+			background-color: #6c757d;
+			color: white;
+			border: none;
+			padding: 12px 24px;
+			border-radius: 8px;
+			font-size: 16px;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			text-decoration: none;
+			display: inline-block;
+		}
+		
+		.btn-secondary:hover {
+			background-color: #5a6268;
+			transform: translateY(-2px);
+		}
+		
+		@keyframes fadeIn {
+			from { opacity: 0; transform: translateY(10px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+	</style>
 	<title>Health Worker Portal</title>
 </head>
 
@@ -72,8 +107,7 @@ session_start();
 						</div>
 					</div>
 					<div class="forgot-password-wrapper">
-						<a class="forgot-password-link" href="#" id="forgot-password">Forgot Password?</a>
-
+						<a class="forgot-password-link" href="#" id="forgotPasswordLink">Forgot Password?</a>
 					</div>
 					<div class="submit-wrapper">
 						<button class="btn btn-primary login-btn" type="submit">
@@ -88,6 +122,29 @@ session_start();
 						</p>
 					</div>
 				</form>
+
+				<!-- Forgot Password Form (Hidden by default) -->
+				<div id="forgotPasswordForm" style="display: none;">
+					<h2 class="form-title">Forgot Password</h2>
+					<form id="ForgotPasswordForm">
+						<div class="input-group">
+							<label class="input-label" for="email_phone">Email or Phone Number</label>
+							<input
+								class="form-input"
+								type="text"
+								id="email_phone"
+								name="email_phone"
+								required
+								placeholder="Enter your email or phone number" />
+						</div>
+						<div class="submit-wrapper">
+							<button class="btn btn-primary" type="submit">Send OTP</button>
+						</div>
+						<div class="cancel-wrapper">
+							<button type="button" id="cancelForgotPassword" class="btn btn-secondary">Cancel</button>
+						</div>
+					</form>
+				</div>
 			</div>
 		</section>
 	</main>
