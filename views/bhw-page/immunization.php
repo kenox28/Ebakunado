@@ -82,8 +82,8 @@ if ($user_id) {
                     <input id="filterPurok" type="text" placeholder="e.g. Purok 1" />
                 </div>
 
-                <button class="btn btn-primary" id="applyFiltersBtn">Apply</button>
-                <button class="btn btn-secondary" id="clearFiltersBtn">Clear</button>
+                <button class="btn btn-primary" id="applyFiltersBtn" type="button">Apply</button>
+                <button class="btn btn-secondary" id="clearFiltersBtn" type="button">Clear</button>
             </div>
 
             <div class="table-container">
@@ -100,7 +100,7 @@ if ($user_id) {
                     </thead>
                     <tbody id="childhealthrecordBody">
                         <tr>
-                            <td colspan="21" class="text-center">
+                            <td colspan="6" class="text-center">
                                 <div class="loading">
                                     <i class="fas fa-spinner fa-spin"></i>
                                     <p>Loading records...</p>
@@ -155,7 +155,7 @@ if ($user_id) {
         let currentPage = 1;
         const pageSize = 10; // fixed to 10 per request
 
-        async function getChildHealthRecord(page = 1, opts = {}) {
+        async function fetchChildHealthRecord(page = 1, opts = {}) {
             const body = document.querySelector('#childhealthrecordBody');
             const keepRows = opts.keep === true;
             const prevBtn = document.getElementById('prevBtn');
@@ -475,7 +475,7 @@ if ($user_id) {
                 }));
                 if (data.status === 'success') {
                     closeImmunizationForm();
-                    await getChildHealthRecord();
+                    await fetchChildHealthRecord();
                     applyFilters();
                     alert('Immunization saved successfully');
                 } else {
@@ -600,11 +600,18 @@ if ($user_id) {
             if (!sel) return;
             const current = sel.value;
 
+            // Always start with the default prompt
+            const options = [
+                '<option value="" disabled selected>Vaccines</option>',
+                '<option value="all">All</option>'
+            ];
+
             // Get unique vaccines from the loaded data
             const vaccines = [...new Set(chrRecords.map(item => item.vaccine_name).filter(v => v))].sort();
+            options.push(...vaccines.map(v => `<option value="${String(v)}">${String(v)}</option>`));
 
-            const options = ['<option value="all">All</option>'].concat(vaccines.map(v => `<option value="${String(v)}">${String(v)}</option>`));
             sel.innerHTML = options.join('');
+            // If the current value exists, set it; otherwise, keep the default
             if (Array.from(sel.options).some(o => o.value === current)) sel.value = current;
         }
 
@@ -614,8 +621,7 @@ if ($user_id) {
         }
 
         function applyFilters() {
-            // server-side filtering; always reset to page 1 for speed
-            getChildHealthRecord(1);
+            fetchChildHealthRecord(1); // <-- FIXED
         }
 
         function clearFilters() {
@@ -623,7 +629,7 @@ if ($user_id) {
             document.getElementById('filterStatus').value = 'upcoming';
             document.getElementById('filterVaccine').value = 'all';
             document.getElementById('filterPurok').value = '';
-            getChildHealthRecord(1);
+            fetchChildHealthRecord(1); // <-- FIXED
         }
 
         function updatePagination(total, page, limit, hasMore = null) {
@@ -641,10 +647,10 @@ if ($user_id) {
             const canNext = hasMore === true || (chrRecords && chrRecords.length === limit);
             nextBtn.disabled = !canNext;
             prevBtn.onclick = () => {
-                if (page > 1) getChildHealthRecord(page - 1, { keep: true });
+                if (page > 1) fetchChildHealthRecord(page - 1, { keep: true });
             };
             nextBtn.onclick = () => {
-                if (canNext) getChildHealthRecord(page + 1, { keep: true });
+                if (canNext) fetchChildHealthRecord(page + 1, { keep: true });
             };
         }
 
@@ -676,7 +682,7 @@ if ($user_id) {
             });
             const data = await response.json();
             if (data.status === 'success') {
-                getChildHealthRecord();
+                fetchChildHealthRecord();
             } else {
                 alert('Record not accepted: ' + data.message);
             }
@@ -692,7 +698,7 @@ if ($user_id) {
             });
             const data = await response.json();
             if (data.status === 'success') {
-                getChildHealthRecord();
+                fetchChildHealthRecord();
             } else {
                 alert('Record not rejected: ' + data.message);
             }
@@ -704,7 +710,7 @@ if ($user_id) {
             if (dateInput) dateInput.value = '';
             const statusSelEl = document.getElementById('filterStatus');
             if (statusSelEl) statusSelEl.value = 'upcoming';
-            getChildHealthRecord(1);
+            fetchChildHealthRecord(1); // <-- FIXED
         });
         window.addEventListener('DOMContentLoaded', function() {
             const applyBtn = document.getElementById('applyFiltersBtn');

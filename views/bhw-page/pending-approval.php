@@ -292,7 +292,8 @@ if ($user_id) {
             if (nextBtn) nextBtn.disabled = true;
 
             if (!opts || !opts.keep) {
-                body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
+                // Show "Loading..." (not "Loading records...") while fetching
+                body.innerHTML = '<tr><td colspan="21" class="text-center">Loading...</td></tr>';
             }
 
             try {

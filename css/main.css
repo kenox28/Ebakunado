@@ -212,6 +212,10 @@ th {
   width: 100%;
 }
 
+.table tr {
+  scroll-snap-align: start;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
