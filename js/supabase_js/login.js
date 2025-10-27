@@ -129,7 +129,7 @@ async function loginFun(e) {
 				// 	window.location.href = "../views/bhw/home.php";
 				// });
 				console.log("Redirecting to BHW home");
-				window.location.href = "../../views/bhw/home.php";
+				window.location.href = "../../views/bhw-page/dashboard.php";
 			} else if (data.user_type === "midwife") {
 				console.log("Midwife login successful, showing SweetAlert");
 				// Swal.fire({
@@ -142,7 +142,7 @@ async function loginFun(e) {
 				// 	window.location.href = "../views/midwives/home.php";
 				// });
 				console.log("Redirecting to BHW home");
-				window.location.href = "../../views/bhw/home.php";
+				window.location.href = "../../views/bhw-page/dashboard.php";
 			} else {
 				console.log("User login successful, showing SweetAlert");
 				// Swal.fire({
@@ -167,10 +167,10 @@ async function loginFun(e) {
 				window.location.href = "../../views/admin/home.php";
 			} else if (data.user_type === "bhw") {
 				console.log("Redirecting already logged in BHW");
-				window.location.href = "../../views/bhw/home.php";
+				window.location.href = "../../views/bhw-page/dashboard.php";
 			} else if (data.user_type === "midwife") {
 				console.log("Redirecting already logged in midwife");
-				window.location.href = "../../views/bhw/home.php";
+				window.location.href = "../../views/bhw-page/dashboard.php";
 			} else {
 				console.log("Redirecting already logged in user");
 				window.location.href = "../../views/users/home.php";
