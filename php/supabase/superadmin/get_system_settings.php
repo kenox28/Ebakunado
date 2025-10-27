@@ -5,25 +5,22 @@ include '../../../database/DatabaseHelper.php';
 
 header('Content-Type: application/json');
 
-// Check if user is authorized (BHW, Admin, or Super Admin)
-if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['midwife_id']) && !isset($_SESSION['admin_id']) && !isset($_SESSION['super_admin_id'])) {
+// Check if user is authorized (SuperAdmin only)
+if (!isset($_SESSION['super_admin_id'])) {
     echo json_encode(['status' => 'error', 'message' => 'Unauthorized access']);
     exit();
 }
 
 try {
     // Get current user info
-    $user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
-    $user_type = $_SESSION['user_type'] ?? null;
+    $user_id = $_SESSION['super_admin_id'];
+    $user_type = 'super_admin';
     
-    // Get system settings from database for current user
-    $settings = [];
-    if ($user_id && $user_type) {
-        $settings = supabaseSelect('system_settings', '*', [
-            'user_id' => $user_id,
-            'user_type' => $user_type
-        ], null, 1);
-    }
+    // Get system settings from database for this user
+    $settings = supabaseSelect('system_settings', '*', [
+        'user_id' => $user_id,
+        'user_type' => $user_type
+    ], null, 1);
     
     if ($settings && count($settings) > 0) {
         $settings_data = $settings[0];
@@ -40,6 +37,8 @@ try {
         echo json_encode([
             'status' => 'success',
             'settings' => [
+                'user_id' => $user_id,
+                'user_type' => $user_type,
                 'email_username' => 'iquenxzx@gmail.com',
                 'email_password' => '',
                 'sms_api_key' => '859e05f9-b29e-4071-b29f-0bd14a273bc2',

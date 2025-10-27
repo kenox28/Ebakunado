@@ -57,6 +57,13 @@
                             <span class="nav-text">Activity Logs</span>
                         </a>
                     </li>
+                    
+                    <li class="nav-item">
+                        <a href="system-settings.php" class="nav-link <?php echo ($current_page == 'system-settings') ? 'active' : ''; ?>">
+                            <span class="nav-icon">⚙️</span>
+                            <span class="nav-text">System Settings</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>

@@ -368,7 +368,26 @@
             const first = name.charAt(0).toUpperCase();
             const upcoming = it.upcoming_date ? formatDate(it.upcoming_date) : (currentFilter==='upcoming' ? 'No date' : '');
             const vaccine = it.upcoming_vaccine || '';
-            const badge = currentFilter==='missed' ? `<span class="child-vaccine">Missed: ${it.missed_count||0}</span>` : (vaccine ? `<span class=\"child-vaccine\">${vaccine}</span>` : '');
+            
+                         // Build missed details HTML if showing missed immunizations (show only closest missed)
+             let missedDetailsHtml = '';
+             if (currentFilter === 'missed' && it.closest_missed) {
+                 const detail = it.closest_missed;
+                 const scheduleDate = detail.schedule_date ? formatDate(detail.schedule_date) : 'Not scheduled';
+                 const catchUpDate = detail.catch_up_date ? formatDate(detail.catch_up_date) : '-';
+                 missedDetailsHtml = `
+                     <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e0e0e0;">
+                         <div style="margin-bottom: 6px; font-size: 13px;">
+                             <strong>${detail.vaccine_name} (Dose ${detail.dose_number})</strong><br>
+                             <span style="color: #666;">Scheduled: ${scheduleDate}</span><br>
+                             <span style="color: #dc3545;">Catch Up: ${catchUpDate}</span>
+                         </div>
+                         ${it.missed_count > 1 ? `<div style="color: #999; font-size: 12px;">...and ${it.missed_count - 1} more missed vaccination(s)</div>` : ''}
+                     </div>
+                 `;
+             }
+            
+            const badge = currentFilter==='missed' ? `<span class="child-vaccine" style="background: #fff3cd; color: #856404;">Missed: ${it.missed_count||0}</span>` : (vaccine ? `<span class=\"child-vaccine\">${vaccine}</span>` : '');
             html += `
                 <div class="child-list-item">
                     <div class="child-avatar">${first}</div>
@@ -376,6 +395,7 @@
                         <h3 class="child-name">${name}</h3>
                         ${currentFilter==='upcoming' ? `<p class="child-schedule"><strong>Next:</strong> ${upcoming}</p>` : ''}
                         ${badge}
+                        ${missedDetailsHtml}
                     </div>
                     <div class="child-actions">
                         <button class="child-view-btn" onclick="viewChildRecord('${it.baby_id||''}')" ${(it.baby_id?'':'disabled')}>View</button>

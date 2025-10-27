@@ -2,6 +2,7 @@
 session_start();
 include "../../database/SupabaseConfig.php";
 include "../../database/DatabaseHelper.php";
+include "../../database/SystemSettingsHelper.php";
 
 header('Content-Type: application/json');
 
@@ -43,9 +44,10 @@ $_SESSION['otp'] = $otp;
 $_SESSION['otp_phone'] = $phone_number;
 $_SESSION['otp_expires'] = time() + 300; // 5 minutes from now
 
-// TextBee.dev API configuration
-$apiKey = '859e05f9-b29e-4071-b29f-0bd14a273bc2';
-$deviceId = '687e5760c87689a0c22492b3';
+// Get TextBee credentials from database (SuperAdmin's settings for OTP)
+$credentials = getOTPCredentials();
+$apiKey = $credentials['api_key'];
+$deviceId = $credentials['device_id'];
 $url = "https://api.textbee.dev/api/v1/gateway/devices/$deviceId/send-sms";
 
 // SMS message
