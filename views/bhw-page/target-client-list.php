@@ -83,8 +83,8 @@ if ($user_id) {
                         <input id="filterPurok" type="text" placeholder="e.g. Purok 1">
                     </div>
 
-                    <button id="applyFiltersBtn" class="btn">Apply</button>
-                    <button id="clearFiltersBtn" class="btn">Clear</button>
+                    <button id="applyFiltersBtn" class="btn btn-primary">Apply</button>
+                    <button id="clearFiltersBtn" class="btn btn-secondary">Clear</button>
                 </div>
             </div>
 

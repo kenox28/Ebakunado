@@ -29,7 +29,7 @@
 
         <!-- Popover Menu -->
         <div id="profileMenu" class="profile-menu" role="menu" aria-hidden="true">
-            <a class="menu-item" href="./profile-management.php" role="menuitem">
+            <a class="menu-item" href="../../views/bhw-page/profile-management.php" role="menuitem">
                 <span class="material-symbols-rounded">person</span>
                 My Account
             </a>

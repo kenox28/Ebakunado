@@ -104,7 +104,7 @@ a {
   color: #fff;
   font-family: inherit;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease,
     color 0.15s ease, transform 0.05s ease;
@@ -149,6 +149,35 @@ a {
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #6f8b7a;
+  background: transparent;
+  color: #1c3b2f;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.back-btn .material-symbols-rounded {
+  font-size: 18px;
+}
+
+.back-btn:hover {
+  background: #e1ece6;
+  border-color: #4d735f;
+}
+
+.back-btn:active {
+  transform: scale(0.98);
+  background: #d0e3db;
 }
 
 /* =========================
