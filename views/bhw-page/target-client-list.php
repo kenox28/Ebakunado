@@ -158,6 +158,20 @@ if ($user_id) {
         </section>
     </main>
 
+    <!-- QR Scanner Modal -->
+    <div id="qrOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 20px; border-radius: 12px; max-width: 600px; width: 90%; text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">Scan Baby QR Code</h3>
+                <button id="closeScannerBtn" style="background: #dc3545; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 20px;">×</button>
+            </div>
+            <select id="cameraSelect" style="margin-bottom: 15px; padding: 8px; width: 100%; border-radius: 5px; display: none;"></select>
+            <div id="qrReader" style="width: 100%; margin: 0 auto; border: 2px solid #ddd; border-radius: 8px;"></div>
+            <p style="margin-top: 15px; color: #666; font-size: 14px;">Point the camera at the QR code</p>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script>
@@ -423,6 +437,15 @@ if ($user_id) {
             }
         }
 
+        async function logoutBhw() {
+            const response = await fetch('../../php/supabase/bhw/logout.php', {
+                method: 'POST'
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                window.location.href = '../../views/auth/login.php';
+            }
+        }
         function closeScanner() {
             const overlay = document.getElementById('qrOverlay');
             if (overlay) overlay.style.display = 'none';
@@ -456,6 +479,7 @@ if ($user_id) {
 
         document.getElementById('applyFiltersBtn').addEventListener('click', applyFilters);
         document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+        document.getElementById('closeScannerBtn').addEventListener('click', closeScanner);
 
         window.addEventListener('DOMContentLoaded', () => loadTCLData(1));
     </script>

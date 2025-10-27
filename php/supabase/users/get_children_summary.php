@@ -2,6 +2,86 @@
 session_start();
 header('Content-Type: application/json');
 
+/**
+ * ==================================================================================
+ * API ENDPOINT: get_children_summary.php
+ * PURPOSE: Returns children summary data with QR codes for user dashboard
+ * USED BY: Flutter Mobile App - User Home Page
+ * ==================================================================================
+ * 
+ * QR CODE STRUCTURE:
+ * ------------------
+ * The QR code is stored in Cloudinary and contains the baby_id as encoded data.
+ * 
+ * QR Code URL Format:
+ * Example: https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v1234567890/ebakunado/qr_codes/baby_ABC123.png
+ * 
+ * Full Structure:
+ * - Upload Folder: 'ebakunado/qr_codes'
+ * - Public ID Format: 'baby_' + baby_id (sanitized)
+ * - Image Size: 600x600 pixels
+ * - Quality: High (ECC level H)
+ * - Data Encoded: The baby_id value (e.g., "ABC123")
+ * 
+ * Cloudinary Public ID Generation:
+ * - Original baby_id: "ABC-123"
+ * - Sanitized: "ABC_123" (special chars replaced with underscores)
+ * - Final public_id: "baby_ABC_123"
+ * 
+ * How to Use in Flutter:
+ * -----------------------
+ * 1. Extract the 'qr_code' field from each child item in the 'items' array
+ * 2. Display it as an image: Image.network(child['qr_code'])
+ * 3. When scanning, extract the baby_id from the QR code data
+ * 4. Example Flutter code:
+ * 
+ *   Image.network(
+ *     child['qr_code'] ?? '', // The Cloudinary URL
+ *     width: 60,
+ *     height: 60,
+ *     fit: BoxFit.cover,
+ *   )
+ * 
+ * QR Code Scanning:
+ * ------------------
+ * When a QR code is scanned, it will contain ONLY the baby_id string
+ * (e.g., "ABC123"). Use this to identify which child's record to display.
+ * 
+ * Example Response with QR Code:
+ * -------------------------------
+ * {
+ *   "status": "success",
+ *   "data": {
+ *     "upcoming_count": 3,
+ *     "missed_count": 2,
+ *     "items": [
+ *       {
+ *         "baby_id": "ABC123",
+ *         "name": "John Doe",
+ *         "qr_code": "https://res.cloudinary.com/demo/image/upload/v123/ebakunado/qr_codes/baby_ABC123.png",
+ *         "upcoming_date": "2024-02-15",
+ *         "upcoming_vaccine": "Pentavalent 1st Dose",
+ *         "missed_count": 2,
+ *         "closest_missed": {
+ *           "vaccine_name": "BCG",
+ *           "dose_number": 1,
+ *           "schedule_date": "2024-01-15",
+ *           "catch_up_date": "2024-01-22"
+ *         }
+ *       }
+ *     ]
+ *   }
+ * }
+ * 
+ * NULL Handling:
+ * --------------
+ * - If a child doesn't have a QR code yet, 'qr_code' will be null
+ * - Always check for null before displaying the QR image
+ * - Example: if (child['qr_code'] != null) { display QR code }
+ * 
+ * ==================================================================================
+ */
+
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
     exit();
@@ -15,7 +95,7 @@ try {
     $filter = $_GET['filter'] ?? null; // 'upcoming' | 'missed' | null
 
     // Fetch children for this user
-    $child_columns = 'id,user_id,baby_id,child_fname,child_lname,child_gender,child_birth_date,status';
+    $child_columns = 'id,user_id,baby_id,child_fname,child_lname,child_gender,child_birth_date,status,qr_code';
     $children = supabaseSelect('child_health_records', $child_columns, ['user_id' => $user_id]);
 
     $summary = [
@@ -126,7 +206,8 @@ try {
                     'upcoming_date' => $upcoming_date,
                     'upcoming_vaccine' => $upcoming_name,
                     'missed_count' => $missed,
-                    'closest_missed' => $closest_missed // Add closest missed detail
+                    'closest_missed' => $closest_missed, // Add closest missed detail
+                    'qr_code' => $child['qr_code'] ?? null // Add QR code
                 ];
             }
         }
