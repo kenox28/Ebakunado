@@ -18,6 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
+    // Get current user info
+    $user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+    $user_type = $_SESSION['user_type'] ?? null;
+    $user_name = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
+    
+    if (!$user_id || !$user_type) {
+        echo json_encode(['status' => 'error', 'message' => 'User not authenticated']);
+        exit();
+    }
+    
     // Get form data
     $email_username = $_POST['email_username'] ?? '';
     $email_password = $_POST['email_password'] ?? '';
@@ -47,6 +57,8 @@ try {
     
     // Prepare settings data
     $settings_data = [
+        'user_id' => $user_id,
+        'user_type' => $user_type,
         'email_username' => $email_username,
         'email_password' => $email_password,
         'sms_api_key' => $sms_api_key,
@@ -58,19 +70,34 @@ try {
     ];
     
     // Check if settings already exist
-    $existing_settings = supabaseSelect('system_settings', 'id', [], null, 1);
+    $existing_settings = supabaseSelect('system_settings', 'user_id', [
+        'user_id' => $user_id,
+        'user_type' => $user_type
+    ], null, 1);
     
     if ($existing_settings && count($existing_settings) > 0) {
         // Update existing settings
-        $result = supabaseUpdate('system_settings', $settings_data, ['id' => $existing_settings[0]['id']]);
+        $result = supabaseUpdate('system_settings', $settings_data, [
+            'user_id' => $user_id,
+            'user_type' => $user_type
+        ]);
         
         if ($result) {
-            // Update all system files with new settings
-            updateSystemFiles($settings_data);
+            // Log activity for midwife settings update
+            if ($user_type === 'midwifes' || $user_type === 'midwife' || $user_type === 'bhw') {
+                supabaseInsert('activity_logs', [
+                    'user_id' => $user_id,
+                    'user_type' => $user_type,
+                    'action_type' => 'UPDATE',
+                    'description' => $user_name . ' updated SMS notification settings (API Key and Device ID)',
+                    'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
+                    'created_at' => date('Y-m-d H:i:s')
+                ]);
+            }
             
             echo json_encode([
                 'status' => 'success',
-                'message' => 'System settings updated successfully. All features will use the new configuration.'
+                'message' => 'System settings updated successfully. Daily vaccination notifications will use the new SMS configuration.'
             ]);
         } else {
             echo json_encode([
@@ -80,15 +107,25 @@ try {
         }
     } else {
         // Insert new settings
+        $settings_data['created_at'] = date('Y-m-d H:i:s');
         $result = supabaseInsert('system_settings', $settings_data);
         
         if ($result) {
-            // Update all system files with new settings
-            updateSystemFiles($settings_data);
+            // Log activity for midwife settings creation
+            if ($user_type === 'midwifes' || $user_type === 'midwife' || $user_type === 'bhw') {
+                supabaseInsert('activity_logs', [
+                    'user_id' => $user_id,
+                    'user_type' => $user_type,
+                    'action_type' => 'CREATE',
+                    'description' => $user_name . ' created SMS notification settings (API Key and Device ID)',
+                    'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
+                    'created_at' => date('Y-m-d H:i:s')
+                ]);
+            }
             
             echo json_encode([
                 'status' => 'success',
-                'message' => 'System settings saved successfully. All features will use the new configuration.'
+                'message' => 'System settings saved successfully. Daily vaccination notifications will use the new SMS configuration.'
             ]);
         } else {
             echo json_encode([

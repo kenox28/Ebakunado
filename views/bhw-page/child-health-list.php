@@ -447,6 +447,69 @@ if ($user_id) {
                 alert('Logout failed: ' + data.message);
             }
         }
+
+        async function viewSchedule(baby_id, btn) {
+            const tr = btn.closest('tr');
+            const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+            const next = tr.nextElementSibling;
+            const hasSchedRow = next && next.classList.contains('sched-row');
+
+            // If already loading, ignore repeated clicks
+            if (btn.dataset.loading === '1') return;
+
+            // Toggle close if expanded and row exists
+            if (isExpanded && hasSchedRow) {
+                next.remove();
+                btn.setAttribute('aria-expanded', 'false');
+                return;
+            }
+
+            // Clean any stray sched-row before loading (race-condition guard)
+            if (hasSchedRow) next.remove();
+
+            btn.dataset.loading = '1';
+
+            try {
+                const res = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
+                const data = await res.json();
+
+                // Re-check just before insert in case another insert happened
+                const curNext = tr.nextElementSibling;
+                if (curNext && curNext.classList.contains('sched-row')) {
+                    curNext.remove();
+                }
+
+                const colspan = tr.cells.length || 21;
+                let html = `<tr class="sched-row"><td colspan="${colspan}">`;
+
+                if (data.status !== 'success' || !data.data || data.data.length === 0) {
+                    html += '<div class="small">No schedule</div>';
+                } else {
+                    html += '<table class="small"><tr><th>Vaccine</th><th>Dose #</th><th>Due</th><th>Date Given</th><th>Status</th></tr>';
+                    data.data.forEach(r => {
+                        html += `<tr>
+                            <td>${r.vaccine_name}</td>
+                            <td>${r.dose_number}</td>
+                            <td>${r.schedule_date || ''}</td>
+                            <td>${r.date_given || ''}</td>
+                            <td>${r.status}</td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                }
+
+                html += '</td></tr>';
+                tr.insertAdjacentHTML('afterend', html);
+
+                // Mark expanded (keeps chevron rotated via CSS)
+                btn.setAttribute('aria-expanded', 'true');
+            } catch (e) {
+                console.error('Error loading schedule:', e);
+                btn.setAttribute('aria-expanded', 'false');
+            } finally {
+                delete btn.dataset.loading;
+            }
+        }
     </script>
 </body>
 

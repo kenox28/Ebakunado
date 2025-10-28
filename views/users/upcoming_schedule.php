@@ -19,7 +19,8 @@
 							<th>Vaccine</th>
 							<th>Dose</th>
 							<th>Schedule Date</th>
-                <th>Status</th>
+							<th>Catch Up Date</th>
+							<th>Status</th>
                             </tr>
                         </thead>
 					<tbody id="scheduleBody">
@@ -52,14 +53,14 @@
                 } catch (error) {
             console.error('Error loading immunization schedule:', error);
             document.getElementById('scheduleBody').innerHTML = `
-                <tr><td colspan="4" style="text-align: center; padding: 20px; color: #dc3545;">Error loading schedule</td></tr>
+                <tr><td colspan="5" style="text-align: center; padding: 20px; color: #dc3545;">Error loading schedule</td></tr>
             `;
         }
     }
 
     function loadChildData() {
         if (scheduleData.length === 0) {
-            document.getElementById('scheduleBody').innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">No immunization records found</td></tr>';
+            document.getElementById('scheduleBody').innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No immunization records found</td></tr>';
             document.getElementById('childName').textContent = 'Unknown Child';
             document.getElementById('childAge').textContent = 'Unknown age';
             document.getElementById('childGender').textContent = 'Unknown';
@@ -114,7 +115,7 @@
         const tbody = document.getElementById('scheduleBody');
         
         if (scheduleData.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px;">No immunization records found</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No immunization records found</td></tr>';
             return;
         }
 
@@ -131,7 +132,7 @@
         }
 
         if (filteredData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 20px;">No ${currentTab} vaccines found</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px;">No ${currentTab} vaccines found</td></tr>`;
                     return;
                 }
 
@@ -149,11 +150,16 @@
             const status = getVaccineStatus(record);
             const statusText = getStatusText(record, status);
             
+            // Format dates
+            const scheduleDate = record.schedule_date ? formatDate(record.schedule_date) : 'Not scheduled';
+            const catchUpDate = record.catch_up_date ? formatDate(record.catch_up_date) : '-';
+            
             rowsHTML += `
                 <tr>
                     <td>${record.vaccine_name}</td>
                     <td>${getDoseText(record.dose_number)}</td>
-                    <td>${record.schedule_date || 'N/A'}</td>
+                    <td>${scheduleDate}</td>
+                    <td>${catchUpDate}</td>
                     <td style="color: ${getStatusColor(status)}">${statusText}</td>
                 </tr>
                     `;

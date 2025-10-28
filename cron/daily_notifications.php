@@ -25,6 +25,7 @@ ini_set('display_errors', 1);
 // Include required files
 require_once __DIR__ . '/../database/SupabaseConfig.php';
 require_once __DIR__ . '/../database/DatabaseHelper.php';
+require_once __DIR__ . '/../database/SystemSettingsHelper.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -86,9 +87,10 @@ function sendSMSNotification($parent, $child, $vaccines, $schedule_date, $messag
     // SMS message
     $message = "Hi " . $parent['fname'] . ", $message_prefix: " . $child['child_fname'] . " " . $child['child_lname'] . " has " . $vaccines . " scheduled $date_label (" . date('M d, Y', strtotime($schedule_date)) . "). Please bring your child to the health center. - City Health Department, Ormoc City";
     
-    // TextBee.dev API configuration
-    $apiKey = '859e05f9-b29e-4071-b29f-0bd14a273bc2';
-    $deviceId = '687e5760c87689a0c22492b3';
+    // Get TextBee credentials from database (Midwife's settings for notifications)
+    $credentials = getNotificationCredentials();
+    $apiKey = $credentials['api_key'];
+    $deviceId = $credentials['device_id'];
     $url = "https://api.textbee.dev/api/v1/gateway/devices/$deviceId/send-sms";
     
     // Prepare SMS data

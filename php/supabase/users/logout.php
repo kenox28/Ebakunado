@@ -16,7 +16,7 @@ include "../../../database/Database.php";
 // Log the logout activity if user is logged in and DB is connected
 try {
     $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-    $user_id = $_SESSION['user_id'];
+    $user_id = $_SESSION['user_id'] ?? null;
     
     // Check if connection is valid
     if ($connect && !$connect->connect_error) {

@@ -32,7 +32,7 @@ try {
     foreach ($baby_ids as $baby_id) {
         $vaccinations = supabaseSelect(
             'immunization_records',
-            'id,baby_id,vaccine_name,dose_number,schedule_date,date_given,status',
+            'id,baby_id,vaccine_name,dose_number,schedule_date,catch_up_date,date_given,status',
             ['baby_id' => $baby_id],
             'schedule_date.asc'
         );
@@ -55,6 +55,7 @@ try {
                     'vaccine_name' => $vaccination['vaccine_name'],
                     'dose_number' => $vaccination['dose_number'],
                     'schedule_date' => $vaccination['schedule_date'],
+                    'catch_up_date' => $vaccination['catch_up_date'],
                     'date_given' => $vaccination['date_given'],
                     'status' => $vaccination['status']
                 ];

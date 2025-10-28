@@ -9,12 +9,22 @@ if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['midwife_id'])) {
     exit();
 }
 
-$baby_id = $_POST['baby_id'];
+$baby_id = $_POST['baby_id'] ?? '';
+
+if (empty($baby_id)) {
+    echo json_encode(['status' => 'error', 'message' => 'Missing baby_id']);
+    exit();
+}
+
 $columns = 'id,user_id,baby_id,child_fname,child_lname,child_gender,child_birth_date,place_of_birth,mother_name,father_name,address,birth_weight,birth_height,birth_attendant,babys_card,delivery_type,birth_order,date_created:date_created,date_updated:date_updated,status,qr_code,exclusive_breastfeeding_1mo,exclusive_breastfeeding_2mo,exclusive_breastfeeding_3mo,exclusive_breastfeeding_4mo,exclusive_breastfeeding_5mo,exclusive_breastfeeding_6mo,complementary_feeding_6mo,complementary_feeding_7mo,complementary_feeding_8mo,lpm,allergies,blood_type,family_planning';
 $rows = supabaseSelect('child_health_records', $columns, ['baby_id' => $baby_id], 'date_created.desc');
+
+if (!$rows || count($rows) === 0) {
+    echo json_encode(['status' => 'error', 'message' => 'No child record found for baby_id: ' . $baby_id]);
+    exit();
+}
 $child_records = [];
-if ($rows && count($rows) > 0) {
-    foreach ($rows as $child) {
+foreach ($rows as $child) {
     $birth_date = new DateTime($child['child_birth_date']);
     $current_date = new DateTime();
     $weeks_old = $current_date->diff($birth_date)->days / 7;
@@ -92,7 +102,6 @@ $child_records[] = [
     'mother_td_dose4_date' => $dose4,
     'mother_td_dose5_date' => $dose5
 ];
-}
 }
 
 echo json_encode(['status'=>'success','data'=>$child_records ?: []]);

@@ -83,8 +83,12 @@ if ($user_id) {
                     <input id="filterPurok" type="text" placeholder="e.g. Purok 1" />
                 </div>
 
-                <button class="btn btn-primary" id="applyFiltersBtn" type="button">Apply</button>
-                <button class="btn btn-secondary" id="clearFiltersBtn" type="button">Clear</button>
+                <button class="btn btn-primary" id="applyFiltersBtn">Apply</button>
+                <button class="btn btn-secondary" id="clearFiltersBtn">Clear</button>
+                <button class="btn btn-outline-primary" id="openScannerBtn" onclick="openScanner()">
+                    <span class="material-symbols-rounded" aria-hidden="true">qr_code_scanner</span>
+                    Scan QR
+                </button>
             </div>
 
             <div class="table-container">
@@ -145,6 +149,20 @@ if ($user_id) {
         </section>
     </main>
 
+    <!-- QR Scanner Modal -->
+    <div id="qrOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 20px; border-radius: 12px; max-width: 600px; width: 90%; text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">Scan Baby QR Code for Immunization</h3>
+                <button id="closeScannerBtn" style="background: #dc3545; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 20px;">×</button>
+            </div>
+            <select id="cameraSelect" style="margin-bottom: 15px; padding: 8px; width: 100%; border-radius: 5px; display: none;"></select>
+            <div id="qrReader" style="width: 100%; margin: 0 auto; border: 2px solid #ddd; border-radius: 8px;"></div>
+            <p style="margin-top: 15px; color: #666; font-size: 14px;">Point the camera at the QR code</p>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script>
@@ -729,21 +747,204 @@ if ($user_id) {
                     dateInput.focus();
                 });
             }
+
+            // Add event listener for close scanner button
+            const closeScannerBtn = document.getElementById('closeScannerBtn');
+            if (closeScannerBtn) {
+                closeScannerBtn.addEventListener('click', closeScanner);
+            }
         });
 
-        // Removed QR scanner functionality and dependencies
-        async function logoutBhw() {
-            // const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
-            const response = await fetch('../../php/supabase/bhw/logout.php', {
-                method: 'POST'
-            });
-            const data = await response.json();
-            if (data.status === 'success') {
-                window.location.href = '../../views/auth/login.php';
-            } else {
-                alert('Logout failed: ' + data.message);
+        // QR Scanner functions
+        let html5QrcodeInstance = null;
+
+        async function openScanner() {
+            const overlay = document.getElementById('qrOverlay');
+            if (overlay) overlay.style.display = 'flex';
+
+            try {
+                const devices = await Html5Qrcode.getCameras();
+                const camSel = document.getElementById('cameraSelect');
+                if (camSel) camSel.innerHTML = '';
+
+                if (devices && devices.length > 0) {
+                    if (camSel) {
+                        devices.forEach((d, idx) => {
+                            const opt = document.createElement('option');
+                            opt.value = d.id;
+                            opt.textContent = d.label || ('Camera ' + (idx + 1));
+                            camSel.appendChild(opt);
+                        });
+                        camSel.style.display = 'inline-block';
+                    }
+                } else if (camSel) {
+                    camSel.style.display = 'none';
+                }
+
+                if (!html5QrcodeInstance) {
+                    html5QrcodeInstance = new Html5Qrcode("qrReader");
+                }
+
+                await html5QrcodeInstance.start({
+                        facingMode: "environment"
+                    }, {
+                        fps: 12,
+                        qrbox: 360,
+                        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+                        disableFlip: true
+                    },
+                    onScanSuccess,
+                    onScanFailure
+                );
+            } catch (e) {
+                console.error('Camera error:', e);
+                alert('Camera error: ' + e);
             }
         }
+
+        function closeScanner() {
+            const overlay = document.getElementById('qrOverlay');
+            if (overlay) overlay.style.display = 'none';
+
+            try {
+                if (html5QrcodeInstance) {
+                    html5QrcodeInstance.stop();
+                    html5QrcodeInstance.clear();
+                }
+            } catch (e) {
+            }
+        }
+
+        async function onScanSuccess(decodedText) {
+            console.log('QR Scan success:', decodedText);
+            closeScanner();
+
+            // Extract baby_id from QR code
+            const match = decodedText.match(/baby_id=([^&\s]+)/i);
+            const baby_id = match ? decodeURIComponent(match[1]) : decodedText;
+
+            if (!baby_id) {
+                alert('Invalid QR code format');
+                return;
+            }
+
+            try {
+                // Fetch immunization records for this baby
+                const response = await fetch(`../../php/supabase/bhw/get_immunization_records.php?baby_id=${encodeURIComponent(baby_id)}`);
+                const data = await response.json();
+
+                if (data.status !== 'success' || !data.data || data.data.length === 0) {
+                    alert('No immunization records found for this baby');
+                    return;
+                }
+
+                // Filter for upcoming/scheduled records
+                const today = new Date().toISOString().split('T')[0];
+                const upcomingRecords = data.data.filter(record => {
+                    const status = record.status?.toLowerCase();
+                    const scheduleDate = record.schedule_date || record.catch_up_date;
+                    return (status === 'scheduled' || status === 'upcoming') && scheduleDate >= today;
+                });
+
+                if (upcomingRecords.length === 0) {
+                    alert('No upcoming immunizations found for this baby');
+                    return;
+                }
+
+                // Find the nearest upcoming record (closest future date)
+                let nearestRecord = null;
+                let nearestDate = null;
+
+                upcomingRecords.forEach(record => {
+                    const scheduleDate = record.schedule_date || record.catch_up_date;
+                    if (!nearestDate || scheduleDate < nearestDate) {
+                        nearestDate = scheduleDate;
+                        nearestRecord = record;
+                    }
+                });
+
+                if (!nearestRecord) {
+                    alert('Could not find nearest upcoming immunization');
+                    return;
+                }
+
+                                 // Fetch child details to get full information for the form
+                 const formData = new FormData();
+                 formData.append('baby_id', baby_id);
+                 const childResponse = await fetch('../../php/supabase/bhw/get_child_details.php', {
+                     method: 'POST',
+                     body: formData
+                 });
+                 const childData = await childResponse.json();
+
+                 console.log('Child details response:', childData);
+                 console.log('Baby ID searched:', baby_id);
+
+                 if (childData.status === 'success' && childData.data && childData.data.length > 0) {
+                     const child = childData.data[0];
+                     
+                     console.log('Child data received:', child);
+                     
+                     // Use the user_id from child record, fallback to empty string if not available
+                     const userId = child.user_id || '';
+                     
+                     // Call openImmunizationForm with the nearest record data
+                     openImmunizationFormForScan(
+                         nearestRecord.id,
+                         userId,
+                         nearestRecord.baby_id,
+                         `${child.child_fname || ''} ${child.child_lname || ''}`.trim(),
+                         nearestRecord.vaccine_name,
+                         nearestRecord.schedule_date || '',
+                         nearestRecord.catch_up_date || '',
+                         child
+                     );
+                 } else {
+                     console.error('Child details fetch failed:', childData);
+                     alert('Could not fetch child details: ' + (childData.message || 'Unknown error'));
+                 }
+            } catch (error) {
+                console.error('Error processing QR scan:', error);
+                alert('Error processing QR code: ' + error.message);
+            }
+        }
+
+        function onScanFailure(err) {
+            // Silent failure, scanner will keep trying
+        }
+
+        // Modified function to handle QR scan auto-open
+        function openImmunizationFormForScan(recordId, userId, babyId, childName, vaccineName, scheduleDate, catchUpDate, childData) {
+            // Create a temporary button element with all the necessary data attributes
+            const tempBtn = document.createElement('button');
+            tempBtn.setAttribute('data-record-id', recordId);
+            tempBtn.setAttribute('data-user-id', userId);
+            tempBtn.setAttribute('data-baby-id', babyId);
+            tempBtn.setAttribute('data-child-name', childName);
+            tempBtn.setAttribute('data-vaccine-name', vaccineName);
+            tempBtn.setAttribute('data-schedule-date', scheduleDate);
+            tempBtn.setAttribute('data-catch-up-date', catchUpDate);
+            
+            // Add feeding data attributes
+            tempBtn.setAttribute('data-eb-1mo', childData.exclusive_breastfeeding_1mo || 'false');
+            tempBtn.setAttribute('data-eb-2mo', childData.exclusive_breastfeeding_2mo || 'false');
+            tempBtn.setAttribute('data-eb-3mo', childData.exclusive_breastfeeding_3mo || 'false');
+            tempBtn.setAttribute('data-eb-4mo', childData.exclusive_breastfeeding_4mo || 'false');
+            tempBtn.setAttribute('data-eb-5mo', childData.exclusive_breastfeeding_5mo || 'false');
+            tempBtn.setAttribute('data-eb-6mo', childData.exclusive_breastfeeding_6mo || 'false');
+            tempBtn.setAttribute('data-cf-6mo', childData.complementary_feeding_6mo || '');
+            tempBtn.setAttribute('data-cf-7mo', childData.complementary_feeding_7mo || '');
+            tempBtn.setAttribute('data-cf-8mo', childData.complementary_feeding_8mo || '');
+            tempBtn.setAttribute('data-td-dose1', childData.mother_td_dose1_date || '');
+            tempBtn.setAttribute('data-td-dose2', childData.mother_td_dose2_date || '');
+            tempBtn.setAttribute('data-td-dose3', childData.mother_td_dose3_date || '');
+            tempBtn.setAttribute('data-td-dose4', childData.mother_td_dose4_date || '');
+            tempBtn.setAttribute('data-td-dose5', childData.mother_td_dose5_date || '');
+
+            // Call the existing openImmunizationForm function
+            openImmunizationForm(tempBtn);
+        }
+        
     </script>
 
 </body>

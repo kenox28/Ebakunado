@@ -53,6 +53,15 @@
 	</div>
 </div>
 
+<!-- QR Code Modal -->
+<div id="qrModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 20px; border-radius: 12px; max-width: 500px; text-align: center; position: relative;">
+        <button id="closeQrModal" style="position: absolute; top: 10px; right: 10px; background: #dc3545; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">×</button>
+        <h3 style="margin: 0 0 15px 0;">Child QR Code</h3>
+        <img id="qrModalImage" src="" alt="QR Code" style="width: 400px; height: 400px; border: 1px solid #ddd; border-radius: 8px;">
+    </div>
+</div>
+
 <style>
 	.dashboard-stats {
 		display: grid;
@@ -368,14 +377,36 @@
             const first = name.charAt(0).toUpperCase();
             const upcoming = it.upcoming_date ? formatDate(it.upcoming_date) : (currentFilter==='upcoming' ? 'No date' : '');
             const vaccine = it.upcoming_vaccine || '';
-            const badge = currentFilter==='missed' ? `<span class="child-vaccine">Missed: ${it.missed_count||0}</span>` : (vaccine ? `<span class=\"child-vaccine\">${vaccine}</span>` : '');
+            
+                         // Build missed details HTML if showing missed immunizations (show only closest missed)
+             let missedDetailsHtml = '';
+             if (currentFilter === 'missed' && it.closest_missed) {
+                 const detail = it.closest_missed;
+                 const scheduleDate = detail.schedule_date ? formatDate(detail.schedule_date) : 'Not scheduled';
+                 const catchUpDate = detail.catch_up_date ? formatDate(detail.catch_up_date) : '-';
+                 missedDetailsHtml = `
+                     <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e0e0e0;">
+                         <div style="margin-bottom: 6px; font-size: 13px;">
+                             <strong>${detail.vaccine_name} (Dose ${detail.dose_number})</strong><br>
+                             <span style="color: #666;">Scheduled: ${scheduleDate}</span><br>
+                             <span style="color: #dc3545;">Catch Up: ${catchUpDate}</span>
+                         </div>
+                         ${it.missed_count > 1 ? `<div style="color: #999; font-size: 12px;">...and ${it.missed_count - 1} more missed vaccination(s)</div>` : ''}
+                     </div>
+                 `;
+             }
+            
+            const badge = currentFilter==='missed' ? `<span class="child-vaccine" style="background: #fff3cd; color: #856404;">Missed: ${it.missed_count||0}</span>` : (vaccine ? `<span class=\"child-vaccine\">${vaccine}</span>` : '');
+            const qrButton = it.qr_code ? `<button onclick="showQrModal('${it.qr_code.replace(/'/g, "\\'")}')" style="background: none; border: none; cursor: pointer; padding: 5px;"><img src="${it.qr_code}" alt="QR Code" style="width: 60px; height: 60px; border-radius: 8px;"></button>` : '';
             html += `
                 <div class="child-list-item">
                     <div class="child-avatar">${first}</div>
+                    ${qrButton}
                     <div class="child-details">
                         <h3 class="child-name">${name}</h3>
                         ${currentFilter==='upcoming' ? `<p class="child-schedule"><strong>Next:</strong> ${upcoming}</p>` : ''}
                         ${badge}
+                        ${missedDetailsHtml}
                     </div>
                     <div class="child-actions">
                         <button class="child-view-btn" onclick="viewChildRecord('${it.baby_id||''}')" ${(it.baby_id?'':'disabled')}>View</button>
@@ -552,12 +583,35 @@ function viewSchedule(babyId) {
 		window.location.href = 'Request.php';
 	}
 
+	// QR Modal functions
+	function showQrModal(qrCodeUrl) {
+		const modal = document.getElementById('qrModal');
+		const qrImage = document.getElementById('qrModalImage');
+		qrImage.src = qrCodeUrl;
+		modal.style.display = 'flex';
+	}
+
+	function closeQrModal() {
+		const modal = document.getElementById('qrModal');
+		modal.style.display = 'none';
+	}
+
 	// Load data when page loads
 	document.addEventListener('DOMContentLoaded', async function() {
 		await refreshCounts();
 		setActiveButton();
 		selectFilter('upcoming');
 		loadDashboardData();
+		
+		// Add event listener for close QR modal button
+		document.getElementById('closeQrModal').addEventListener('click', closeQrModal);
+		
+		// Close modal when clicking outside
+		document.getElementById('qrModal').addEventListener('click', function(e) {
+			if (e.target.id === 'qrModal') {
+				closeQrModal();
+			}
+		});
 	});
 </script>
 
