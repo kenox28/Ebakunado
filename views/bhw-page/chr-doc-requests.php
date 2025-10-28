@@ -95,6 +95,7 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
         }
         </script>
     </main>
+    <script src="../../js/header-handler/profile-menu.js" defer></script>
 </body>
 </html>
 
