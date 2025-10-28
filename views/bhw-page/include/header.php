@@ -8,7 +8,6 @@
             aria-expanded="false"
             aria-controls="sideNav"
         >menu</button>
-        <h1 class="header-greeting">Welcome, <?php echo htmlspecialchars($user_name);?>!</h1>
     </div>
 
     <div

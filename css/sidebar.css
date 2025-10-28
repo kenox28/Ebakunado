@@ -2,6 +2,8 @@
 	width: 230px;
 	height: 100vh;
 	background: var(--background-white);
+	/* background: #76a582; */
+	/* background: #414141; */
 	box-shadow: rgba(0, 0, 0, 0.05) 6px 0px 24px 0px,
 		rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
 
