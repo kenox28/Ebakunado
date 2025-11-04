@@ -93,6 +93,35 @@ if ($insert === false) {
     exit();
 }
 
+// Log activity: User requested CHR document
+try {
+    // Get user name for logging
+    $user_info = supabaseSelect('users', 'fname,lname', ['user_id' => $user_id], null, 1);
+    $user_name = 'User';
+    if ($user_info && count($user_info) > 0) {
+        $user_name = trim(($user_info[0]['fname'] ?? '') . ' ' . ($user_info[0]['lname'] ?? ''));
+    }
+    
+    // Get child name for logging
+    $child_info = supabaseSelect('child_health_records', 'child_fname,child_lname', ['baby_id' => $baby_id], null, 1);
+    $child_name = 'Child';
+    if ($child_info && count($child_info) > 0) {
+        $child_name = trim(($child_info[0]['child_fname'] ?? '') . ' ' . ($child_info[0]['child_lname'] ?? ''));
+    }
+    
+    $doc_type_label = ucfirst($request_type) . ' Copy';
+    supabaseLogActivity(
+        $user_id,
+        'user',
+        'CHR_DOC_REQUEST',
+        $user_name . ' requested ' . $doc_type_label . ' CHR document for ' . $child_name . ' (Baby ID: ' . $baby_id . ')',
+        $_SERVER['REMOTE_ADDR'] ?? null
+    );
+} catch (Exception $e) {
+    // Log error but don't fail the request
+    error_log('Failed to log CHR document request activity: ' . $e->getMessage());
+}
+
 echo json_encode(['status' => 'success', 'message' => 'Request submitted', 'data' => $insert]);
 exit();
 ?>

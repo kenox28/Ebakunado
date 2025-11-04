@@ -646,6 +646,25 @@ $user_fname = $_SESSION['fname'] ?? '';
 			<a href="approved_requests.php" data-icon="✅"><span>Approved Requests</span></a>
 			<a href="Request.php" data-icon="➕"><span>Add Child</span></a>
 			<a href="profile_management.php" data-icon="👤"><span>Profile Management</span></a>
+			<?php
+			// Check if user has BHW or Midwife role available (from available_roles session)
+			$has_bhw_role = false;
+			$has_midwife_role = false;
+			$switch_back_role = null;
+
+			if (isset($_SESSION['available_roles'])) {
+				if (in_array('bhw', $_SESSION['available_roles'])) {
+					$has_bhw_role = true;
+					$switch_back_role = 'bhw';
+				} elseif (in_array('midwife', $_SESSION['available_roles'])) {
+					$has_midwife_role = true;
+					$switch_back_role = 'midwife';
+				}
+			}
+			
+			if ($has_bhw_role || $has_midwife_role): ?>
+			<a href="#" onclick="switchToBHWView(); return false;" data-icon="⬅️"><span>Switch to <?php echo ucfirst($switch_back_role === 'bhw' ? 'BHW' : 'Midwife'); ?> View</span></a>
+			<?php endif; ?>
 			<a href="#" onclick="logoutUser()" data-icon="🚪"><span>Logout</span></a>
 		</nav>
 	</aside>

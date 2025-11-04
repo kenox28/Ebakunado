@@ -362,6 +362,11 @@ if ($user_types != 'midwifes') {
                 <p><strong>Share this link with the parent:</strong></p>
                 <p style="background: #f0f0f0; padding: 10px; border-radius: 4px; word-break: break-all;">${data.share_link}</p>
                 <p style="margin-top: 15px;"><em>The parent can use the family code to claim this child in their account.</em></p>
+                <p style="margin-top: 15px;">
+                    <a href="bhw-added-children.php" style="display: inline-block; padding: 8px 16px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin-top: 10px;">
+                        View Added Children
+                    </a>
+                </p>
             `;
                         resultDiv.style.display = 'block';
                         this.reset();

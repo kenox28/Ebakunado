@@ -1,6 +1,22 @@
 <?php
 // Determine which page is currently loaded
 $currentPage = basename($_SERVER['PHP_SELF']);
+$user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+$user_types = $_SESSION['user_type'];
+$user_name = $_SESSION['fname'] ?? 'User';
+$user_fullname = ($_SESSION['fname'] ?? '') . " " . ($_SESSION['lname'] ?? '');
+if ($user_types != 'midwife') {
+    $user_type = 'Barangay Health Worker';
+} else {
+    $user_type = 'Midwife';
+}
+
+// Check if user also exists in users table (has Parent role)
+// Use available_roles from session (set during login)
+$has_user_role = false;
+if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available_roles'])) {
+    $has_user_role = true;
+}
 ?>
 <aside class="sidebar" id="sideNav">
     <nav class="sidebar-nav">
@@ -68,6 +84,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
 
+                <!-- Added Children -->
+                <li class="sidebar-menu-item<?php echo $currentPage === 'bhw-added-children.php' ? ' active' : ''; ?>">
+                    <a href="../../views/bhw-page/bhw-added-children.php" class="menu-link">
+                        <span class="menu-icon material-symbols-rounded">child_care</span>
+                        <span class="menu-label">Added Children</span>
+                    </a>
+                </li>
+
                 <?php if (isset($_SESSION['midwife_id'])): ?>
                 <!-- CHR Doc Requests (Midwife only) -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'chr-doc-requests.php' ? ' active' : ''; ?>">
@@ -76,28 +100,26 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                         <span class="menu-label">CHR Doc Requests</span>
                     </a>
                 </li>
-
-                <!-- System Settings (Midwife only) -->
-                <li class="sidebar-menu-item<?php echo $currentPage === 'system-settings.php' ? ' active' : ''; ?>">
-                    <a href="../../views/bhw-page/system-settings.php" class="menu-link">
-                        <span class="menu-icon material-symbols-rounded">settings</span>
-                        <span class="menu-label">System Settings</span>
-                    </a>
-                </li>
                 <?php endif; ?>
             </ul>
         </div>
 
+        <?php
+            $sessionProfileImg = isset($_SESSION['profileimg']) ? trim((string)$_SESSION['profileimg']) : '';
+            $sidebarProfileImg = ($sessionProfileImg && $sessionProfileImg !== 'noprofile.png')
+                ? $sessionProfileImg
+                : '../../assets/images/user-profile.png';
+        ?>
         <div class="sidebar-profile">
             <div class="profile-avatar-container">
                 <img
                     class="profile-avatar"
-                    src="../../assets/images/user-profile.png"
+                    src="<?php echo htmlspecialchars($sidebarProfileImg); ?>"
                     alt="User Profile" />
             </div>
             <div class="profile-text-block">
                 <h2 class="profile-name"><?php echo htmlspecialchars($user_fullname); ?></h2>
-                <h3 class="profile-role"><?php echo htmlspecialchars($user_type); ?></h3>
+                <h3 class="profile-role"><?php echo $user_type; ?></h3>
             </div>
         </div>
     </nav>

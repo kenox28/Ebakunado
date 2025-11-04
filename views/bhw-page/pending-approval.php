@@ -121,6 +121,7 @@ if ($user_id) {
                     </h1>
                     <div class="childinfo-actions">
                         <button class="btn back-btn" onclick="backToList()" id="closeButton">Back</button>
+                        <button class="btn reject-btn" id="rejectButton" style="background: #dc3545; color: white; margin-right: 10px;">Reject</button>
                         <button class="btn accept-btn" id="acceptButton">Accept Record</button>
                     </div>
                 </div>
@@ -459,6 +460,11 @@ if ($user_id) {
                     acceptRecord(baby_id);
                 };
 
+                // Set up reject button
+                document.querySelector('#rejectButton').onclick = () => {
+                    rejectRecord(baby_id);
+                };
+
                 // Load vaccination records
                 await loadVaccinationRecords(baby_id);
 
@@ -577,15 +583,20 @@ if ($user_id) {
         }
 
         async function rejectRecord(baby_id) {
+            if (!confirm('Are you sure you want to reject and remove this child registration request? This action cannot be undone.')) {
+                return;
+            }
+            
             const formData = new FormData();
             formData.append('baby_id', baby_id);
-            const response = await fetch('../../php/mysql/bhw/reject_chr.php', {
+            const response = await fetch('../../php/supabase/bhw/reject_chr.php', {
                 method: 'POST',
                 body: formData
             });
             const data = await response.json();
             if (data.status === 'success') {
-                getChildHealthRecord();
+                alert('Child registration request rejected and removed successfully.');
+                backToList();
             } else {
                 alert('Record not rejected: ' + data.message);
             }
@@ -989,6 +1000,16 @@ if ($user_id) {
                 document.querySelector('#childImage').src = row.babys_card || '';
 
                 document.querySelector('.childinformation-container').dataset.babyId = baby_id;
+
+                // Set up accept button
+                document.querySelector('#acceptButton').onclick = () => {
+                    acceptRecord(baby_id);
+                };
+
+                // Set up reject button
+                document.querySelector('#rejectButton').onclick = () => {
+                    rejectRecord(baby_id);
+                };
 
                 await loadVaccinationRecords(baby_id);
                 setChildInfoEditing(false);

@@ -12,7 +12,7 @@ session_start();
   <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
   <link rel="stylesheet" href="../css/fonts.css" />
   <link rel="stylesheet" href="../css/variables.css" />
-  <link rel="stylesheet" href="../css/create-account-style.css?v=1.0.1" />
+  <link rel="stylesheet" href="../css/create-account-style.css?v=1.0.3" />
   <link rel="stylesheet" href="/css/queries.css" />
 
   <!-- SweetAlert2 for better notifications -->
@@ -216,6 +216,29 @@ session_start();
                   required />
                 <span class="material-symbols-rounded password-toggle">visibility_off</span>
               </div>
+              <!-- Password Requirements List -->
+              <div id="passwordRequirements" class="password-requirements" style="display: none;">
+                <div class="requirement-item" id="req-length">
+                  <span class="requirement-icon"></span>
+                  <span class="requirement-text">At least 8 characters</span>
+                </div>
+                <div class="requirement-item" id="req-uppercase">
+                  <span class="requirement-icon"></span>
+                  <span class="requirement-text">1 uppercase letter</span>
+                </div>
+                <div class="requirement-item" id="req-lowercase">
+                  <span class="requirement-icon"></span>
+                  <span class="requirement-text">1 lowercase letter</span>
+                </div>
+                <div class="requirement-item" id="req-number">
+                  <span class="requirement-icon"></span>
+                  <span class="requirement-text">1 number</span>
+                </div>
+                <div class="requirement-item" id="req-special">
+                  <span class="requirement-icon"></span>
+                  <span class="requirement-text">1 special character</span>
+                </div>
+              </div>
             </div>
 
             <div class="input-group password-group">
@@ -254,8 +277,8 @@ session_start();
   </main>
 
   <script src="/ebakunado/js/auth-handler/password-toggle.js"></script>
-  <script src="/ebakunado/js/auth-handler/create-account-stepper.js"></script>
-  <script src="/ebakunado/js/supabase_js/create_account.js?v=1.0.5"></script>
+  <script src="/ebakunado/js/auth-handler/create-account-stepper.js?v=1.0.1"></script>
+  <script src="/ebakunado/js/supabase_js/create_account.js?v=1.0.11"></script>
 </body>
 
 </html>

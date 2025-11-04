@@ -44,9 +44,37 @@ $updateData = array_filter($updateData, function($value) {
 });
 
 try {
+    // Get approver info for logging
+    $approver_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+    $approver_type = isset($_SESSION['midwife_id']) ? 'midwife' : 'bhw';
+    $approver_name = trim(($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? ''));
+    
+    // Get child info for logging
+    $child_info = supabaseSelect('child_health_records', 'child_fname,child_lname,mother_name', ['baby_id' => $baby_id], null, 1);
+    $child_name = 'Unknown Child';
+    $mother_name = 'Unknown Mother';
+    if ($child_info && count($child_info) > 0) {
+        $child_name = trim(($child_info[0]['child_fname'] ?? '') . ' ' . ($child_info[0]['child_lname'] ?? ''));
+        $mother_name = $child_info[0]['mother_name'] ?? 'Unknown Mother';
+    }
+    
     $result = supabaseUpdate('child_health_records', $updateData, ['baby_id' => $baby_id]);
     
     if ($result !== false) {
+        // Log activity: BHW/Midwife updated child information
+        try {
+            supabaseLogActivity(
+                $approver_id,
+                $approver_type,
+                'CHILD_INFO_UPDATED',
+                $approver_name . ' updated child information for ' . $child_name . ', child of ' . $mother_name . ' (Baby ID: ' . $baby_id . ')',
+                $_SERVER['REMOTE_ADDR'] ?? null
+            );
+        } catch (Exception $e) {
+            // Log error but don't fail the update
+            error_log('Failed to log child info update activity: ' . $e->getMessage());
+        }
+        
         echo json_encode(['status' => 'success', 'message' => 'Child information updated successfully']);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Failed to update child information']);

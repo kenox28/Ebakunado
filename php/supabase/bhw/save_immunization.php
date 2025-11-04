@@ -94,6 +94,39 @@ try {
         exit();
     }
 
+    // Log activity: BHW/Midwife recorded immunization (when mark_completed=1)
+    if ($mark_completed) {
+        try {
+            // Get approver info
+            $approver_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+            $approver_type = isset($_SESSION['midwife_id']) ? 'midwife' : 'bhw';
+            $approver_name = trim(($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? ''));
+            
+            // Get child info for logging
+            $child_info = supabaseSelect('child_health_records', 'child_fname,child_lname,mother_name', ['baby_id' => $record['baby_id']], null, 1);
+            $child_name = 'Unknown Child';
+            $mother_name = 'Unknown Mother';
+            if ($child_info && count($child_info) > 0) {
+                $child_name = trim(($child_info[0]['child_fname'] ?? '') . ' ' . ($child_info[0]['child_lname'] ?? ''));
+                $mother_name = $child_info[0]['mother_name'] ?? 'Unknown Mother';
+            }
+            
+            $vaccine_name = $record['vaccine_name'] ?? 'Unknown Vaccine';
+            $dose_number = $record['dose_number'] ?? 1;
+            
+            supabaseLogActivity(
+                $approver_id,
+                $approver_type,
+                'IMMUNIZATION_RECORDED',
+                $approver_name . ' recorded ' . $vaccine_name . ' (Dose ' . $dose_number . ') for ' . $child_name . ', child of ' . $mother_name . ' (Baby ID: ' . $record['baby_id'] . ', Record ID: ' . $record['id'] . ')',
+                $_SERVER['REMOTE_ADDR'] ?? null
+            );
+        } catch (Exception $e) {
+            // Log error but don't fail the update
+            error_log('Failed to log immunization recording activity: ' . $e->getMessage());
+        }
+    }
+
     // Update feeding status and TD status if provided
     if ($update_feeding_status !== '' || $update_complementary_feeding !== '' || $update_td_dose_date !== '') {
         $feeding_update = [];

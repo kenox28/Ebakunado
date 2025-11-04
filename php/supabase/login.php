@@ -9,7 +9,96 @@ session_start();
 include "../../database/SupabaseConfig.php";
 include "../../database/DatabaseHelper.php";
 
-// Keep your original flow and session behavior, swapping SQL for Supabase helpers
+// Robust function to detect Flutter/mobile app requests
+function isFlutterRequest() {
+    // Method 1: Check explicit source parameter
+    if (isset($_POST['source']) && $_POST['source'] === 'flutter') {
+        return true;
+    }
+    
+    // Method 2: Check User-Agent for Flutter/Dio patterns (most reliable for Flutter)
+    $user_agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
+    
+    // Flutter/Dio HTTP client patterns (definitive indicators)
+    if (strpos($user_agent, 'dio') !== false || 
+        strpos($user_agent, 'flutter') !== false ||
+        strpos($user_agent, 'dart') !== false) {
+        return true;
+    }
+    
+    // Method 3: Check if it's a mobile device (iOS/Android)
+    $is_mobile_device = (
+        strpos($user_agent, 'android') !== false ||
+        strpos($user_agent, 'iphone') !== false ||
+        strpos($user_agent, 'ipad') !== false ||
+        strpos($user_agent, 'ipod') !== false ||
+        strpos($user_agent, 'mobile') !== false
+    );
+    
+    // Method 4: Check for browser-specific headers that mobile apps typically don't send
+    $has_browser_headers = (
+        isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) && 
+        strlen($_SERVER['HTTP_ACCEPT_LANGUAGE']) > 10 && // Browsers send detailed language headers
+        (
+            strpos($_SERVER['HTTP_ACCEPT_LANGUAGE'], ',') !== false || // Multiple languages
+            strpos($_SERVER['HTTP_ACCEPT_LANGUAGE'], ';') !== false   // With quality values
+        )
+    ) || (
+        isset($_SERVER['HTTP_SEC_FETCH_DEST']) || // Modern browser security headers
+        isset($_SERVER['HTTP_SEC_FETCH_MODE']) ||
+        isset($_SERVER['HTTP_SEC_FETCH_SITE']) ||
+        isset($_SERVER['HTTP_SEC_FETCH_USER'])
+    ) || (
+        isset($_SERVER['HTTP_REFERER']) && // Browsers send referer
+        strpos($_SERVER['HTTP_REFERER'], 'http') === 0
+    );
+    
+    // Method 5: Check for headers that mobile apps typically don't have
+    $has_web_browser_patterns = (
+        isset($_SERVER['HTTP_ACCEPT']) &&
+        (
+            strpos($_SERVER['HTTP_ACCEPT'], 'text/html') !== false ||
+            strpos($_SERVER['HTTP_ACCEPT'], 'application/xhtml') !== false
+        )
+    ) && (
+        isset($_SERVER['HTTP_ACCEPT_ENCODING']) &&
+        (
+            strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false ||
+            strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'deflate') !== false
+        )
+    );
+    
+    // Method 6: Check if it's a mobile device but NOT a browser
+    // Mobile browsers have specific patterns, pure mobile apps don't
+    $is_mobile_browser = $is_mobile_device && (
+        strpos($user_agent, 'chrome') !== false ||
+        strpos($user_agent, 'safari') !== false ||
+        strpos($user_agent, 'firefox') !== false ||
+        strpos($user_agent, 'edge') !== false ||
+        strpos($user_agent, 'opera') !== false ||
+        strpos($user_agent, 'samsungbrowser') !== false ||
+        strpos($user_agent, 'ucbrowser') !== false
+    );
+    
+    // Decision logic:
+    // 1. If it's a mobile device AND has browser headers → it's a mobile browser (web)
+    // 2. If it's a mobile device AND NO browser headers → it's likely a mobile app (Flutter)
+    // 3. If it has Dio/Flutter patterns → definitely Flutter
+    // 4. If it's mobile browser → web login
+    
+    if ($is_mobile_device && !$has_browser_headers && !$is_mobile_browser) {
+        // Mobile device without browser headers = mobile app
+        return true;
+    }
+    
+    // If it's clearly a mobile browser, it's web login
+    if ($is_mobile_browser || $has_web_browser_patterns) {
+        return false;
+    }
+    
+    // If no clear indicators, default to web (safer for backward compatibility)
+    return false;
+}
 
 // Initialize (reference only)
 if (function_exists('initializeSupabaseTables')) {
@@ -66,6 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Inputs
 $email_or_phone = trim($_POST['Email_number'] ?? '');
 $password = $_POST['password'] ?? '';
+$is_flutter = isFlutterRequest(); // Use the robust detection function
 
 if (empty($email_or_phone) || empty($password)) {
     echo json_encode([
@@ -79,6 +169,7 @@ try {
     $user_found = false;
     $user_data = null;
     $user_type = null;
+    $available_roles = []; // Track all roles user has (for web login)
 
     $is_email = filter_var($email_or_phone, FILTER_VALIDATE_EMAIL);
     
@@ -87,86 +178,201 @@ try {
         $email_or_phone = filter_var($email_or_phone, FILTER_SANITIZE_EMAIL);
     }
 
-    if ($is_email) {
-        // Try multiple email variations for compatibility with older records
-        $email_variations = [
-            $email_or_phone, // sanitized version
-            strtolower(trim($_POST['Email_number'] ?? '')), // original lowercase
-            trim($_POST['Email_number'] ?? '') // original as-is
-        ];
-        
-        foreach ($email_variations as $email_to_try) {
-            if ($user_found) break;
+    if ($is_flutter) {
+        // FLUTTER APP: Only check users table (parents only)
+        if ($is_email) {
+            $email_variations = [
+                $email_or_phone,
+                strtolower(trim($_POST['Email_number'] ?? '')),
+                trim($_POST['Email_number'] ?? '')
+            ];
             
-            // super_admin
-            $rows = supabaseSelect('super_admin', '*', ['email' => $email_to_try]);
-            if ($rows && count($rows) > 0) {
-                $user_data = $rows[0];
-                $user_type = 'super_admin';
-                $user_found = true;
-                break;
+            foreach ($email_variations as $email_to_try) {
+                $rows = supabaseSelect('users', '*', ['email' => $email_to_try]);
+                if ($rows && count($rows) > 0) {
+                    $user_data = $rows[0];
+                    $user_type = 'user';
+                    $user_found = true;
+                    break;
+                }
             }
-
-            // admin
-            $rows = supabaseSelect('admin', '*', ['email' => $email_to_try]);
-            if ($rows && count($rows) > 0) {
-                $user_data = $rows[0];
-                $user_type = 'admin';
-                $user_found = true;
-                break;
-            }
-
-            // bhw
-            $rows = supabaseSelect('bhw', '*', ['email' => $email_to_try]);
-            if ($rows && count($rows) > 0) {
-                $user_data = $rows[0];
-                $user_type = 'bhw';
-                $user_found = true;
-                break;
-            }
-
-            // midwives
-            $rows = supabaseSelect('midwives', '*', ['email' => $email_to_try]);
-            if ($rows && count($rows) > 0) {
-                $user_data = $rows[0];
-                $user_type = 'midwife';
-                $user_found = true;
-                break;
-            }
-
-            // users
-            $rows = supabaseSelect('users', '*', ['email' => $email_to_try]);
-            if ($rows && count($rows) > 0) {
-                $user_data = $rows[0];
-                $user_type = 'user';
-                $user_found = true;
-                break;
-            }
-        }
-    } else {
-        // phone: bhw -> midwives -> users (to match your logic)
-        $rows = supabaseSelect('bhw', '*', ['phone_number' => $email_or_phone]);
-        if ($rows && count($rows) > 0) {
-            $user_data = $rows[0];
-            $user_type = 'bhw';
-            $user_found = true;
-        }
-
-        if (!$user_found) {
-            $rows = supabaseSelect('midwives', '*', ['phone_number' => $email_or_phone]);
-            if ($rows && count($rows) > 0) {
-                $user_data = $rows[0];
-                $user_type = 'midwife';
-                $user_found = true;
-            }
-        }
-
-        if (!$user_found) {
+        } else {
+            // Phone login for Flutter
             $rows = supabaseSelect('users', '*', ['phone_number' => $email_or_phone]);
             if ($rows && count($rows) > 0) {
                 $user_data = $rows[0];
                 $user_type = 'user';
                 $user_found = true;
+            }
+        }
+    } else {
+        // WEB LOGIN: Check all tables and support multiple roles
+        if ($is_email) {
+            // Try multiple email variations for compatibility with older records
+            $email_variations = [
+                $email_or_phone, // sanitized version
+                strtolower(trim($_POST['Email_number'] ?? '')), // original lowercase
+                trim($_POST['Email_number'] ?? '') // original as-is
+            ];
+            
+            // Check all tables to find user and collect all roles
+            foreach ($email_variations as $email_to_try) {
+                // Check super_admin
+                $rows = supabaseSelect('super_admin', '*', ['email' => $email_to_try]);
+                if ($rows && count($rows) > 0 && !$user_found) {
+                    $user_data = $rows[0];
+                    $user_type = 'super_admin';
+                    $user_found = true;
+                    $available_roles[] = 'super_admin';
+                    break; // Super admin is highest priority, stop here
+                }
+
+                // Check admin
+                $rows = supabaseSelect('admin', '*', ['email' => $email_to_try]);
+                if ($rows && count($rows) > 0) {
+                    if (!$user_found) {
+                        $user_data = $rows[0];
+                        $user_type = 'admin';
+                        $user_found = true;
+                    }
+                    $available_roles[] = 'admin';
+                }
+
+                // Check bhw
+                $rows = supabaseSelect('bhw', '*', ['email' => $email_to_try]);
+                if ($rows && count($rows) > 0) {
+                    if (!$user_found) {
+                        $user_data = $rows[0];
+                        $user_type = 'bhw';
+                        $user_found = true;
+                    }
+                    $available_roles[] = 'bhw';
+                }
+
+                // Check midwives
+                $rows = supabaseSelect('midwives', '*', ['email' => $email_to_try]);
+                if ($rows && count($rows) > 0) {
+                    if (!$user_found) {
+                        $user_data = $rows[0];
+                        $user_type = 'midwife';
+                        $user_found = true;
+                    }
+                    $available_roles[] = 'midwife';
+                }
+
+                // Check users
+                $rows = supabaseSelect('users', '*', ['email' => $email_to_try]);
+                if ($rows && count($rows) > 0) {
+                    if (!$user_found) {
+                        $user_data = $rows[0];
+                        $user_type = 'user';
+                        $user_found = true;
+                    }
+                    $available_roles[] = 'user';
+                }
+            }
+        } else {
+            // Phone login: Check all tables
+            // Check bhw
+            $rows = supabaseSelect('bhw', '*', ['phone_number' => $email_or_phone]);
+            if ($rows && count($rows) > 0) {
+                $user_data = $rows[0];
+                $user_type = 'bhw';
+                $user_found = true;
+                $available_roles[] = 'bhw';
+            }
+
+            // Check midwives
+            $rows = supabaseSelect('midwives', '*', ['phone_number' => $email_or_phone]);
+            if ($rows && count($rows) > 0) {
+                if (!$user_found) {
+                    $user_data = $rows[0];
+                    $user_type = 'midwife';
+                    $user_found = true;
+                }
+                $available_roles[] = 'midwife';
+            }
+
+            // Check users
+            $rows = supabaseSelect('users', '*', ['phone_number' => $email_or_phone]);
+            if ($rows && count($rows) > 0) {
+                if (!$user_found) {
+                    $user_data = $rows[0];
+                    $user_type = 'user';
+                    $user_found = true;
+                }
+                $available_roles[] = 'user';
+            }
+
+            // Check admin (for phone login if needed)
+            $rows = supabaseSelect('admin', '*', ['phone_number' => $email_or_phone]);
+            if ($rows && count($rows) > 0) {
+                if (!$user_found) {
+                    $user_data = $rows[0];
+                    $user_type = 'admin';
+                    $user_found = true;
+                }
+                $available_roles[] = 'admin';
+            }
+        }
+
+        // Determine primary role based on priority (for web login)
+        // Priority: super_admin > admin > bhw > midwife > user
+        if (count($available_roles) > 0) {
+            if (in_array('super_admin', $available_roles)) {
+                $primary_role = 'super_admin';
+            } elseif (in_array('admin', $available_roles)) {
+                $primary_role = 'admin';
+            } elseif (in_array('bhw', $available_roles)) {
+                $primary_role = 'bhw';
+            } elseif (in_array('midwife', $available_roles)) {
+                $primary_role = 'midwife';
+            } else {
+                $primary_role = 'user';
+            }
+
+            // Get data for primary role if we haven't already
+            if ($user_type !== $primary_role) {
+                $email_to_use = $is_email ? $email_or_phone : null;
+                $phone_to_use = $is_email ? null : $email_or_phone;
+                
+                if ($primary_role === 'super_admin' && $email_to_use) {
+                    $rows = supabaseSelect('super_admin', '*', ['email' => $email_to_use]);
+                    if ($rows && count($rows) > 0) {
+                        $user_data = $rows[0];
+                        $user_type = 'super_admin';
+                    }
+                } elseif ($primary_role === 'admin') {
+                    if ($email_to_use) {
+                        $rows = supabaseSelect('admin', '*', ['email' => $email_to_use]);
+                    } else {
+                        $rows = supabaseSelect('admin', '*', ['phone_number' => $phone_to_use]);
+                    }
+                    if ($rows && count($rows) > 0) {
+                        $user_data = $rows[0];
+                        $user_type = 'admin';
+                    }
+                } elseif ($primary_role === 'bhw') {
+                    if ($email_to_use) {
+                        $rows = supabaseSelect('bhw', '*', ['email' => $email_to_use]);
+                    } else {
+                        $rows = supabaseSelect('bhw', '*', ['phone_number' => $phone_to_use]);
+                    }
+                    if ($rows && count($rows) > 0) {
+                        $user_data = $rows[0];
+                        $user_type = 'bhw';
+                    }
+                } elseif ($primary_role === 'midwife') {
+                    if ($email_to_use) {
+                        $rows = supabaseSelect('midwives', '*', ['email' => $email_to_use]);
+                    } else {
+                        $rows = supabaseSelect('midwives', '*', ['phone_number' => $phone_to_use]);
+                    }
+                    if ($rows && count($rows) > 0) {
+                        $user_data = $rows[0];
+                        $user_type = 'midwife';
+                    }
+                }
             }
         }
     }
@@ -177,7 +383,9 @@ try {
             "message" => "Email/phone not found. Please check your credentials.",
             "debug" => [
                 "searched_email" => $is_email ? $email_or_phone : null,
-                "is_email" => $is_email
+                "is_email" => $is_email,
+                "is_flutter" => $is_flutter,
+                "user_agent" => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
             ]
         ]);
         exit();
@@ -227,6 +435,11 @@ try {
 
     // Sessions matching your original code style
     session_unset();
+
+    // Store available roles for web logins (not Flutter)
+    if (!$is_flutter && count($available_roles) > 0) {
+        $_SESSION['available_roles'] = $available_roles;
+    }
 
     if ($user_type === 'super_admin') {
         $_SESSION['super_admin_id'] = $user_data['super_admin_id'];

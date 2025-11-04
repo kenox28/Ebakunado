@@ -46,8 +46,17 @@ $_SESSION['otp_expires'] = time() + 300; // 5 minutes from now
 
 // Get TextBee credentials from database (SuperAdmin's settings for OTP)
 $credentials = getOTPCredentials();
-$apiKey = $credentials['api_key'];
-$deviceId = $credentials['device_id'];
+$apiKey = trim($credentials['api_key'] ?? '');
+$deviceId = trim($credentials['device_id'] ?? '');
+
+if (empty($apiKey) || empty($deviceId)) {
+    echo json_encode([
+        'status' => 'error', 
+        'message' => 'SMS service configuration error. Please contact administrator.'
+    ]);
+    exit();
+}
+
 $url = "https://api.textbee.dev/api/v1/gateway/devices/$deviceId/send-sms";
 
 // SMS message
@@ -67,10 +76,13 @@ curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($smsData));
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Content-Type: application/json',
-    'X-API-Key: ' . $apiKey
+    'X-API-Key: ' . $apiKey,
+    'Accept: application/json'
 ]);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 
 // Execute request
 $response = curl_exec($ch);
@@ -80,24 +92,39 @@ curl_close($ch);
 
 // Check for cURL errors
 if ($curlError) {
-    echo json_encode(['status' => 'error', 'message' => 'Failed to send SMS. Please try again.']);
+    echo json_encode([
+        'status' => 'error', 
+        'message' => 'Failed to send SMS. Network error occurred.'
+    ]);
     exit();
 }
 
 // Parse response
 $responseData = json_decode($response, true);
 
-// Check for successful response - TextBee.dev returns HTTP 201 for successful SMS
+// Check for successful response - TextBee.dev returns HTTP 200/201 for successful SMS
 if ($httpCode === 200 || $httpCode === 201) {
-    // Check if the response indicates success
+    // Check if the response indicates success - TextBee API structure may vary
     $isSuccess = false;
     
-    if ($responseData && isset($responseData['data']['success']) && $responseData['data']['success'] === true) {
-        $isSuccess = true;
-    } elseif ($responseData && isset($responseData['success']) && $responseData['success'] === true) {
-        $isSuccess = true;
-    } elseif ($httpCode === 200 || $httpCode === 201) {
-        // If we get 200/201, assume success even if response format is different
+    if ($responseData) {
+        // Check for explicit success flag
+        if (isset($responseData['success']) && $responseData['success'] === true) {
+            $isSuccess = true;
+        } elseif (isset($responseData['data']['success']) && $responseData['data']['success'] === true) {
+            $isSuccess = true;
+        } elseif (isset($responseData['status']) && ($responseData['status'] === 'success' || $responseData['status'] === 'sent')) {
+            $isSuccess = true;
+        } elseif (isset($responseData['data']['status']) && ($responseData['data']['status'] === 'success' || $responseData['data']['status'] === 'sent')) {
+            $isSuccess = true;
+        } elseif (isset($responseData['message_id']) || isset($responseData['data']['message_id'])) {
+            $isSuccess = true;
+        } elseif (!isset($responseData['error']) && !isset($responseData['data']['error'])) {
+            // If HTTP 200/201 and no error field, assume success
+            $isSuccess = true;
+        }
+    } else {
+        // Empty response but HTTP 200/201 - might still be success
         $isSuccess = true;
     }
     
@@ -108,9 +135,29 @@ if ($httpCode === 200 || $httpCode === 201) {
             'expires_in' => 300
         ]);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'SMS API returned unexpected response format']);
+        echo json_encode([
+            'status' => 'error', 
+            'message' => 'SMS API returned unexpected response format'
+        ]);
     }
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Failed to send SMS. Please check your phone number.']);
+    // Provide specific error messages based on HTTP code
+    $errorMessage = 'Failed to send SMS.';
+    if ($httpCode === 401) {
+        $errorMessage = 'SMS API authentication failed. Please contact your administrator.';
+    } elseif ($httpCode === 403) {
+        $errorMessage = 'SMS API access denied.';
+    } elseif ($httpCode === 404) {
+        $errorMessage = 'SMS API endpoint not found.';
+    } elseif ($httpCode === 400) {
+        $errorMessage = 'Invalid SMS request. Please check your phone number format.';
+    } elseif ($httpCode >= 500) {
+        $errorMessage = 'SMS service is temporarily unavailable. Please try again later.';
+    }
+    
+    echo json_encode([
+        'status' => 'error', 
+        'message' => $errorMessage
+    ]);
 }
 ?>

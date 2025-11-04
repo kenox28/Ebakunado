@@ -154,10 +154,6 @@ if ($user_types != 'midwifes') {
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" onclick="loadProfileData()" class="btn btn-secondary">
-                        <span class="material-symbols-rounded">refresh</span>
-                        Refresh
-                    </button>
                     <button type="submit" class="btn btn-primary">
                         <span class="material-symbols-rounded">save</span>
                         Save Changes
@@ -179,7 +175,7 @@ if ($user_types != 'midwifes') {
 
         async function loadProfileData() {
             try {
-                const response = await fetch('/ebakunado/php/supabase/shared/get_profile_data.php');
+                const response = await fetch('../../php/supabase/shared/get_profile_data.php');
                 const data = await response.json();
 
                 if (data.status === 'success') {
@@ -193,8 +189,8 @@ if ($user_types != 'midwifes') {
                     document.getElementById('phone_number').value = profile.phone_number || '';
                     document.getElementById('gender').value = profile.gender || '';
                     document.getElementById('place').value = profile.place || '';
-                    if (profile.profileImg && profile.profileImg !== 'noprofile.png') {
-                        document.getElementById('profileImage').src = profile.profileImg;
+                    if (profile.profileimg && profile.profileimg !== 'noprofile.png') {
+                        document.getElementById('profileImage').src = profile.profileimg;
                     }
                 }
             } catch (error) {
@@ -213,8 +209,28 @@ if ($user_types != 'midwifes') {
                     body: formData
                 });
                 const data = await response.json();
+                
+                // Log debug info to console
+                if (data.debug) {
+                    console.log('=== Profile Photo Upload Debug Info ===');
+                    console.log('User exists in users table:', data.debug.user_exists_in_users_table);
+                    console.log('User user_id:', data.debug.user_user_id);
+                    console.log('Email checked:', data.debug.email_checked);
+                    console.log('Phone checked:', data.debug.phone_checked);
+                    console.log('Sync attempted:', data.debug.sync_attempted);
+                    console.log('Sync success:', data.debug.sync_success);
+                    console.log('Full debug:', data.debug);
+                }
+                
                 if (data.status === 'success') {
                     document.getElementById('profileImage').src = data.imageUrl;
+                    // Also update header and sidebar avatars immediately without reload
+                    try {
+                        var headerAvatar = document.querySelector('.header .user-avatar');
+                        if (headerAvatar) headerAvatar.src = data.imageUrl;
+                        var sidebarAvatar = document.querySelector('.sidebar .profile-avatar');
+                        if (sidebarAvatar) sidebarAvatar.src = data.imageUrl;
+                    } catch (e) {}
                     Swal.fire('Success!', 'Profile photo updated successfully', 'success');
                 } else {
                     Swal.fire('Error!', data.message, 'error');
@@ -228,13 +244,33 @@ if ($user_types != 'midwifes') {
             e.preventDefault();
             const formData = new FormData(this);
             try {
-                const response = await fetch('/ebakunado/php/supabase/shared/update_profile.php', {
+                const response = await fetch('../../php/supabase/shared/update_profile.php', {
                     method: 'POST',
                     body: formData
                 });
                 const data = await response.json();
+                
+                // Log debug info to console
+                if (data.debug) {
+                    console.log('=== Profile Update Debug Info ===');
+                    console.log('User exists in users table:', data.debug.user_exists_in_users_table);
+                    console.log('User user_id:', data.debug.user_user_id);
+                    console.log('Old email:', data.debug.old_email);
+                    console.log('Old phone:', data.debug.old_phone);
+                    console.log('Sync attempted:', data.debug.sync_attempted);
+                    console.log('Sync success:', data.debug.sync_success);
+                    console.log('Full debug:', data.debug);
+                }
+                
                 if (data.status === 'success') {
-                    Swal.fire('Success!', 'Profile updated successfully', 'success');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Profile updated successfully',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    // Auto-refresh the profile data
                     loadProfileData();
                 } else {
                     Swal.fire('Error!', data.message, 'error');

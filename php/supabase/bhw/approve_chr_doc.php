@@ -157,6 +157,36 @@ try {
         'approved_at' => date('Y-m-d H:i:s')
     ], ['id' => $request_id]);
     
+    // Log activity: BHW/Midwife approved CHR document request
+    try {
+        // Get approver info
+        $approver_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+        $approver_type = isset($_SESSION['midwife_id']) ? 'midwife' : 'bhw';
+        $approver_name = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
+        
+        // Get requesting user info for context
+        $requesting_user_id = $req['user_id'] ?? null;
+        $requesting_user_info = null;
+        if ($requesting_user_id) {
+            $requesting_user_info = supabaseSelect('users', 'fname,lname', ['user_id' => $requesting_user_id], null, 1);
+        }
+        
+        $child_name = trim(($child['child_fname'] ?? '') . ' ' . ($child['child_lname'] ?? ''));
+        $doc_type_label = ucfirst($req['request_type'] ?? '') . ' Copy';
+        
+        // Log approval activity
+        supabaseLogActivity(
+            $approver_id,
+            $approver_type,
+            'CHR_DOC_APPROVED',
+            $approver_name . ' approved ' . $doc_type_label . ' CHR document request for ' . $child_name . ' (Request ID: ' . $request_id . ', Baby ID: ' . $req['baby_id'] . ')',
+            $_SERVER['REMOTE_ADDR'] ?? null
+        );
+    } catch (Exception $e) {
+        // Log error but don't fail the approval
+        error_log('Failed to log CHR document approval activity: ' . $e->getMessage());
+    }
+    
     echo json_encode(['status' => 'success', 'doc_url' => $doc_url]);
     exit();
     

@@ -10,12 +10,42 @@ if ($baby_id === '') { echo json_encode(['status'=>'error','message'=>'Missing b
 // Check authorization
 if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['midwife_id'])) { echo json_encode(['status'=>'error','message'=>'Unauthorized']); exit(); }
 
+// Get approver info
+$approver_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+$approver_type = isset($_SESSION['midwife_id']) ? 'midwife' : 'bhw';
+$approver_name = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
+
+// Get child info for logging
+$child_info = supabaseSelect('child_health_records', 'child_fname,child_lname,user_id,mother_name', ['baby_id' => $baby_id], null, 1);
+$child_name = 'Unknown Child';
+$mother_name = 'Unknown Mother';
+$requesting_user_id = null;
+if ($child_info && count($child_info) > 0) {
+    $child_name = trim(($child_info[0]['child_fname'] ?? '') . ' ' . ($child_info[0]['child_lname'] ?? ''));
+    $mother_name = $child_info[0]['mother_name'] ?? 'Unknown Mother';
+    $requesting_user_id = $child_info[0]['user_id'] ?? null;
+}
+
 // 1) Mark CHR accepted
 $ok = supabaseUpdate('child_health_records', [
 	'status' => 'accepted', 
 	'date_updated' => date('Y-m-d H:i:s')
 ], ['baby_id' => $baby_id]);
 if ($ok === false) { echo json_encode(['status' => 'error', 'message' => 'Record not accepted']); exit(); }
+
+// Log activity: BHW/Midwife approved child registration
+try {
+    supabaseLogActivity(
+        $approver_id,
+        $approver_type,
+        'CHILD_REGISTRATION_APPROVED',
+        $approver_name . ' approved child registration for ' . $child_name . ', child of ' . $mother_name . ' (Baby ID: ' . $baby_id . ')',
+        $_SERVER['REMOTE_ADDR'] ?? null
+    );
+} catch (Exception $e) {
+    // Log error but don't fail the approval
+    error_log('Failed to log child registration approval activity: ' . $e->getMessage());
+}
 
 // 2) Generate QR code and upload to Cloudinary, then store URL in child_health_records.qr_code
 try {

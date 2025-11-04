@@ -2,10 +2,17 @@
 let otpTimer = null;
 let otpVerified = false;
 
+// Password validation state
+let passwordValid = false;
+let passwordsMatch = false;
+
 // Generate CSRF token on page load
 document.addEventListener("DOMContentLoaded", function () {
 	generateCSRFToken();
 	loadProvinces();
+
+	// Initialize password validation
+	initPasswordValidation();
 
 	// No need for OTP field listeners since we use popup now
 });
@@ -61,7 +68,18 @@ async function sendOTPAutomatically(phoneNumber) {
 			body: formData,
 		});
 
-		const data = await response.json();
+		const responseText = await response.text();
+		let data;
+		try {
+			data = JSON.parse(responseText);
+		} catch (e) {
+			Swal.fire({
+				icon: "error",
+				title: "Failed to Send OTP!",
+				text: "Invalid server response. Please try again.",
+			});
+			return false;
+		}
 
 		if (data.status === "success") {
 			Swal.close();
@@ -70,16 +88,17 @@ async function sendOTPAutomatically(phoneNumber) {
 			Swal.fire({
 				icon: "error",
 				title: "Failed to Send OTP!",
-				text: data.message,
+				text: data.message || "Failed to send OTP. Please try again.",
 			});
 			return false;
 		}
 	} catch (error) {
 		console.error("Error sending OTP:", error);
+		console.error("Error details:", error.message, error.stack);
 		Swal.fire({
 			icon: "error",
 			title: "Error!",
-			text: "Failed to send OTP. Please try again.",
+			text: "Failed to send OTP. Please check console for details.",
 		});
 		return false;
 	}
@@ -198,7 +217,143 @@ async function showOTPPopup() {
 	});
 }
 
-// Client-side password validation
+// Initialize password validation
+function initPasswordValidation() {
+	const passwordInput = document.getElementById("password");
+	const confirmPasswordInput = document.getElementById("confirm_password");
+	const passwordRequirements = document.getElementById("passwordRequirements");
+	const passwordMatchIndicator = document.getElementById(
+		"passwordMatchIndicator"
+	);
+
+	if (!passwordInput || !confirmPasswordInput) return;
+
+	// Show requirements when password field is focused
+	passwordInput.addEventListener("focus", function () {
+		if (passwordRequirements) {
+			passwordRequirements.style.display = "block";
+		}
+	});
+
+	// Hide requirements when password field is blurred (if password is valid)
+	passwordInput.addEventListener("blur", function () {
+		if (passwordRequirements && passwordValid) {
+			// Keep it visible if password is valid, or hide after a delay
+			setTimeout(() => {
+				if (passwordInput !== document.activeElement) {
+					passwordRequirements.style.display = "none";
+				}
+			}, 200);
+		}
+	});
+
+	// Real-time password validation
+	passwordInput.addEventListener("input", function () {
+		validatePasswordRealTime(this.value);
+	});
+
+	// Real-time password match validation
+	confirmPasswordInput.addEventListener("input", function () {
+		checkPasswordMatch();
+	});
+
+	passwordInput.addEventListener("input", function () {
+		checkPasswordMatch();
+	});
+}
+
+// Real-time password validation - shows all requirements at once
+function validatePasswordRealTime(password) {
+	const requirements = {
+		length: password.length >= 8,
+		uppercase: /[A-Z]/.test(password),
+		lowercase: /[a-z]/.test(password),
+		number: /[0-9]/.test(password),
+		special: /[^A-Za-z0-9]/.test(password),
+	};
+
+	// Check and update length requirement
+	const reqLength = document.getElementById("req-length");
+	if (reqLength) {
+		if (requirements.length) {
+			reqLength.classList.add("met");
+		} else {
+			reqLength.classList.remove("met");
+		}
+	}
+
+	// Check and update uppercase requirement
+	const reqUppercase = document.getElementById("req-uppercase");
+	if (reqUppercase) {
+		if (requirements.uppercase) {
+			reqUppercase.classList.add("met");
+		} else {
+			reqUppercase.classList.remove("met");
+		}
+	}
+
+	// Check and update lowercase requirement
+	const reqLowercase = document.getElementById("req-lowercase");
+	if (reqLowercase) {
+		if (requirements.lowercase) {
+			reqLowercase.classList.add("met");
+		} else {
+			reqLowercase.classList.remove("met");
+		}
+	}
+
+	// Check and update number requirement
+	const reqNumber = document.getElementById("req-number");
+	if (reqNumber) {
+		if (requirements.number) {
+			reqNumber.classList.add("met");
+		} else {
+			reqNumber.classList.remove("met");
+		}
+	}
+
+	// Check and update special character requirement
+	const reqSpecial = document.getElementById("req-special");
+	if (reqSpecial) {
+		if (requirements.special) {
+			reqSpecial.classList.add("met");
+		} else {
+			reqSpecial.classList.remove("met");
+		}
+	}
+
+	// Check if all requirements are met
+	passwordValid =
+		requirements.length &&
+		requirements.uppercase &&
+		requirements.lowercase &&
+		requirements.number &&
+		requirements.special;
+}
+
+// Real-time password match validation (silent - no visual indicator)
+function checkPasswordMatch() {
+	const passwordInput = document.getElementById("password");
+	const confirmPasswordInput = document.getElementById("confirm_password");
+
+	if (!passwordInput || !confirmPasswordInput) return;
+
+	const password = passwordInput.value;
+	const confirmPassword = confirmPasswordInput.value;
+
+	if (confirmPassword.length === 0) {
+		passwordsMatch = false;
+		return;
+	}
+
+	if (password === confirmPassword && password.length > 0) {
+		passwordsMatch = true;
+	} else {
+		passwordsMatch = false;
+	}
+}
+
+// Client-side password validation (for form submission)
 function validatePassword(password) {
 	const errors = [];
 
@@ -246,19 +401,7 @@ async function CreateFun(e) {
 	const confirmPassword = document.getElementById("confirm_password").value;
 	const csrfToken = document.getElementById("csrf_token").value;
 
-	// First, send OTP automatically
-	const otpSent = await sendOTPAutomatically(number);
-	if (!otpSent) {
-		return; // Error already shown in sendOTPAutomatically
-	}
-
-	// Show OTP input popup
-	const otpVerified = await showOTPPopup();
-	if (!otpVerified) {
-		return; // User cancelled or OTP verification failed
-	}
-
-	// Client-side validation
+	// Client-side validation - check BEFORE OTP to give immediate feedback
 	if (!fname || !lname || !email || !number || !password || !confirmPassword) {
 		Swal.fire({
 			icon: "error",
@@ -290,13 +433,18 @@ async function CreateFun(e) {
 		return;
 	}
 
-	// Password validation
-	const passwordErrors = validatePassword(password);
-	if (passwordErrors.length > 0) {
+	// Password validation check (using real-time validation state)
+	if (!passwordValid) {
 		Swal.fire({
 			icon: "error",
 			title: "Password Requirements Not Met!",
-			html: passwordErrors.join("<br>"),
+			html:
+				"Please ensure your password meets all requirements:<br>" +
+				"• At least 8 characters<br>" +
+				"• 1 uppercase letter<br>" +
+				"• 1 lowercase letter<br>" +
+				"• 1 number<br>" +
+				"• 1 special character",
 		});
 		return;
 	}
@@ -311,14 +459,41 @@ async function CreateFun(e) {
 		return;
 	}
 
-	// Password confirmation check
+	// Password confirmation check - CRITICAL: Check BEFORE OTP to prevent unnecessary OTP sending
+	// Update the match state first
+	checkPasswordMatch();
+
+	// Explicit password match check - this MUST pass before proceeding
 	if (password !== confirmPassword) {
 		Swal.fire({
 			icon: "error",
 			title: "Password Mismatch!",
 			text: "Passwords do not match. Please try again.",
 		});
-		return;
+		return; // Stop form submission
+	}
+
+	// Also verify the validation state variable
+	if (!passwordsMatch) {
+		Swal.fire({
+			icon: "error",
+			title: "Password Mismatch!",
+			text: "Passwords do not match. Please try again.",
+		});
+		return; // Stop form submission
+	}
+
+	// All validations passed - now proceed with OTP
+	// First, send OTP automatically
+	const otpSent = await sendOTPAutomatically(number);
+	if (!otpSent) {
+		return; // Error already shown in sendOTPAutomatically
+	}
+
+	// Show OTP input popup
+	const otpVerified = await showOTPPopup();
+	if (!otpVerified) {
+		return; // User cancelled or OTP verification failed
 	}
 
 	// Show loading state

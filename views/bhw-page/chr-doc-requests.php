@@ -163,24 +163,23 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
                 let html = '';
                 html += '<table border="1">';
                 html += '<thead><tr>'+
-                    '<th style="padding:6px;">Request ID</th>'+
                     '<th style="padding:6px;">Parent Name</th>'+
                     '<th style="padding:6px;">Child Name</th>'+
                     '<th style="padding:6px;">Type</th>'+
-                    '<th style="padding:6px;">Status</th>'+
                     '<th style="padding:6px;">Requested At</th>'+
                     '<th style="padding:6px;">Action</th>'+
                     '</tr></thead>';
                 html += '<tbody>';
                 rows.forEach(r => {
                     html += '<tr>'+
-                        `<td style="padding:6px;">${r.id}</td>`+
                         `<td style="padding:6px;">${r.user_fullname||r.user_id||''}</td>`+
                         `<td style="padding:6px;">${r.baby_name||r.baby_id||''}</td>`+
                         `<td style="padding:6px;">${(r.request_type||'').toUpperCase()}</td>`+
-                        `<td style="padding:6px;">${r.status||''}</td>`+
                         `<td style="padding:6px;">${(r.created_at||'').toString().replace('T',' ').split('.')[0]}</td>`+
-                        `<td style="padding:6px; text-align:center;"><button style="padding:4px 8px;" onclick="approveChr(${r.id}, '${(r.request_type||'').toLowerCase()}')">Approve & Generate</button></td>`+
+                        `<td style="padding:6px; text-align:center;">
+                            <button style="padding:4px 8px; margin-right: 5px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="approveChr(${r.id}, '${(r.request_type||'').toLowerCase()}')">Approve & Generate</button>
+                            <button style="padding:4px 8px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="rejectChrDoc(${r.id})">Reject</button>
+                        </td>`+
                     '</tr>';
                 });
                 html += '</tbody></table>';
@@ -240,6 +239,26 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
             }catch(e){ 
                 console.error('Approve error:', e);
                 alert('Network error approving request: ' + e.message); 
+            }
+        }
+
+        async function rejectChrDoc(requestId){
+            if (!confirm('Are you sure you want to reject and remove this CHR document request? This action cannot be undone.')) {
+                return;
+            }
+            try{
+                const fd = new FormData(); 
+                fd.append('request_id', requestId);
+                const res = await fetch('../../php/supabase/bhw/reject_chr_doc.php', { method:'POST', body: fd });
+                if (!res.ok) { throw new Error(`HTTP ${res.status}: ${res.statusText}`); }
+                const j = await res.json();
+                if (j.status === 'success'){
+                    alert('CHR document request rejected and removed successfully.');
+                    loadChrRequests(currentPage); // Reload current page
+                } else { alert('Reject failed: ' + (j.message||'Unknown error')); }
+            }catch(e){ 
+                console.error('Reject error:', e);
+                alert('Network error rejecting request: ' + e.message); 
             }
         }
         </script>

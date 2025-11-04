@@ -13,12 +13,12 @@ $user_fullname = ($_SESSION['fname'] ?? '') . " " . ($_SESSION['lname'] ?? '');
 <main class="main-content">
     <div class="page-header">
         <h1>System Settings</h1>
-        <p>Manage SMS configuration for OTP/Authentication</p>
+        <p>Manage SMS and Email configuration for OTP, Authentication, and Daily Notifications</p>
     </div>
 
     <div class="settings-container">
-        <h2>⚙️ SMS Configuration for OTP/Authentication</h2>
-        <p class="settings-description">These settings are used for sending OTP codes during account creation, password reset, and other authentication processes.</p>
+        <h2>⚙️ System SMS & Email Configuration</h2>
+        <p class="settings-description">These settings control all SMS and Email communications in the system, including OTP codes, authentication, and daily vaccination notifications.</p>
         
         <div class="settings-form">
             <form id="systemSettingsForm">
@@ -37,12 +37,12 @@ $user_fullname = ($_SESSION['fname'] ?? '') . " " . ($_SESSION['lname'] ?? '');
                 </div>
 
                 <div class="settings-section">
-                    <h3>📱 SMS Configuration (TextBee) - For OTP</h3>
-                    <p class="section-description">Used for: OTP verification, Password Reset, and other authentication SMS</p>
+                    <h3>📱 SMS Configuration (TextBee)</h3>
+                    <p class="section-description">Used for: OTP verification, Password Reset, Daily Vaccination Notifications, and all system SMS communications</p>
                     <div class="form-group">
                         <label for="sms_api_key">API Key:</label>
                         <input type="text" id="sms_api_key" name="sms_api_key" placeholder="Enter TextBee API Key" required>
-                        <small class="help-text">Your TextBee.dev API key for sending OTP SMS</small>
+                        <small class="help-text">Your TextBee.dev API key for sending all system SMS (OTP, notifications, etc.)</small>
                     </div>
                     <div class="form-group">
                         <label for="sms_device_id">Device ID:</label>
@@ -233,7 +233,7 @@ function displayCurrentSettings(settings) {
     let html = '<strong>Email Configuration:</strong><br>';
     html += 'Username: ' + (settings.email_username || 'Not set') + '<br>';
     html += 'Password: ' + (settings.email_password ? '••••••••' : 'Not set') + '<br><br>';
-    html += '<strong>SMS Configuration (OTP):</strong><br>';
+    html += '<strong>SMS Configuration (OTP & Notifications):</strong><br>';
     html += 'API Key: ' + (settings.sms_api_key ? settings.sms_api_key.substring(0, 8) + '...' : 'Not set') + '<br>';
     html += 'Device ID: ' + (settings.sms_device_id || 'Not set') + '<br><br>';
     html += '<strong>System Configuration:</strong><br>';
@@ -256,7 +256,7 @@ document.getElementById('systemSettingsForm').addEventListener('submit', async f
         const data = await response.json();
         
         if (data.status === 'success') {
-            showSuccess('System settings saved successfully! OTP and authentication features will use the new configuration.');
+            showSuccess('System settings saved successfully! OTP, authentication, and daily notification features will use the new configuration.');
             loadCurrentSettings();
         } else {
             showError('Failed to save settings: ' + data.message);
