@@ -82,6 +82,12 @@ main {
   margin-bottom: 2rem;
 }
 
+.form-section {
+  color: #6c757d;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
 .form-section:last-of-type {
   margin-bottom: 0;
 }
@@ -328,3 +334,4 @@ input[type="date"] {
 .material-symbols-rounded {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }
+

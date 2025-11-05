@@ -22,23 +22,23 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <ul class="sidebar-menu">
                 <!-- Dashboard -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'dashboard.php' ? ' active' : ''; ?>">
-                    <a href="../../views/bhw-page/dashboard.php" class="menu-link">
+                    <a href="../../views/user-page/dashboard.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">dashboard</span>
                         <span class="menu-label">Dashboard</span>
                     </a>
                 </li>
 
                 <!-- Pending Approval -->
-                <li class="sidebar-menu-item<?php echo $currentPage === 'pending-approval.php' ? ' active' : ''; ?>">
-                    <a href="../../views/bhw-page/pending-approval.php" class="menu-link">
-                        <span class="menu-icon material-symbols-rounded">pending_actions</span>
+                <li class="sidebar-menu-item<?php echo $currentPage === 'children-list.php' ? ' active' : ''; ?>">
+                    <a href="../../views/user-page/children-list.php" class="menu-link">
+                        <span class="menu-icon material-symbols-rounded">folder</span>
                         <span class="menu-label">Child Record</span>
                     </a>
                 </li>
 
                 <!-- Child Health Record -->
-                <li class="sidebar-menu-item<?php echo $currentPage === 'child-health-list.php' ? ' active' : ''; ?>">
-                    <a href="../../views/bhw-page/child-health-list.php" class="menu-link">
+                <li class="sidebar-menu-item<?php echo $currentPage === 'approved-requests.php' ? ' active' : ''; ?>">
+                    <a href="../../views/user-page/approved-requests.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">description</span>
                         <span class="menu-label">Approved Requests</span>
                     </a>
@@ -46,7 +46,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 
                 <!-- Add Child -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'add-child.php' ? ' active' : ''; ?>">
-                    <a href="../../views/bhw-page/add-child.php" class="menu-link">
+                    <a href="../../views/user-page/add-child-request.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">add_circle</span>
                         <span class="menu-label">Add Child</span>
                     </a>

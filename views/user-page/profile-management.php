@@ -1,29 +1,40 @@
 <?php
 session_start();
-?>
-<?php
-$user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
-$user_types = $_SESSION['user_type'];
-$user_name = $_SESSION['fname'] ?? 'User';
-$user_fullname = ($_SESSION['fname'] ?? '') . " " . ($_SESSION['lname'] ?? '');
-if ($user_types != 'midwifes') {
-    $user_type = 'Barangay Health Worker';
-} else {
-    $user_type = 'Midwife';
+
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+    header("Location: ../login.php");
+    exit();
 }
+
+
+// Get user information from session
+$user_id = $_SESSION['user_id'] ?? '';
+$fname = $_SESSION['fname'] ?? 'User';
+$lname = $_SESSION['lname'] ?? '';
+$email = $_SESSION['email'] ?? '';
+$phone = $_SESSION['phone_number'] ?? '';
+$noprofile = $_SESSION['profileimg'] ?? '';
+$gender = $_SESSION['gender'] ?? '';
+$place = $_SESSION['place'] ?? '';
+$user_fname = $_SESSION['fname'] ?? '';
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile Management</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Children</title>
     <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/bhw/profile-management.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
@@ -47,7 +58,7 @@ if ($user_types != 'midwifes') {
                 <div class="profile-avatar">
                     <img
                         class="profile-avatar" id="profileImage"
-                        src="../../assets/images/user-profile.png"
+                        src="<?php echo !empty($noprofile) ? htmlspecialchars($noprofile) : '../../assets/images/user-profile.png'; ?>"
                         alt="User Profile" />
                     <button class="change-photo-btn" onclick="document.getElementById('photoInput').click()">
                         <span class="material-symbols-rounded">camera_alt</span>
@@ -167,51 +178,66 @@ if ($user_types != 'midwifes') {
         </section>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/auth-handler/password-toggle.js"></script>
     <script>
+        // Load profile data on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadProfileData();
         });
 
         async function loadProfileData() {
             try {
-                const response = await fetch('/ebakunado/php/supabase/shared/get_profile_data.php');
+                const response = await fetch('/ebakunado/php/supabase/users/get_profile_data.php');
                 const data = await response.json();
 
                 if (data.status === 'success') {
                     const profile = data.data;
+
+                    // Update display
                     document.getElementById('displayName').textContent = `${profile.fname} ${profile.lname}`;
-                    document.getElementById('displayRole').textContent = profile.user_type ? profile.user_type.charAt(0).toUpperCase() + profile.user_type.slice(1) : 'User';
+                    document.getElementById('displayRole').textContent = 'User';
                     document.getElementById('displayEmail').textContent = profile.email;
+
+                    // Update form fields
                     document.getElementById('fname').value = profile.fname || '';
                     document.getElementById('lname').value = profile.lname || '';
                     document.getElementById('email').value = profile.email || '';
                     document.getElementById('phone_number').value = profile.phone_number || '';
                     document.getElementById('gender').value = profile.gender || '';
                     document.getElementById('place').value = profile.place || '';
-                    if (profile.profileImg && profile.profileImg !== 'noprofile.png') {
-                        document.getElementById('profileImage').src = profile.profileImg;
+                    document.getElementById('philhealth_no').value = profile.philhealth_no || '';
+                    document.getElementById('nhts').value = profile.nhts || '';
+
+                    // Update profile image
+                    if (profile.profileimg && profile.profileimg !== 'noprofile.png') {
+                        document.getElementById('profileImage').src = profile.profileimg;
                     }
+                } else {
+                    console.error('Error loading profile:', data.message);
                 }
             } catch (error) {
-                console.error('Error loading profile:', error);
+                console.error('Error loading profile data:', error);
             }
         }
 
         async function uploadProfilePhoto() {
-            const file = document.getElementById('photoInput').files[0];
+            const fileInput = document.getElementById('photoInput');
+            const file = fileInput.files[0];
+
             if (!file) return;
+
             const formData = new FormData();
             formData.append('photo', file);
+
             try {
-                const response = await fetch('../../php/supabase/shared/upload_profile_photo.php', {
+                const response = await fetch('/ebakunado/php/supabase/users/upload_profile_photo.php', {
                     method: 'POST',
                     body: formData
                 });
+
                 const data = await response.json();
+
                 if (data.status === 'success') {
                     document.getElementById('profileImage').src = data.imageUrl;
                     Swal.fire('Success!', 'Profile photo updated successfully', 'success');
@@ -219,30 +245,35 @@ if ($user_types != 'midwifes') {
                     Swal.fire('Error!', data.message, 'error');
                 }
             } catch (error) {
+                console.error('Error uploading photo:', error);
                 Swal.fire('Error!', 'Failed to upload photo', 'error');
             }
         }
 
+        // Handle form submission
         document.getElementById('profileForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+
             const formData = new FormData(this);
+
             try {
-                const response = await fetch('/ebakunado/php/supabase/shared/update_profile.php', {
+                const response = await fetch('/ebakunado/php/supabase/users/update_profile.php', {
                     method: 'POST',
                     body: formData
                 });
+
                 const data = await response.json();
+
                 if (data.status === 'success') {
                     Swal.fire('Success!', 'Profile updated successfully', 'success');
-                    loadProfileData();
+                    loadProfileData(); // Refresh the display
                 } else {
                     Swal.fire('Error!', data.message, 'error');
                 }
             } catch (error) {
+                console.error('Error updating profile:', error);
                 Swal.fire('Error!', 'Failed to update profile', 'error');
             }
         });
     </script>
 </body>
-
-</html>
