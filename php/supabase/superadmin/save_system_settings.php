@@ -83,14 +83,14 @@ try {
                 'user_id' => $user_id,
                 'user_type' => $user_type,
                 'action_type' => 'UPDATE',
-                'description' => $user_name . ' updated SMS OTP settings (API Key and Device ID)',
+                'description' => $user_name . ' updated system SMS settings (API Key and Device ID) for OTP and daily notifications',
                 'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
             
             echo json_encode([
                 'status' => 'success',
-                'message' => 'System settings updated successfully. OTP and authentication features will use the new configuration.'
+                'message' => 'System settings updated successfully. OTP, authentication, and daily notification features will use the new configuration.'
             ]);
         } else {
             echo json_encode([
@@ -109,14 +109,14 @@ try {
                 'user_id' => $user_id,
                 'user_type' => $user_type,
                 'action_type' => 'CREATE',
-                'description' => $user_name . ' created SMS OTP settings (API Key and Device ID)',
+                'description' => $user_name . ' created system SMS settings (API Key and Device ID) for OTP and daily notifications',
                 'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
             
             echo json_encode([
                 'status' => 'success',
-                'message' => 'System settings saved successfully. OTP and authentication features will use the new configuration.'
+                'message' => 'System settings saved successfully. OTP, authentication, and daily notification features will use the new configuration.'
             ]);
         } else {
             echo json_encode([

@@ -75,9 +75,9 @@ try {
 	}
 
     // Helper lambdas to insert and delete
-    $insert_user_from_record = function($record, $id_key) use ($fname,$lname,$email,$phone_number,$gender,$place,$insert_with_fallback) {
+    $insert_user_from_record = function($record, $id_key, $user_id_val) use ($fname,$lname,$email,$phone_number,$gender,$place,$insert_with_fallback) {
         return $insert_with_fallback('users', [
-        'user_id' => $record[$id_key],
+        'user_id' => $user_id_val,
         'fname' => $fname,
         'lname' => $lname,
         'email' => $email,
@@ -93,9 +93,9 @@ try {
     ]);
 };
 
-    $insert_bhw_from_record = function($record, $id_key) use ($fname,$lname,$email,$phone_number,$gender,$place,$insert_with_fallback) {
+    $insert_bhw_from_record = function($record, $id_key, $user_id_val) use ($fname,$lname,$email,$phone_number,$gender,$place,$insert_with_fallback) {
         return $insert_with_fallback('bhw', [
-        'bhw_id' => $record[$id_key],
+        'bhw_id' => $user_id_val,
         'fname' => $fname,
         'lname' => $lname,
         'email' => $email,
@@ -112,9 +112,9 @@ try {
     ]);
 };
 
-    $insert_midwife_from_record = function($record, $id_key) use ($fname,$lname,$email,$phone_number,$gender,$place,$insert_with_fallback) {
+    $insert_midwife_from_record = function($record, $id_key, $user_id_val) use ($fname,$lname,$email,$phone_number,$gender,$place,$insert_with_fallback) {
         $midwife_data = [
-        'midwife_id' => $record[$id_key],
+        'midwife_id' => $user_id_val,
         'fname' => $fname,
         'lname' => $lname,
         'email' => $email,
@@ -137,133 +137,81 @@ try {
         return $result;
 };
 
-	// If role changes, handle moves between tables
-	if ($role !== $current_role) {
-		if ($role === 'user') {
-			if ($current_table === 'bhw') {
-				$ins = $insert_user_from_record($current_user, 'bhw_id');
-				if ($ins === false) { echo json_encode(['status'=>'error','message'=>'Failed to move user from BHW to users table']); exit(); }
-				$del = supabaseDelete('bhw', ['bhw_id' => $user_id]);
-				if ($del === false) { echo json_encode(['status'=>'error','message'=>'Failed to remove user from BHW table']); exit(); }
-			} elseif ($current_table === 'midwives') {
-				$ins = $insert_user_from_record($current_user, 'midwife_id');
-				if ($ins === false) { echo json_encode(['status'=>'error','message'=>'Failed to move user from Midwives to users table']); exit(); }
-				$del = supabaseDelete('midwives', ['midwife_id' => $user_id]);
-				if ($del === false) { echo json_encode(['status'=>'error','message'=>'Failed to remove user from Midwives table']); exit(); }
-			} else {
-				$upd = supabaseUpdate('users', [
-					'fname' => $fname,
-					'lname' => $lname,
-					'email' => $email,
-					'phone_number' => $phone_number,
-					'gender' => $gender,
-					'place' => $place,
-					'role' => $role
-				], ['user_id' => $user_id]);
-				if ($upd === false) { echo json_encode(['status'=>'error','message'=>'Failed to update user']); exit(); }
-			}
-		} elseif ($role === 'bhw') {
-			if ($current_table === 'users') {
-				$ins = $insert_bhw_from_record($current_user, 'user_id');
-                if ($ins === false) { 
-                    $dbg = getSupabase() ? ['status' => getSupabase()->getLastStatus(), 'error' => getSupabase()->getLastError()] : null;
-                    echo json_encode(['status'=>'error','message'=>'Failed to move user to BHW table','debug'=>$dbg]); 
-                    exit(); 
-                }
-				$del = supabaseDelete('users', ['user_id' => $user_id]);
-				if ($del === false) { echo json_encode(['status'=>'error','message'=>'Failed to remove user from users table']); exit(); }
-			} elseif ($current_table === 'midwives') {
-				$ins = $insert_bhw_from_record($current_user, 'midwife_id');
-				if ($ins === false) { echo json_encode(['status'=>'error','message'=>'Failed to move user to BHW table']); exit(); }
-				$del = supabaseDelete('midwives', ['midwife_id' => $user_id]);
-				if ($del === false) { echo json_encode(['status'=>'error','message'=>'Failed to remove user from midwives table']); exit(); }
-			} else {
-				$upd = supabaseUpdate('bhw', [
-					'fname' => $fname,
-					'lname' => $lname,
-					'email' => $email,
-					'phone_number' => $phone_number,
-					'gender' => $gender,
-					'place' => $place
-				], ['bhw_id' => $user_id]);
-				if ($upd === false) { echo json_encode(['status'=>'error','message'=>'Failed to update BHW']); exit(); }
-			}
-		} elseif ($role === 'midwife') {
-			if ($current_table === 'users') {
-				error_log("Attempting to move user from users to midwives table. User data: " . json_encode($current_user));
-				$ins = $insert_midwife_from_record($current_user, 'user_id');
-				if ($ins === false) { 
-					$dbg = getSupabase() ? ['status' => getSupabase()->getLastStatus(), 'error' => getSupabase()->getLastError()] : null;
-					error_log("Failed to insert into midwives table. Debug: " . json_encode($dbg));
-					echo json_encode(['status'=>'error','message'=>'Failed to move user to midwives table','debug'=>$dbg]); 
-					exit(); 
-				}
-				error_log("Successfully inserted into midwives table, now deleting from users table");
-				$del = supabaseDelete('users', ['user_id' => $user_id]);
-				if ($del === false) { 
-					error_log("Failed to delete from users table");
-					echo json_encode(['status'=>'error','message'=>'Failed to remove user from users table']); 
-					exit(); 
-				}
-			} elseif ($current_table === 'bhw') {
-				error_log("Attempting to move user from bhw to midwives table. User data: " . json_encode($current_user));
-				$ins = $insert_midwife_from_record($current_user, 'bhw_id');
-				if ($ins === false) { 
-					$dbg = getSupabase() ? ['status' => getSupabase()->getLastStatus(), 'error' => getSupabase()->getLastError()] : null;
-					error_log("Failed to insert into midwives table. Debug: " . json_encode($dbg));
-					echo json_encode(['status'=>'error','message'=>'Failed to move user to midwives table','debug'=>$dbg]); 
-					exit(); 
-				}
-				error_log("Successfully inserted into midwives table, now deleting from bhw table");
-				$del = supabaseDelete('bhw', ['bhw_id' => $user_id]);
-				if ($del === false) { 
-					error_log("Failed to delete from bhw table");
-					echo json_encode(['status'=>'error','message'=>'Failed to remove user from BHW table']); 
-					exit(); 
-				}
-			} else {
-				$upd = supabaseUpdate('midwives', [
-					'fname' => $fname,
-					'lname' => $lname,
-					'email' => $email,
-					'phone_number' => $phone_number,
-					'gender' => $gender,
-					'place' => $place
-				], ['midwife_id' => $user_id]);
-				if ($upd === false) { echo json_encode(['status'=>'error','message'=>'Failed to update midwife']); exit(); }
+	// Check which tables the user exists in (to support multiple roles)
+	$user_in_users = supabaseSelect('users', '*', ['user_id' => $user_id]);
+	$user_in_bhw = supabaseSelect('bhw', '*', ['bhw_id' => $user_id]);
+	$user_in_midwives = supabaseSelect('midwives', '*', ['midwife_id' => $user_id]);
+
+	// Update all tables where user exists with new information
+	if ($user_in_users && count($user_in_users) > 0) {
+		$upd = supabaseUpdate('users', [
+			'fname' => $fname,
+			'lname' => $lname,
+			'email' => $email,
+			'phone_number' => $phone_number,
+			'gender' => $gender,
+			'place' => $place,
+			'role' => 'user'
+		], ['user_id' => $user_id]);
+		if ($upd === false) { echo json_encode(['status'=>'error','message'=>'Failed to update user in users table']); exit(); }
+	}
+
+	if ($user_in_bhw && count($user_in_bhw) > 0) {
+		$upd = supabaseUpdate('bhw', [
+			'fname' => $fname,
+			'lname' => $lname,
+			'email' => $email,
+			'phone_number' => $phone_number,
+			'gender' => $gender,
+			'place' => $place,
+			'role' => 'bhw'
+		], ['bhw_id' => $user_id]);
+		if ($upd === false) { echo json_encode(['status'=>'error','message'=>'Failed to update user in bhw table']); exit(); }
+	}
+
+	if ($user_in_midwives && count($user_in_midwives) > 0) {
+		$upd = supabaseUpdate('midwives', [
+			'fname' => $fname,
+			'lname' => $lname,
+			'email' => $email,
+			'phone_number' => $phone_number,
+			'gender' => $gender,
+			'place' => $place,
+			'role' => 'midwife'
+		], ['midwife_id' => $user_id]);
+		if ($upd === false) { echo json_encode(['status'=>'error','message'=>'Failed to update user in midwives table']); exit(); }
+	}
+
+	// Add user to new role tables if role is being added (not already exists)
+	if ($role === 'user') {
+		if (!$user_in_users || count($user_in_users) === 0) {
+			// User doesn't exist in users table, add them
+			$ins = $insert_user_from_record($current_user, 'user_id', $user_id);
+			if ($ins === false) { 
+				echo json_encode(['status'=>'error','message'=>'Failed to add user to users table']); 
+				exit(); 
 			}
 		}
-	} else {
-		// No role change, update in current table
-		if ($current_table === 'users') {
-			$upd = supabaseUpdate('users', [
-				'fname' => $fname,
-				'lname' => $lname,
-				'email' => $email,
-				'phone_number' => $phone_number,
-				'gender' => $gender,
-				'place' => $place
-			], ['user_id' => $user_id]);
-		} elseif ($current_table === 'bhw') {
-			$upd = supabaseUpdate('bhw', [
-				'fname' => $fname,
-				'lname' => $lname,
-				'email' => $email,
-				'phone_number' => $phone_number,
-				'gender' => $gender,
-				'place' => $place
-			], ['bhw_id' => $user_id]);
-		} else {
-			$upd = supabaseUpdate('midwives', [
-				'fname' => $fname,
-				'lname' => $lname,
-				'email' => $email,
-				'phone_number' => $phone_number,
-				'gender' => $gender,
-				'place' => $place
-			], ['midwife_id' => $user_id]);
+	} elseif ($role === 'bhw') {
+		if (!$user_in_bhw || count($user_in_bhw) === 0) {
+			// User doesn't exist in bhw table, add them
+			$ins = $insert_bhw_from_record($current_user, 'bhw_id', $user_id);
+			if ($ins === false) { 
+				$dbg = getSupabase() ? ['status' => getSupabase()->getLastStatus(), 'error' => getSupabase()->getLastError()] : null;
+				echo json_encode(['status'=>'error','message'=>'Failed to add user to BHW table','debug'=>$dbg]); 
+				exit(); 
+			}
 		}
-		if ($upd === false) { echo json_encode(['status'=>'error','message'=>'Failed to update user']); exit(); }
+	} elseif ($role === 'midwife') {
+		if (!$user_in_midwives || count($user_in_midwives) === 0) {
+			// User doesn't exist in midwives table, add them
+			$ins = $insert_midwife_from_record($current_user, 'midwife_id', $user_id);
+			if ($ins === false) { 
+				$dbg = getSupabase() ? ['status' => getSupabase()->getLastStatus(), 'error' => getSupabase()->getLastError()] : null;
+				echo json_encode(['status'=>'error','message'=>'Failed to add user to midwives table','debug'=>$dbg]); 
+				exit(); 
+			}
+		}
 	}
 
 	// Log activity

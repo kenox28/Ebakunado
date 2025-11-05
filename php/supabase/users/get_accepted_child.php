@@ -10,7 +10,7 @@ $user_id = $_SESSION['user_id'];
 
 
 // Get child health records for the logged-in user
-$child_columns = 'id,user_id,baby_id,child_fname,child_lname,child_gender,child_birth_date,status';
+$child_columns = 'id,user_id,baby_id,child_fname,child_lname,child_gender,child_birth_date,status,qr_code';
 $child_records = supabaseSelect('child_health_records', $child_columns, ['user_id' => $user_id], 'date_created.desc');
 
 $rows = [];
@@ -106,6 +106,7 @@ if ($child_records && count($child_records) > 0) {
             'dose' => $latest_dose,
             'schedule_date' => $upcoming_schedule,
             'status' => $child['status'],
+            'qr_code' => $child['qr_code'] ?? null, // Add QR code
             // Vaccination counts
             'taken_count' => $taken_count,
             'missed_count' => $missed_count,

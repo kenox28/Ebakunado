@@ -433,8 +433,7 @@
 				// Calculate statistics from children data
 				calculateStatsFromChildren(childrenData.data);
 				
-				// Render children list
-				renderChildrenList(childrenData.data);
+				// Don't render children list here - it's already handled by selectFilter()
 			} else {
 				// Set default values when no children
 				document.getElementById('totalChildren').textContent = '0';
@@ -526,10 +525,12 @@
 			const babyId = child.baby_id || '';
 			const upcomingSchedule = child.schedule_date ? formatDate(child.schedule_date) : 'No upcoming schedule';
 			const vaccineName = child.vaccine || 'No vaccine scheduled';
+			const qrButton = child.qr_code ? `<button onclick="showQrModal('${child.qr_code.replace(/'/g, "\\'")}')" style="background: none; border: none; cursor: pointer; padding: 5px;"><img src="${child.qr_code}" alt="QR Code" style="width: 60px; height: 60px; border-radius: 8px;"></button>` : '';
 			
 				html += `
 				<div class="child-list-item">
 						<div class="child-avatar">${firstLetter}</div>
+					${qrButton}
 					<div class="child-details">
 						<h3 class="child-name">${fullName}</h3>
 						<p class="child-schedule"><strong>Next:</strong> ${upcomingSchedule}</p>

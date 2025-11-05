@@ -10,47 +10,38 @@ function toggleSidebar() {
 }
 
 // Logout admin
-function logoutAdmin() {
-	// Swal.fire({
-	// 	title: "Are you sure?",
-	// 	text: "You will be logged out of the admin panel",
-	// 	icon: "warning",
-	// 	showCancelButton: true,
-	// 	confirmButtonColor: "#dc3545",
-	// 	cancelButtonColor: "#6c757d",
-	// 	confirmButtonText: "Yes, logout",
-	// }).then((result) => {
-	// 	if (result.isConfirmed) {
-	// 		// Show loading
-	// 		Swal.fire({
-	// 			title: "Logging out...",
-	// 			allowOutsideClick: false,
-	// 			didOpen: () => {
-	// 				Swal.showLoading();
-	// 			},
-	// 		});
+async function logoutAdmin() {
+	const result = await Swal.fire({
+		title: "Are you sure?",
+		text: "You will be logged out of the system",
+		icon: "question",
+		showCancelButton: true,
+		confirmButtonColor: "#e74c3c",
+		cancelButtonColor: "#95a5a6",
+		confirmButtonText: "Yes, logout",
+	});
 
-	// Perform logout
-	// fetch("../../php/supabase/admin/logout.php", {
-	fetch("../../php/supabase/admin/logout.php", {
-		// fetch("../../php/mysql/admin/logout.php", {
-		method: "POST",
-	})
-		.then((response) => response.json())
-		.then((data) => {
-			if (data.status === "success") {
-				window.location.href = "../../views/landing_page.php";
-			} else {
-				Swal.fire("Error!", "Logout failed", "error");
-			}
-		})
-		.catch((error) => {
-			console.error("Logout error:", error);
-			// Even if there's an error, redirect to landing page
-			window.location.href = "../../views/landing_page.php";
+	if (result.isConfirmed) {
+		const response = await fetch("../../php/supabase/admin/logout.php", {
+			method: "POST",
 		});
-	// }
-	// });
+
+		const data = await response.json();
+
+		if (data.status === "success") {
+			Swal.fire({
+				icon: "success",
+				title: "Logged Out",
+				text: "You have been successfully logged out",
+				showConfirmButton: false,
+				timer: 1500,
+			}).then(() => {
+				window.location.href = "../../views/landing-page/landing-page.html";
+			});
+		} else {
+			Swal.fire("Error!", data.message, "error");
+		}
+	}
 }
 
 // Filter table function

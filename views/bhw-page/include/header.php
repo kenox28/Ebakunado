@@ -8,48 +8,302 @@
             aria-expanded="false"
             aria-controls="sideNav"
         >menu</button>
+        <h1 class="header-greeting">Welcome, <?php echo htmlspecialchars($user_name);?>!</h1>
     </div>
 
-    <div
-        class="header-user"
-        id="headerUser"
-        role="button"
-        tabindex="0"
-        aria-haspopup="menu"
-        aria-expanded="false"
-        aria-controls="profileMenu"
-    >
-        <img
-            class="user-avatar"
-            src="../../assets/images/user-profile.png"
-            alt="User Profile" />
-        <h2 class="user-display-name"><?php echo htmlspecialchars($user_name);?></h2>
-        <span class="icon-dropdown material-symbols-rounded">keyboard_arrow_down</span>
+    <div class="header-right">
+        <!-- Notification Button with Dropdown -->
+        <div class="notification-container">
+            <button class="notification-button" onclick="toggleNotificationDropdown()" aria-label="Notifications">
+                <span class="material-symbols-rounded">notifications</span>
+                <span class="notification-badge" id="notificationCount" style="display: none;">0</span>
+            </button>
+            <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+                <div class="notification-header">
+                    <h4><span class="material-symbols-rounded">notifications</span> Notifications</h4>
+                    <button onclick="markAllAsRead()">Mark all as read</button>
+                </div>
+                <div class="notification-content" id="notificationContent">
+                    <div class="loading-notifications">
+                        <span class="material-symbols-rounded" style="animation: spin 1s linear infinite;">sync</span>
+                        <p>Loading notifications...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <!-- Popover Menu -->
-        <div id="profileMenu" class="profile-menu" role="menu" aria-hidden="true">
-            <a class="menu-item" href="../../views/bhw-page/profile-management.php" role="menuitem">
-                <span class="material-symbols-rounded">person</span>
-                My Account
-            </a>
-            <a class="menu-item" href="#" role="menuitem" onclick="logoutBhw()">
-                <span class="material-symbols-rounded">logout</span>
-                Logout
-            </a>
+        <?php
+            $sessionProfileImg = isset($_SESSION['profileimg']) ? trim((string)$_SESSION['profileimg']) : '';
+            $headerProfileImg = ($sessionProfileImg && $sessionProfileImg !== 'noprofile.png')
+                ? $sessionProfileImg
+                : '../../assets/images/user-profile.png';
+        ?>
+        <div
+            class="header-user"
+            id="headerUser"
+            role="button"
+            tabindex="0"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="profileMenu"
+        >
+            <img
+                class="user-avatar"
+                src="<?php echo htmlspecialchars($headerProfileImg); ?>"
+                alt="User Profile" />
+            <h2 class="user-display-name"><?php echo htmlspecialchars($user_name);?></h2>
+            <span class="icon-dropdown material-symbols-rounded">keyboard_arrow_down</span>
+
+            <!-- Popover Menu -->
+            <div id="profileMenu" class="profile-menu" role="menu" aria-hidden="true">
+                <a class="menu-item" href="./profile-management.php" role="menuitem">
+                    <span class="material-symbols-rounded">person</span>
+                    My Account
+                </a>
+                <?php
+                // Check if user also exists in users table (has Parent/User role)
+                $has_user_role = false;
+                if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available_roles'])) {
+                    $has_user_role = true;
+                }
+                if ($has_user_role): ?>
+                <a class="menu-item" href="#" role="menuitem" onclick="switchToParentView(); return false;">
+                    <span class="material-symbols-rounded">account_circle</span>
+                    Switch to Parent
+                </a>
+                <?php endif; ?>
+                <a class="menu-item" href="#" role="menuitem" onclick="logoutBhw()">
+                    <span class="material-symbols-rounded">logout</span>
+                    Logout
+                </a>
+            </div>
         </div>
     </div>
-</header>
+
 <script>
-    async function logoutBhw() {
-            // const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
-            const response = await fetch('../../php/supabase/bhw/logout.php', {
-                method: 'POST'
-            });
-            const data = await response.json();
-            if (data.status === 'success') {
-                window.location.href = '../../views/auth/login.php';
-            } else {
-                alert('Logout failed: ' + data.message);
-            }
+// Notification System for BHW/Midwives (same as Users)
+let notifications = [];
+let notificationDropdownOpen = false;
+let unreadCount = 0;
+
+function toggleNotificationDropdown() {
+    const dropdown = document.getElementById('notificationDropdown');
+    notificationDropdownOpen = !notificationDropdownOpen;
+
+    if (notificationDropdownOpen) {
+        dropdown.style.display = 'block';
+        loadNotifications(); // Always load fresh notifications
+    } else {
+        dropdown.style.display = 'none';
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const container = document.querySelector('.notification-container');
+    const dropdown = document.getElementById('notificationDropdown');
+    if (container && dropdown && !container.contains(event.target)) {
+        dropdown.style.display = 'none';
+        notificationDropdownOpen = false;
+    }
+});
+
+async function loadNotifications() {
+    const content = document.getElementById('notificationContent');
+    content.innerHTML = '<div class="loading-notifications"><span class="material-symbols-rounded" style="animation: spin 1s linear infinite;">sync</span><p>Loading notifications...</p></div>';
+
+    try {
+        // Determine endpoint based on user type
+        const isMidwife = <?php echo (isset($_SESSION['midwife_id']) ? 'true' : 'false'); ?>;
+        const endpoint = isMidwife 
+            ? '../../php/supabase/midwives/get_notifications.php'
+            : '../../php/supabase/bhw/get_bhw_notifications.php';
+        
+        const response = await fetch(endpoint);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+
+        const data = await response.json();
+        if (data.status === 'success') {
+            notifications = data.data.notifications || [];
+            unreadCount = data.data.unread_count || 0;
+            updateNotificationBadge(unreadCount);
+            renderNotifications(notifications);
+        } else {
+            content.innerHTML = `<div class="no-notifications"><span class="material-symbols-rounded">error</span><p>${data.message || 'Error loading notifications'}</p></div>`;
+        }
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+        content.innerHTML = '<div class="no-notifications"><span class="material-symbols-rounded">error</span><p>Network error: ' + error.message + '</p></div>';
+    }
+}
+
+function updateNotificationBadge(count) {
+    const badge = document.getElementById('notificationCount');
+    if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.style.display = 'flex';
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+function markNotificationAsRead(notificationId) {
+    const idx = notifications.findIndex(n => n.id === notificationId);
+    if (idx !== -1 && notifications[idx].unread) {
+        notifications[idx].unread = false;
+        if (unreadCount > 0) {
+            unreadCount--;
+            updateNotificationBadge(unreadCount);
+        }
+        renderNotifications(notifications);
+    }
+}
+
+function renderNotifications(notifications) {
+    const content = document.getElementById('notificationContent');
+
+    if (!notifications || notifications.length === 0) {
+        content.innerHTML = '<div class="no-notifications"><span class="material-symbols-rounded">notifications_off</span><p>No notifications</p></div>';
+        return;
+    }
+
+    let html = '';
+    notifications.forEach(notification => {
+        const timeAgo = getTimeAgo(notification.timestamp);
+        const cls = notification.unread ? 'notification-item unread' : 'notification-item read';
+        html += `
+        <div class="${cls}" onclick="handleNotificationClick('${notification.id}')">
+            <h4>${notification.icon || '🔔'} ${notification.title}</h4>
+            <p>${notification.message}</p>
+            <div class="notification-time">${timeAgo}</div>
+        </div>
+        `;
+    });
+
+    content.innerHTML = html;
+}
+
+function handleNotificationClick(notificationId) {
+    const notification = notifications.find(n => n.id === notificationId);
+    if (notification) {
+        markNotificationAsRead(notificationId);
+        // Mark as read on server
+        const isMidwife = <?php echo (isset($_SESSION['midwife_id']) ? 'true' : 'false'); ?>;
+        const endpoint = isMidwife 
+            ? '../../php/supabase/midwives/mark_notification_read.php'
+            : '../../php/supabase/bhw/mark_notification_read.php';
+        
+        const fd = new FormData();
+        fd.append('id', notificationId);
+        fetch(endpoint, {
+            method: 'POST',
+            body: fd
+        }).catch(e => console.error('Error marking notification as read:', e));
+        
+        // Navigate to action URL
+        if (notification.action_url) {
+            setTimeout(() => {
+                window.location.href = notification.action_url;
+            }, 150);
+        }
+    }
+}
+
+function markAllAsRead() {
+    if (Array.isArray(notifications)) {
+        notifications = notifications.map(n => ({ ...n, unread: false }));
+        renderNotifications(notifications);
+    }
+    unreadCount = 0;
+    updateNotificationBadge(0);
+    
+    // Persist to server
+    const isMidwife = <?php echo (isset($_SESSION['midwife_id']) ? 'true' : 'false'); ?>;
+    const endpoint = isMidwife 
+        ? '../../php/supabase/midwives/mark_notifications_read_all.php'
+        : '../../php/supabase/bhw/mark_notifications_read_all.php';
+    
+    fetch(endpoint, { method: 'POST' }).catch(e => console.error('Error marking all as read:', e));
+}
+
+function getTimeAgo(timestamp) {
+    const now = new Date();
+    let time;
+    
+    if (timestamp.includes('T')) {
+        const parts = timestamp.split('T');
+        const datePart = parts[0];
+        const timePart = parts[1].split('.')[0];
+        time = new Date(datePart + ' ' + timePart);
+    } else {
+        time = new Date(timestamp.replace(' ', 'T'));
+    }
+    
+    if (isNaN(time.getTime())) {
+        return 'Unknown time';
+    }
+    
+    const diffInSeconds = Math.floor((now - time) / 1000);
+    if (diffInSeconds < 0) return 'In the future';
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return Math.floor(diffInSeconds / 60) + ' minutes ago';
+    if (diffInSeconds < 86400) return Math.floor(diffInSeconds / 3600) + ' hours ago';
+    if (diffInSeconds < 2592000) return Math.floor(diffInSeconds / 86400) + ' days ago';
+    return 'Over a month ago';
+}
+
+// Preload unread badge on page load
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        const isMidwife = <?php echo (isset($_SESSION['midwife_id']) ? 'true' : 'false'); ?>;
+        const endpoint = isMidwife 
+            ? '../../php/supabase/midwives/get_notifications.php'
+            : '../../php/supabase/bhw/get_bhw_notifications.php';
+        
+        const res = await fetch(endpoint);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.status === 'success' && data.data) {
+            unreadCount = data.data.unread_count || 0;
+            updateNotificationBadge(unreadCount);
+        }
+    } catch (e) {
+        // Silent fail
+    }
+});
+
+<?php if ($has_user_role): ?>
+// Function to switch to Parent/User view
+async function switchToParentView() {
+    try {
+        const response = await fetch('/ebakunado/php/supabase/shared/switch_role.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        });
+
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            // Redirect to user home page
+            window.location.href = data.redirect_url || '/ebakunado/views/users/home.php';
+        } else {
+            // Show detailed error message
+            let errorMsg = data.message || 'Failed to switch to Parent view';
+            if (data.debug) {
+                console.error('Switch to Parent view debug:', data.debug);
+                errorMsg += '\n\nDebug info logged to console';
+            }
+            alert('Error: ' + errorMsg);
+        }
+    } catch (error) {
+        console.error('Error switching to Parent view:', error);
+        alert('Error: Failed to switch to Parent view. Please try again.');
+    }
+}
+<?php endif; ?>
 </script>
+</header>

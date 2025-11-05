@@ -70,24 +70,20 @@ if ($user_id) {
                     <table class="table table-hover" id="childhealthrecord">
                         <thead>
                             <tr>
-                                <th>Child Firstname</th>
-                                <th>Child Lastname</th>
+                                <th>Child Name</th>
                                 <th>Gender</th>
                                 <th>Birth Date</th>
                                 <th>Place of Birth</th>
                                 <th>Mother's Name</th>
                                 <th>Father's Name</th>
                                 <th>Address</th>
-                                <th>Weight</th>
-                                <th>Height</th>
-                                <th>Birth Attendant</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="childhealthrecordBody">
                             <tr>
-                                <td colspan="21" class="text-center">
+                                <td colspan="9" class="text-center">
                                     <div class="loading">
                                         <i class="fas fa-spinner fa-spin"></i>
                                         <p>Loading records...</p>
@@ -125,6 +121,7 @@ if ($user_id) {
                     </h1>
                     <div class="childinfo-actions">
                         <button class="btn back-btn" onclick="backToList()" id="closeButton">Back</button>
+                        <button class="btn reject-btn" id="rejectButton" style="background: #dc3545; color: white; margin-right: 10px;">Reject</button>
                         <button class="btn accept-btn" id="acceptButton">Accept Record</button>
                     </div>
                 </div>
@@ -294,7 +291,7 @@ if ($user_id) {
 
             if (!opts || !opts.keep) {
                 // Show "Loading..." (not "Loading records...") while fetching
-                body.innerHTML = '<tr><td colspan="21" class="text-center">Loading...</td></tr>';
+                body.innerHTML = '<tr><td colspan="9" class="text-center">Loading...</td></tr>';
             }
 
             try {
@@ -303,7 +300,7 @@ if ($user_id) {
                 const data = await res.json();
 
                 if (data.status !== 'success') {
-                    body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>';
+                    body.innerHTML = '<tr><td colspan="9">Failed to load records</td></tr>';
                     updatePaPager({ page, has_more: false });
                     updatePaInfo(page, limit, 0, 0);
                     return;
@@ -313,7 +310,7 @@ if ($user_id) {
                 const count = rowsData.length;
 
                 if (count === 0) {
-                    body.innerHTML = '<tr><td colspan="21">No records found</td></tr>';
+                    body.innerHTML = '<tr><td colspan="9">No records found</td></tr>';
                     updatePaPager({ page: data.page || page, has_more: false });
                     updatePaInfo(data.page || page, data.limit || limit, 0);
                     return;
@@ -321,21 +318,18 @@ if ($user_id) {
 
                 let rows = '';
                 rowsData.forEach(item => {
+                    const fullName = `${item.child_fname || ''} ${item.child_lname || ''}`.trim();
                     rows += `<tr>
                             <td hidden>${item.id || ''}</td>
                             <td hidden>${item.user_id || ''}</td>
                             <td hidden>${item.baby_id || ''}</td>
-                            <td>${item.child_fname || ''}</td>
-                            <td>${item.child_lname || ''}</td>
+                            <td>${fullName || '-'}</td>
                             <td>${item.child_gender || ''}</td>
                             <td>${item.child_birth_date || ''}</td>
                             <td>${item.place_of_birth || ''}</td>
                             <td>${item.mother_name || ''}</td>
                             <td>${item.father_name || ''}</td>
                             <td>${item.address || ''}</td>
-                            <td>${item.birth_weight || ''}</td>
-                            <td>${item.birth_height || ''}</td>
-                            <td>${item.birth_attendant || ''}</td>
                             <td>${item.status || ''}</td>
                             <td><button class="btn view-btn" onclick="viewChildInformation('${item.baby_id}')">
                                 <span class="material-symbols-rounded">visibility</span>
@@ -348,7 +342,7 @@ if ($user_id) {
                 updatePaPager({ page: data.page || page, has_more: !!data.has_more || count === (data.limit || limit) });
                 updatePaInfo(data.page || page, data.limit || limit, count, data.total || 0);
             } catch (e) {
-                body.innerHTML = '<tr><td colspan="21">Error loading records</td></tr>';
+                body.innerHTML = '<tr><td colspan="9">Error loading records</td></tr>';
                 updatePaPager({ page, has_more: false });
                 updatePaInfo(page, limit, 0, 0);
             } finally {
@@ -383,38 +377,34 @@ if ($user_id) {
 
         async function getChildHealthRecord() {
             const body = document.querySelector('#childhealthrecordBody');
-            body.innerHTML = '<tr><td colspan="14">Loading...</td></tr>';
+            body.innerHTML = '<tr><td colspan="9">Loading...</td></tr>';
             try {
                 // const res = await fetch('../../php/bhw/get_child_health_records.php');
                 const res = await fetch('../../php/supabase/bhw/pending_chr.php');
                 const data = await res.json();
                 if (data.status !== 'success') {
-                    body.innerHTML = '<tr><td colspan="14">Failed to load records</td></tr>';
+                    body.innerHTML = '<tr><td colspan="9">Failed to load records</td></tr>';
                     return;
                 }
                 if (!data.data || data.data.length === 0) {
-                    body.innerHTML = '<tr><td colspan="14">No records found</td></tr>';
+                    body.innerHTML = '<tr><td colspan="9">No records found</td></tr>';
                     return;
                 }
 
                 let rows = '';
                 data.data.forEach((item, index) => {
+                    const fullName = `${item.child_fname || ''} ${item.child_lname || ''}`.trim();
                     rows += `<tr>
-							<td>${index + 1}</td>
 							<td hidden>${item.id || ''}</td>
 							<td hidden>${item.user_id || ''}</td>
 							<td hidden>${item.baby_id || ''}</td>
-							<td>${item.child_fname || ''}</td>
-							<td>${item.child_lname || ''}</td>
+							<td>${fullName || '-'}</td>
 							<td>${item.child_gender || ''}</td>
 							<td>${item.child_birth_date || ''}</td>
 							<td>${item.place_of_birth || ''}</td>
 							<td>${item.mother_name || ''}</td>
 							<td>${item.father_name || ''}</td>
 							<td>${item.address || ''}</td>
-							<td>${item.birth_weight || ''}</td>
-							<td>${item.birth_height || ''}</td>
-							<td>${item.birth_attendant || ''}</td>
 							<td>${item.status || ''}</td>
 							<td><button class="btn view-btn" onclick=\"viewChildInformation('${item.baby_id}')\">
                             <span class="material-symbols-rounded">visibility</span>
@@ -425,7 +415,7 @@ if ($user_id) {
                 });
                 body.innerHTML = rows;
             } catch (e) {
-                body.innerHTML = '<tr><td colspan="14">Error loading records</td></tr>';
+                body.innerHTML = '<tr><td colspan="9">Error loading records</td></tr>';
             }
         }
 
@@ -468,6 +458,11 @@ if ($user_id) {
                 // Set up accept button
                 document.querySelector('#acceptButton').onclick = () => {
                     acceptRecord(baby_id);
+                };
+
+                // Set up reject button
+                document.querySelector('#rejectButton').onclick = () => {
+                    rejectRecord(baby_id);
                 };
 
                 // Load vaccination records
@@ -588,15 +583,20 @@ if ($user_id) {
         }
 
         async function rejectRecord(baby_id) {
+            if (!confirm('Are you sure you want to reject and remove this child registration request? This action cannot be undone.')) {
+                return;
+            }
+            
             const formData = new FormData();
             formData.append('baby_id', baby_id);
-            const response = await fetch('../../php/mysql/bhw/reject_chr.php', {
+            const response = await fetch('../../php/supabase/bhw/reject_chr.php', {
                 method: 'POST',
                 body: formData
             });
             const data = await response.json();
             if (data.status === 'success') {
-                getChildHealthRecord();
+                alert('Child registration request rejected and removed successfully.');
+                backToList();
             } else {
                 alert('Record not rejected: ' + data.message);
             }
@@ -1000,6 +1000,16 @@ if ($user_id) {
                 document.querySelector('#childImage').src = row.babys_card || '';
 
                 document.querySelector('.childinformation-container').dataset.babyId = baby_id;
+
+                // Set up accept button
+                document.querySelector('#acceptButton').onclick = () => {
+                    acceptRecord(baby_id);
+                };
+
+                // Set up reject button
+                document.querySelector('#rejectButton').onclick = () => {
+                    rejectRecord(baby_id);
+                };
 
                 await loadVaccinationRecords(baby_id);
                 setChildInfoEditing(false);

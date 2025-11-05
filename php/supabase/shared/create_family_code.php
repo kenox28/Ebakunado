@@ -91,6 +91,28 @@ $insert = supabaseInsert('child_health_records', [
 ]);
 
 if ($insert !== false) {
+    // Log activity: BHW/Midwife added child and generated family code
+    try {
+        // Get approver info
+        $approver_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+        $approver_type = isset($_SESSION['midwife_id']) ? 'midwife' : 'bhw';
+        $approver_name = trim(($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? ''));
+        
+        $child_name = trim($child_fname . ' ' . $child_lname);
+        $mother_name = trim($mother_name) ?: 'Unknown Mother';
+        
+        supabaseLogActivity(
+            $approver_id,
+            $approver_type,
+            'CHILD_ADDED',
+            $approver_name . ' added child ' . $child_name . ', child of ' . $mother_name . ' and generated family code ' . $family_code . ' (Baby ID: ' . $baby_id . ')',
+            $_SERVER['REMOTE_ADDR'] ?? null
+        );
+    } catch (Exception $e) {
+        // Log error but don't fail the creation
+        error_log('Failed to log child addition activity: ' . $e->getMessage());
+    }
+    
     // Create immunization records for the child
     createImmunizationRecords($baby_id, $child_birth_date, $vaccines_received);
     

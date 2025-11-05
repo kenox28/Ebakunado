@@ -434,19 +434,18 @@ if ($user_id) {
                 );
             } catch (e) {
                 console.error('Camera error:', e);
-                alert('Camera error: ' + e);
+                closeScanner();
+                if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+                    alert('Camera permission denied. Please allow camera access in your browser settings and try again.');
+                } else if (e.name === 'NotFoundError' || e.name === 'DevicesNotFoundError') {
+                    alert('No camera found. Please connect a camera and try again.');
+                } else {
+                    alert('Camera error: ' + (e.message || e.toString()));
+                }
             }
         }
 
-        async function logoutBhw() {
-            const response = await fetch('../../php/supabase/bhw/logout.php', {
-                method: 'POST'
-            });
-            const data = await response.json();
-            if (data.status === 'success') {
-                window.location.href = '../../views/auth/login.php';
-            }
-        }
+
         function closeScanner() {
             const overlay = document.getElementById('qrOverlay');
             if (overlay) overlay.style.display = 'none';

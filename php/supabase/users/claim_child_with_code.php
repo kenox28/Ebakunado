@@ -19,12 +19,14 @@ if (empty($family_code)) {
 }
 
 // Find record with family code
-$record = supabaseSelect('child_health_records', '*', ['user_id' => $family_code]);
+$records = supabaseSelect('child_health_records', '*', ['user_id' => $family_code], null, 1);
 
-if (!$record) {
+if (!$records || count($records) === 0) {
     echo json_encode(['status' => 'error', 'message' => 'Invalid family code']);
     exit();
 }
+
+$record = $records[0];
 
 // Update record with actual user_id and set status to accepted
 $update = supabaseUpdate('child_health_records', 
@@ -35,6 +37,30 @@ $update = supabaseUpdate('child_health_records',
 if ($update !== false) {
     // Create immunization records for the child
     createImmunizationRecords($record['baby_id'], $record['child_birth_date']);
+    
+    // Log activity: User claimed child with family code
+    try {
+        // Get user name for logging
+        $user_info = supabaseSelect('users', 'fname,lname', ['user_id' => $user_id], null, 1);
+        $user_name = 'User';
+        if ($user_info && count($user_info) > 0) {
+            $user_name = trim(($user_info[0]['fname'] ?? '') . ' ' . ($user_info[0]['lname'] ?? ''));
+        }
+        
+        $child_name = trim(($record['child_fname'] ?? '') . ' ' . ($record['child_lname'] ?? ''));
+        $mother_name = $record['mother_name'] ?? 'Unknown Mother';
+        
+        supabaseLogActivity(
+            $user_id,
+            'user',
+            'CHILD_CLAIMED_WITH_CODE',
+            $user_name . ' claimed child ' . $child_name . ', child of ' . $mother_name . ' using family code (Baby ID: ' . $record['baby_id'] . ')',
+            $_SERVER['REMOTE_ADDR'] ?? null
+        );
+    } catch (Exception $e) {
+        // Log error but don't fail the claim
+        error_log('Failed to log child claim activity: ' . $e->getMessage());
+    }
     
         echo json_encode([
             'status' => 'success',

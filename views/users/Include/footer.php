@@ -52,6 +52,29 @@
 					}
 				}
 			}
+
+			async function switchToBHWView() {
+				try {
+					const response = await fetch('/ebakunado/php/supabase/shared/switch_back_to_bhw.php', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded',
+						}
+					});
+
+					const data = await response.json();
+					
+					if (data.status === 'success') {
+						// Redirect to BHW dashboard
+						window.location.href = data.redirect_url || '/ebakunado/views/bhw-page/dashboard.php';
+					} else {
+						alert('Error: ' + (data.message || 'Failed to switch to BHW/Midwife view'));
+					}
+				} catch (error) {
+					console.error('Error switching to BHW/Midwife view:', error);
+					alert('Error: Failed to switch to BHW/Midwife view. Please try again.');
+				}
+			}
 			
 			function addChild() {
 				// Implement add child functionality

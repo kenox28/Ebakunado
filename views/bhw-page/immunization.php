@@ -181,6 +181,9 @@ if ($user_id) {
             const nextBtn = document.getElementById('nextBtn');
             const btnWrap = document.getElementById('pageButtons');
 
+            // Save previous markup before updating
+            let prevMarkup = btnWrap ? btnWrap.innerHTML : '';
+
             // Always show pager spinner while fetching (like pending-approval)
             if (btnWrap) btnWrap.innerHTML = `<span class="pager-spinner" aria-label="Loading" role="status"></span>`;
             if (prevBtn) prevBtn.disabled = true;
@@ -219,7 +222,8 @@ if ($user_id) {
                 body.innerHTML = '<tr><td colspan="6">Error loading records</td></tr>';
                 updatePagination(0, 0, 0);
             } finally {
-                if (btnWrap && prevMarkup && !keepRows) btnWrap.innerHTML = prevMarkup;
+                // Remove this line - updatePagination handles the button display
+                // if (btnWrap && prevMarkup && !keepRows) btnWrap.innerHTML = prevMarkup;
             }
         }
 
@@ -798,7 +802,14 @@ if ($user_id) {
                 );
             } catch (e) {
                 console.error('Camera error:', e);
-                alert('Camera error: ' + e);
+                closeScanner();
+                if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+                    alert('Camera permission denied. Please allow camera access in your browser settings and try again.');
+                } else if (e.name === 'NotFoundError' || e.name === 'DevicesNotFoundError') {
+                    alert('No camera found. Please connect a camera and try again.');
+                } else {
+                    alert('Camera error: ' + (e.message || e.toString()));
+                }
             }
         }
 
