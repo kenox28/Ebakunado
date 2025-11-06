@@ -31,7 +31,7 @@ $user_fname = $_SESSION['fname'] ?? '';
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/bhw/profile-management.css" />
+    <link rel="stylesheet" href="../../css/bhw/profile-management.css?v=1.0.4" />
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -57,7 +57,7 @@ $user_fname = $_SESSION['fname'] ?? '';
             <div class="profile-info-section">
                 <div class="profile-avatar">
                     <img
-                        class="profile-avatar" id="profileImage"
+                        id="profileImage"
                         src="<?php echo !empty($noprofile) ? htmlspecialchars($noprofile) : '../../assets/images/user-profile.png'; ?>"
                         alt="User Profile" />
                     <button class="change-photo-btn" onclick="document.getElementById('photoInput').click()">
@@ -130,6 +130,29 @@ $user_fname = $_SESSION['fname'] ?? '';
                         <div class="input-with-icon">
                             <span class="input-icon material-symbols-rounded">location_on</span>
                             <input type="text" id="place" name="place" placeholder="e.g., Barangay Linao">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="philhealth_no">PhilHealth No.</label>
+                        <div class="input-with-icon">
+                            <span class="input-icon material-symbols-rounded">badge</span>
+                            <input type="text" id="philhealth_no" name="philhealth_no" placeholder="Optional">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="radio-label">National Household Targeting System</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="nhts" value="Yes">
+                                Yes
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="nhts" value="No">
+                                No
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -207,7 +230,12 @@ $user_fname = $_SESSION['fname'] ?? '';
                     document.getElementById('gender').value = profile.gender || '';
                     document.getElementById('place').value = profile.place || '';
                     document.getElementById('philhealth_no').value = profile.philhealth_no || '';
-                    document.getElementById('nhts').value = profile.nhts || '';
+                    // Set NHTS radio button
+                    const nhtsValue = profile.nhts || '';
+                    const nhtsRadio = document.querySelector(`input[name="nhts"][value="${nhtsValue}"]`);
+                    if (nhtsRadio) {
+                        nhtsRadio.checked = true;
+                    }
 
                     // Update profile image
                     if (profile.profileimg && profile.profileimg !== 'noprofile.png') {

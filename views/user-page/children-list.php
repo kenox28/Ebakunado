@@ -58,7 +58,6 @@ $user_fname = $_SESSION['fname'] ?? '';
                 <div class="filters">
                     <div class="select-with-icon">
                         <select id="chrFilter" aria-label="CHR Status">
-                            <option value="" disabled selected>CHR Status</option>
                             <option value="all">All Children</option>
                             <option value="pending">Pending Registration</option>
                             <option value="approved" selected>Approved Children</option>
