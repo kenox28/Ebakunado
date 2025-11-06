@@ -32,9 +32,7 @@ if ($user_types != 'midwifes') {
             <div class="add-child-header">
                 <div class="add-child-header-content">
                     <div class="add-child-header-text">
-                        <h1>
-                            Add New Child
-                        </h1>
+                        <h1>Add New Child</h1>
                         <p>Create a new child record and generate a family code for parents to claim</p>
                     </div>
                 </div>
@@ -194,7 +192,8 @@ if ($user_types != 'midwifes') {
                         <span class="material-symbols-rounded">vaccines</span>
                         <span>Vaccines Already Received</span>
                     </h2>
-                    <p style="color: #6c757d; margin-bottom: 15px; font-size: 1.3rem;">Check all vaccines that the child has already received:</p>
+                    <p>Check all vaccines that the child has already received:</p>
+
                     <div class="checkbox-grid">
                         <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="BCG"> BCG (Tuberculosis)</label>
                         <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="HEPAB1 (w/in 24 hrs)"> HEPAB1 (w/in 24 hrs)</label>

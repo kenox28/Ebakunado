@@ -414,7 +414,7 @@ main {
   overflow-y: hidden;
   max-height: none;
   width: 100%;
-  padding: 1.25rem 1.25rem 1.25rem 1.25rem;
+  padding: 1.25rem;
 }
 
 /* Immunization table inherits styles from main.css .table class */
@@ -476,11 +476,6 @@ main {
   width: 18px;
   height: 18px;
   cursor: pointer;
-}
-
-/* Utilities */
-.loading-cell {
-  color: var(--muted);
 }
 
 /* Sidebar */

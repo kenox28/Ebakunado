@@ -1,0 +1,298 @@
+main {
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.chr-top-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
+
+.child-health-record-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.chr-section {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  transition: box-shadow 0.2s ease;
+}
+
+/* Header */
+.chr-header {
+  padding: 1.8rem 1.5rem;
+  background-color: #47895b;
+  border-radius: 12px;
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  margin-bottom: 1.5rem;
+}
+.chr-header-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  max-width: 100%;
+}
+.chr-header-text {
+  text-align: center;
+  flex: 1;
+}
+.child-health-record-section .chr-header h2 {
+  margin: 0;
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  color: #ffffff;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.child-health-record-section .chr-header p {
+  margin: 0.6rem 0 0;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.3rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Sections */
+.chr-section {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  transition: box-shadow 0.2s ease;
+}
+
+/* Subheaders to match BHW look */
+.chr-subheader {
+  text-align: left;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 150, 57, 0.08) 0%,
+    rgba(0, 150, 57, 0.03) 100%
+  );
+  border-bottom: 1px solid rgba(0, 150, 57, 0.15);
+}
+.chr-subheader h2 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0;
+}
+.chr-subheader h2 .material-symbols-rounded {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  font-size: 2.2rem;
+  color: var(--primary-color);
+}
+
+/* Section title block */
+.block-header {
+  text-align: left;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 150, 57, 0.08) 0%,
+    rgba(0, 150, 57, 0.03) 100%
+  );
+  border-bottom: 1px solid rgba(0, 150, 57, 0.15);
+  font-size: 1.6rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* Grid containers */
+.chr-grid {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+}
+.profile-section .chr-grid {
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+}
+.history-section .chr-grid {
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  align-items: start;
+}
+.feeding-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: 1.2rem 2.5rem;
+  padding: 1.25rem 1.5rem;
+}
+.td-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(160px, 1fr));
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+}
+
+/* Info rows (plain divs in user page) */
+#childProfile .chr-grid > div > div,
+#childHistory .chr-grid > div > div,
+#feedingSection .feeding-grid > div > div,
+#tdSection .td-grid > div {
+  padding: 0.8rem 1rem;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  color: #1a1a1a;
+  font-size: 1.3rem;
+}
+#feedingSection h3,
+#tdSection h3 {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-size: 1.6rem;
+  color: #2c3e50;
+}
+#feedingSection h4 {
+  margin: 0 0 0.6rem 0;
+  font-size: 1.4rem;
+  color: #2c3e50;
+}
+
+/* Grids to mirror BHW layout but match user markup */
+.eb-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(100px, 1fr));
+  gap: 0.8rem;
+}
+.cf-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+}
+
+/* Normalize font sizes within CHR area similar to BHW */
+.child-health-record-section,
+.child-health-record-section p,
+.child-health-record-section .immunization-table thead th,
+.child-health-record-section .immunization-table tbody td {
+  font-size: 1.2rem;
+}
+
+/* Optional: if markup uses labels like BHW, style them too */
+.childinfo-column {
+  display: grid;
+  gap: 0.6rem;
+}
+.childinfo-column label,
+.eb-grid label,
+.cf-grid label,
+.td-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  color: var(--text, #1a1a1a);
+  font-size: 1.3rem;
+  transition: all 0.2s ease;
+}
+.childinfo-column label:hover,
+.eb-grid label:hover,
+.cf-grid label:hover,
+.td-grid label:hover {
+  border-color: #adb5bd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+.childinfo-column label > span:first-child,
+.eb-grid label > span:first-child,
+.cf-grid label > span:first-child,
+.td-grid label > span:first-child {
+  color: #6c757d;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.childinfo-column label span:last-child,
+.eb-grid label span:last-child,
+.cf-grid label span:last-child,
+.td-grid label span:last-child {
+  color: #1a1a1a;
+  font-weight: 600;
+  font-size: 1.3rem;
+  text-transform: capitalize;
+}
+
+/* Immunization record */
+.immunization-record {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px, rgba(27, 31, 35, 0.15) 0 0 0 1px;
+}
+.table-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  padding: 1.25rem;
+}
+
+/* Actions */
+.chr-actions {
+  margin-top: 12px;
+  text-align: right;
+}
+.chr-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  background: var(--primary-color);
+  color: #fff;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.chr-actions .btn + .btn {
+  margin-left: 8px;
+}
+.chr-actions .btn:hover {
+  background: #005d2d;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+.chr-actions .btn:active {
+  background: #005129;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Utilities */
+.loading-cell {
+  text-align: center;
+  color: var(--muted);
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+/* Sidebar */
+.sidebar-menu-item:nth-child(3){
+	border-left-color: var(--primary-color);
+	background-color: #d8e6db;
+	color: var(--primary-color);
+}

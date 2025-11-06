@@ -10,6 +10,28 @@
     </div>
 
     <div class="header-right">
+        <div class="notification-container">
+            <button class="notification-button" onclick="toggleNotificationDropdown()">
+                <span class="material-symbols-rounded">notifications</span>
+                <span class="notification-badge" id="notificationCount">0</span>
+            </button>
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header">
+                    <h4>
+                        <span class="material-symbols-rounded">notifications</span>
+                        Notifications
+                    </h4>
+                    <button onclick="markAllAsRead()">Mark all as read</button>
+                </div>
+                <div class="notification-content" id="notificationContent">
+                    <div class="notif-loading">
+                        <div class="notif-spinner"></div>
+                        <p>Loading notifications...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="header-user"
             id="headerUser"
             role="button"
@@ -26,7 +48,7 @@
 
             <!-- Popover Menu -->
             <div id="profileMenu" class="profile-menu" role="menu" aria-hidden="true">
-                <a class="menu-item" href="../../views/bhw-page/profile-management.php" role="menuitem">
+                <a class="menu-item" href="../../views/user-page/profile-management.php" role="menuitem">
                     <span class="material-symbols-rounded">person</span>
                     My Account
                 </a>
@@ -36,27 +58,194 @@
                 </a>
             </div>
         </div>
-
-        <div class="notification-container">
-            <button class="notification-button" onclick="toggleNotificationDropdown()">
-                <span class="material-symbols-rounded">notifications</span>
-                <span class="notification-badge" id="notificationCount">0</span>
-            </button>
-            <div class="notification-dropdown" id="notificationDropdown">
-                <div class="notification-header">
-                    <h4>
-                        <span class="material-symbols-rounded">notifications</span>
-                        Notifications
-                    </h4>
-                    <button onclick="markAllAsRead()">Mark all as read</button>
-                </div>
-                <div class="notification-content" id="notificationContent">
-                    <div class="loading-notifications">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading notifications...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </header>
+
+<script>
+    let notifications = [];
+    let notificationDropdownOpen = false;
+    let unreadCount = 0;
+
+    function toggleNotificationDropdown() {
+        const dropdown = document.getElementById('notificationDropdown');
+        notificationDropdownOpen = !notificationDropdownOpen;
+
+        if (notificationDropdownOpen) {
+            dropdown.style.display = 'block';
+            loadNotifications(); // Always load fresh notifications
+        } else {
+            dropdown.style.display = 'none';
+        }
+    }
+
+    async function loadNotifications() {
+        const content = document.getElementById('notificationContent');
+        content.innerHTML = '<div class="notif-loading"><div class="notif-spinner"></div><p>Loading notifications...</p></div>';
+
+        try {
+            console.log('Loading user notifications...');
+            const startTime = Date.now();
+
+            const response = await fetch('../../php/supabase/users/get_user_notifications.php');
+            console.log('Response status:', response.status);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            const loadTime = Date.now() - startTime;
+            console.log('Notification response received in', loadTime + 'ms:', data);
+
+            if (data.status === 'success') {
+                notifications = data.data.notifications;
+                unreadCount = data.data.unread_count;
+                updateNotificationBadge(unreadCount);
+                renderNotifications(notifications);
+                console.log('User notifications loaded successfully:', notifications.length, 'unread:', unreadCount);
+            } else {
+                console.error('Notification API error:', data);
+                let errorMsg = data.message || 'Error loading notifications';
+                content.innerHTML = `<div class="no-notifications"><i class="fas fa-exclamation-triangle"></i><p>${errorMsg}</p></div>`;
+            }
+        } catch (error) {
+            console.error('Error loading notifications:', error);
+            content.innerHTML = '<div class="no-notifications"><i class="fas fa-exclamation-triangle"></i><p>Network error: ' + error.message + '</p></div>';
+        }
+    }
+
+    function updateNotificationBadge(count) {
+        const badge = document.getElementById('notificationCount');
+        if (count > 0) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    function markNotificationAsRead(notificationId) {
+        const idx = notifications.findIndex(n => n.id === notificationId);
+        if (idx !== -1 && notifications[idx].unread) {
+            notifications[idx].unread = false;
+            if (unreadCount > 0) {
+                unreadCount--;
+                updateNotificationBadge(unreadCount);
+            }
+            renderNotifications(notifications);
+        }
+    }
+
+    function renderNotifications(notifications) {
+        const content = document.getElementById('notificationContent');
+
+        if (!notifications || notifications.length === 0) {
+            content.innerHTML = '<div class="no-notifications"><i class="fas fa-bell-slash"></i><p>No notifications</p></div>';
+            return;
+        }
+
+        let html = '';
+        notifications.forEach(notification => {
+            const timeAgo = getTimeAgo(notification.timestamp);
+            const cls = notification.unread ? 'notification-item unread' : 'notification-item read';
+            html += `
+					<div class="${cls}" onclick="handleNotificationClick('${notification.id}')">
+						<h4>${notification.icon} ${notification.title}</h4>
+						<p>${notification.message}</p>
+						<div class="notification-time">${timeAgo}</div>
+					</div>
+				`;
+        });
+
+        content.innerHTML = html;
+
+    }
+
+    function handleNotificationClick(notificationId) {
+        const notification = notifications.find(n => n.id === notificationId);
+        if (notification) {
+            markNotificationAsRead(notificationId);
+            try {
+                const fd = new FormData();
+                fd.append('id', notificationId);
+                fetch('../../php/supabase/users/mark_notification_read.php', {
+                    method: 'POST',
+                    body: fd
+                });
+            } catch (e) {}
+            if (notification.action_url) {
+                setTimeout(() => {
+                    window.location.href = notification.action_url;
+                }, 150);
+            }
+        }
+    }
+
+    function markAllAsRead() {
+        if (Array.isArray(notifications)) {
+            notifications = notifications.map(n => ({
+                ...n,
+                unread: false
+            }));
+            renderNotifications(notifications);
+        }
+        unreadCount = 0;
+        updateNotificationBadge(0);
+        try {
+            fetch('../../php/supabase/users/mark_notifications_read_all.php', {
+                method: 'POST'
+            });
+        } catch (e) {}
+    }
+
+    function getTimeAgo(timestamp) {
+        const now = new Date();
+        let time;
+
+        if (timestamp.includes('T')) {
+            const parts = timestamp.split('T');
+            const datePart = parts[0];
+            const timePart = parts[1].split('.')[0];
+
+            time = new Date(datePart + ' ' + timePart);
+        } else {
+            time = new Date(timestamp.replace(' ', 'T'));
+        }
+
+        if (isNaN(time.getTime())) {
+            console.error('Invalid timestamp:', timestamp);
+            return 'Unknown time';
+        }
+
+        const diffInSeconds = Math.floor((now - time) / 1000);
+
+        if (diffInSeconds < 0) return 'In the future';
+        if (diffInSeconds < 60) return 'Just now';
+        if (diffInSeconds < 3600) return Math.floor(diffInSeconds / 60) + ' minutes ago';
+        if (diffInSeconds < 86400) return Math.floor(diffInSeconds / 3600) + ' hours ago';
+        if (diffInSeconds < 2592000) return Math.floor(diffInSeconds / 86400) + ' days ago';
+        return 'Over a month ago';
+    }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            const res = await fetch('../../php/supabase/users/get_user_notifications.php');
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data && data.status === 'success' && data.data) {
+                unreadCount = data.data.unread_count || 0;
+                updateNotificationBadge(unreadCount);
+            }
+        } catch (e) {}
+
+        document.addEventListener('click', function(e) {
+            const container = document.querySelector('.notification-container');
+            const dropdown = document.getElementById('notificationDropdown');
+            if (!container || !dropdown) return;
+            if (!container.contains(e.target)) {
+                dropdown.style.display = 'none';
+                notificationDropdownOpen = false;
+            }
+        });
+    });
+</script>
