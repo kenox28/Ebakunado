@@ -100,6 +100,7 @@ $user_fname = $_SESSION['fname'] ?? '';
     <script>
         let allChildrenData = [];
         let allChrStatusData = [];
+        let currentSort = { key: 'name', dir: 'asc' };
 
         document.addEventListener('DOMContentLoaded', async function() {
             const container = document.getElementById('childrenContainer');
@@ -195,21 +196,36 @@ $user_fname = $_SESSION['fname'] ?? '';
                 }
             });
 
+            // Sort children based on currentSort
+            const sortKey = currentSort.key;
+            const sortDir = currentSort.dir === 'asc' ? 1 : -1;
+            filteredChildren.sort((a, b) => {
+                const va = getSortValue(a, sortKey);
+                const vb = getSortValue(b, sortKey);
+                if (va == null && vb == null) return 0;
+                if (va == null) return 1; // nulls last
+                if (vb == null) return -1;
+                if (typeof va === 'number' && typeof vb === 'number') {
+                    return (va - vb) * sortDir;
+                }
+                return String(va).localeCompare(String(vb)) * sortDir;
+            });
+
             if (filteredChildren.length === 0) {
                 container.innerHTML = `<div class="no-data">No children found for "${filterSelect.options[filterSelect.selectedIndex].text}"</div>`;
                 return;
             }
 
             let html = '';
-            html += '<table class="table">';
+            html += '<table class="table" aria-busy="false">';
             html += '<thead><tr>' +
-                '<th>Name</th>' +
-                '<th>Age</th>' +
-                '<th>Gender</th>' +
-                '<th>Upcoming</th>' +
-                '<th>Missed</th>' +
-                '<th>Taken</th>' +
-                '<th>Action</th>' +
+                renderHeaderCell('name', 'Name') +
+                renderHeaderCell('age', 'Age') +
+                renderHeaderCell('gender', 'Gender') +
+                renderHeaderCell('upcoming', 'Upcoming') +
+                renderHeaderCell('missed', 'Missed') +
+                renderHeaderCell('taken', 'Taken') +
+                '<th scope="col">Action</th>' +
                 '</tr></thead>';
             html += '<tbody>';
 
@@ -229,7 +245,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                     `<td>${upc}</td>` +
                     `<td>${mis}</td>` +
                     `<td>${tak}</td>` +
-                    '<td>' +
+                    '<td class="actions-cell">' +
                     (babyId ? `<a class="view-btn" href="child-health-record.php?baby_id=${encodeURIComponent(String(babyId))}"><span class="material-symbols-rounded">visibility</span> View</a>` : '<span class="text-muted">N/A</span>') +
                     '</td>' +
                     '</tr>';
@@ -237,6 +253,78 @@ $user_fname = $_SESSION['fname'] ?? '';
 
             html += '</tbody></table>';
             container.innerHTML = html;
+
+            // Attach sort handlers and ensure aria-busy updated
+            const table = container.querySelector('table');
+            if (table) table.setAttribute('aria-busy', 'false');
+            attachSortHandlers();
+        }
+
+        function renderHeaderCell(key, label) {
+            const cls = ['sortable'];
+            let aria = 'none';
+            if (currentSort.key === key) {
+                if (currentSort.dir === 'asc') {
+                    cls.push('sort-asc');
+                    aria = 'ascending';
+                } else {
+                    cls.push('sort-desc');
+                    aria = 'descending';
+                }
+            }
+            return `<th scope="col" class="${cls.join(' ')}" data-sort-key="${key}" role="button" tabindex="0" aria-sort="${aria}">${label}</th>`;
+        }
+
+        function attachSortHandlers() {
+            const container = document.getElementById('childrenContainer');
+            const headers = container.querySelectorAll('th.sortable');
+            headers.forEach(th => {
+                const key = th.getAttribute('data-sort-key');
+                const toggleSort = () => {
+                    if (currentSort.key === key) {
+                        currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSort.key = key;
+                        currentSort.dir = 'asc';
+                    }
+                    renderChildrenTable();
+                };
+                th.addEventListener('click', toggleSort);
+                th.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleSort();
+                    }
+                });
+            });
+        }
+
+        function computeAgeValue(child) {
+            // Return age in days for consistent numeric sorting
+            const years = Number(child.age);
+            if (!isNaN(years) && years > 0) return Math.round(years * 365);
+            const weeks = Number(child.weeks_old);
+            if (!isNaN(weeks) && weeks >= 0) return Math.round(weeks * 7);
+            return 0;
+        }
+
+        function getSortValue(child, key) {
+            switch (key) {
+                case 'name':
+                    return (child.name) || [child.child_fname || '', child.child_lname || ''].filter(Boolean).join(' ').toLowerCase();
+                case 'age':
+                    return computeAgeValue(child);
+                case 'gender':
+                    return (child.gender || '').toLowerCase();
+                case 'upcoming':
+                    return Number(child.scheduled_count) || 0;
+                case 'missed':
+                    return Number(child.missed_count) || 0;
+                case 'taken':
+                    return Number(child.taken_count) || 0;
+                default:
+                    return '';
+            }
         }
 
         function getChrStatusForChild(babyId) {

@@ -172,11 +172,18 @@ main {
   align-items: center;
   gap: 0.6rem;
   padding: 0.8rem 1.2rem;
+  /* border: 1.5px solid #dee2e6; */
   border-radius: 6px;
+  /* background: #f8f9fa; */
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 1.3rem;
 }
+
+/* .radio-option:hover {
+  border-color: var(--primary-color);
+  background: #f1f3f5;
+} */
 
 .radio-option input[type="radio"] {
   width: 18px;
@@ -184,6 +191,11 @@ main {
   accent-color: var(--primary-color);
   cursor: pointer;
   margin: 0;
+}
+
+.radio-option.selected {
+  border-color: var(--primary-color);
+  background: #e6f4ea;
 }
 
 .radio-option input[type="text"] {
@@ -361,7 +373,14 @@ input[type="date"] {
   padding: 1.25rem 1.5rem;
   box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
     rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  border: 1px solid #e9ecef;
   font-family: inherit;
+}
+
+.family-code-section h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.5rem;
+  color: #2c3e50;
 }
 
 .family-code-section p {
@@ -499,9 +518,45 @@ input[type="date"] {
   font-size: 1.1rem;
 }
 /* File upload progress bar */
+.file-upload-progress {
+  display: none;
+  position: relative;
+  width: 100%;
+  height: 10px;
+  background: #eef2f3;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.75rem;
+  border: 1px solid #e3e7ea;
+}
+
+.file-upload-progress__bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #0a6a35, #18a058);
+  transition: width 0.2s ease;
+}
+
+.file-upload-progress__label {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.95rem;
+  color: #ffffff;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+  pointer-events: none;
+}
+
+.file-upload-progress.is-visible {
+  display: block;
+}
 /* Spacing between file upload and next section */
 .form-group + .form-section {
-  margin-top: 2.5rem;
+  margin-top: 1.5rem;
 }
 
 /* File upload loading styles */
@@ -540,222 +595,4 @@ input[type="date"] {
   100% {
     background-position: -200% 0;
   }
-}
-
-/* Modern upload card */
-.upload-card {
-  border: 1px solid #e9ecef;
-  border-radius: 12px;
-  background: #ffffff;
-  padding: 1rem;
-}
-
-.upload-dropzone {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  /* transform: translateY(-1px); */
-  min-height: 120px;
-  border: 1.5px dashed #cfd4da;
-  border-radius: 10px;
-  background: #f8f9fa;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  user-select: none;
-}
-
-.upload-dropzone:hover {
-  border-color: var(--primary-color);
-  background: #f3f7f4;
-}
-
-.upload-dropzone.dragover {
-  border-color: var(--primary-color);
-  background: #e6f4ea;
-}
-
-.upload-dropzone .material-symbols-rounded {
-  font-size: 2.2rem;
-  color: var(--primary-color);
-}
-
-.upload-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  color: #2c3e50;
-}
-
-.upload-text strong {
-  font-size: 1.2rem;
-}
-
-.upload-text span {
-  font-size: 1rem;
-  color: #6c757d;
-}
-
-.upload-actions {
-  margin-top: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.upload-btn {
-  background: var(--primary-color);
-  color: #ffffff;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  font-family: inherit;
-  font-size: 1.2rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.upload-btn:hover {
-  background: #0a6a35;
-}
-
-.upload-filename {
-  color: #495057;
-  font-size: 1.1rem;
-}
-.upload-filename.is-empty {
-  color: #6c757d;
-  font-style: italic;
-}
-
-/* Remove-file icon next to filename */
-.remove-file {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  padding: 0;
-  color: #6c757d;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-.remove-file:hover {
-  color: #c92a2a;
-}
-.remove-file .material-symbols-rounded {
-  font-size: 1.8rem;
-}
-.upload-controls {
-  margin-top: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-.upload-preview {
-  margin-top: 0.75rem;
-  border: 1px solid #e9ecef;
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  box-shadow: 0 1px 2px rgba(16,24,40,0.04);
-}
-.upload-preview__thumb {
-  width: 25px;
-  height: 25px;
-  border-radius: 8px;
-  background: #f8f9fa;
-  border: 1px dashed #dee2e6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.upload-preview__thumb img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.upload-preview__placeholder {
-  color: #6c757d;
-}
-.upload-preview__meta {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.upload-preview .remove-file {
-  margin-left: auto;
-}
-.upload-preview__meta .name {
-  font-weight: 600;
-  color: #2c3e50;
-}
-.upload-preview__meta .size {
-  color: #6c757d;
-  font-size: 0.95rem;
-}
-.is-hidden {
-  display: none !important;
-}
-
-/* Alerts */
-.alert {
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  margin-top: 10px;
-  font-size: 0.975rem;
-}
-.alert .alert-title {
-  margin: 0 0 8px 0;
-  font-weight: 600;
-}
-.alert-info {
-  color: #0b69a3;
-  background: #e6f2fb;
-  border-color: #bee3f8;
-}
-.alert-success {
-  color: #1b5e20;
-  background: #e8f5e9;
-  border-color: #c8e6c9;
-}
-.alert-error {
-  color: #b71c1c;
-  background: #ffebee;
-  border-color: #ffcdd2;
-}
-.upload-dropzone:focus-visible {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
-}
-
-.visually-hidden {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
-}
-
-/* File upload progress removed (no progress bar) */
-
-/* Submit section spacing */
-.submit-section p {
-  text-align: center;
-  margin-top: 0.8rem;
 }

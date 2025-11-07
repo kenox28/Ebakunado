@@ -242,62 +242,6 @@ main {
   z-index: auto;
 }
 
-/* =Data table: container */
-.table-container {
-  overflow: auto;
-  max-height: 60vh;
-  overflow-y: auto;
-  overflow-x: auto;
-}
-
-/* =Data table: base */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 1200px;
-}
-.table thead {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: #f2f2f2;
-}
-.table thead th {
-  padding: 0.75rem;
-  text-align: left;
-  background-color: #f2f2f2;
-  color: #1a1a1a;
-  font-weight: 600;
-  white-space: nowrap;
-  font-size: 1.3rem;
-  text-transform: capitalize;
-}
-.table tbody tr {
-  border-bottom: 1px solid #e2e8f0;
-  transition: background-color 0.2s ease;
-}
-.table tbody tr:hover {
-  background-color: #f8fafc;
-}
-.table tbody tr:last-child {
-  border-bottom: none;
-}
-.table tbody td {
-  padding: 0.75rem;
-  text-align: left;
-  color: #1a1a1a;
-  font-size: 1.3rem;
-  vertical-align: middle;
-  white-space: nowrap;
-  text-transform: capitalize;
-}
-.table tbody td:first-child {
-  font-weight: 500;
-  text-align: left;
-  width: 60px;
-  min-width: 60px;
-}
-
 /* =Data table: column width hints */
 .table th:nth-child(2),
 .table td:nth-child(2) {

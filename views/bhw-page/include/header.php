@@ -20,12 +20,16 @@
             </button>
             <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
                 <div class="notification-header">
-                    <h4><span class="material-symbols-rounded">notifications</span> Notifications</h4>
+                    <h4>
+                        <span class="material-symbols-rounded">notifications</span>
+                        Notifications
+                    </h4>
                     <button onclick="markAllAsRead()">Mark all as read</button>
                 </div>
                 <div class="notification-content" id="notificationContent">
-                    <div class="loading-notifications">
-                        <span class="material-symbols-rounded" style="animation: spin 1s linear infinite;">sync</span>
+                    <!-- Match user-page structure for loading state -->
+                    <div class="notif-loading">
+                        <div class="notif-spinner"></div>
                         <p>Loading notifications...</p>
                     </div>
                 </div>
@@ -110,7 +114,8 @@ document.addEventListener('click', function(event) {
 
 async function loadNotifications() {
     const content = document.getElementById('notificationContent');
-    content.innerHTML = '<div class="loading-notifications"><span class="material-symbols-rounded" style="animation: spin 1s linear infinite;">sync</span><p>Loading notifications...</p></div>';
+    // Use the same loading structure as user-page header
+    content.innerHTML = '<div class="notif-loading"><div class="notif-spinner"></div><p>Loading notifications...</p></div>';
 
     try {
         // Determine endpoint based on user type

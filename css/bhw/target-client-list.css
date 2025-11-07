@@ -130,62 +130,7 @@ main {
   box-shadow: none !important;
 }
 
-/* Table (aligned with immunization table look) */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 900px;
-  border: 1px solid #e5e7eb;
-}
-
-.table thead {
-  position: static;
-  top: auto;
-  z-index: auto;
-  background: #f2f2f2;
-}
-
-.table thead th {
-  padding: 1rem 1.25rem;
-  text-align: left;
-  background-color: #f2f2f2;
-  color: #1a1a1a;
-  font-weight: 600;
-  white-space: nowrap;
-  font-size: 1.3rem;
-  text-transform: capitalize;
-  border-bottom: 1px solid #e4e4e7;
-  border-right: 1px solid #e5e7eb;
-}
-.table thead th:last-child {
-  border-right: 0;
-}
-
-.table tbody tr {
-  border-bottom: 1px solid #e2e8f0;
-  transition: background-color 0.2s ease;
-}
-.table tbody tr:hover {
-  background-color: #f8fafc;
-}
-.table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.table tbody td {
-  padding: 1rem 1.25rem;
-  text-align: left;
-  color: #1a1a1a;
-  font-size: 1.3rem;
-  vertical-align: middle;
-  white-space: nowrap;
-  text-transform: capitalize;
-  border-bottom: 1px solid #f0f0f0;
-  border-right: 1px solid #e5e7eb;
-}
-.table tbody td:last-child {
-  border-right: 0;
-}
+/* Page-level table base styles removed – using global styles in main.css */
 
 /* Vaccine status colors */
 .vaccine-completed {
@@ -211,14 +156,7 @@ main {
   gap: 8px;
 }
 
-/* Safety: ensure no sticky headers remain */
-.table thead th,
-.table thead tr:first-child th,
-.table thead tr:nth-child(2) th {
-  position: static !important;
-  top: auto !important;
-  z-index: auto !important;
-}
+/* Removed sticky override – allow global sticky headers from main.css */
 
 /* Filters bar: label + controls in one row (align right) */
 .target-client-list-section .filters-bar {

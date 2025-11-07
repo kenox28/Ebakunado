@@ -31,7 +31,7 @@ $user_fname = $_SESSION['fname'] ?? '';
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/user/add-child-request.css" />
+    <link rel="stylesheet" href="../../css/user/add-child-request.css?v=1.0.1" />
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -227,7 +227,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                                         <strong>Drag & drop file here</strong>
                                         <span>or use the Browse button</span>
                                         <button type="button" id="triggerFileSelect" class="upload-btn">Browse</button>
-                                        <span class="upload-accepted">Accepted formats: JPG, PNG, PDF</span>
+                                        <span class="upload-accepted">Accepted formats: JPG, PNG</span>
                                     </div>
                                 </div>
                                 <!-- Actual file input (hidden) -->
@@ -248,7 +248,6 @@ $user_fname = $_SESSION['fname'] ?? '';
                                     <button type="button" id="removeSelectedFile" class="remove-file is-hidden" aria-label="Remove file"><span class="material-symbols-rounded">close</span></button>
                                 </div>
                             </div>
-
                         </div>
 
                         <!-- Vaccines Section -->
@@ -288,6 +287,8 @@ $user_fname = $_SESSION['fname'] ?? '';
                         </div>
 
                         <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
+                    </div>
+                </div>
             </form>
         </section>
     </main>

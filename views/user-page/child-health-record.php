@@ -25,7 +25,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Children</title>
+    <title>Child Health Record</title>
     <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="../../css/header.css" />
@@ -215,6 +215,13 @@ $user_fname = $_SESSION['fname'] ?? '';
             return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
         }
 
+        // Return a hyphen when value is empty/undefined/null
+        function getValue(value) {
+            if (value === null || value === undefined) return '-';
+            if (typeof value === 'string' && value.trim() === '') return '-';
+            return value;
+        }
+
         function getDoseText(n) {
             const map = {
                 1: '1st dose',
@@ -246,29 +253,29 @@ $user_fname = $_SESSION['fname'] ?? '';
                 const child = (childJson && childJson.status === 'success' && childJson.data && childJson.data[0]) ? childJson.data[0] : {};
 
                 // Fill header (blanks when missing)
-                document.getElementById('f_name').textContent = child.name || [(child.child_fname || ''), (child.child_lname || '')].filter(Boolean).join(' ');
-                document.getElementById('f_gender').textContent = child.child_gender || child.gender || '';
-                document.getElementById('f_birth_date').textContent = child.child_birth_date || '';
-                document.getElementById('f_birth_place').textContent = child.place_of_birth || '';
-                document.getElementById('f_birth_weight').textContent = child.birth_weight || '';
-                document.getElementById('f_birth_height').textContent = child.birth_height || '';
-                document.getElementById('f_address').textContent = child.address || '';
-                document.getElementById('f_allergies').textContent = child.allergies || '';
-                document.getElementById('f_lpm').textContent = child.lpm || '';
-                document.getElementById('f_blood_type').textContent = child.blood_type || '';
-                document.getElementById('f_family_no').textContent = child.family_number || '';
-                document.getElementById('f_philhealth').textContent = child.philhealth_no || '';
-                document.getElementById('f_nhts').textContent = child.nhts || '';
-                document.getElementById('f_non_nhts').textContent = '';
-                document.getElementById('f_father').textContent = child.father_name || '';
-                document.getElementById('f_mother').textContent = child.mother_name || '';
-                document.getElementById('f_nb_screen').textContent = '';
-                document.getElementById('f_fp').textContent = child.family_planning || '';
-                document.getElementById('f_nbs_date').textContent = '';
-                document.getElementById('f_delivery_type').textContent = child.delivery_type || '';
-                document.getElementById('f_birth_order').textContent = child.birth_order || '';
-                document.getElementById('f_nbs_place').textContent = '';
-                document.getElementById('f_attended_by').textContent = child.birth_attendant || '';
+                document.getElementById('f_name').textContent = getValue(child.name || [(child.child_fname || ''), (child.child_lname || '')].filter(Boolean).join(' '));
+                document.getElementById('f_gender').textContent = getValue(child.child_gender || child.gender);
+                document.getElementById('f_birth_date').textContent = getValue(child.child_birth_date);
+                document.getElementById('f_birth_place').textContent = getValue(child.place_of_birth);
+                document.getElementById('f_birth_weight').textContent = getValue(child.birth_weight);
+                document.getElementById('f_birth_height').textContent = getValue(child.birth_height);
+                document.getElementById('f_address').textContent = getValue(child.address);
+                document.getElementById('f_allergies').textContent = getValue(child.allergies);
+                document.getElementById('f_lpm').textContent = getValue(child.lpm);
+                document.getElementById('f_blood_type').textContent = getValue(child.blood_type);
+                document.getElementById('f_family_no').textContent = getValue(child.family_number);
+                document.getElementById('f_philhealth').textContent = getValue(child.philhealth_no);
+                document.getElementById('f_nhts').textContent = getValue(child.nhts);
+                document.getElementById('f_non_nhts').textContent = getValue('');
+                document.getElementById('f_father').textContent = getValue(child.father_name);
+                document.getElementById('f_mother').textContent = getValue(child.mother_name);
+                document.getElementById('f_nb_screen').textContent = getValue('');
+                document.getElementById('f_fp').textContent = getValue(child.family_planning);
+                document.getElementById('f_nbs_date').textContent = getValue('');
+                document.getElementById('f_delivery_type').textContent = getValue(child.delivery_type);
+                document.getElementById('f_birth_order').textContent = getValue(child.birth_order);
+                document.getElementById('f_nbs_place').textContent = getValue('');
+                document.getElementById('f_attended_by').textContent = getValue(child.birth_attendant);
 
                 // Fill Exclusive Breastfeeding data (✓ if true, otherwise '-')
                 document.getElementById('f_eb_1mo').textContent = child.exclusive_breastfeeding_1mo ? '✓' : '-';
@@ -430,16 +437,16 @@ $user_fname = $_SESSION['fname'] ?? '';
                     const next = nextScheduleAfter(date);
                     ledgerHtml += `
                 <tr>
-                    <td>${formatDate(date)}</td>
-                    <td>${name}</td>
-                    <td>${ht || ''}</td>
-                    <td>${wt || ''}</td>
-                    <td></td>
+                    <td>${getValue(formatDate(date))}</td>
+                    <td>${getValue(name)}</td>
+                    <td>${getValue(ht)}</td>
+                    <td>${getValue(wt)}</td>
+                    <td>-</td>
                     <td>Taken</td>
-                    <td></td>
-                    <td></td>
-                    <td>${formatDate(next)}</td>
-                    <td></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>${getValue(formatDate(next))}</td>
+                    <td>-</td>
                 </tr>`;
                 });
 

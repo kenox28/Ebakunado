@@ -30,10 +30,11 @@ if ($user_id) {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>BHW Dashboard</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
         <link rel="stylesheet" href="../../css/main.css" />
         <link rel="stylesheet" href="../../css/header.css" />
         <link rel="stylesheet" href="../../css/sidebar.css" />
+        <link rel="stylesheet" href="../../css/notification-style.css" />
         <link rel="stylesheet" href="../../css/bhw/immunization-style.css">
     </head>
 
@@ -44,8 +45,16 @@ if ($user_id) {
     <main>
         <section class="section-container">
             <h2 class="section-title">
-                <span class="material-symbols-rounded">syringe</span>
-                Immunization Records
+                <div class="title-left">
+                    <span class="material-symbols-rounded">syringe</span>
+                    Immunization Records
+                </div>
+                <div class="title-actions">
+                    <button class="btn btn-outline-primary" id="openScannerBtn" onclick="openScanner()">
+                        <span class="material-symbols-rounded" aria-hidden="true">qr_code_scanner</span>
+                        Scan QR
+                    </button>
+                </div>
             </h2>
         </section>
         <section class="immunization-section">
@@ -85,10 +94,6 @@ if ($user_id) {
 
                 <button class="btn btn-primary" id="applyFiltersBtn">Apply</button>
                 <button class="btn btn-secondary" id="clearFiltersBtn">Clear</button>
-                <button class="btn btn-outline-primary" id="openScannerBtn" onclick="openScanner()">
-                    <span class="material-symbols-rounded" aria-hidden="true">qr_code_scanner</span>
-                    Scan QR
-                </button>
             </div>
 
             <div class="table-container">
@@ -670,10 +675,14 @@ if ($user_id) {
             const canNext = hasMore === true || (chrRecords && chrRecords.length === limit);
             nextBtn.disabled = !canNext;
             prevBtn.onclick = () => {
-                if (page > 1) fetchChildHealthRecord(page - 1, { keep: true });
+                if (page > 1) fetchChildHealthRecord(page - 1, {
+                    keep: true
+                });
             };
             nextBtn.onclick = () => {
-                if (canNext) fetchChildHealthRecord(page + 1, { keep: true });
+                if (canNext) fetchChildHealthRecord(page + 1, {
+                    keep: true
+                });
             };
         }
 
@@ -822,8 +831,7 @@ if ($user_id) {
                     html5QrcodeInstance.stop();
                     html5QrcodeInstance.clear();
                 }
-            } catch (e) {
-            }
+            } catch (e) {}
         }
 
         async function onScanSuccess(decodedText) {
@@ -879,41 +887,41 @@ if ($user_id) {
                     return;
                 }
 
-                                 // Fetch child details to get full information for the form
-                 const formData = new FormData();
-                 formData.append('baby_id', baby_id);
-                 const childResponse = await fetch('../../php/supabase/bhw/get_child_details.php', {
-                     method: 'POST',
-                     body: formData
-                 });
-                 const childData = await childResponse.json();
+                // Fetch child details to get full information for the form
+                const formData = new FormData();
+                formData.append('baby_id', baby_id);
+                const childResponse = await fetch('../../php/supabase/bhw/get_child_details.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const childData = await childResponse.json();
 
-                 console.log('Child details response:', childData);
-                 console.log('Baby ID searched:', baby_id);
+                console.log('Child details response:', childData);
+                console.log('Baby ID searched:', baby_id);
 
-                 if (childData.status === 'success' && childData.data && childData.data.length > 0) {
-                     const child = childData.data[0];
-                     
-                     console.log('Child data received:', child);
-                     
-                     // Use the user_id from child record, fallback to empty string if not available
-                     const userId = child.user_id || '';
-                     
-                     // Call openImmunizationForm with the nearest record data
-                     openImmunizationFormForScan(
-                         nearestRecord.id,
-                         userId,
-                         nearestRecord.baby_id,
-                         `${child.child_fname || ''} ${child.child_lname || ''}`.trim(),
-                         nearestRecord.vaccine_name,
-                         nearestRecord.schedule_date || '',
-                         nearestRecord.catch_up_date || '',
-                         child
-                     );
-                 } else {
-                     console.error('Child details fetch failed:', childData);
-                     alert('Could not fetch child details: ' + (childData.message || 'Unknown error'));
-                 }
+                if (childData.status === 'success' && childData.data && childData.data.length > 0) {
+                    const child = childData.data[0];
+
+                    console.log('Child data received:', child);
+
+                    // Use the user_id from child record, fallback to empty string if not available
+                    const userId = child.user_id || '';
+
+                    // Call openImmunizationForm with the nearest record data
+                    openImmunizationFormForScan(
+                        nearestRecord.id,
+                        userId,
+                        nearestRecord.baby_id,
+                        `${child.child_fname || ''} ${child.child_lname || ''}`.trim(),
+                        nearestRecord.vaccine_name,
+                        nearestRecord.schedule_date || '',
+                        nearestRecord.catch_up_date || '',
+                        child
+                    );
+                } else {
+                    console.error('Child details fetch failed:', childData);
+                    alert('Could not fetch child details: ' + (childData.message || 'Unknown error'));
+                }
             } catch (error) {
                 console.error('Error processing QR scan:', error);
                 alert('Error processing QR code: ' + error.message);
@@ -935,7 +943,7 @@ if ($user_id) {
             tempBtn.setAttribute('data-vaccine-name', vaccineName);
             tempBtn.setAttribute('data-schedule-date', scheduleDate);
             tempBtn.setAttribute('data-catch-up-date', catchUpDate);
-            
+
             // Add feeding data attributes
             tempBtn.setAttribute('data-eb-1mo', childData.exclusive_breastfeeding_1mo || 'false');
             tempBtn.setAttribute('data-eb-2mo', childData.exclusive_breastfeeding_2mo || 'false');
@@ -955,7 +963,6 @@ if ($user_id) {
             // Call the existing openImmunizationForm function
             openImmunizationForm(tempBtn);
         }
-        
     </script>
 
 </body>

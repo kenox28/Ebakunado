@@ -289,10 +289,3 @@ main {
   padding: 1rem;
   font-size: 1rem;
 }
-
-/* Sidebar */
-.sidebar-menu-item:nth-child(3){
-	border-left-color: var(--primary-color);
-	background-color: #d8e6db;
-	color: var(--primary-color);
-}
