@@ -29,6 +29,8 @@ if ($user_id) {
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/notification-style.css" />
+    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
     <link rel="stylesheet" href="../../css/bhw/child-health-list.css" />
 </head>
 
@@ -78,15 +80,36 @@ if ($user_id) {
                         </tr>
                     </thead>
                     <tbody id="childhealthrecordBody">
-                        <tr>
-                            <td colspan="21" class="text-center">
-                                <div class="loading">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                    <p>Loading records...</p>
-                                </div>
-                            </td>
+                        <tr class="skeleton-row">
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
                         </tr>
-                        <tr>
+                        <tr class="skeleton-row">
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                        </tr>
+                        <tr class="skeleton-row">
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -109,7 +132,28 @@ if ($user_id) {
 
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
+        // Column config for skeleton (8 visible columns)
+        function getChildHealthListColsConfig() {
+            return [
+                { type: 'text', widthClass: 'skeleton-col-1' }, // Fullname
+                { type: 'text', widthClass: 'skeleton-col-2' }, // Gender
+                { type: 'text', widthClass: 'skeleton-col-3' }, // Birth Date
+                { type: 'text', widthClass: 'skeleton-col-4' }, // Place of Birth
+                { type: 'text', widthClass: 'skeleton-col-5' }, // Mother
+                { type: 'text', widthClass: 'skeleton-col-3' }, // Address
+                { type: 'pill', widthClass: 'skeleton-col-5' }, // Status
+                { type: 'btn',  widthClass: 'skeleton-col-6' }  // Schedule/CHR actions
+            ];
+        }
+        // Date formatting helper: Mon D, YYYY
+        function formatDate(dateStr){
+            if(!dateStr) return '';
+            const d = new Date(dateStr);
+            if(isNaN(d.getTime())) return dateStr; // fallback if invalid
+            return d.toLocaleDateString(undefined,{ month:'short', day:'numeric', year:'numeric'});
+        }
         // pager CSS
         (function() {
             const s = document.createElement('style');
@@ -126,14 +170,22 @@ if ($user_id) {
             const prevBtn = document.getElementById('chlPrevBtn');
             const nextBtn = document.getElementById('chlNextBtn');
             const pageSpan = document.getElementById('chlPageButtons');
+            const pageInfoEl = document.getElementById('chlPageInfo');
 
             // Always show pager spinner while fetching (like pending-approval)
             if (pageSpan) pageSpan.innerHTML = '<span class="pager-spinner" aria-label="Loading" role="status"></span>';
             if (prevBtn) prevBtn.disabled = true;
             if (nextBtn) nextBtn.disabled = true;
+            // Ensure a neutral page-info is visible during loading (parity with immunization & pending-approval)
+            if (pageInfoEl && (!pageInfoEl.textContent || pageInfoEl.textContent === '\u00A0')) {
+                pageInfoEl.textContent = 'Showing 0-0 of 0 entries';
+            }
 
             if (!keep) {
-                body.innerHTML = '<tr><td colspan="21">Loading...</td></tr>';
+                if (typeof applyTableSkeleton === 'function') {
+                    applyTableSkeleton(body, getChildHealthListColsConfig(), chlLimit);
+                }
+                // Removed fallback "Loading..." text; rely on static skeleton rows if utility unavailable.
             }
             try {
                 const qs = new URLSearchParams({
@@ -148,23 +200,32 @@ if ($user_id) {
                 const res = await fetch('../../php/supabase/bhw/get_child_health_record.php?' + qs.toString());
                 const data = await res.json();
                 if (data.status !== 'success') {
-                    body.innerHTML = '<tr><td colspan="21">Failed to load records</td></tr>';
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 8, kind: 'error' });
+                    } else {
+                        body.innerHTML = '<tr class="message-row error"><td colspan="8">Failed to load data. Please try again.</td></tr>';
+                    }
                     updateChlPagination(0, page, chlLimit, false);
                     return;
                 }
                 const rowsData = Array.isArray(data.data) ? data.data : [];
                 if (rowsData.length === 0) {
-                    body.innerHTML = '<tr><td colspan="21">No records found</td></tr>';
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(body, 'No records found', { colspan: 8 });
+                    } else {
+                        body.innerHTML = '<tr class="message-row"><td colspan="8">No records found</td></tr>';
+                    }
                     updateChlPagination(data.total || 0, data.page || page, data.limit || chlLimit, false);
                     return;
                 }
 
                 let rows = '';
                 rowsData.forEach(item => {
+                    const birthDateFmt = formatDate(item.child_birth_date);
                     rows += `<tr>
                                 <td>${item.child_fname || ''} ${item.child_lname || ''}</td>
                                 <td>${item.child_gender || ''}</td>
-                                <td>${item.child_birth_date || ''}</td>
+                                <td>${birthDateFmt}</td>
                                 <td>${item.place_of_birth || ''}</td>
                                 <td>${item.mother_name || ''}</td>
                                 <td>${item.address || ''}</td>
@@ -191,7 +252,11 @@ if ($user_id) {
                 const canNext = data.has_more === true || rowsData.length === (data.limit || chlLimit);
                 updateChlPagination(data.total || 0, chlPage, data.limit || chlLimit, canNext);
             } catch (e) {
-                body.innerHTML = '<tr><td colspan="21">Error loading records</td></tr>';
+                if (typeof renderTableMessage === 'function') {
+                    renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 8, kind: 'error' });
+                } else {
+                    body.innerHTML = '<tr class="message-row error"><td colspan="8">Failed to load data. Please try again.</td></tr>';
+                }
                 updateChlPagination(0, page, chlLimit, false);
             }
         }
@@ -203,13 +268,19 @@ if ($user_id) {
             const nextBtn = document.getElementById('chlNextBtn');
             if (!info || !btnWrap || !prevBtn || !nextBtn) return;
 
-            const start = (page - 1) * limit + 1;
-            const count = document.querySelectorAll('#childhealthrecordBody tr').length || 0;
-            const end = start + Math.max(0, count) - 1;
+            // Count only actual data rows, excluding skeleton and message rows
+            const count = document.querySelectorAll('#childhealthrecordBody tr:not(.message-row):not(.skeleton-row)').length || 0;
             const totalNum = Number.isFinite(Number(total)) ? Number(total) : 0;
-            const endClamped = Math.min(end, totalNum || end);
 
-            info.textContent = count > 0 ? `Showing ${start}-${endClamped} of ${totalNum} entries` : '';
+            // Always show a page-info string; when zero results, show neutral text
+            if (totalNum === 0 || count === 0) {
+                info.textContent = 'Showing 0-0 of 0 entries';
+            } else {
+                const start = (page - 1) * limit + 1;
+                const end = start + Math.max(0, count) - 1;
+                const endClamped = Math.min(end, totalNum || end);
+                info.textContent = `Showing ${start}-${endClamped} of ${totalNum} entries`;
+            }
             btnWrap.innerHTML = `<button type="button" data-page="${page}" disabled>${page}</button>`;
 
             prevBtn.disabled = page <= 1;
@@ -223,7 +294,7 @@ if ($user_id) {
             nextBtn.onclick = () => { if (canNext) getChildHealthRecord(page + 1, { keep: true }); };
         }
 
-        window.addEventListener('DOMContentLoaded', () => getChildHealthRecord(1));
+    window.addEventListener('DOMContentLoaded', () => getChildHealthRecord(1, { keep: false }));
         document.addEventListener('DOMContentLoaded', () => {
             const applyBtn = document.getElementById('chlApplyFiltersBtn');
             const clearBtn = document.getElementById('chlClearFiltersBtn');
@@ -490,8 +561,8 @@ if ($user_id) {
                         html += `<tr>
                             <td>${r.vaccine_name}</td>
                             <td>${r.dose_number}</td>
-                            <td>${r.schedule_date || ''}</td>
-                            <td>${r.date_given || ''}</td>
+                            <td>${formatDate(r.schedule_date)}</td>
+                            <td>${formatDate(r.date_given)}</td>
                             <td>${r.status}</td>
                             <td>${((r.status || '').toLowerCase() === 'missed') ? (r.catch_up_date || '') : ''}</td>
                         </tr>`;

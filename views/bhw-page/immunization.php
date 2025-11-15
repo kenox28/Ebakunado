@@ -30,10 +30,12 @@ if ($user_id) {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>BHW Dashboard</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
         <link rel="stylesheet" href="../../css/main.css" />
         <link rel="stylesheet" href="../../css/header.css" />
         <link rel="stylesheet" href="../../css/sidebar.css" />
+        <link rel="stylesheet" href="../../css/notification-style.css" />
+        <link rel="stylesheet" href="../../css/skeleton-loading.css" />
         <link rel="stylesheet" href="../../css/bhw/immunization-style.css">
         <link rel="stylesheet" href="../../css/bhw/growth-assessment.css">
     </head>
@@ -45,8 +47,16 @@ if ($user_id) {
     <main>
         <section class="section-container">
             <h2 class="section-title">
-                <span class="material-symbols-rounded">syringe</span>
-                Immunization Records
+                <div class="title-left">
+                    <span class="material-symbols-rounded">syringe</span>
+                    Immunization Records
+                </div>
+                <div class="title-actions">
+                    <button class="btn btn-outline-primary" id="openScannerBtn" onclick="openScanner()">
+                        <span class="material-symbols-rounded" aria-hidden="true">qr_code_scanner</span>
+                        Scan QR
+                    </button>
+                </div>
             </h2>
         </section>
         <section class="immunization-section">
@@ -86,10 +96,6 @@ if ($user_id) {
 
                 <button class="btn btn-primary" id="applyFiltersBtn">Apply</button>
                 <button class="btn btn-secondary" id="clearFiltersBtn">Clear</button>
-                <button class="btn btn-outline-primary" id="openScannerBtn" onclick="openScanner()">
-                    <span class="material-symbols-rounded" aria-hidden="true">qr_code_scanner</span>
-                    Scan QR
-                </button>
             </div>
 
             <div class="table-container">
@@ -105,13 +111,45 @@ if ($user_id) {
                         </tr>
                     </thead>
                     <tbody id="childhealthrecordBody">
-                        <tr>
-                            <td colspan="6" class="text-center">
-                                <div class="loading">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                    <p>Loading records...</p>
-                                </div>
-                            </td>
+                        <tr class="skeleton-row">
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                        </tr>
+                        <tr class="skeleton-row">
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                        </tr>
+                        <tr class="skeleton-row">
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                        </tr>
+                        <tr class="skeleton-row">
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                        </tr>
+                        <tr class="skeleton-row">
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
                         </tr>
                     </tbody>
                 </table>
@@ -167,6 +205,7 @@ if ($user_id) {
     <script src="../../js/growth-standards/who-growth-calculator.js" defer></script>
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
         // spinner CSS (scoped)
         const style = document.createElement('style');
@@ -176,12 +215,25 @@ if ($user_id) {
         let currentPage = 1;
         const pageSize = 10; // fixed to 10 per request
 
+        // Column config used by skeleton generator: 6 columns layout
+        function getImmunizationColsConfig() {
+            return [
+                { type: 'text', widthClass: 'skeleton-col-1' },
+                { type: 'text', widthClass: 'skeleton-col-2' },
+                { type: 'text', widthClass: 'skeleton-col-3' },
+                { type: 'text', widthClass: 'skeleton-col-4' },
+                { type: 'pill', widthClass: 'skeleton-col-5' },
+                { type: 'btn',  widthClass: 'skeleton-col-6' }
+            ];
+        }
+
         async function fetchChildHealthRecord(page = 1, opts = {}) {
             const body = document.querySelector('#childhealthrecordBody');
             const keepRows = opts.keep === true;
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             const btnWrap = document.getElementById('pageButtons');
+            const pageInfoEl = document.getElementById('pageInfo');
 
             // Save previous markup before updating
             let prevMarkup = btnWrap ? btnWrap.innerHTML : '';
@@ -190,9 +242,13 @@ if ($user_id) {
             if (btnWrap) btnWrap.innerHTML = `<span class="pager-spinner" aria-label="Loading" role="status"></span>`;
             if (prevBtn) prevBtn.disabled = true;
             if (nextBtn) nextBtn.disabled = true;
+            // Ensure a neutral page-info is visible during initial / loading state (parity with pending-approval)
+            if (pageInfoEl && (!pageInfoEl.textContent || pageInfoEl.textContent === '\u00A0')) {
+                pageInfoEl.textContent = 'Showing 0-0 of 0 entries';
+            }
 
             if (!keepRows) {
-                body.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
+                applyTableSkeleton(body, getImmunizationColsConfig(), pageSize);
             }
             try {
                 const params = new URLSearchParams();
@@ -211,8 +267,8 @@ if ($user_id) {
                 const res = await fetch(`../../php/supabase/bhw/get_immunization_view.php?${params.toString()}`);
                 const data = await res.json();
                 if (data.status !== 'success') {
-                    body.innerHTML = '<tr><td colspan="6">Failed to load records</td></tr>';
-                    updatePagination(0, 0, 0);
+                    body.innerHTML = '<tr class="message-row error"><td colspan="6">Failed to load data. Please try again.</td></tr>';
+                    updatePagination(0, 0, pageSize);
                     return;
                 }
                 chrRecords = data.data || [];
@@ -221,7 +277,7 @@ if ($user_id) {
                 updatePagination(data.total, data.page || 1, data.limit || pageSize, data.has_more === true);
                 currentPage = data.page || 1;
             } catch (e) {
-                body.innerHTML = '<tr><td colspan="6">Error loading records</td></tr>';
+                body.innerHTML = '<tr class="message-row error"><td colspan="6">Failed to load data. Please try again.</td></tr>';
                 updatePagination(0, 0, 0);
             } finally {
                 // Remove this line - updatePagination handles the button display
@@ -547,7 +603,7 @@ if ($user_id) {
         function renderTable(records) {
             const body = document.querySelector('#childhealthrecordBody');
             if (!records || records.length === 0) {
-                body.innerHTML = '<tr><td colspan="6">No records</td></tr>';
+                body.innerHTML = '<tr class="message-row"><td colspan="6">No records found</td></tr>';
                 return;
             }
             let rows = '';
@@ -661,7 +717,7 @@ if ($user_id) {
             const options = [
                 '<option value="" disabled selected>Vaccines</option>',
                 '<option value="all">All</option>'
-            ];
+        ];
 
             // Get unique vaccines from the loaded data
             const vaccines = [...new Set(chrRecords.map(item => item.vaccine_name).filter(v => v))].sort();
@@ -695,19 +751,29 @@ if ($user_id) {
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             if (!info || !btnWrap || !prevBtn || !nextBtn) return;
-            const start = (page - 1) * limit + 1;
-            const end = start + (chrRecords?.length || 0) - 1;
-            const endClamped = Math.min(end, total || end);
-            info.textContent = chrRecords && chrRecords.length ? `Showing ${start}-${endClamped} of ${total || 0} entries` : '';
+            const count = chrRecords ? chrRecords.length : 0;
+            // Always show a page-info string, even when zero (parity with pending-approval page)
+            if (!total || total === 0 || count === 0) {
+                info.textContent = 'Showing 0-0 of 0 entries';
+            } else {
+                const start = (page - 1) * limit + 1;
+                const end = start + count - 1;
+                const endClamped = Math.min(end, total);
+                info.textContent = `Showing ${start}-${endClamped} of ${total} entries`;
+            }
             btnWrap.innerHTML = `<button type="button" data-page="${page}" disabled>${page}</button>`;
             prevBtn.disabled = page <= 1;
             const canNext = hasMore === true || (chrRecords && chrRecords.length === limit);
             nextBtn.disabled = !canNext;
             prevBtn.onclick = () => {
-                if (page > 1) fetchChildHealthRecord(page - 1, { keep: true });
+                if (page > 1) fetchChildHealthRecord(page - 1, {
+                    keep: true
+                });
             };
             nextBtn.onclick = () => {
-                if (canNext) fetchChildHealthRecord(page + 1, { keep: true });
+                if (canNext) fetchChildHealthRecord(page + 1, {
+                    keep: true
+                });
             };
         }
 
@@ -856,8 +922,7 @@ if ($user_id) {
                     html5QrcodeInstance.stop();
                     html5QrcodeInstance.clear();
                 }
-            } catch (e) {
-            }
+            } catch (e) {}
         }
 
         async function onScanSuccess(decodedText) {
@@ -913,41 +978,41 @@ if ($user_id) {
                     return;
                 }
 
-                                 // Fetch child details to get full information for the form
-                 const formData = new FormData();
-                 formData.append('baby_id', baby_id);
-                 const childResponse = await fetch('../../php/supabase/bhw/get_child_details.php', {
-                     method: 'POST',
-                     body: formData
-                 });
-                 const childData = await childResponse.json();
+                // Fetch child details to get full information for the form
+                const formData = new FormData();
+                formData.append('baby_id', baby_id);
+                const childResponse = await fetch('../../php/supabase/bhw/get_child_details.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const childData = await childResponse.json();
 
-                 console.log('Child details response:', childData);
-                 console.log('Baby ID searched:', baby_id);
+                console.log('Child details response:', childData);
+                console.log('Baby ID searched:', baby_id);
 
-                 if (childData.status === 'success' && childData.data && childData.data.length > 0) {
-                     const child = childData.data[0];
-                     
-                     console.log('Child data received:', child);
-                     
-                     // Use the user_id from child record, fallback to empty string if not available
-                     const userId = child.user_id || '';
-                     
-                     // Call openImmunizationForm with the nearest record data
-                     openImmunizationFormForScan(
-                         nearestRecord.id,
-                         userId,
-                         nearestRecord.baby_id,
-                         `${child.child_fname || ''} ${child.child_lname || ''}`.trim(),
-                         nearestRecord.vaccine_name,
-                         nearestRecord.schedule_date || '',
-                         nearestRecord.catch_up_date || '',
-                         child
-                     );
-                 } else {
-                     console.error('Child details fetch failed:', childData);
-                     alert('Could not fetch child details: ' + (childData.message || 'Unknown error'));
-                 }
+                if (childData.status === 'success' && childData.data && childData.data.length > 0) {
+                    const child = childData.data[0];
+
+                    console.log('Child data received:', child);
+
+                    // Use the user_id from child record, fallback to empty string if not available
+                    const userId = child.user_id || '';
+
+                    // Call openImmunizationForm with the nearest record data
+                    openImmunizationFormForScan(
+                        nearestRecord.id,
+                        userId,
+                        nearestRecord.baby_id,
+                        `${child.child_fname || ''} ${child.child_lname || ''}`.trim(),
+                        nearestRecord.vaccine_name,
+                        nearestRecord.schedule_date || '',
+                        nearestRecord.catch_up_date || '',
+                        child
+                    );
+                } else {
+                    console.error('Child details fetch failed:', childData);
+                    alert('Could not fetch child details: ' + (childData.message || 'Unknown error'));
+                }
             } catch (error) {
                 console.error('Error processing QR scan:', error);
                 alert('Error processing QR code: ' + error.message);
@@ -969,7 +1034,7 @@ if ($user_id) {
             tempBtn.setAttribute('data-vaccine-name', vaccineName);
             tempBtn.setAttribute('data-schedule-date', scheduleDate);
             tempBtn.setAttribute('data-catch-up-date', catchUpDate);
-            
+
             // Add feeding data attributes
             tempBtn.setAttribute('data-eb-1mo', childData.exclusive_breastfeeding_1mo || 'false');
             tempBtn.setAttribute('data-eb-2mo', childData.exclusive_breastfeeding_2mo || 'false');

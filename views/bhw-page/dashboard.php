@@ -29,7 +29,9 @@ if ($user_id) {
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
-    <link rel="stylesheet" href="../../css/bhw/dashboard.css" />
+    <link rel="stylesheet" href="../../css/notification-style.css" />
+    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
+    <link rel="stylesheet" href="../../css/bhw/dashboard.css?v=1.0.1" />
 </head>
 
 <body>
@@ -141,8 +143,9 @@ if ($user_id) {
         </section>
     </main>
 
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
+    <script src="../../js/header-handler/profile-menu_v2.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
         // Dashboard Data Loading
         async function loadDashboardData() {
@@ -169,21 +172,55 @@ if ($user_id) {
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
                 showError('Network error: ' + error.message);
+                // Ensure card numbers don't stay in perpetual skeleton state on error
+                if (typeof setDashboardCardNumbers === 'function') {
+                    setDashboardCardNumbers({
+                        pendingCount: 0,
+                        todayCount: 0,
+                        missedCount: 0,
+                        totalCount: 0
+                    });
+                } else {
+                    const ids = ['pendingCount','todayCount','missedCount','totalCount'];
+                    ids.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.textContent = '0';
+                    });
+                }
             }
         }
 
         function updateStats(stats) {
-            document.getElementById('pendingCount').textContent = stats.pending_approvals;
-            document.getElementById('todayCount').textContent = stats.today_vaccinations;
-            document.getElementById('missedCount').textContent = stats.missed_vaccinations;
-            document.getElementById('totalCount').textContent = stats.total_children;
-            document.getElementById('pendingActionCount').textContent = stats.pending_approvals;
-            document.getElementById('todayActionCount').textContent = stats.today_vaccinations;
+            // If skeleton API is available, replace numbers via helper for smooth cross-fade
+            if (typeof setDashboardCardNumbers === 'function') {
+                setDashboardCardNumbers({
+                    pendingCount: stats.pending_approvals,
+                    todayCount: stats.today_vaccinations,
+                    missedCount: stats.missed_vaccinations,
+                    totalCount: stats.total_children
+                });
+            } else {
+                const p = document.getElementById('pendingCount');
+                const t = document.getElementById('todayCount');
+                const m = document.getElementById('missedCount');
+                const tc = document.getElementById('totalCount');
+                if (p) p.textContent = stats.pending_approvals;
+                if (t) t.textContent = stats.today_vaccinations;
+                if (m) m.textContent = stats.missed_vaccinations;
+                if (tc) tc.textContent = stats.total_children;
+            }
+            // Safely update any action counters if present (currently not in markup)
+            const pa = document.getElementById('pendingActionCount');
+            const ta = document.getElementById('todayActionCount');
+            if (pa) pa.textContent = stats.pending_approvals;
+            if (ta) ta.textContent = stats.today_vaccinations;
         }
 
         function updateTasks(stats) {
-            document.getElementById('overdueCount').textContent = stats.overdue_tasks;
-            document.getElementById('tomorrowCount').textContent = stats.tomorrow_vaccinations;
+            const overdueEl = document.getElementById('overdueCount');
+            const tomorrowEl = document.getElementById('tomorrowCount');
+            if (overdueEl) overdueEl.textContent = stats.overdue_tasks;
+            if (tomorrowEl) tomorrowEl.textContent = stats.tomorrow_vaccinations;
         }
 
         function updateActivity(activities) {
@@ -380,6 +417,11 @@ if ($user_id) {
 
         // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            // Apply skeleton shimmer to card numbers immediately
+            if (typeof applyDashboardCardNumbersSkeleton === 'function') {
+                applyDashboardCardNumbersSkeleton();
+            }
+            // Fetch and populate real data
             loadDashboardData();
         });
 

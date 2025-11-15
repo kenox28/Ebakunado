@@ -1,3 +1,24 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+	header("Location: ../login.php");
+	exit();
+}
+
+
+// Get user information from session
+$user_id = $_SESSION['user_id'] ?? '';
+$fname = $_SESSION['fname'] ?? 'User';
+$lname = $_SESSION['lname'] ?? '';
+$email = $_SESSION['email'] ?? '';
+$phone = $_SESSION['phone_number'] ?? '';
+$noprofile = $_SESSION['profileimg'] ?? '';
+$gender = $_SESSION['gender'] ?? '';
+$place = $_SESSION['place'] ?? '';
+$user_fname = $_SESSION['fname'] ?? '';
+?>
+
 <header class="header">
     <div class="header-left">
         <button
@@ -140,7 +161,7 @@
         const content = document.getElementById('notificationContent');
 
         if (!notifications || notifications.length === 0) {
-            content.innerHTML = '<div class="no-notifications"><i class="fas fa-bell-slash"></i><p>No notifications</p></div>';
+            content.innerHTML = '<div class="no-notifications"><span class="material-symbols-rounded">notifications_off</span><p>No notifications</p></div>';
             return;
         }
 
@@ -262,7 +283,7 @@
     });
 
     if (result.isConfirmed) {
-        const response = await fetch("/ebakunado/php/supabase/users/logout.php", {
+        const response = await fetch("../../php/supabase/users/logout.php", {
             method: "POST",
         });
 

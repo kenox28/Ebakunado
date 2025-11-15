@@ -26,9 +26,12 @@ if ($user_id) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Approval</title>
     <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
+    <!-- <link rel="stylesheet" href="../../css/main.css" /> -->
+    <link rel="stylesheet" href="../../css/main.css?v=20251106" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/notification-style.css" />
+    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
     <link rel="stylesheet" href="../../css/bhw/pending-approval-style.css" />
 </head>
 
@@ -82,32 +85,110 @@ if ($user_id) {
                             </tr>
                         </thead>
                         <tbody id="childhealthrecordBody">
-                            <tr>
-                                <td colspan="9" class="text-center">
-                                    <div class="loading">
-                                        <i class="fas fa-spinner fa-spin"></i>
-                                        <p>Loading records...</p>
-                                    </div>
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                </td>
+                            </tr>
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                </td>
+                            </tr>
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            <!-- Moved pager outside the scrollable table-container -->
-            <div class="pager" id="paPager">
-                <div id="paPageInfo" class="page-info">&nbsp;</div>
-                <div class="pager-controls">
-                    <button id="paPrevBtn" type="button" class="pager-btn">
-                        <span class="material-symbols-rounded">chevron_backward</span>
-                        Prev
-                    </button>
-                    <span id="paPageButtons" class="page-buttons"></span>
-                    <button id="paNextBtn" type="button" class="pager-btn">
-                        Next
-                        <span class="material-symbols-rounded">chevron_forward</span>
-                    </button>
+                <div class="pager" id="paPager">
+                    <div id="paPageInfo" class="page-info">&nbsp;</div>
+                    <div class="pager-controls">
+                        <button id="paPrevBtn" type="button" class="pager-btn">
+                            <span class="material-symbols-rounded">chevron_backward</span>
+                            Prev
+                        </button>
+                        <span id="paPageButtons" class="page-buttons"></span>
+                        <button id="paNextBtn" type="button" class="pager-btn">
+                            Next
+                            <span class="material-symbols-rounded">chevron_forward</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -236,7 +317,7 @@ if ($user_id) {
                         </h2>
                         <img src="" alt="Baby Card" id="childImage">
                     </div>
-                </div>
+                </div> <!-- end .childinfo-main (two-column child info area) -->
 
                 <div class="vaccination-section">
                     <h2 class="vaccination-header">
@@ -246,23 +327,72 @@ if ($user_id) {
                         Child's Vaccination Records
                     </h2>
                     <div class="vaccination-record-list" id="vaccinationRecordsContainer">
-                        <div class="loading">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <p>Loading vaccination records...</p>
-                        </div>
+                        <!-- Dynamic content: skeleton table, data rows, or message -->
                     </div>
                 </div>
             </div>
         </section>
-        
+
     </main>
 
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script>
+        // Column config for skeleton rows in Pending Approval (9 visible columns)
+        function getPendingColsConfig() {
+            return [{
+                    type: 'text',
+                    widthClass: 'skeleton-col-1'
+                }, // Child Name
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-2'
+                }, // Gender
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-3'
+                }, // Birth Date
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-4'
+                }, // Place of Birth
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-5'
+                }, // Mother's Name
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-3'
+                }, // Father's Name
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-2'
+                }, // Address
+                {
+                    type: 'pill',
+                    widthClass: 'skeleton-col-5'
+                }, // Status
+                {
+                    type: 'btn',
+                    widthClass: 'skeleton-col-6'
+                } // Action
+            ];
+        }
+        // Date formatting helper: "Mon D, YYYY"
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr; // fallback if invalid
+            return d.toLocaleDateString(undefined, {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
         // Pager spinner CSS (primary color)
-        (function ensureSpinnerCss(){
+        (function ensureSpinnerCss() {
             if (document.getElementById('pagerSpinnerCss')) return;
             const style = document.createElement('style');
             style.id = 'pagerSpinnerCss';
@@ -270,13 +400,21 @@ if ($user_id) {
             document.head.appendChild(style);
         })();
 
-        const paState = { page: 1, limit: 10, loading: false };
+        const paState = {
+            page: 1,
+            limit: 10,
+            loading: false
+        };
 
-        async function loadPending(page = 1, opts = { keep: true }) {
+        async function loadPending(page = 1, opts = {
+            keep: true
+        }) {
             const body = document.querySelector('#childhealthrecordBody');
             const prevBtn = document.getElementById('paPrevBtn');
             const nextBtn = document.getElementById('paNextBtn');
             const pageButtons = document.getElementById('paPageButtons');
+            const pager = document.getElementById('paPager');
+            const pageInfo = document.getElementById('paPageInfo');
 
             const search = (document.getElementById('paSearch').value || '').trim();
             const status = (document.getElementById('paStatus').value || 'pending');
@@ -285,23 +423,46 @@ if ($user_id) {
             paState.page = page;
             paState.loading = true;
 
+            // Ensure pager is visible during fetch/skeleton (parity with Immunization)
+            if (pager) pager.style.display = '';
+            // Keep a neutral page-info visible during loading
+            if (pageInfo && (!pageInfo.textContent || pageInfo.textContent === '\u00A0')) {
+                pageInfo.textContent = `Showing 0-0 of 0 entries`;
+            }
             if (pageButtons) pageButtons.innerHTML = '<span class="pager-spinner" aria-label="Loading" role="status"></span>';
             if (prevBtn) prevBtn.disabled = true;
             if (nextBtn) nextBtn.disabled = true;
 
             if (!opts || !opts.keep) {
-                // Show "Loading..." (not "Loading records...") while fetching
-                body.innerHTML = '<tr><td colspan="9" class="text-center">Loading...</td></tr>';
+                if (typeof applyTableSkeleton === 'function') {
+                    applyTableSkeleton(body, getPendingColsConfig(), limit);
+                }
+                // Removed fallback "Loading..." text (skeleton rows already in initial markup)
             }
 
             try {
-                const qs = new URLSearchParams({ page: String(page), limit: String(limit), status, search });
+                const qs = new URLSearchParams({
+                    page: String(page),
+                    limit: String(limit),
+                    status,
+                    search
+                });
                 const res = await fetch('../../php/supabase/bhw/pending_chr.php?' + qs.toString());
                 const data = await res.json();
 
                 if (data.status !== 'success') {
-                    body.innerHTML = '<tr><td colspan="9">Failed to load records</td></tr>';
-                    updatePaPager({ page, has_more: false });
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(body, 'Failed to load data. Please try again.', {
+                            colspan: 9,
+                            kind: 'error'
+                        });
+                    } else {
+                        body.innerHTML = '<tr class="message-row error"><td colspan="9">Failed to load data. Please try again.</td></tr>';
+                    }
+                    updatePaPager({
+                        page,
+                        has_more: false
+                    });
                     updatePaInfo(page, limit, 0, 0);
                     return;
                 }
@@ -310,8 +471,17 @@ if ($user_id) {
                 const count = rowsData.length;
 
                 if (count === 0) {
-                    body.innerHTML = '<tr><td colspan="9">No records found</td></tr>';
-                    updatePaPager({ page: data.page || page, has_more: false });
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(body, 'No records found', {
+                            colspan: 9
+                        });
+                    } else {
+                        body.innerHTML = '<tr class="message-row"><td colspan="9">No records found</td></tr>';
+                    }
+                    updatePaPager({
+                        page: data.page || page,
+                        has_more: false
+                    });
                     updatePaInfo(data.page || page, data.limit || limit, 0);
                     return;
                 }
@@ -319,13 +489,14 @@ if ($user_id) {
                 let rows = '';
                 rowsData.forEach(item => {
                     const fullName = `${item.child_fname || ''} ${item.child_lname || ''}`.trim();
+                    const birthDateFmt = formatDate(item.child_birth_date);
                     rows += `<tr>
                             <td hidden>${item.id || ''}</td>
                             <td hidden>${item.user_id || ''}</td>
                             <td hidden>${item.baby_id || ''}</td>
                             <td>${fullName || '-'}</td>
                             <td>${item.child_gender || ''}</td>
-                            <td>${item.child_birth_date || ''}</td>
+                            <td>${birthDateFmt}</td>
                             <td>${item.place_of_birth || ''}</td>
                             <td>${item.mother_name || ''}</td>
                             <td>${item.father_name || ''}</td>
@@ -339,18 +510,31 @@ if ($user_id) {
                 });
                 body.innerHTML = rows;
 
-                updatePaPager({ page: data.page || page, has_more: !!data.has_more || count === (data.limit || limit) });
+                updatePaPager({
+                    page: data.page || page,
+                    has_more: !!data.has_more || count === (data.limit || limit)
+                });
                 updatePaInfo(data.page || page, data.limit || limit, count, data.total || 0);
             } catch (e) {
-                body.innerHTML = '<tr><td colspan="9">Error loading records</td></tr>';
-                updatePaPager({ page, has_more: false });
+                if (typeof renderTableMessage === 'function') {
+                    renderTableMessage(body, 'Failed to load data. Please try again.', {
+                        colspan: 9,
+                        kind: 'error'
+                    });
+                } else {
+                    body.innerHTML = '<tr class="message-row error"><td colspan="9">Failed to load data. Please try again.</td></tr>';
+                }
+                updatePaPager({
+                    page,
+                    has_more: false
+                });
                 updatePaInfo(page, limit, 0, 0);
             } finally {
                 paState.loading = false;
             }
         }
 
-        function updatePaPager(meta){
+        function updatePaPager(meta) {
             const prevBtn = document.getElementById('paPrevBtn');
             const nextBtn = document.getElementById('paNextBtn');
             const pageButtons = document.getElementById('paPageButtons');
@@ -361,46 +545,75 @@ if ($user_id) {
             if (prevBtn) prevBtn.disabled = page <= 1;
             if (nextBtn) nextBtn.disabled = !hasMore;
 
-            if (prevBtn) prevBtn.onclick = () => { if (page > 1) loadPending(page - 1, { keep: true }); };
-            if (nextBtn) nextBtn.onclick = () => { if (hasMore) loadPending(page + 1, { keep: true }); };
+            if (prevBtn) prevBtn.onclick = () => {
+                if (page > 1) loadPending(page - 1, {
+                    keep: true
+                });
+            };
+            if (nextBtn) nextBtn.onclick = () => {
+                if (hasMore) loadPending(page + 1, {
+                    keep: true
+                });
+            };
         }
 
-        function updatePaInfo(page, limit, count, total){
+        function updatePaInfo(page, limit, count, total) {
             const info = document.getElementById('paPageInfo');
             if (!info) return;
+            const totalNum = Number.isFinite(Number(total)) ? Number(total) : 0;
+            if (totalNum === 0 || count <= 0) {
+                info.textContent = `Showing 0-0 of ${totalNum} entries`;
+                return;
+            }
             const start = (page - 1) * limit + 1;
             const end = start + Math.max(0, count) - 1;
-            const endClamped = Math.max(0, end);
-            const totalNum = typeof total === 'number' ? total : (count || 0);
-            info.textContent = count > 0 ? `Showing ${start}-${endClamped} of ${totalNum} entries` : '';
+            const endClamped = Math.min(end, totalNum || end);
+            info.textContent = `Showing ${start}-${endClamped} of ${totalNum} entries`;
         }
 
         async function getChildHealthRecord() {
             const body = document.querySelector('#childhealthrecordBody');
-            body.innerHTML = '<tr><td colspan="9">Loading...</td></tr>';
+            if (typeof applyTableSkeleton === 'function') {
+                applyTableSkeleton(body, getPendingColsConfig(), 10);
+            }
+            // Removed fallback "Loading..." text; rely on existing static skeleton rows if utility absent.
             try {
                 // const res = await fetch('../../php/bhw/get_child_health_records.php');
                 const res = await fetch('../../php/supabase/bhw/pending_chr.php');
                 const data = await res.json();
                 if (data.status !== 'success') {
-                    body.innerHTML = '<tr><td colspan="9">Failed to load records</td></tr>';
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(body, 'Failed to load data. Please try again.', {
+                            colspan: 9,
+                            kind: 'error'
+                        });
+                    } else {
+                        body.innerHTML = '<tr class="message-row error"><td colspan="9">Failed to load data. Please try again.</td></tr>';
+                    }
                     return;
                 }
                 if (!data.data || data.data.length === 0) {
-                    body.innerHTML = '<tr><td colspan="9">No records found</td></tr>';
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(body, 'No records found', {
+                            colspan: 9
+                        });
+                    } else {
+                        body.innerHTML = '<tr class="message-row"><td colspan="9">No records found</td></tr>';
+                    }
                     return;
                 }
 
                 let rows = '';
                 data.data.forEach((item, index) => {
                     const fullName = `${item.child_fname || ''} ${item.child_lname || ''}`.trim();
+                    const birthDateFmt = formatDate(item.child_birth_date);
                     rows += `<tr>
 							<td hidden>${item.id || ''}</td>
 							<td hidden>${item.user_id || ''}</td>
 							<td hidden>${item.baby_id || ''}</td>
 							<td>${fullName || '-'}</td>
 							<td>${item.child_gender || ''}</td>
-							<td>${item.child_birth_date || ''}</td>
+                            <td>${birthDateFmt}</td>
 							<td>${item.place_of_birth || ''}</td>
 							<td>${item.mother_name || ''}</td>
 							<td>${item.father_name || ''}</td>
@@ -415,7 +628,14 @@ if ($user_id) {
                 });
                 body.innerHTML = rows;
             } catch (e) {
-                body.innerHTML = '<tr><td colspan="9">Error loading records</td></tr>';
+                if (typeof renderTableMessage === 'function') {
+                    renderTableMessage(body, 'Failed to load data. Please try again.', {
+                        colspan: 9,
+                        kind: 'error'
+                    });
+                } else {
+                    body.innerHTML = '<tr class="message-row error"><td colspan="9">Failed to load data. Please try again.</td></tr>';
+                }
             }
         }
 
@@ -498,48 +718,105 @@ if ($user_id) {
             }
 
             // Refresh current page (keeps filters and pager state)
-            loadPending((paState && paState.page) ? paState.page : 1, { keep: true });
+            loadPending((paState && paState.page) ? paState.page : 1, {
+                keep: true
+            });
         }
 
+        // Vaccination records skeleton + table renderer (removes redundant spinner/loading text)
+        function getVaccinationColsConfig() {
+            return [{
+                    type: 'text',
+                    widthClass: 'skeleton-col-2'
+                }, // Vaccine
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-6'
+                }, // Dose
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-3'
+                }, // Schedule Date
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-3'
+                }, // Catch-up Date
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-3'
+                }, // Date Given
+                {
+                    type: 'pill',
+                    widthClass: 'skeleton-col-5'
+                } // Status
+            ];
+        }
+
+        function buildVaccinationSkeletonTableHTML() {
+            return `<table class="table table-hover" style="width:100%;margin-top:10px;">` +
+                `<thead><tr>` +
+                `<th>Vaccine</th><th>Dose</th><th>Schedule Date</th><th>Catch-up Date</th><th>Date Given</th><th>Status</th>` +
+                `</tr></thead><tbody id="vaccinationRecordsBody"></tbody></table>`;
+        }
         async function loadVaccinationRecords(baby_id) {
             const container = document.querySelector('#vaccinationRecordsContainer');
-            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading vaccination records...</p></div>';
-
+            if (!container) return;
+            container.innerHTML = buildVaccinationSkeletonTableHTML();
+            const tbody = container.querySelector('#vaccinationRecordsBody');
+            if (typeof applyTableSkeleton === 'function') {
+                applyTableSkeleton(tbody, getVaccinationColsConfig(), 14);
+            }
+            // Removed fallback "Loading..." text for vaccination records; skeleton preferred.
             try {
                 const response = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
                 const data = await response.json();
-
-                if (data.status !== 'success' || !data.data || data.data.length === 0) {
-                    container.innerHTML = '<p class="no-vaccination-records">No vaccination records found</p>';
+                if (!data || data.status !== 'success') {
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(tbody, 'Failed to load data. Please try again.', {
+                            colspan: 6,
+                            kind: 'error'
+                        });
+                    } else {
+                        tbody.innerHTML = '<tr class="message-row error"><td colspan="6">Failed to load data. Please try again.</td></tr>';
+                    }
                     return;
                 }
-
-                let html = '<table class="table table-hover" style="width: 100%; margin-top: 10px;">';
-                html += '<thead><tr>';
-                html += '<th>Vaccine</th><th>Dose</th><th>Schedule Date</th><th>Catch-up Date</th><th>Date Given</th><th>Status</th>';
-                html += '</tr></thead><tbody>';
-
-                data.data.forEach(record => {
-                    const statusClass = record.status === 'completed' ? 'success' :
-                        record.status === 'missed' ? 'danger' : 'warning';
-                    const statusText = record.status.charAt(0).toUpperCase() + record.status.slice(1);
-
-                    html += `<tr data-record-id="${record.id}">`;
-                    html += `<td>${record.vaccine_name || ''}</td>`;
-                    html += `<td>${record.dose_number || ''}</td>`;
-                    html += `<td>${record.schedule_date || ''}</td>`;
-                    html += `<td>${record.catch_up_date || ''}</td>`;
-                    html += `<td>${record.date_given || ''}</td>`;
-                    html += `<td><span class="badge badge-${statusClass}">${statusText}</span></td>`;
-                    html += `</tr>`;
+                const records = Array.isArray(data.data) ? data.data : [];
+                if (records.length === 0) {
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(tbody, 'No records found', {
+                            colspan: 6
+                        });
+                    } else {
+                        tbody.innerHTML = '<tr class="message-row"><td colspan="6">No records found</td></tr>';
+                    }
+                    return;
+                }
+                let rows = '';
+                records.forEach(record => {
+                    const statusRaw = String(record.status || '').toLowerCase();
+                    const statusClass = statusRaw === 'completed' ? 'success' : (statusRaw === 'missed' ? 'danger' : 'warning');
+                    const statusText = statusRaw ? statusRaw.charAt(0).toUpperCase() + statusRaw.slice(1) : '-';
+                    rows += `<tr data-record-id="${record.id || ''}">` +
+                        `<td>${record.vaccine_name || ''}</td>` +
+                        `<td>${record.dose_number || ''}</td>` +
+                        `<td>${formatDate(record.schedule_date) || ''}</td>` +
+                        `<td>${formatDate(record.catch_up_date) || ''}</td>` +
+                        `<td>${formatDate(record.date_given) || ''}</td>` +
+                        `<td><span class="badge badge-${statusClass}">${statusText}</span></td>` +
+                        `</tr>`;
                 });
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
-
+                tbody.innerHTML = rows;
             } catch (error) {
                 console.error('Error loading vaccination records:', error);
-                container.innerHTML = '<p class="no-vaccination-error">Error loading vaccination records</p>';
+                if (typeof renderTableMessage === 'function') {
+                    renderTableMessage(tbody, 'Failed to load data. Please try again.', {
+                        colspan: 6,
+                        kind: 'error'
+                    });
+                } else if (tbody) {
+                    tbody.innerHTML = '<tr class="message-row error"><td colspan="6">Failed to load data. Please try again.</td></tr>';
+                }
             }
         }
 
@@ -586,7 +863,7 @@ if ($user_id) {
             if (!confirm('Are you sure you want to reject and remove this child registration request? This action cannot be undone.')) {
                 return;
             }
-            
+
             const formData = new FormData();
             formData.append('baby_id', baby_id);
             const response = await fetch('../../php/supabase/bhw/reject_chr.php', {
@@ -607,21 +884,31 @@ if ($user_id) {
         document.addEventListener('DOMContentLoaded', () => {
             // existing bindings
             document.getElementById('paPrevBtn').addEventListener('click', () => {
-                if (paState.loading) return; 
-                const nextPage = Math.max(1, (paState.page||1) - 1);
-                loadPending(nextPage, { keep: true });
+                if (paState.loading) return;
+                const nextPage = Math.max(1, (paState.page || 1) - 1);
+                loadPending(nextPage, {
+                    keep: true
+                });
             });
             document.getElementById('paNextBtn').addEventListener('click', () => {
-                if (paState.loading) return; 
-                const nextPage = (paState.page||1) + 1;
-                loadPending(nextPage, { keep: true });
+                if (paState.loading) return;
+                const nextPage = (paState.page || 1) + 1;
+                loadPending(nextPage, {
+                    keep: true
+                });
             });
-            document.getElementById('paSearch').addEventListener('input', () => loadPending(1, { keep: true }));
-            document.getElementById('paStatus').addEventListener('change', () => loadPending(1, { keep: true }));
+            document.getElementById('paSearch').addEventListener('input', () => loadPending(1, {
+                keep: true
+            }));
+            document.getElementById('paStatus').addEventListener('change', () => loadPending(1, {
+                keep: true
+            }));
             document.getElementById('paClear').addEventListener('click', () => {
                 document.getElementById('paSearch').value = '';
                 document.getElementById('paStatus').value = 'pending';
-                loadPending(1, { keep: true });
+                loadPending(1, {
+                    keep: true
+                });
             });
 
             // Icon click focuses the corresponding input/select
@@ -634,7 +921,10 @@ if ($user_id) {
                 }
             });
 
-            loadPending(1, { keep: true });
+            // Initial load should replace initial skeleton; do not keep previous rows
+            loadPending(1, {
+                keep: false
+            });
         });
 
         let html5QrcodeInstance = null;
@@ -869,7 +1159,10 @@ if ($user_id) {
                 if (data.status === 'success') {
                     alert('Child information updated successfully!');
                     // Update original data for reset functionality
-                    originalChildData = { ...originalChildData, ...updateData };
+                    originalChildData = {
+                        ...originalChildData,
+                        ...updateData
+                    };
 
                     // Exit edit mode and show Edit button again
                     setChildInfoEditing(false);
@@ -1042,6 +1335,7 @@ if ($user_id) {
             setChildInfoEditing(false);
         }
 
+        // (Removed preview-eye-btn and image preview overlay handlers to revert to past style)
     </script>
 </body>
 

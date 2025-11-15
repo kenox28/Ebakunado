@@ -4,6 +4,11 @@ main {
   overflow-y: auto;
 }
 
+.pending-approval-section {
+  height: 110vh;
+}
+
+
 /* =Buttons: full base + states */
 .childinfo-actions {
   display: flex;
@@ -242,62 +247,6 @@ main {
   z-index: auto;
 }
 
-/* =Data table: container */
-.table-container {
-  overflow: auto;
-  max-height: 60vh;
-  overflow-y: auto;
-  overflow-x: auto;
-}
-
-/* =Data table: base */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 1200px;
-}
-.table thead {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: #f2f2f2;
-}
-.table thead th {
-  padding: 0.75rem;
-  text-align: left;
-  background-color: #f2f2f2;
-  color: #1a1a1a;
-  font-weight: 600;
-  white-space: nowrap;
-  font-size: 1.3rem;
-  text-transform: capitalize;
-}
-.table tbody tr {
-  border-bottom: 1px solid #e2e8f0;
-  transition: background-color 0.2s ease;
-}
-.table tbody tr:hover {
-  background-color: #f8fafc;
-}
-.table tbody tr:last-child {
-  border-bottom: none;
-}
-.table tbody td {
-  padding: 0.75rem;
-  text-align: left;
-  color: #1a1a1a;
-  font-size: 1.3rem;
-  vertical-align: middle;
-  white-space: nowrap;
-  text-transform: capitalize;
-}
-.table tbody td:first-child {
-  font-weight: 500;
-  text-align: left;
-  width: 60px;
-  min-width: 60px;
-}
-
 /* =Data table: column width hints */
 .table th:nth-child(2),
 .table td:nth-child(2) {
@@ -396,9 +345,23 @@ main {
   font-size: 1.6rem;
 }
 
+/* Empty & Error message rows (parity with immunization) */
+.pending-approval-section .table .message-row td {
+  text-align: center;
+  padding: 2.4rem 1.2rem;
+  font-size: 1.3rem;
+  color: #6b7280; /* muted gray */
+  font-weight: 400;
+  text-transform: none;
+}
+.pending-approval-section .table .message-row.error td {
+  color: #b91c1c; /* red-700 */
+  font-weight: 500;
+}
+
 /* =Panels: list (left/initial) */
 .pending-approval-panel {
-  height: 100vh;
+  /* height: 100vh; */
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -419,13 +382,13 @@ main {
 }
 
 /* =Section wrapper: flex fix to allow inner scroll */
-.pending-approval-section {
+/* .pending-approval-section {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
   overflow: hidden;
-}
+} */
 
 /* =Details panel: scroll behavior overrides */
 .childinformation-container {
@@ -632,4 +595,17 @@ main {
   background: none !important;
   color: var(--primary-color) !important;
   box-shadow: none !important;
+}
+/* Shared empty & error message rows (added children reuse same page stylesheet) */
+.pending-approval-section .table .message-row td {
+  text-align: center;
+  padding: 2.4rem 1.2rem;
+  font-size: 1.3rem;
+  color: #6b7280;
+  font-weight: 400;
+  text-transform: none;
+}
+.pending-approval-section .table .message-row.error td {
+  color: #b91c1c;
+  font-weight: 500;
 }

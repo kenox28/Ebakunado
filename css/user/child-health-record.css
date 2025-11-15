@@ -290,9 +290,20 @@ main {
   font-size: 1rem;
 }
 
-/* Sidebar */
-.sidebar-menu-item:nth-child(3){
-	border-left-color: var(--primary-color);
-	background-color: #d8e6db;
-	color: var(--primary-color);
+/* Standardized message rows for ledger table */
+.child-health-record-section .immunization-table .message-row td,
+.child-health-record-section .immunization-table tr.message-row td {
+  text-align: center;
+  padding: 1.25rem 1rem;
+  font-size: 1.15rem;
+  color: #555;
+  background: #fafafa;
+  border: 1px solid #eee;
+}
+.child-health-record-section .immunization-table .message-row.error td,
+.child-health-record-section .immunization-table tr.message-row.error td {
+  color: #b00020;
+  background: #fff5f5;
+  border-color: #ffc9c9;
+  font-weight: 500;
 }

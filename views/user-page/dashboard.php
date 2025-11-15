@@ -31,6 +31,7 @@ $user_fname = $_SESSION['fname'] ?? '';
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/notification-style.css" />
+    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
     <link rel="stylesheet" href="../../css/user/dashboard.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -134,6 +135,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
         let currentFilter = 'upcoming';
 
@@ -171,16 +173,21 @@ $user_fname = $_SESSION['fname'] ?? '';
             setActiveButton();
             const list = document.getElementById('childrenList');
             const label = filter === 'missed' ? 'Missed Immunizations' : 'Upcoming Immunizations';
-            list.innerHTML = `<div class="children-list-label">${label}</div><div class=\"loading\"><div class=\"spinner\"></div><p>Loading...</p></div>`;
+            // Apply skeleton cards instead of spinner
+            if (typeof applyChildrenListSkeleton === 'function') {
+                applyChildrenListSkeleton(list, 6, label);
+            } else {
+                list.innerHTML = `<div class=\"children-list-label\">${label}</div><div class=\"loading\"><div class=\"spinner\"></div><p>Loading...</p></div>`;
+            }
             try {
                 const resp = await fetchSummary(filter);
                 if (resp && resp.status === 'success') {
                     renderFilteredList(resp.data.items || []);
                 } else {
-                    list.innerHTML = `<div class=\"children-list-label\">${label}</div><div class=\"no-data\"><span class=\"material-symbols-rounded icon error\">error</span><p>Failed to load list</p></div>`;
+                    list.innerHTML = `<div class=\"children-list-label\">${label}</div><div class=\"no-data\"><p>Something went wrong</p><small>Please try again.</small></div>`;
                 }
             } catch (e) {
-                list.innerHTML = `<div class=\"children-list-label\">${label}</div><div class=\"no-data\"><span class=\"material-symbols-rounded icon error\">error</span><p>Network error</p></div>`;
+                list.innerHTML = `<div class=\"children-list-label\">${label}</div><div class=\"no-data\"><p>Something went wrong</p><small>Please try again.</small></div>`;
             }
             // also refresh counts in background
             refreshCounts();
@@ -190,7 +197,7 @@ $user_fname = $_SESSION['fname'] ?? '';
             const list = document.getElementById('childrenList');
             const label = currentFilter === 'missed' ? 'Missed Immunizations' : 'Upcoming Immunizations';
             if (!items || items.length === 0) {
-                list.innerHTML = `<div class=\"children-list-label\">${label}</div><div class=\"no-data\"><span class=\"material-symbols-rounded icon\">child_care</span><p>No records</p></div>`;
+                list.innerHTML = `<div class=\"children-list-label\">${label}</div><div class=\"no-data\"><p>No children registered yet</p></div>`;
                 return;
             }
             let html = '';
@@ -252,11 +259,7 @@ $user_fname = $_SESSION['fname'] ?? '';
         }
         async function loadDashboardData() {
             try {
-                // Show loading state
-                document.getElementById('totalChildren').textContent = '...';
-                document.getElementById('approvedChr').textContent = '...';
-                document.getElementById('missedCount').textContent = '...';
-                document.getElementById('todaySchedule').textContent = '...';
+                // Card numbers show skeleton shimmer (set on page load); fetch and replace with values
 
                 // Load children data first (this will give us all the stats we need)
                 const childrenResponse = await fetch('../../php/supabase/users/get_accepted_child.php');
@@ -267,19 +270,37 @@ $user_fname = $_SESSION['fname'] ?? '';
                     calculateStatsFromChildren(childrenData.data || []);
                 } else {
                     // Set default values when request failed
-                    document.getElementById('totalChildren').textContent = '0';
-                    document.getElementById('approvedChr').textContent = '0';
-                    document.getElementById('missedCount').textContent = '0';
-                    document.getElementById('todaySchedule').textContent = '0';
+                    if (typeof setDashboardCardNumbers === 'function') {
+                        setDashboardCardNumbers({
+                            totalChildren: 0,
+                            approvedChr: 0,
+                            missedCount: 0,
+                            todaySchedule: 0,
+                        });
+                    } else {
+                        document.getElementById('totalChildren').textContent = '0';
+                        document.getElementById('approvedChr').textContent = '0';
+                        document.getElementById('missedCount').textContent = '0';
+                        document.getElementById('todaySchedule').textContent = '0';
+                    }
                 }
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
 
                 // Set default stats
-                document.getElementById('totalChildren').textContent = '0';
-                document.getElementById('approvedChr').textContent = '0';
-                document.getElementById('missedCount').textContent = '0';
-                document.getElementById('todaySchedule').textContent = '0';
+                if (typeof setDashboardCardNumbers === 'function') {
+                    setDashboardCardNumbers({
+                        totalChildren: 0,
+                        approvedChr: 0,
+                        missedCount: 0,
+                        todaySchedule: 0,
+                    });
+                } else {
+                    document.getElementById('totalChildren').textContent = '0';
+                    document.getElementById('approvedChr').textContent = '0';
+                    document.getElementById('missedCount').textContent = '0';
+                    document.getElementById('todaySchedule').textContent = '0';
+                }
             }
         }
 
@@ -301,10 +322,18 @@ $user_fname = $_SESSION['fname'] ?? '';
                 }
             });
 
-            // Update the stats display
-            document.getElementById('totalChildren').textContent = totalChildren;
-            document.getElementById('missedCount').textContent = totalMissed;
-            document.getElementById('todaySchedule').textContent = totalToday;
+            // Update the stats display using skeleton helper if available
+            if (typeof setDashboardCardNumbers === 'function') {
+                setDashboardCardNumbers({
+                    totalChildren: totalChildren,
+                    missedCount: totalMissed,
+                    todaySchedule: totalToday,
+                });
+            } else {
+                document.getElementById('totalChildren').textContent = totalChildren;
+                document.getElementById('missedCount').textContent = totalMissed;
+                document.getElementById('todaySchedule').textContent = totalToday;
+            }
 
             // Get approved CHR count (we'll load this separately)
             loadApprovedChrCount();
@@ -315,14 +344,19 @@ $user_fname = $_SESSION['fname'] ?? '';
                 const response = await fetch('../../php/supabase/users/get_dashboard_summary.php');
                 const data = await response.json();
 
-                if (data.status === 'success') {
-                    document.getElementById('approvedChr').textContent = data.data.approved_chr_documents;
+                const value = (data.status === 'success') ? data.data.approved_chr_documents : 0;
+                if (typeof setDashboardCardNumbers === 'function') {
+                    setDashboardCardNumbers({ approvedChr: value });
                 } else {
-                    document.getElementById('approvedChr').textContent = '0';
+                    document.getElementById('approvedChr').textContent = String(value);
                 }
             } catch (error) {
                 console.error('Error loading approved CHR count:', error);
-                document.getElementById('approvedChr').textContent = '0';
+                if (typeof setDashboardCardNumbers === 'function') {
+                    setDashboardCardNumbers({ approvedChr: 0 });
+                } else {
+                    document.getElementById('approvedChr').textContent = '0';
+                }
             }
         }
 
@@ -371,9 +405,8 @@ $user_fname = $_SESSION['fname'] ?? '';
             if (acceptedChildren.length === 0) {
                 html = `
                 <div class="no-data">
-                    <span class="material-symbols-rounded icon">child_care</span>
-                    <p>No approved children found</p>
-                    <small>Children need to be approved by BHW first</small>
+                    <p>No children registered yet</p>
+                    <small>Start by adding a child record.</small>
                 </div>
 			`;
             }
@@ -424,6 +457,21 @@ $user_fname = $_SESSION['fname'] ?? '';
         document.addEventListener('DOMContentLoaded', async function() {
             await refreshCounts();
             setActiveButton();
+            // Show initial skeleton immediately
+            const initialLabel = 'Upcoming Immunizations';
+            if (typeof applyChildrenListSkeleton === 'function') {
+                applyChildrenListSkeleton('#childrenList', 6, initialLabel);
+            }
+            // Apply skeleton shimmer for dashboard card numbers
+            if (typeof applyDashboardCardNumbersSkeleton === 'function') {
+                applyDashboardCardNumbersSkeleton();
+            } else {
+                // Fallback to simple placeholders if skeleton utility isn't available
+                document.getElementById('totalChildren').textContent = '...';
+                document.getElementById('approvedChr').textContent = '...';
+                document.getElementById('missedCount').textContent = '...';
+                document.getElementById('todaySchedule').textContent = '...';
+            }
             selectFilter('upcoming');
             loadDashboardData();
 

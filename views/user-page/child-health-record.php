@@ -25,12 +25,13 @@ $user_fname = $_SESSION['fname'] ?? '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Children</title>
+    <title>Child Health Record</title>
     <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/notification-style.css" />
+    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
     <link rel="stylesheet" href="../../css/user/child-health-record.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -180,11 +181,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                                 <th>Remarks</th>
                             </tr>
                         </thead>
-                        <tbody id="ledgerBody">
-                            <tr>
-                                <td colspan="10" class="loading-cell">Loading...</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="ledgerBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -197,22 +194,32 @@ $user_fname = $_SESSION['fname'] ?? '';
 
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
+        // Using shared group maps from skeleton-loading.js (CHR_SKELETON)
+
         function formatDate(dateString) {
             if (!dateString) return '';
             const d = new Date(dateString);
             if (Number.isNaN(d.getTime())) return String(dateString);
-            // Example wanted: 10/7/25 (no leading zeros, 2-digit year)
+            // Example wanted: Nov 7, 2025 (short month, numeric day, full year)
             return d.toLocaleDateString('en-US', {
-                month: 'numeric',
+                month: 'short',
                 day: 'numeric',
-                year: '2-digit'
+                year: 'numeric'
             });
         }
 
         function normalizeDateStr(d) {
             const pad = n => (n < 10 ? '0' : '') + n;
             return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+        }
+
+        // Return a hyphen when value is empty/undefined/null
+        function getValue(value) {
+            if (value === null || value === undefined) return '-';
+            if (typeof value === 'string' && value.trim() === '') return '-';
+            return value;
         }
 
         function getDoseText(n) {
@@ -234,6 +241,42 @@ $user_fname = $_SESSION['fname'] ?? '';
             }
             // No back/print/download elements now
 
+            // Turn on skeletons for all detail fields right away using group helper
+            if (window.CHR_SKELETON && typeof window.CHR_SKELETON.apply === 'function') {
+                window.CHR_SKELETON.apply();
+            } else if (typeof applyFieldsSkeleton === 'function') {
+                // Fallback: apply combined map manually if helper not available
+                const combined = Object.assign({},
+                  window.CHR_SKELETON?.CHILD_INFO_FIELDS || {},
+                  window.CHR_SKELETON?.CHILD_HISTORY_FIELDS || {},
+                  window.CHR_SKELETON?.FEEDING_FIELDS || {},
+                  window.CHR_SKELETON?.TD_STATUS_FIELDS || {}
+                );
+                applyFieldsSkeleton(combined);
+            }
+
+            // Show ledger skeleton immediately (before any network calls)
+            const ledgerBody = document.getElementById('ledgerBody');
+            function getLedgerColsConfig(){
+                return [
+                    { type: 'text', widthClass: 'skeleton-col-1' }, // Date
+                    { type: 'text', widthClass: 'skeleton-col-2' }, // Purpose
+                    { type: 'text', widthClass: 'skeleton-col-3' }, // HT
+                    { type: 'text', widthClass: 'skeleton-col-4' }, // WT
+                    { type: 'text', widthClass: 'skeleton-col-5' }, // ME/AC
+                    { type: 'pill', widthClass: 'skeleton-col-5' }, // STATUS
+                    { type: 'text', widthClass: 'skeleton-col-3' }, // Condition of Baby
+                    { type: 'text', widthClass: 'skeleton-col-4' }, // Advice Given
+                    { type: 'text', widthClass: 'skeleton-col-2' }, // Next Sched Date
+                    { type: 'text', widthClass: 'skeleton-col-6' }  // Remarks
+                ];
+            }
+            if (typeof applyTableSkeleton === 'function' && ledgerBody) {
+                applyTableSkeleton(ledgerBody, getLedgerColsConfig(), 10);
+            } else if (ledgerBody) {
+                ledgerBody.innerHTML = '<tr><td colspan="10" class="loading-cell">Loading...</td></tr>';
+            }
+
             try {
                 // Fetch child details
                 const fd = new FormData();
@@ -245,50 +288,56 @@ $user_fname = $_SESSION['fname'] ?? '';
                 const childJson = await childRes.json();
                 const child = (childJson && childJson.status === 'success' && childJson.data && childJson.data[0]) ? childJson.data[0] : {};
 
-                // Fill header (blanks when missing)
-                document.getElementById('f_name').textContent = child.name || [(child.child_fname || ''), (child.child_lname || '')].filter(Boolean).join(' ');
-                document.getElementById('f_gender').textContent = child.child_gender || child.gender || '';
-                document.getElementById('f_birth_date').textContent = child.child_birth_date || '';
-                document.getElementById('f_birth_place').textContent = child.place_of_birth || '';
-                document.getElementById('f_birth_weight').textContent = child.birth_weight || '';
-                document.getElementById('f_birth_height').textContent = child.birth_height || '';
-                document.getElementById('f_address').textContent = child.address || '';
-                document.getElementById('f_allergies').textContent = child.allergies || '';
-                document.getElementById('f_lpm').textContent = child.lpm || '';
-                document.getElementById('f_blood_type').textContent = child.blood_type || '';
-                document.getElementById('f_family_no').textContent = child.family_number || '';
-                document.getElementById('f_philhealth').textContent = child.philhealth_no || '';
-                document.getElementById('f_nhts').textContent = child.nhts || '';
-                document.getElementById('f_non_nhts').textContent = '';
-                document.getElementById('f_father').textContent = child.father_name || '';
-                document.getElementById('f_mother').textContent = child.mother_name || '';
-                document.getElementById('f_nb_screen').textContent = '';
-                document.getElementById('f_fp').textContent = child.family_planning || '';
-                document.getElementById('f_nbs_date').textContent = '';
-                document.getElementById('f_delivery_type').textContent = child.delivery_type || '';
-                document.getElementById('f_birth_order').textContent = child.birth_order || '';
-                document.getElementById('f_nbs_place').textContent = '';
-                document.getElementById('f_attended_by').textContent = child.birth_attendant || '';
-
-                // Fill Exclusive Breastfeeding data (✓ if true, otherwise '-')
-                document.getElementById('f_eb_1mo').textContent = child.exclusive_breastfeeding_1mo ? '✓' : '-';
-                document.getElementById('f_eb_2mo').textContent = child.exclusive_breastfeeding_2mo ? '✓' : '-';
-                document.getElementById('f_eb_3mo').textContent = child.exclusive_breastfeeding_3mo ? '✓' : '-';
-                document.getElementById('f_eb_4mo').textContent = child.exclusive_breastfeeding_4mo ? '✓' : '-';
-                document.getElementById('f_eb_5mo').textContent = child.exclusive_breastfeeding_5mo ? '✓' : '-';
-                document.getElementById('f_eb_6mo').textContent = child.exclusive_breastfeeding_6mo ? '✓' : '-';
-
-                // Fill Complementary Feeding data (fallback '-')
-                document.getElementById('f_cf_6mo').textContent = child.complementary_feeding_6mo || '-';
-                document.getElementById('f_cf_7mo').textContent = child.complementary_feeding_7mo || '-';
-                document.getElementById('f_cf_8mo').textContent = child.complementary_feeding_8mo || '-';
-
-                // Fill Mother's TD Status data (formatted date or '-')
-                document.getElementById('f_td_dose1').textContent = formatDate(child.mother_td_dose1_date) || '-';
-                document.getElementById('f_td_dose2').textContent = formatDate(child.mother_td_dose2_date) || '-';
-                document.getElementById('f_td_dose3').textContent = formatDate(child.mother_td_dose3_date) || '-';
-                document.getElementById('f_td_dose4').textContent = formatDate(child.mother_td_dose4_date) || '-';
-                document.getElementById('f_td_dose5').textContent = formatDate(child.mother_td_dose5_date) || '-';
+                // Fill header (blanks when missing) and stop skeletons
+                // Prepare values for batch population
+                const values = {
+                    f_name: child.name || [(child.child_fname || ''), (child.child_lname || '')].filter(Boolean).join(' '),
+                    f_gender: child.child_gender || child.gender,
+                    f_birth_date: child.child_birth_date,
+                    f_birth_place: child.place_of_birth,
+                    f_birth_weight: child.birth_weight,
+                    f_birth_height: child.birth_height,
+                    f_address: child.address,
+                    f_allergies: child.allergies,
+                    f_lpm: child.lpm,
+                    f_blood_type: child.blood_type,
+                    f_family_no: child.family_number,
+                    f_philhealth: child.philhealth_no,
+                    f_nhts: child.nhts,
+                    f_non_nhts: '',
+                    f_father: child.father_name,
+                    f_mother: child.mother_name,
+                    f_nb_screen: '',
+                    f_fp: child.family_planning,
+                    f_nbs_date: '',
+                    f_delivery_type: child.delivery_type,
+                    f_birth_order: child.birth_order,
+                    f_nbs_place: '',
+                    f_attended_by: child.birth_attendant,
+                    f_eb_1mo: child.exclusive_breastfeeding_1mo ? '✓' : '-',
+                    f_eb_2mo: child.exclusive_breastfeeding_2mo ? '✓' : '-',
+                    f_eb_3mo: child.exclusive_breastfeeding_3mo ? '✓' : '-',
+                    f_eb_4mo: child.exclusive_breastfeeding_4mo ? '✓' : '-',
+                    f_eb_5mo: child.exclusive_breastfeeding_5mo ? '✓' : '-',
+                    f_eb_6mo: child.exclusive_breastfeeding_6mo ? '✓' : '-',
+                    f_cf_6mo: child.complementary_feeding_6mo || '-',
+                    f_cf_7mo: child.complementary_feeding_7mo || '-',
+                    f_cf_8mo: child.complementary_feeding_8mo || '-',
+                    f_td_dose1: formatDate(child.mother_td_dose1_date) || '-',
+                    f_td_dose2: formatDate(child.mother_td_dose2_date) || '-',
+                    f_td_dose3: formatDate(child.mother_td_dose3_date) || '-',
+                    f_td_dose4: formatDate(child.mother_td_dose4_date) || '-',
+                    f_td_dose5: formatDate(child.mother_td_dose5_date) || '-'
+                };
+                if (typeof setFieldsValues === 'function') {
+                    setFieldsValues(values);
+                } else {
+                    // Fallback if utility not loaded for some reason
+                    Object.keys(values).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.textContent = values[id];
+                    });
+                }
 
                 // Wire two request buttons (transfer, school)
                 const reqTransferBtn = document.getElementById('reqTransferBtn');
@@ -367,8 +416,24 @@ $user_fname = $_SESSION['fname'] ?? '';
 
                 // Fetch immunization schedule for child to build compact ledger
                 const schedRes = await fetch(`/ebakunado/php/supabase/users/get_immunization_schedule.php?baby_id=${encodeURIComponent(babyId)}`);
+                if (!schedRes.ok) {
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', { colspan: 10, kind: 'error' });
+                    } else {
+                        ledgerBody.innerHTML = '<tr class="message-row error"><td colspan="10">Failed to load data. Please try again.</td></tr>';
+                    }
+                    return;
+                }
                 const schedJson = await schedRes.json();
-                const allRows = (schedJson && schedJson.status === 'success' && Array.isArray(schedJson.data)) ? schedJson.data : [];
+                if (!schedJson || schedJson.status !== 'success') {
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', { colspan: 10, kind: 'error' });
+                    } else {
+                        ledgerBody.innerHTML = '<tr class="message-row error"><td colspan="10">Failed to load data. Please try again.</td></tr>';
+                    }
+                    return;
+                }
+                const allRows = Array.isArray(schedJson.data) ? schedJson.data : [];
 
                 // Filter only taken records
                 const takenRows = allRows.filter(r => r.status === 'taken' || r.status === 'completed');
@@ -430,24 +495,39 @@ $user_fname = $_SESSION['fname'] ?? '';
                     const next = nextScheduleAfter(date);
                     ledgerHtml += `
                 <tr>
-                    <td>${formatDate(date)}</td>
-                    <td>${name}</td>
-                    <td>${ht || ''}</td>
-                    <td>${wt || ''}</td>
-                    <td></td>
+                    <td>${getValue(formatDate(date))}</td>
+                    <td>${getValue(name)}</td>
+                    <td>${getValue(ht)}</td>
+                    <td>${getValue(wt)}</td>
+                    <td>-</td>
                     <td>Taken</td>
-                    <td></td>
-                    <td></td>
-                    <td>${formatDate(next)}</td>
-                    <td></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>${getValue(formatDate(next))}</td>
+                    <td>-</td>
                 </tr>`;
                 });
 
-                document.getElementById('ledgerBody').innerHTML = ledgerHtml || '<tr><td colspan="10" class="text-center p-10">No taken vaccinations yet</td></tr>';
+                if (!ledgerHtml) {
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(ledgerBody, 'No records found', { colspan: 10 });
+                    } else {
+                        ledgerBody.innerHTML = '<tr class="message-row"><td colspan="10">No records found</td></tr>';
+                    }
+                } else {
+                    ledgerBody.innerHTML = ledgerHtml;
+                }
 
             } catch (err) {
                 console.error('CHR load error', err);
-                // No ledger to update on error
+                const ledgerBody = document.getElementById('ledgerBody');
+                if (ledgerBody) {
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', { colspan: 10, kind: 'error' });
+                    } else {
+                        ledgerBody.innerHTML = '<tr class="message-row error"><td colspan="10">Failed to load data. Please try again.</td></tr>';
+                    }
+                }
             }
         });
     </script>

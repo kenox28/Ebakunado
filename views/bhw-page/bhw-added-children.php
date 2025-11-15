@@ -23,6 +23,8 @@ if ($user_types != 'midwifes') {
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/notification-style.css" />
+    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
     <link rel="stylesheet" href="../../css/bhw/pending-approval-style.css" />
 </head>
 
@@ -76,13 +78,27 @@ if ($user_types != 'midwifes') {
                             </tr>
                         </thead>
                         <tbody id="childhealthrecordBody">
-                            <tr>
-                                <td colspan="9" class="text-center">
-                                    <div class="loading">
-                                        <i class="fas fa-spinner fa-spin"></i>
-                                        <p>Loading records...</p>
-                                    </div>
-                                </td>
+                            <tr class="skeleton-row">
+                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                                <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-6"></div></td>
+                            </tr>
+                            <tr class="skeleton-row">
+                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                                <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-6"></div></td>
                             </tr>
                         </tbody>
                     </table>
@@ -238,10 +254,7 @@ if ($user_types != 'midwifes') {
                         Child's Vaccination Records
                     </h2>
                     <div class="vaccination-record-list" id="vaccinationRecordsContainer">
-                        <div class="loading">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <p>Loading vaccination records...</p>
-                        </div>
+                        <!-- Content populated dynamically: skeleton table, rows, or message -->
                     </div>
                 </div>
             </div>
@@ -251,7 +264,22 @@ if ($user_types != 'midwifes') {
 
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
+        // Column config for Added Children (9 visible columns)
+        function getAddedChildrenColsConfig() {
+            return [
+                { type: 'text', widthClass: 'skeleton-col-1' }, // Child Name
+                { type: 'text', widthClass: 'skeleton-col-2' }, // Gender
+                { type: 'text', widthClass: 'skeleton-col-3' }, // Birth Date
+                { type: 'text', widthClass: 'skeleton-col-4' }, // Place of Birth
+                { type: 'text', widthClass: 'skeleton-col-5' }, // Mother's Name
+                { type: 'text', widthClass: 'skeleton-col-3' }, // Father's Name
+                { type: 'text', widthClass: 'skeleton-col-2' }, // Address
+                { type: 'pill', widthClass: 'skeleton-col-5' }, // Status
+                { type: 'text', widthClass: 'skeleton-col-6' }  // Family Code
+            ];
+        }
         // Pager spinner CSS
         (function ensureSpinnerCss(){
             if (document.getElementById('pagerSpinnerCss')) return;
@@ -263,11 +291,41 @@ if ($user_types != 'midwifes') {
 
         const paState = { page: 1, limit: 10, loading: false };
 
+        // Columns for Child's Vaccination Records table (6 columns)
+        function getVaccinationColsConfig() {
+            return [
+                { type: 'text', widthClass: 'skeleton-col-2' }, // Vaccine
+                { type: 'text', widthClass: 'skeleton-col-6' }, // Dose
+                { type: 'text', widthClass: 'skeleton-col-3' }, // Schedule Date
+                { type: 'text', widthClass: 'skeleton-col-3' }, // Catch-up Date
+                { type: 'text', widthClass: 'skeleton-col-3' }, // Date Given
+                { type: 'pill', widthClass: 'skeleton-col-5' }  // Status
+            ];
+        }
+
+        function buildVaccinationSkeletonTableHTML() {
+            return `
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Vaccine</th>
+                            <th>Dose</th>
+                            <th>Schedule Date</th>
+                            <th>Catch-up Date</th>
+                            <th>Date Given</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vaccinationRecordsBody"></tbody>
+                </table>`;
+        }
+
         async function loadAddedChildren(page = 1, opts = { keep: true }) {
             const body = document.querySelector('#childhealthrecordBody');
             const prevBtn = document.getElementById('paPrevBtn');
             const nextBtn = document.getElementById('paNextBtn');
             const pageButtons = document.getElementById('paPageButtons');
+            const pageInfo = document.getElementById('paPageInfo');
 
             const search = (document.getElementById('paSearch').value || '').trim();
             const status = (document.getElementById('paStatus').value || 'pending');
@@ -279,9 +337,16 @@ if ($user_types != 'midwifes') {
             if (pageButtons) pageButtons.innerHTML = '<span class="pager-spinner" aria-label="Loading" role="status"></span>';
             if (prevBtn) prevBtn.disabled = true;
             if (nextBtn) nextBtn.disabled = true;
+            // Keep a neutral page-info visible during loading (parity with other pages)
+            if (pageInfo && (!pageInfo.textContent || pageInfo.textContent === '\u00A0')) {
+                pageInfo.textContent = 'Showing 0-0 of 0 entries';
+            }
 
             if (!opts || !opts.keep) {
-                body.innerHTML = '<tr><td colspan="9" class="text-center">Loading...</td></tr>';
+                if (typeof applyTableSkeleton === 'function') {
+                    applyTableSkeleton(body, getAddedChildrenColsConfig(), limit);
+                }
+                // Removed fallback "Loading..." text; rely on static skeleton rows if utility unavailable.
             }
 
             try {
@@ -290,7 +355,11 @@ if ($user_types != 'midwifes') {
                 const data = await res.json();
 
                 if (data.status !== 'success') {
-                    body.innerHTML = '<tr><td colspan="9">Failed to load records</td></tr>';
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 9, kind: 'error' });
+                    } else {
+                        body.innerHTML = '<tr class="message-row error"><td colspan="9">Failed to load data. Please try again.</td></tr>';
+                    }
                     updatePaPager({ page, has_more: false });
                     updatePaInfo(page, limit, 0, 0);
                     return;
@@ -300,7 +369,11 @@ if ($user_types != 'midwifes') {
                 const count = rowsData.length;
 
                 if (count === 0) {
-                    body.innerHTML = '<tr><td colspan="9">No records found</td></tr>';
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(body, 'No records found', { colspan: 9 });
+                    } else {
+                        body.innerHTML = '<tr class="message-row"><td colspan="9">No records found</td></tr>';
+                    }
                     updatePaPager({ page: data.page || page, has_more: false });
                     updatePaInfo(data.page || page, data.limit || limit, 0);
                     return;
@@ -310,11 +383,13 @@ if ($user_types != 'midwifes') {
                 rowsData.forEach(item => {
                     const fullName = `${item.child_fname || ''} ${item.child_lname || ''}`.trim();
                     const familyCode = item.user_id || '-';
-                    rows += `<tr>
-                            <td hidden>${item.id || ''}</td>
-                            <td hidden>${item.user_id || ''}</td>
-                            <td hidden>${item.baby_id || ''}</td>
-                            <td style="cursor: pointer; color: #007bff; text-decoration: underline;" onclick="viewChildInformation('${item.baby_id}')" title="Click to view details">${fullName || '-'}</td>
+                    rows += `<tr data-id="${item.id || ''}" data-user-id="${item.user_id || ''}" data-baby-id="${item.baby_id || ''}">
+                            <td>
+                                <span class="child-name">${fullName || '-'}</span>
+                                <button type="button" class="icon-btn view-child-btn" aria-label="View details" title="View details" onclick="viewChildInformation('${item.baby_id}')">
+                                    <span class="material-symbols-rounded">visibility</span>
+                                </button>
+                            </td>
                             <td>${item.child_gender || ''}</td>
                             <td>${item.child_birth_date || ''}</td>
                             <td>${item.place_of_birth || ''}</td>
@@ -326,11 +401,26 @@ if ($user_types != 'midwifes') {
                         </tr>`;
                 });
                 body.innerHTML = rows;
+                // Minimal inline styles for new view icon button if global styles absent
+                (function ensureViewBtnStyles(){
+                    if (document.getElementById('viewChildBtnStyles')) return;
+                    const style = document.createElement('style');
+                    style.id = 'viewChildBtnStyles';
+                    style.textContent = `.icon-btn.view-child-btn{margin-left:6px;display:inline-flex;align-items:center;justify-content:center;padding:2px;background:transparent;border:none;color:var(--primary-color,#2a7ae4);cursor:pointer;vertical-align:middle}`+
+                        `.icon-btn.view-child-btn .material-symbols-rounded{font-size:20px;line-height:1}`+
+                        `.icon-btn.view-child-btn:hover{opacity:.85}`+
+                        `.child-name{font-weight:500}`;
+                    document.head.appendChild(style);
+                })();
 
                 updatePaPager({ page: data.page || page, has_more: !!data.has_more || count === (data.limit || limit) });
                 updatePaInfo(data.page || page, data.limit || limit, count, data.total || 0);
             } catch (e) {
-                body.innerHTML = '<tr><td colspan="9">Error loading records</td></tr>';
+                if (typeof renderTableMessage === 'function') {
+                    renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 9, kind: 'error' });
+                } else {
+                    body.innerHTML = '<tr class="message-row error"><td colspan="9">Failed to load data. Please try again.</td></tr>';
+                }
                 updatePaPager({ page, has_more: false });
                 updatePaInfo(page, limit, 0, 0);
             } finally {
@@ -356,11 +446,15 @@ if ($user_types != 'midwifes') {
         function updatePaInfo(page, limit, count, total){
             const info = document.getElementById('paPageInfo');
             if (!info) return;
+            const totalNum = Number.isFinite(Number(total)) ? Number(total) : 0;
+            if (totalNum === 0 || count <= 0) {
+                info.textContent = 'Showing 0-0 of 0 entries';
+                return;
+            }
             const start = (page - 1) * limit + 1;
             const end = start + Math.max(0, count) - 1;
-            const endClamped = Math.max(0, end);
-            const totalNum = typeof total === 'number' ? total : (count || 0);
-            info.textContent = count > 0 ? `Showing ${start}-${endClamped} of ${totalNum} entries` : '';
+            const endClamped = Math.min(end, totalNum || end);
+            info.textContent = `Showing ${start}-${endClamped} of ${totalNum} entries`;
         }
 
         let originalChildData = {};
@@ -380,43 +474,64 @@ if ($user_types != 'midwifes') {
 
         async function loadVaccinationRecords(baby_id) {
             const container = document.querySelector('#vaccinationRecordsContainer');
-            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading vaccination records...</p></div>';
+            if (!container) return;
+
+            // Initialize with a skeleton table
+            container.innerHTML = buildVaccinationSkeletonTableHTML();
+            const tbody = container.querySelector('#vaccinationRecordsBody');
+            if (typeof applyTableSkeleton === 'function') {
+                // Increased skeleton placeholder rows from 8 to 14 for better perceived loading density
+                applyTableSkeleton(tbody, getVaccinationColsConfig(), 14);
+            }
+            // Removed fallback "Loading..." text for vaccination records; skeleton preferred.
 
             try {
                 const response = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
                 const data = await response.json();
 
-                if (data.status !== 'success' || !data.data || data.data.length === 0) {
-                    container.innerHTML = '<p class="no-vaccination-records">No vaccination records found</p>';
+                if (!data || data.status !== 'success') {
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(tbody, 'Failed to load data. Please try again.', { colspan: 6, kind: 'error' });
+                    } else if (tbody) {
+                        tbody.innerHTML = '<tr class="message-row error"><td colspan="6">Failed to load data. Please try again.</td></tr>';
+                    }
                     return;
                 }
 
-                let html = '<table class="table table-hover" style="width: 100%; margin-top: 10px;">';
-                html += '<thead><tr>';
-                html += '<th>Vaccine</th><th>Dose</th><th>Schedule Date</th><th>Catch-up Date</th><th>Date Given</th><th>Status</th>';
-                html += '</tr></thead><tbody>';
+                const records = Array.isArray(data.data) ? data.data : [];
+                if (records.length === 0) {
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(tbody, 'No records found', { colspan: 6 });
+                    } else if (tbody) {
+                        tbody.innerHTML = '<tr class="message-row"><td colspan="6">No records found</td></tr>';
+                    }
+                    return;
+                }
 
-                data.data.forEach(record => {
-                    const statusClass = record.status === 'completed' ? 'success' :
-                        record.status === 'missed' ? 'danger' : 'warning';
-                    const statusText = record.status.charAt(0).toUpperCase() + record.status.slice(1);
-
-                    html += `<tr data-record-id="${record.id}">`;
-                    html += `<td>${record.vaccine_name || ''}</td>`;
-                    html += `<td>${record.dose_number || ''}</td>`;
-                    html += `<td>${record.schedule_date || ''}</td>`;
-                    html += `<td>${record.catch_up_date || ''}</td>`;
-                    html += `<td>${record.date_given || ''}</td>`;
-                    html += `<td><span class="badge badge-${statusClass}">${statusText}</span></td>`;
-                    html += `</tr>`;
+                let rows = '';
+                records.forEach(record => {
+                    const status = String(record.status || '').toLowerCase();
+                    const statusClass = status === 'completed' ? 'success' : (status === 'missed' ? 'danger' : 'warning');
+                    const statusText = status ? status.charAt(0).toUpperCase() + status.slice(1) : '-';
+                    rows += `
+                        <tr data-record-id="${record.id || ''}">
+                            <td>${record.vaccine_name || ''}</td>
+                            <td>${record.dose_number || ''}</td>
+                            <td>${record.schedule_date || ''}</td>
+                            <td>${record.catch_up_date || ''}</td>
+                            <td>${record.date_given || ''}</td>
+                            <td><span class="badge badge-${statusClass}">${statusText}</span></td>
+                        </tr>`;
                 });
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
-
+                if (tbody) tbody.innerHTML = rows;
             } catch (error) {
                 console.error('Error loading vaccination records:', error);
-                container.innerHTML = '<p class="no-vaccination-error">Error loading vaccination records</p>';
+                const tb = container.querySelector('#vaccinationRecordsBody') || tbody;
+                if (typeof renderTableMessage === 'function') {
+                    renderTableMessage(tb, 'Failed to load data. Please try again.', { colspan: 6, kind: 'error' });
+                } else if (tb) {
+                    tb.innerHTML = '<tr class="message-row error"><td colspan="6">Failed to load data. Please try again.</td></tr>';
+                }
             }
         }
 
@@ -611,7 +726,7 @@ if ($user_types != 'midwifes') {
                 }
             });
 
-            loadAddedChildren(1, { keep: true });
+            loadAddedChildren(1, { keep: false });
         });
     </script>
 </body>
