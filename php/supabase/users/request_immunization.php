@@ -164,16 +164,13 @@ try {
 
     $vaccines = [
         ['BCG', 'at birth'],
-        ['HEPAB1 (w/in 24 hrs)', 'at birth'],
-        ['HEPAB1 (More than 24hrs)', 'at birth'],
+        ['Hepatitis B', 'at birth'],
         ['Pentavalent (DPT-HepB-Hib) - 1st', '6 weeks'],
         ['OPV - 1st', '6 weeks'],
         ['PCV - 1st', '6 weeks'],
-        ['Rota Virus Vaccine - 1st', '6 weeks'],
         ['Pentavalent (DPT-HepB-Hib) - 2nd', '10 weeks'],
         ['OPV - 2nd', '10 weeks'],
         ['PCV - 2nd', '10 weeks'],
-        ['Rota Virus Vaccine - 2nd', '10 weeks'],
         ['Pentavalent (DPT-HepB-Hib) - 3rd', '14 weeks'],
         ['OPV - 3rd', '14 weeks'],
         ['PCV - 3rd', '14 weeks'],
@@ -199,7 +196,19 @@ try {
 
     $immunization_records_created = 0;
     $transferred_count = 0;
-    $doseNum = 1;
+
+    // Derive dose number per vaccine series (not global incremental)
+    function derive_dose_number($vname) {
+        $n = strtoupper((string)$vname);
+        if (strpos($n, ' - 1ST') !== false) return 1;
+        if (strpos($n, ' - 2ND') !== false) return 2;
+        if (strpos($n, ' - 3RD') !== false) return 3;
+        if (strpos($n, 'MCV1') !== false || strpos($n, '(AMV)') !== false) return 1;
+        if (strpos($n, 'MCV2') !== false || strpos($n, '(MMR)') !== false) return 2;
+        if (strpos($n, 'BCG') !== false) return 1;
+        if (strpos($n, 'HEP') !== false) return 1;
+        return 1;
+    }
 
     // Parse vaccines_received if it's a string
     if (is_string($vaccines_received)) {
@@ -218,7 +227,7 @@ try {
             $immunization_insert = supabaseInsert('immunization_records', [
                 'baby_id' => $baby_id,
                 'vaccine_name' => $vname,
-                'dose_number' => $doseNum,
+                'dose_number' => derive_dose_number($vname),
                 'status' => $is_transferred ? 'taken' : 'scheduled',
                 'schedule_date' => $due,
                 'catch_up_date' => null,
@@ -232,7 +241,6 @@ try {
                     $transferred_count++;
                 }
             }
-            $doseNum++;
         } catch (Exception $e) {
             // Log error but continue with other vaccines
             error_log('Failed to insert vaccine record: ' . $e->getMessage());

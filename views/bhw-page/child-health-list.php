@@ -485,7 +485,7 @@ if ($user_id) {
                 if (data.status !== 'success' || !data.data || data.data.length === 0) {
                     html += '<div class="small">No schedule</div>';
                 } else {
-                    html += '<table class="small"><tr><th>Vaccine</th><th>Dose #</th><th>Due</th><th>Date Given</th><th>Status</th></tr>';
+                    html += '<table class="small"><tr><th>Vaccine</th><th>Dose #</th><th>Due</th><th>Date Given</th><th>Status</th><th>Catch-up Date</th></tr>';
                     data.data.forEach(r => {
                         html += `<tr>
                             <td>${r.vaccine_name}</td>
@@ -493,6 +493,7 @@ if ($user_id) {
                             <td>${r.schedule_date || ''}</td>
                             <td>${r.date_given || ''}</td>
                             <td>${r.status}</td>
+                            <td>${((r.status || '').toLowerCase() === 'missed') ? (r.catch_up_date || '') : ''}</td>
                         </tr>`;
                     });
                     html += '</table>';

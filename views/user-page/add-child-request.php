@@ -261,16 +261,13 @@ $user_fname = $_SESSION['fname'] ?? '';
 
                             <div class="checkbox-grid">
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="BCG"> BCG (Tuberculosis)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="HEPAB1 (w/in 24 hrs)"> HEPAB1 (w/in 24 hrs)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="HEPAB1 (More than 24hrs)"> HEPAB1 (More than 24hrs)</label>
+                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Hepatitis B"> Hepatitis B (Birth dose)</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 1st"> Pentavalent (DPT-HepB-Hib) - 1st</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 1st"> OPV - 1st (Oral Polio)</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 1st"> PCV - 1st (Pneumococcal)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Rota Virus Vaccine - 1st"> Rota Virus Vaccine - 1st</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 2nd"> Pentavalent (DPT-HepB-Hib) - 2nd</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 2nd"> OPV - 2nd (Oral Polio)</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 2nd"> PCV - 2nd (Pneumococcal)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Rota Virus Vaccine - 2nd"> Rota Virus Vaccine - 2nd</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 3rd"> Pentavalent (DPT-HepB-Hib) - 3rd</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 3rd"> OPV - 3rd (Oral Polio)</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 3rd"> PCV - 3rd (Pneumococcal)</label>

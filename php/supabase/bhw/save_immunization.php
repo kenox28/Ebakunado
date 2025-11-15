@@ -32,6 +32,12 @@ try {
     $administered_by = $_POST['administered_by'] ?? '';
     $mark_completed = isset($_POST['mark_completed']) ? ($_POST['mark_completed'] === '1') : false;
     
+    // Growth assessment data
+    $growth_wfa = $_POST['growth_wfa'] ?? '';
+    $growth_lfa = $_POST['growth_lfa'] ?? '';
+    $growth_wfl = $_POST['growth_wfl'] ?? '';
+    $growth_age_months = $_POST['growth_age_months'] ?? '';
+    
     // Feeding status updates
     $update_feeding_status = $_POST['update_feeding_status'] ?? '';
     $update_complementary_feeding = $_POST['update_complementary_feeding'] ?? '';
@@ -66,6 +72,12 @@ try {
     if ($height_cm !== '') { $update['height'] = (float)$height_cm; }
     if ($weight_kg !== '') { $update['weight'] = (float)$weight_kg; }
     if ($administered_by !== '') { $update['administered_by'] = $administered_by; }
+    
+    // Growth assessment classifications
+    if ($growth_wfa !== '') { $update['growth_wfa'] = $growth_wfa; }
+    if ($growth_lfa !== '') { $update['growth_lfa'] = $growth_lfa; }
+    if ($growth_wfl !== '') { $update['growth_wfl'] = $growth_wfl; }
+    if ($growth_age_months !== '') { $update['growth_age_months'] = (int)$growth_age_months; }
 
     if ($date_taken !== '') {
         $update['date_given'] = $date_taken; // Expecting Y-m-d from client

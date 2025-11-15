@@ -1,0 +1,18 @@
+{
+	"indicator": "weight-for-length",
+	"gender": "boys",
+	"unit": "kg",
+	"length_unit": "cm",
+	"note": "Please provide the complete reference table data from NNC EOPT tool. This structure needs to be filled with actual values. Structure: length (cm) -> weight thresholds (kg).",
+	"standards": {
+		"45": {
+			"sam": { "max": 0 },
+			"mam": { "min": 0, "max": 0 },
+			"normal": { "min": 0, "max": 0 },
+			"overweight": { "min": 0, "max": 0 },
+			"obese": { "min": 0 }
+		}
+	}
+}
+
+

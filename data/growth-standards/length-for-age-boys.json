@@ -1,0 +1,16 @@
+{
+	"indicator": "length-for-age",
+	"gender": "boys",
+	"age_range": "0-11 months",
+	"unit": "cm",
+	"note": "Please provide the complete reference table data from NNC EOPT tool. This structure needs to be filled with actual values.",
+	"standards": {
+		"0": {
+			"severely_stunted": { "max": 0 },
+			"normal": { "min": 0, "max": 0 },
+			"tall": { "min": 0 }
+		}
+	}
+}
+
+

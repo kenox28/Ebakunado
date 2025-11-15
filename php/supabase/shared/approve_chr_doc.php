@@ -199,8 +199,7 @@ $getDate = function($displayName) use ($immRows){
     // Map display names to database names
     $nameMapping = [
         'BCG' => 'BCG',
-        'Hepa B within 24 hrs' => 'HEPAB1 (w/in 24 hrs)',
-        'Hepa B more than 24 hrs' => 'HEPAB1 (More than 24hrs)',
+        'Hepatitis B' => 'Hepatitis B',
         'Pentavalent 1st dose' => 'Pentavalent (DPT-HepB-Hib) - 1st',
         'Pentavalent 2nd dose' => 'Pentavalent (DPT-HepB-Hib) - 2nd',
         'Pentavalent 3rd dose' => 'Pentavalent (DPT-HepB-Hib) - 3rd',
@@ -212,9 +211,6 @@ $getDate = function($displayName) use ($immRows){
         'PCV 3rd dose' => 'PCV - 3rd',
         'MMR 1st dose' => 'MCV1 (AMV)',
         'MMR 2nd dose' => 'MCV2 (MMR)',
-        'Rota Virus Vaccine - 1st' => 'Rota Virus Vaccine - 1st',
-        'Rota Virus Vaccine - 2nd' => 'Rota Virus Vaccine - 2nd',
-        'IPV' => 'IPV',
         'FIC' => 'FIC',
         'CIC' => 'CIC'
     ];
@@ -239,7 +235,7 @@ $immRight = $immTable->addCell(6000);
 // Left column vaccines
 $leftVaccines = [
     'BCG',
-    'Hepa B within 24 hrs',
+    'Hepatitis B',
     'Pentavalent 1st dose',
     'bOPV 1st dose',
     'PCV 1st dose',
@@ -256,17 +252,13 @@ foreach ($leftVaccines as $vaccine) {
 
 // Right column vaccines
 $rightVaccines = [
-    'Hepa B more than 24 hrs',
     'Pentavalent 2nd dose',
     'Pentavalent 3rd dose',
     'bOPV 2nd dose',
     'bOPV 3rd dose',
-    'IPV',
     'PCV 2nd dose',
     'PCV 3rd dose',
     'MMR 2nd dose',
-    'Rota Virus Vaccine - 1st',
-    'Rota Virus Vaccine - 2nd',
     'FIC',
     'CIC'
 ];
@@ -295,10 +287,11 @@ foreach (['Date','Purpose','HT','WT','MUAC','STATUS','Condition of Baby','Advice
 
 // Build canonical order and best taken mapping (using database names)
 $canonical = [
-    'BCG','HEPAB1 (w/in 24 hrs)','HEPAB1 (More than 24hrs)',
-    'Pentavalent (DPT-HepB-Hib) - 1st','OPV - 1st','PCV - 1st','Rota Virus Vaccine - 1st',
-    'Pentavalent (DPT-HepB-Hib) - 2nd','OPV - 2nd','PCV - 2nd','Rota Virus Vaccine - 2nd',
-    'Pentavalent (DPT-HepB-Hib) - 3rd','OPV - 3rd','PCV - 3rd','MCV1 (AMV)','MCV2 (MMR)'
+    'BCG','Hepatitis B',
+    'Pentavalent (DPT-HepB-Hib) - 1st','OPV - 1st','PCV - 1st',
+    'Pentavalent (DPT-HepB-Hib) - 2nd','OPV - 2nd','PCV - 2nd',
+    'Pentavalent (DPT-HepB-Hib) - 3rd','OPV - 3rd','PCV - 3rd',
+    'MCV1 (AMV)','MCV2 (MMR)'
 ];
 
 $bestByName = [];

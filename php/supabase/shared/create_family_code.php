@@ -170,16 +170,13 @@ if ($insert !== false) {
 function createImmunizationRecords($baby_id, $birth_date, $vaccines_received) {
     $vaccines = [
         ['BCG', 'at birth'],
-        ['HEPAB1 (w/in 24 hrs)', 'at birth'],
-        ['HEPAB1 (More than 24hrs)', 'at birth'],
+        ['Hepatitis B', 'at birth'],
         ['Pentavalent (DPT-HepB-Hib) - 1st', '6 weeks'],
         ['OPV - 1st', '6 weeks'],
         ['PCV - 1st', '6 weeks'],
-        ['Rota Virus Vaccine - 1st', '6 weeks'],
         ['Pentavalent (DPT-HepB-Hib) - 2nd', '10 weeks'],
         ['OPV - 2nd', '10 weeks'],
         ['PCV - 2nd', '10 weeks'],
-        ['Rota Virus Vaccine - 2nd', '10 weeks'],
         ['Pentavalent (DPT-HepB-Hib) - 3rd', '14 weeks'],
         ['OPV - 3rd', '14 weeks'],
         ['PCV - 3rd', '14 weeks'],
@@ -187,7 +184,19 @@ function createImmunizationRecords($baby_id, $birth_date, $vaccines_received) {
         ['MCV2 (MMR)', '12 months']
     ];
     
-    $doseNum = 1;
+    // Per-series dose derivation
+    $deriveDose = function($vname) {
+        $n = strtoupper((string)$vname);
+        if (strpos($n, ' - 1ST') !== false) return 1;
+        if (strpos($n, ' - 2ND') !== false) return 2;
+        if (strpos($n, ' - 3RD') !== false) return 3;
+        if (strpos($n, 'MCV1') !== false || strpos($n, '(AMV)') !== false) return 1;
+        if (strpos($n, 'MCV2') !== false || strpos($n, '(MMR)') !== false) return 2;
+        if (strpos($n, 'BCG') !== false) return 1;
+        if (strpos($n, 'HEP') !== false) return 1;
+        return 1;
+    };
+    
     foreach ($vaccines as $vaccine) {
         $vname = $vaccine[0];
         $sched = $vaccine[1];
@@ -199,15 +208,13 @@ function createImmunizationRecords($baby_id, $birth_date, $vaccines_received) {
         supabaseInsert('immunization_records', [
             'baby_id' => $baby_id,
             'vaccine_name' => $vname,
-            'dose_number' => $doseNum,
+            'dose_number' => $deriveDose($vname),
             'status' => $is_transferred ? 'taken' : 'scheduled',
             'schedule_date' => $due,
             'catch_up_date' => null,
             'date_given' => $is_transferred ? $due : null,
             'created_at' => date('Y-m-d H:i:s')
         ]);
-        
-        $doseNum++;
     }
 }
 

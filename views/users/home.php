@@ -475,15 +475,21 @@
 		let totalToday = 0;
 		
 		// Count missed immunizations and today's schedules
+        const today = new Date().toISOString().split('T')[0];
+
 		children.forEach(child => {
 			totalMissed += child.missed_count || 0;
+
+            const hasScheduleTodayField = child.has_schedule_today;
+            const hasScheduleToday = hasScheduleTodayField === true ||
+                                     hasScheduleTodayField === 1 ||
+                                     hasScheduleTodayField === '1';
 			
-			// Check if child has schedule for today
-			if (child.schedule_date) {
-				const today = new Date().toISOString().split('T')[0];
-				if (child.schedule_date === today) {
-					totalToday++;
-				}
+			// Check if child has schedule (regular or catch-up) for today
+			if (hasScheduleToday) {
+				totalToday++;
+			} else if (child.schedule_date && child.schedule_date === today) {
+				totalToday++;
 			}
 		});
 
@@ -524,7 +530,9 @@
 			const firstLetter = fullName.charAt(0).toUpperCase();
 			const babyId = child.baby_id || '';
 			const upcomingSchedule = child.schedule_date ? formatDate(child.schedule_date) : 'No upcoming schedule';
+            const isCatchUp = child.next_is_catch_up === true || child.next_is_catch_up === 1 || child.next_is_catch_up === '1';
 			const vaccineName = child.vaccine || 'No vaccine scheduled';
+            const nextLabel = child.schedule_date ? (isCatchUp ? 'Catch-up:' : 'Next:') : 'Next:';
 			const qrButton = child.qr_code ? `<button onclick="showQrModal('${child.qr_code.replace(/'/g, "\\'")}')" style="background: none; border: none; cursor: pointer; padding: 5px;"><img src="${child.qr_code}" alt="QR Code" style="width: 60px; height: 60px; border-radius: 8px;"></button>` : '';
 			
 				html += `
@@ -533,7 +541,7 @@
 					${qrButton}
 					<div class="child-details">
 						<h3 class="child-name">${fullName}</h3>
-						<p class="child-schedule"><strong>Next:</strong> ${upcomingSchedule}</p>
+						<p class="child-schedule"><strong>${nextLabel}</strong> ${upcomingSchedule}</p>
 						<p class="child-vaccine">${vaccineName}</p>
 					</div>
 					<div class="child-actions">

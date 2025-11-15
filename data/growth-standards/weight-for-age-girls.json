@@ -1,0 +1,313 @@
+{
+	"indicator": "weight-for-age",
+	"gender": "girls",
+	"age_range": "0-60 months",
+	"unit": "kg",
+	"standards": {
+		"0": {
+			"severely_underweight": { "max": 2.0 },
+			"underweight": { "min": 2.1, "max": 2.4 },
+			"normal": { "min": 2.5, "max": 4.2 }
+		},
+		"1": {
+			"severely_underweight": { "max": 2.7 },
+			"underweight": { "min": 2.8, "max": 3.2 },
+			"normal": { "min": 3.3, "max": 5.5 }
+		},
+		"2": {
+			"severely_underweight": { "max": 3.4 },
+			"underweight": { "min": 3.5, "max": 3.9 },
+			"normal": { "min": 4.0, "max": 6.6 }
+		},
+		"3": {
+			"severely_underweight": { "max": 4.0 },
+			"underweight": { "min": 4.1, "max": 4.5 },
+			"normal": { "min": 4.6, "max": 7.5 }
+		},
+		"4": {
+			"severely_underweight": { "max": 4.4 },
+			"underweight": { "min": 4.5, "max": 5.0 },
+			"normal": { "min": 5.1, "max": 8.2 }
+		},
+		"5": {
+			"severely_underweight": { "max": 4.8 },
+			"underweight": { "min": 4.9, "max": 5.4 },
+			"normal": { "min": 5.5, "max": 8.8 }
+		},
+		"6": {
+			"severely_underweight": { "max": 5.1 },
+			"underweight": { "min": 5.2, "max": 5.7 },
+			"normal": { "min": 5.8, "max": 9.3 }
+		},
+		"7": {
+			"severely_underweight": { "max": 5.3 },
+			"underweight": { "min": 5.4, "max": 6.0 },
+			"normal": { "min": 6.1, "max": 9.8 }
+		},
+		"8": {
+			"severely_underweight": { "max": 5.6 },
+			"underweight": { "min": 5.7, "max": 6.3 },
+			"normal": { "min": 6.4, "max": 10.2 }
+		},
+		"9": {
+			"severely_underweight": { "max": 5.8 },
+			"underweight": { "min": 5.9, "max": 6.5 },
+			"normal": { "min": 6.6, "max": 10.5 }
+		},
+		"10": {
+			"severely_underweight": { "max": 5.9 },
+			"underweight": { "min": 6.0, "max": 6.7 },
+			"normal": { "min": 6.8, "max": 10.9 }
+		},
+		"11": {
+			"severely_underweight": { "max": 6.1 },
+			"underweight": { "min": 6.2, "max": 6.9 },
+			"normal": { "min": 7.0, "max": 11.2 }
+		},
+		"12": {
+			"severely_underweight": { "max": 6.3 },
+			"underweight": { "min": 6.4, "max": 7.0 },
+			"normal": { "min": 7.1, "max": 11.5 }
+		},
+		"13": {
+			"severely_underweight": { "max": 6.4 },
+			"underweight": { "min": 6.5, "max": 7.2 },
+			"normal": { "min": 7.3, "max": 11.8 }
+		},
+		"14": {
+			"severely_underweight": { "max": 6.6 },
+			"underweight": { "min": 6.7, "max": 7.4 },
+			"normal": { "min": 7.5, "max": 12.1 }
+		},
+		"15": {
+			"severely_underweight": { "max": 6.7 },
+			"underweight": { "min": 6.8, "max": 7.6 },
+			"normal": { "min": 7.7, "max": 12.4 }
+		},
+		"16": {
+			"severely_underweight": { "max": 6.9 },
+			"underweight": { "min": 7.0, "max": 7.7 },
+			"normal": { "min": 7.8, "max": 12.6 }
+		},
+		"17": {
+			"severely_underweight": { "max": 7.0 },
+			"underweight": { "min": 7.1, "max": 7.9 },
+			"normal": { "min": 8.0, "max": 12.9 }
+		},
+		"18": {
+			"severely_underweight": { "max": 7.2 },
+			"underweight": { "min": 7.3, "max": 8.1 },
+			"normal": { "min": 8.2, "max": 13.2 }
+		},
+		"19": {
+			"severely_underweight": { "max": 7.3 },
+			"underweight": { "min": 7.4, "max": 8.2 },
+			"normal": { "min": 8.3, "max": 13.5 }
+		},
+		"20": {
+			"severely_underweight": { "max": 7.5 },
+			"underweight": { "min": 7.6, "max": 8.4 },
+			"normal": { "min": 8.5, "max": 13.7 }
+		},
+		"21": {
+			"severely_underweight": { "max": 7.6 },
+			"underweight": { "min": 7.7, "max": 8.6 },
+			"normal": { "min": 8.7, "max": 14.0 }
+		},
+		"22": {
+			"severely_underweight": { "max": 7.8 },
+			"underweight": { "min": 7.9, "max": 8.7 },
+			"normal": { "min": 8.8, "max": 14.3 }
+		},
+		"23": {
+			"severely_underweight": { "max": 7.9 },
+			"underweight": { "min": 8.0, "max": 8.9 },
+			"normal": { "min": 9.0, "max": 14.6 }
+		},
+		"24": {
+			"severely_underweight": { "max": 8.1 },
+			"underweight": { "min": 8.2, "max": 9.0 },
+			"normal": { "min": 9.1, "max": 14.8 }
+		},
+		"25": {
+			"severely_underweight": { "max": 8.2 },
+			"underweight": { "min": 8.3, "max": 9.2 },
+			"normal": { "min": 9.3, "max": 15.1 }
+		},
+		"26": {
+			"severely_underweight": { "max": 8.4 },
+			"underweight": { "min": 8.5, "max": 9.4 },
+			"normal": { "min": 9.5, "max": 15.4 }
+		},
+		"27": {
+			"severely_underweight": { "max": 8.5 },
+			"underweight": { "min": 8.6, "max": 9.5 },
+			"normal": { "min": 9.6, "max": 15.7 }
+		},
+		"28": {
+			"severely_underweight": { "max": 8.6 },
+			"underweight": { "min": 8.7, "max": 9.7 },
+			"normal": { "min": 9.8, "max": 16.0 }
+		},
+		"29": {
+			"severely_underweight": { "max": 8.8 },
+			"underweight": { "min": 8.9, "max": 9.8 },
+			"normal": { "min": 9.9, "max": 16.2 }
+		},
+		"30": {
+			"severely_underweight": { "max": 8.9 },
+			"underweight": { "min": 9.0, "max": 10.0 },
+			"normal": { "min": 10.1, "max": 16.5 }
+		},
+		"31": {
+			"severely_underweight": { "max": 9.0 },
+			"underweight": { "min": 9.1, "max": 10.1 },
+			"normal": { "min": 10.2, "max": 16.8 }
+		},
+		"32": {
+			"severely_underweight": { "max": 9.1 },
+			"underweight": { "min": 9.2, "max": 10.3 },
+			"normal": { "min": 10.4, "max": 17.1 }
+		},
+		"33": {
+			"severely_underweight": { "max": 9.3 },
+			"underweight": { "min": 9.4, "max": 10.4 },
+			"normal": { "min": 10.5, "max": 17.3 }
+		},
+		"34": {
+			"severely_underweight": { "max": 9.4 },
+			"underweight": { "min": 9.5, "max": 10.5 },
+			"normal": { "min": 10.6, "max": 17.6 }
+		},
+		"35": {
+			"severely_underweight": { "max": 9.5 },
+			"underweight": { "min": 9.6, "max": 10.7 },
+			"normal": { "min": 10.8, "max": 17.9 }
+		},
+		"36": {
+			"severely_underweight": { "max": 9.6 },
+			"underweight": { "min": 9.7, "max": 10.8 },
+			"normal": { "min": 10.9, "max": 18.1 }
+		},
+		"37": {
+			"severely_underweight": { "max": 9.7 },
+			"underweight": { "min": 9.8, "max": 10.9 },
+			"normal": { "min": 11.0, "max": 18.4 }
+		},
+		"38": {
+			"severely_underweight": { "max": 9.8 },
+			"underweight": { "min": 9.9, "max": 11.1 },
+			"normal": { "min": 11.2, "max": 18.7 }
+		},
+		"39": {
+			"severely_underweight": { "max": 9.9 },
+			"underweight": { "min": 10.0, "max": 11.2 },
+			"normal": { "min": 11.3, "max": 19.0 }
+		},
+		"40": {
+			"severely_underweight": { "max": 10.1 },
+			"underweight": { "min": 10.2, "max": 11.3 },
+			"normal": { "min": 11.4, "max": 19.2 }
+		},
+		"41": {
+			"severely_underweight": { "max": 10.2 },
+			"underweight": { "min": 10.3, "max": 11.5 },
+			"normal": { "min": 11.6, "max": 19.5 }
+		},
+		"42": {
+			"severely_underweight": { "max": 10.3 },
+			"underweight": { "min": 10.4, "max": 11.6 },
+			"normal": { "min": 11.7, "max": 19.8 }
+		},
+		"43": {
+			"severely_underweight": { "max": 10.4 },
+			"underweight": { "min": 10.5, "max": 11.7 },
+			"normal": { "min": 11.8, "max": 20.1 }
+		},
+		"44": {
+			"severely_underweight": { "max": 10.5 },
+			"underweight": { "min": 10.6, "max": 11.8 },
+			"normal": { "min": 11.9, "max": 20.4 }
+		},
+		"45": {
+			"severely_underweight": { "max": 10.6 },
+			"underweight": { "min": 10.7, "max": 12.0 },
+			"normal": { "min": 12.1, "max": 20.7 }
+		},
+		"46": {
+			"severely_underweight": { "max": 10.7 },
+			"underweight": { "min": 10.8, "max": 12.1 },
+			"normal": { "min": 12.2, "max": 20.9 }
+		},
+		"47": {
+			"severely_underweight": { "max": 10.8 },
+			"underweight": { "min": 10.9, "max": 12.2 },
+			"normal": { "min": 12.3, "max": 21.2 }
+		},
+		"48": {
+			"severely_underweight": { "max": 10.9 },
+			"underweight": { "min": 11.0, "max": 12.3 },
+			"normal": { "min": 12.4, "max": 21.5 }
+		},
+		"49": {
+			"severely_underweight": { "max": 11.0 },
+			"underweight": { "min": 11.1, "max": 12.4 },
+			"normal": { "min": 12.5, "max": 21.8 }
+		},
+		"50": {
+			"severely_underweight": { "max": 11.1 },
+			"underweight": { "min": 11.2, "max": 12.6 },
+			"normal": { "min": 12.7, "max": 22.1 }
+		},
+		"51": {
+			"severely_underweight": { "max": 11.2 },
+			"underweight": { "min": 11.3, "max": 12.7 },
+			"normal": { "min": 12.8, "max": 22.4 }
+		},
+		"52": {
+			"severely_underweight": { "max": 11.3 },
+			"underweight": { "min": 11.4, "max": 12.8 },
+			"normal": { "min": 12.9, "max": 22.6 }
+		},
+		"53": {
+			"severely_underweight": { "max": 11.4 },
+			"underweight": { "min": 11.5, "max": 12.9 },
+			"normal": { "min": 13.0, "max": 22.9 }
+		},
+		"54": {
+			"severely_underweight": { "max": 11.5 },
+			"underweight": { "min": 11.6, "max": 13.0 },
+			"normal": { "min": 13.1, "max": 23.2 }
+		},
+		"55": {
+			"severely_underweight": { "max": 11.6 },
+			"underweight": { "min": 11.7, "max": 13.2 },
+			"normal": { "min": 13.3, "max": 23.5 }
+		},
+		"56": {
+			"severely_underweight": { "max": 11.7 },
+			"underweight": { "min": 11.8, "max": 13.3 },
+			"normal": { "min": 13.4, "max": 23.8 }
+		},
+		"57": {
+			"severely_underweight": { "max": 11.8 },
+			"underweight": { "min": 11.9, "max": 13.4 },
+			"normal": { "min": 13.5, "max": 24.1 }
+		},
+		"58": {
+			"severely_underweight": { "max": 11.9 },
+			"underweight": { "min": 12.0, "max": 13.5 },
+			"normal": { "min": 13.6, "max": 24.4 }
+		},
+		"59": {
+			"severely_underweight": { "max": 12.0 },
+			"underweight": { "min": 12.1, "max": 13.6 },
+			"normal": { "min": 13.7, "max": 24.6 }
+		},
+		"60": {
+			"severely_underweight": { "max": 12.1 },
+			"underweight": { "min": 12.2, "max": 13.7 },
+			"normal": { "min": 13.8, "max": 24.9 }
+		}
+	}
+}

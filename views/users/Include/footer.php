@@ -31,7 +31,7 @@
 				});
 
 				if (result.isConfirmed) {
-					const response = await fetch("/ebakunado/php/supabase/users/logout.php", {
+					const response = await fetch("../../php/supabase/users/logout.php", {
 						method: "POST",
 					});
 

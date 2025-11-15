@@ -45,7 +45,7 @@ if ($child_records && count($child_records) > 0) {
         // Get immunization records for this child from pre-loaded data
         $immunization_records = $immunizations_by_baby[$child['baby_id']] ?? [];
         
-        // Count vaccination statuses
+        // Count vaccination statuses and track upcoming schedules
         $taken_count = 0;
         $missed_count = 0;
         $scheduled_count = 0;
@@ -53,39 +53,63 @@ if ($child_records && count($child_records) > 0) {
         $upcoming_vaccine = '';
         $latest_vaccine = '';
         $latest_dose = '';
+        $next_is_catch_up = false;
+        $has_schedule_today = false;
+        $today_str = $current_date->format('Y-m-d');
+        $upcoming_candidates = [];
         
         if ($immunization_records && count($immunization_records) > 0) {
-            $current_date_str = $current_date->format('Y-m-d');
-            
             // First, count all statuses
             foreach ($immunization_records as $immunization) {
-                if ($immunization['status'] === 'taken') {
+                $status = strtolower($immunization['status'] ?? '');
+                $sched_date = $immunization['schedule_date'] ?? null;
+                $catch_up_date = $immunization['catch_up_date'] ?? null;
+                
+                if ($status === 'taken') {
                     $taken_count++;
-                } elseif ($immunization['status'] === 'missed') {
+                } elseif ($status === 'missed') {
                     $missed_count++;
-                } elseif ($immunization['status'] === 'scheduled') {
+                } elseif ($status === 'scheduled') {
                     $scheduled_count++;
+                }
+
+                if ($status === 'scheduled' && $sched_date) {
+                    if ($sched_date === $today_str) {
+                        $has_schedule_today = true;
+                    }
+                    if ($sched_date >= $today_str) {
+                        $upcoming_candidates[] = [
+                            'date' => $sched_date,
+                            'type' => 'scheduled',
+                            'vaccine' => $immunization['vaccine_name'] ?? '',
+                            'dose' => $immunization['dose_number'] ?? ''
+                        ];
+                    }
+                }
+
+                if ($status === 'missed' && $catch_up_date) {
+                    if ($catch_up_date === $today_str) {
+                        $has_schedule_today = true;
+                    }
+                    if ($catch_up_date >= $today_str) {
+                        $upcoming_candidates[] = [
+                            'date' => $catch_up_date,
+                            'type' => 'catch_up',
+                            'vaccine' => $immunization['vaccine_name'] ?? '',
+                            'dose' => $immunization['dose_number'] ?? ''
+                        ];
+                    }
                 }
             }
             
-            // Now find the closest upcoming vaccination
-            $upcoming_vaccinations = array_filter($immunization_records, function($immunization) use ($current_date_str) {
-                return $immunization['status'] === 'scheduled' && 
-                       ($immunization['schedule_date'] >= $current_date_str || 
-                        $immunization['catch_up_date'] >= $current_date_str);
-            });
-            
-            if (!empty($upcoming_vaccinations)) {
-                // Sort by schedule_date or catch_up_date to find the closest one
-                usort($upcoming_vaccinations, function($a, $b) use ($current_date_str) {
-                    $dateA = $a['schedule_date'] ?: $a['catch_up_date'];
-                    $dateB = $b['schedule_date'] ?: $b['catch_up_date'];
-                    return strtotime($dateA) - strtotime($dateB);
+            if (!empty($upcoming_candidates)) {
+                usort($upcoming_candidates, function($a, $b) {
+                    return strcmp($a['date'], $b['date']);
                 });
-                
-                $closest_upcoming = $upcoming_vaccinations[0];
-                $upcoming_schedule = $closest_upcoming['schedule_date'] ?: $closest_upcoming['catch_up_date'];
-                $upcoming_vaccine = $closest_upcoming['vaccine_name'] ?: '';
+                $closest_upcoming = $upcoming_candidates[0];
+                $upcoming_schedule = $closest_upcoming['date'];
+                $upcoming_vaccine = $closest_upcoming['vaccine'];
+                $next_is_catch_up = ($closest_upcoming['type'] === 'catch_up');
             }
             
             // Get the latest vaccine and dose information
@@ -110,7 +134,9 @@ if ($child_records && count($child_records) > 0) {
             // Vaccination counts
             'taken_count' => $taken_count,
             'missed_count' => $missed_count,
-            'scheduled_count' => $scheduled_count
+            'scheduled_count' => $scheduled_count,
+            'next_is_catch_up' => $next_is_catch_up ? 1 : 0,
+            'has_schedule_today' => $has_schedule_today ? 1 : 0
         ];
     }
 }
