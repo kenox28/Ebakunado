@@ -21,6 +21,7 @@ if ($user_types != 'midwifes') {
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/bhw/add-child.css" />
 </head>
 
@@ -108,7 +109,7 @@ if ($user_types != 'midwifes') {
                     <div class="form-group">
                         <label>Baby Gender *</label>
                         <div class="radio-group">
-                            <label class="radio-option selected">
+                            <label class="radio-option">
                                 <input type="radio" name="child_gender" value="Male" checked>
                                 Male
                             </label>

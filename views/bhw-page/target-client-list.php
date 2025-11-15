@@ -29,6 +29,8 @@ if ($user_id) {
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/notification-style.css" />
+    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
     <link rel="stylesheet" href="../../css/bhw/target-client-list.css" />
 </head>
 
@@ -130,13 +132,57 @@ if ($user_id) {
                         </tr>
                     </thead>
                     <tbody id="tclBody">
-                        <tr>
-                            <td colspan="25" class="text-center">
-                                <div class="loading">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                    <p>Loading TCL data...</p>
-                                </div>
-                            </td>
+                        <tr class="skeleton-row">
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-6"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-6"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-pill skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                        </tr>
+                        <tr class="skeleton-row">
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-6"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-6"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-pill skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
                         </tr>
                     </tbody>
                 </table>
@@ -175,7 +221,18 @@ if ($user_id) {
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
+        // Column config for TCL (25 columns; use pill for Status column)
+        function getTclColsConfig() {
+            const cols = [];
+            for (let i = 0; i < 25; i++) {
+                const widthClass = `skeleton-col-${(i % 6) + 1}`;
+                const type = (i === 23) ? 'pill' : 'text'; // 0-based: 23 => 24th column (Status)
+                cols.push({ type, widthClass });
+            }
+            return cols;
+        }
         let tclRecords = [];
         let tclPage = 1;
         const tclLimit = 10;
@@ -185,12 +242,22 @@ if ($user_id) {
             const prevBtn = document.getElementById('tclPrevBtn');
             const nextBtn = document.getElementById('tclNextBtn');
             const pagerSpan = document.getElementById('tclPageButtons');
+            const pageInfoEl = document.getElementById('pageInfo');
 
             if (pagerSpan) pagerSpan.innerHTML = `<span class="pager-spinner" aria-label="Loading" role="status"></span>`;
             if (prevBtn) prevBtn.disabled = true;
             if (nextBtn) nextBtn.disabled = true;
+            // Show neutral page-info during loading (parity with other pages)
+            if (pageInfoEl && (!pageInfoEl.textContent || pageInfoEl.textContent === '\u00A0')) {
+                pageInfoEl.textContent = 'Showing 0-0 of 0 entries';
+            }
 
-            body.innerHTML = '<tr><td colspan="25">Loading...</td></tr>';
+            if (!opts || opts.keep !== true) {
+                if (typeof applyTableSkeleton === 'function') {
+                    applyTableSkeleton(body, getTclColsConfig(), tclLimit);
+                }
+                // If skeleton utility is unavailable, keep existing static skeleton rows in markup.
+            }
 
             try {
                 const params = new URLSearchParams();
@@ -206,7 +273,11 @@ if ($user_id) {
                 const res = await fetch(`../../php/supabase/bhw/get_target_client_list.php?${params.toString()}`);
                 const data = await res.json();
                 if (data.status !== 'success') {
-                    body.innerHTML = '<tr><td colspan="25">Failed to load TCL data</td></tr>';
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 25, kind: 'error' });
+                    } else {
+                        body.innerHTML = '<tr class="message-row error"><td colspan="25">Failed to load data. Please try again.</td></tr>';
+                    }
                     updateTclPager(1, false);
                     updateTclInfo(0, 0, 0, 0);
                     return;
@@ -218,7 +289,11 @@ if ($user_id) {
                 updateTclInfo(tclPage, tclLimit, tclRecords.length, data.total || tclRecords.length);
             } catch (e) {
                 console.error('Error loading TCL data:', e);
-                body.innerHTML = '<tr><td colspan="25">Error loading TCL data</td></tr>';
+                if (typeof renderTableMessage === 'function') {
+                    renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 25, kind: 'error' });
+                } else {
+                    body.innerHTML = '<tr class="message-row error"><td colspan="25">Failed to load data. Please try again.</td></tr>';
+                }
                 updateTclPager(1, false);
                 updateTclInfo(0, 0, 0, 0);
             }
@@ -227,7 +302,11 @@ if ($user_id) {
         function renderTCLTable(records) {
             const body = document.querySelector('#tclBody');
             if (!records || records.length === 0) {
-                body.innerHTML = '<tr><td colspan="25">No records found</td></tr>';
+                if (typeof renderTableMessage === 'function') {
+                    renderTableMessage(body, 'No records found', { colspan: 25 });
+                } else {
+                    body.innerHTML = '<tr class="message-row"><td colspan="25">No records found</td></tr>';
+                }
                 return;
             }
 
@@ -319,11 +398,15 @@ if ($user_id) {
         function updateTclInfo(page, limit, count, total) {
             const info = document.getElementById('pageInfo');
             if (!info) return;
+            const totalNum = Number.isFinite(Number(total)) ? Number(total) : 0;
+            if (totalNum === 0 || count === 0) {
+                info.textContent = 'Showing 0-0 of 0 entries';
+                return;
+            }
             const start = (page - 1) * limit + 1;
             const end = start + Math.max(0, count) - 1;
-            const endClamped = Math.max(0, end);
-            const totalNum = typeof total === 'number' ? total : (count || 0);
-            info.textContent = count > 0 ? `Showing ${start}-${endClamped} of ${totalNum} entries` : '';
+            const endClamped = Math.min(end, totalNum || end);
+            info.textContent = `Showing ${start}-${endClamped} of ${totalNum} entries`;
         }
 
         document.getElementById('tclPrevBtn').addEventListener('click', (e) => {

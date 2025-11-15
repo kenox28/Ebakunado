@@ -153,3 +153,16 @@ main {
   color: var(--primary-color) !important;
   box-shadow: none !important;
 }
+/* Empty & Error message rows (consistent with other tables) */
+.child-health-list-section .table .message-row td {
+  text-align: center;
+  padding: 2.4rem 1.2rem;
+  font-size: 1.3rem;
+  color: #6b7280; /* muted gray */
+  font-weight: 400;
+  text-transform: none;
+}
+.child-health-list-section .table .message-row.error td {
+  color: #b91c1c; /* red-700 */
+  font-weight: 500;
+}

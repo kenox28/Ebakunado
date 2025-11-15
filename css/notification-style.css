@@ -8,7 +8,7 @@
   border: none;
   padding: 8px;
   cursor: pointer;
-  border-radius: 50%;
+  border-radius: 9999px;
   transition: background-color 0.2s ease;
 }
 

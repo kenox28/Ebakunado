@@ -140,7 +140,7 @@
         const content = document.getElementById('notificationContent');
 
         if (!notifications || notifications.length === 0) {
-            content.innerHTML = '<div class="no-notifications"><i class="fas fa-bell-slash"></i><p>No notifications</p></div>';
+            content.innerHTML = '<div class="no-notifications"><span class="material-symbols-rounded">notifications_off</span><p>No notifications</p></div>';
             return;
         }
 

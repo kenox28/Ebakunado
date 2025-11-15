@@ -1,0 +1,87 @@
+/* Approved Requests page specific styles */
+
+.approved-requests-section {
+  margin-top: 1rem;
+}
+
+.approved-requests-section .content {
+  display: block;
+}
+
+/* Optional: align the Download link */
+.table td.text-center,
+.table th.text-center {
+  text-align: center;
+}
+
+/* Optional: improve the loading row appearance (uses global .table-loading styles) */
+.table-loading p {
+  margin: 0.25rem 0 0;
+  color: #6c757d;
+}
+
+/* Loading row inside table (match children-list) */
+.approved-requests-section .table-loading-row td {
+  padding: 16px;
+}
+.approved-requests-section .table-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-label);
+}
+.approved-requests-section .table-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #1976d2;
+  border-radius: 50%;
+  animation: table-spin 1s linear infinite;
+}
+@keyframes table-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Standardized message rows (empty/error states) */
+.approved-requests-section .table .message-row td {
+  text-align: center;
+  padding: 1.1rem 0.75rem;
+  font-size: 1.05rem;
+  color: #555;
+  background: #fafafa;
+  border: 1px solid #eee;
+}
+.approved-requests-section .table .message-row.error td {
+  color: #b00020;
+  background: #fff5f5;
+  border-color: #ffc9c9;
+  font-weight: 500;
+}
+
+/* Download button (match children-list .view-btn) */
+.approved-requests-section .download-btn {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+.approved-requests-section .download-btn:hover {
+  background-color: #005529;
+  transform: translateY(-1px);
+}
+.approved-requests-section .download-btn .material-symbols-rounded {
+  font-size: 1.6rem;
+}

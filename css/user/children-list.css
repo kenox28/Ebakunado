@@ -167,3 +167,19 @@ main {
   padding: 20px;
   color: #666;
 }
+
+/* Standardized table message rows (empty/error) */
+.children-list-section .table .message-row td {
+  text-align: center;
+  padding: 1.1rem 0.75rem;
+  font-size: 1.15rem;
+  color: #555;
+  background: #fafafa;
+  border: 1px solid #eee;
+}
+.children-list-section .table .message-row.error td {
+  color: #b00020;
+  background: #fff5f5;
+  border-color: #ffc9c9;
+  font-weight: 500;
+}

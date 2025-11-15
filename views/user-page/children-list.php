@@ -31,6 +31,7 @@ $user_fname = $_SESSION['fname'] ?? '';
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/notification-style.css" />
+    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
     <link rel="stylesheet" href="../../css/user/children-list.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -78,14 +79,24 @@ $user_fname = $_SESSION['fname'] ?? '';
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr class="table-loading-row">
-                                <td colspan="7">
-                                    <div class="table-loading">
-                                        <span class="table-spinner" aria-hidden="true"></span>
-                                        <p>Loading children data...</p>
-                                    </div>
-                                </td>
+                        <tbody id="childrenTbody">
+                            <tr class="skeleton-row">
+                                <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                <td><div class="skeleton skeleton-pill skeleton-col-3"></div></td>
+                            </tr>
+                            <tr class="skeleton-row">
+                                <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                <td><div class="skeleton skeleton-pill skeleton-col-3"></div></td>
                             </tr>
                         </tbody>
                     </table>
@@ -96,45 +107,36 @@ $user_fname = $_SESSION['fname'] ?? '';
 
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
         let allChildrenData = [];
         let allChrStatusData = [];
+        let loadError = false;
         let currentSort = { key: 'name', dir: 'asc' };
 
         document.addEventListener('DOMContentLoaded', async function() {
             const container = document.getElementById('childrenContainer');
             const filterSelect = document.getElementById('chrFilter');
 
-            // Ensure initial table with loading row is present (already in HTML)
-            if (!container.querySelector('table')) {
-                container.innerHTML = `
-                <table class="table" aria-busy="true">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Age</th>
-                            <th>Gender</th>
-                            <th>Upcoming</th>
-                            <th>Missed</th>
-                            <th>Taken</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="table-loading-row">
-                            <td colspan="7">
-                                <div class="table-loading">
-                                    <span class="table-spinner" aria-hidden="true"></span>
-                                    <p>Loading children data...</p>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>`;
+            // Prepare skeleton on initial load
+            const tbody = document.getElementById('childrenTbody');
+            function getChildrenColsConfig(){
+                return [
+                    { type:'text', widthClass:'skeleton-col-2' }, // Name
+                    { type:'text', widthClass:'skeleton-col-2' }, // Age
+                    { type:'text', widthClass:'skeleton-col-1' }, // Gender
+                    { type:'text', widthClass:'skeleton-col-1' }, // Upcoming
+                    { type:'text', widthClass:'skeleton-col-1' }, // Missed
+                    { type:'text', widthClass:'skeleton-col-1' }, // Taken
+                    { type:'pill', widthClass:'skeleton-col-3' }  // Action
+                ];
+            }
+            if (typeof applyTableSkeleton === 'function' && tbody) {
+                applyTableSkeleton(tbody, getChildrenColsConfig(), 10);
             }
 
             // Load children data and CHR status data
-            await Promise.all([loadChildrenData(), loadChrStatusData()]);
+            await Promise.all([loadChildrenData(), loadChrStatusData()]).catch(() => {});
 
             // Render the table
             renderChildrenTable();
@@ -149,22 +151,44 @@ $user_fname = $_SESSION['fname'] ?? '';
             try {
                 // Load all children data (not just accepted ones) for proper filtering
                 const res = await fetch('../../php/supabase/users/get_accepted_child.php');
+                if (!res.ok) {
+                    loadError = true;
+                    allChildrenData = [];
+                    return;
+                }
                 const data = await res.json();
-                allChildrenData = (data && data.status === 'success' && Array.isArray(data.data)) ? data.data : [];
+                if (!data || data.status !== 'success') {
+                    loadError = true;
+                    allChildrenData = [];
+                } else {
+                    allChildrenData = Array.isArray(data.data) ? data.data : [];
+                }
             } catch (err) {
                 console.error('Error loading children data:', err);
                 allChildrenData = [];
+                loadError = true;
             }
         }
 
         async function loadChrStatusData() {
             try {
                 const res = await fetch('../../php/supabase/users/get_child_list.php');
+                if (!res.ok) {
+                    loadError = true;
+                    allChrStatusData = [];
+                    return;
+                }
                 const data = await res.json();
-                allChrStatusData = (data && data.status === 'success' && Array.isArray(data.data)) ? data.data : [];
+                if (!data || data.status !== 'success') {
+                    loadError = true;
+                    allChrStatusData = [];
+                } else {
+                    allChrStatusData = Array.isArray(data.data) ? data.data : [];
+                }
             } catch (err) {
                 console.error('Error loading CHR status data:', err);
                 allChrStatusData = [];
+                loadError = true;
             }
         }
 
@@ -172,62 +196,62 @@ $user_fname = $_SESSION['fname'] ?? '';
             const container = document.getElementById('childrenContainer');
             const filterSelect = document.getElementById('chrFilter');
             const selectedFilter = filterSelect.value;
+            const existingTable = container.querySelector('table.table');
+            const tbody = document.getElementById('childrenTbody') || (existingTable && existingTable.querySelector('tbody'));
 
+            // If both sources failed/no data
             if (allChildrenData.length === 0) {
-                container.innerHTML = '<div class="no-data">No children found</div>';
+                if (typeof renderTableMessage === 'function' && tbody) {
+                    renderTableMessage(
+                        tbody,
+                        loadError ? 'Failed to load data. Please try again.' : 'No records found',
+                        { colspan: 7, ...(loadError ? { kind: 'error' } : {}) }
+                    );
+                } else if (tbody) {
+                    tbody.innerHTML = `<tr class="message-row${loadError ? ' error' : ''}"><td colspan="7">${loadError ? 'Failed to load data. Please try again.' : 'No records found'}</td></tr>`;
+                }
                 return;
             }
 
             // Filter children based on selected filter
             let filteredChildren = allChildrenData.filter(child => {
                 const babyId = child.baby_id || child.id || '';
-                const childStatus = child.status; // This is the child registration status
-                const chrStatus = getChrStatusForChild(babyId);
-
+                const childStatus = child.status;
                 switch (selectedFilter) {
                     case 'pending':
-                        return childStatus === 'pending'; // Child registration is pending BHW approval
+                        return childStatus === 'pending';
                     case 'approved':
-                        return childStatus === 'accepted'; // Child is approved by BHW
+                        return childStatus === 'accepted';
                     case 'all':
                     default:
-                        return true; // Show all children
+                        return true;
                 }
             });
 
-            // Sort children based on currentSort
+            // Sort
             const sortKey = currentSort.key;
             const sortDir = currentSort.dir === 'asc' ? 1 : -1;
             filteredChildren.sort((a, b) => {
                 const va = getSortValue(a, sortKey);
                 const vb = getSortValue(b, sortKey);
                 if (va == null && vb == null) return 0;
-                if (va == null) return 1; // nulls last
+                if (va == null) return 1;
                 if (vb == null) return -1;
-                if (typeof va === 'number' && typeof vb === 'number') {
-                    return (va - vb) * sortDir;
-                }
+                if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * sortDir;
                 return String(va).localeCompare(String(vb)) * sortDir;
             });
 
             if (filteredChildren.length === 0) {
-                container.innerHTML = `<div class="no-data">No children found for "${filterSelect.options[filterSelect.selectedIndex].text}"</div>`;
+                if (typeof renderTableMessage === 'function' && tbody) {
+                    renderTableMessage(tbody, 'No records found', { colspan: 7 });
+                } else if (tbody) {
+                    tbody.innerHTML = '<tr class="message-row"><td colspan="7">No records found</td></tr>';
+                }
                 return;
             }
 
-            let html = '';
-            html += '<table class="table" aria-busy="false">';
-            html += '<thead><tr>' +
-                renderHeaderCell('name', 'Name') +
-                renderHeaderCell('age', 'Age') +
-                renderHeaderCell('gender', 'Gender') +
-                renderHeaderCell('upcoming', 'Upcoming') +
-                renderHeaderCell('missed', 'Missed') +
-                renderHeaderCell('taken', 'Taken') +
-                '<th scope="col">Action</th>' +
-                '</tr></thead>';
-            html += '<tbody>';
-
+            // Build tbody content
+            let rowsHtml = '';
             filteredChildren.forEach(child => {
                 const fullName = (child.name) || [child.child_fname || '', child.child_lname || ''].filter(Boolean).join(' ');
                 const ageText = (child.age && child.age > 0) ? (child.age + ' years') : (child.weeks_old != null ? (child.weeks_old + ' weeks') : '');
@@ -236,8 +260,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                 const upc = child.scheduled_count || 0;
                 const mis = child.missed_count || 0;
                 const tak = child.taken_count || 0;
-
-                html += '<tr>' +
+                rowsHtml += '<tr>' +
                     `<td>${fullName}</td>` +
                     `<td>${ageText}</td>` +
                     `<td>${gender}</td>` +
@@ -250,13 +273,43 @@ $user_fname = $_SESSION['fname'] ?? '';
                     '</tr>';
             });
 
-            html += '</tbody></table>';
-            container.innerHTML = html;
+            // If table does not exist yet, build it (keeps original header styles from CSS)
+            if (!existingTable) {
+                const tableHtml = '<table class="table" aria-busy="false">' +
+                    '<thead><tr>' +
+                    renderHeaderCell('name', 'Name') +
+                    renderHeaderCell('age', 'Age') +
+                    renderHeaderCell('gender', 'Gender') +
+                    renderHeaderCell('upcoming', 'Upcoming') +
+                    renderHeaderCell('missed', 'Missed') +
+                    renderHeaderCell('taken', 'Taken') +
+                    '<th scope="col">Action</th>' +
+                    '</tr></thead>' +
+                    '<tbody id="childrenTbody">' + rowsHtml + '</tbody></table>';
+                container.innerHTML = tableHtml;
+                attachSortHandlers();
+            } else {
+                // Update existing tbody only
+                const tbody = existingTable.querySelector('tbody');
+                if (tbody) tbody.innerHTML = rowsHtml;
+                existingTable.setAttribute('aria-busy', 'false');
+                // Update header sort classes
+                updateHeaderSortState(existingTable);
+            }
+        }
 
-            // Attach sort handlers and ensure aria-busy updated
-            const table = container.querySelector('table');
-            if (table) table.setAttribute('aria-busy', 'false');
-            attachSortHandlers();
+        function updateHeaderSortState(table){
+            const headers = table.querySelectorAll('th.sortable');
+            headers.forEach(th => {
+                const key = th.getAttribute('data-sort-key');
+                th.classList.remove('sort-asc','sort-desc');
+                let aria = 'none';
+                if (currentSort.key === key){
+                    if (currentSort.dir === 'asc') { th.classList.add('sort-asc'); aria = 'ascending'; }
+                    else { th.classList.add('sort-desc'); aria = 'descending'; }
+                }
+                th.setAttribute('aria-sort', aria);
+            });
         }
 
         function renderHeaderCell(key, label) {
@@ -326,38 +379,7 @@ $user_fname = $_SESSION['fname'] ?? '';
             }
         }
 
-        function getChrStatusForChild(babyId) {
-            const chrData = allChrStatusData.find(item => item.baby_id === babyId);
-            return chrData ? chrData.chr_status : 'none';
-        }
-
-        function getChrStatusText(status) {
-            switch (status) {
-                case 'pending':
-                    return 'Pending Request';
-                case 'approved':
-                    return 'Approved';
-                case 'new_records':
-                    return 'New Records Available';
-                case 'none':
-                default:
-                    return 'No Request';
-            }
-        }
-
-        function getChrStatusColor(status) {
-            switch (status) {
-                case 'pending':
-                    return '#ffc107'; // Yellow
-                case 'approved':
-                    return '#28a745'; // Green
-                case 'new_records':
-                    return '#007bff'; // Blue
-                case 'none':
-                default:
-                    return '#6c757d'; // Gray
-            }
-        }
+        // Note: helper functions for CHR status kept above if needed in future UI updates
     </script>
 </body>
 

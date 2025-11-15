@@ -1,0 +1,204 @@
+/* Reusable skeleton loading styles for tables and UI elements */
+
+:root {
+  --skeleton-base: #e0e0e0;
+  --skeleton-highlight: #f5f5f5;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Base skeleton block */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--skeleton-base);
+  border-radius: 8px;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    var(--skeleton-highlight),
+    transparent
+  );
+  animation: skeleton-shimmer 1.2s infinite linear;
+}
+
+/* Variants */
+.skeleton-text {
+  height: 12px;
+}
+.skeleton-text.sm {
+  height: 10px;
+}
+.skeleton-text.lg {
+  height: 14px;
+}
+.skeleton-pill {
+  height: 20px;
+  border-radius: 999px;
+}
+.skeleton-btn {
+  height: 32px;
+  width: 80px;
+  border-radius: 8px;
+}
+.skeleton-number {
+  height: 34px; 
+  border-radius: 8px;
+}
+.skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 5px;
+}
+/* Compact dot variant (used for card number 3-dot shimmer) */
+.skeleton-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 5px;
+}
+
+/* Dots container - horizontally centers right-aligned shimmer representation */
+.skeleton-dots {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 60px;
+}
+
+/* Helpful widths for table columns */
+.skeleton-col-1 {
+  width: 70%;
+}
+.skeleton-col-2 {
+  width: 80%;
+}
+.skeleton-col-3 {
+  width: 55%;
+}
+.skeleton-col-4 {
+  width: 40%;
+}
+.skeleton-col-5 {
+  width: 60%;
+}
+.skeleton-col-6 {
+  width: 80px;
+}
+
+/* Semantic sizes for inline field placeholders (span-sized) */
+.skeleton-field-xs { width: 60px; }
+.skeleton-field-s { width: 100px; }
+.skeleton-field-m { width: 160px; }
+.skeleton-field-l { width: 220px; }
+.skeleton-field-xl { width: 320px; }
+.skeleton-field-tick { width: 18px; }
+
+/* Row padding to keep skeleton height consistent with table rows */
+.skeleton-row td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* ==========================================================
+   Card / list skeletons (e.g., children list on dashboard)
+   ========================================================== */
+/* Utility width helpers */
+.skeleton-w-25 {
+  width: 25%;
+}
+.skeleton-w-30 {
+  width: 30%;
+}
+.skeleton-w-40 {
+  width: 40%;
+}
+.skeleton-w-50 {
+  width: 50%;
+}
+.skeleton-w-60 {
+  width: 60%;
+}
+.skeleton-w-70 {
+  width: 70%;
+}
+.skeleton-w-80 {
+  width: 80%;
+}
+.skeleton-w-90 {
+  width: 90%;
+}
+
+/* Stack spacing */
+.skeleton-stack > .skeleton + .skeleton {
+  margin-top: 6px;
+}
+
+/* Children list specific layout */
+.child-list-item.skeleton-card {
+  position: relative;
+}
+.child-list-item.skeleton-card .child-item-body {
+  align-items: flex-start;
+}
+.child-list-item.skeleton-card .child-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.child-list-item.skeleton-card .child-actions {
+  display: flex;
+  gap: 8px;
+}
+.child-list-item.skeleton-card .child-actions .skeleton-btn {
+  height: 32px;
+  border-radius: 8px;
+}
+/* Specific widths to mirror actual buttons */
+.child-list-item.skeleton-card .child-actions .skeleton-btn-view { width: 90px; }
+.child-list-item.skeleton-card .child-actions .skeleton-btn-schedule { width: 150px; }
+
+/* Ensure avatar placeholder matches card size expectations */
+.child-list-item.skeleton-card .qr-area .skeleton-avatar {
+  width: 48px;
+  height: 48px;
+}
+
+/* ==========================================================
+   Dashboard card number (3-dot shimmer) fade behavior
+   ========================================================== */
+.card-number {
+  position: relative;
+}
+.card-number .number-value,
+.card-number .skeleton-placeholder {
+  display: inline-block;
+  transition: opacity 260ms ease;
+}
+.card-number.is-loading .number-value { opacity: 0; }
+.card-number.is-loading .skeleton-placeholder { opacity: 1; }
+.card-number.is-loaded .number-value { opacity: 1; }
+.card-number.is-loaded .skeleton-placeholder { opacity: 0; pointer-events: none; }
+
+/* Overlay shimmer dots atop where number will appear, for clean cross-fade */
+.card-number .skeleton-placeholder {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: auto;
+}

@@ -165,8 +165,8 @@ main {
 .segmented-control {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px;
+  gap: 3px;            /* tighter spacing between segments */
+  padding: 2px;        /* slimmer outer padding */
   background: #f7f7f7;
   border: 1px solid #e5e7eb;
   border-radius: 999px;
@@ -174,8 +174,8 @@ main {
 .segmented-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
+  gap: 6px;            /* reduce space between icon and text */
+  padding: 6px 12px;   /* smaller button padding */
   border: none;
   border-radius: 999px;
   background: transparent;
@@ -184,17 +184,18 @@ main {
   transition: background-color 160ms ease, color 160ms ease,
     box-shadow 160ms ease;
   font-family: inherit;
+  font-size: 13px;     /* compact text size */
 }
 .segmented-btn .material-symbols-rounded {
-  font-size: 18px;
+  font-size: 16px;     /* smaller icon size */
   line-height: 1;
 }
 .seg-badge {
   display: inline-flex;
   align-items: center;
-  height: 20px;
-  padding: 0 8px;
-  font-size: 12px;
+  height: 18px;        /* slightly shorter badge */
+  padding: 0 6px;      /* slimmer badge padding */
+  font-size: 11px;     /* compact badge text */
   border-radius: 999px;
   background: #e9ecef;
   color: #495057;
@@ -233,6 +234,10 @@ main {
   }
 }
 
+.loading p {
+  font-size: 1.4rem;
+}
+
 /* Empty / error states */
 .no-data {
   display: flex;
@@ -259,7 +264,7 @@ main {
   padding: 4px 8px;
   background: #eef6f0;
   color: #1f6f3b;
-  border-radius: 999px;
+  border-radius: 5px;
   font-size: 12px;
   margin-top: 4px;
 }
@@ -324,6 +329,27 @@ main {
   gap: 1rem;
 }
 
+/* Centered empty/error fallback inside children list */
+.children-list .no-data {
+  grid-column: 1 / -1;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  border: 1px dashed #e5e7eb;
+  background: #fafafa;
+  border-radius: 12px;
+}
+.children-list .no-data p {
+  margin: 0;
+  font-size: 1.4rem;
+}
+.children-list .no-data small {
+  color: #6b7280; /* gray-500 */
+}
+
 /* Child item card */
 .child-list-item {
   display: flex;
@@ -360,8 +386,8 @@ main {
 }
 .child-schedule {
   margin: 2px 0;
-  font-size: 1.2rem;
   color: #555;
+  font-weight: 700;
 }
 .child-actions {
   display: flex;

@@ -605,16 +605,17 @@ input[type="date"] {
 
 .upload-dropzone {
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 0.75rem;
-	/* transform: translateY(-1px); */
-	min-height: 120px;
-	border: 1.5px dashed #cfd4da;
-	border-radius: 10px;
+	gap: 1.1rem;
+	min-height: 180px; /* reduced from 220px */
+	padding: 1.75rem 2rem; /* reduced padding */
+	border: 2px dashed #cfd4da;
+	border-radius: 12px; /* slightly smaller radius */
 	background: #f8f9fa;
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: all 0.25s ease;
 	user-select: none;
 }
 
@@ -629,7 +630,7 @@ input[type="date"] {
 }
 
 .upload-dropzone .material-symbols-rounded {
-	font-size: 2.2rem;
+	font-size: 5rem; /* was 6rem */
 	color: var(--primary-color);
 }
 
@@ -637,16 +638,16 @@ input[type="date"] {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 2px;
+	gap: 1rem;
 	color: #2c3e50;
 }
 
 .upload-text strong {
-	font-size: 1.2rem;
+	font-size: 1.5rem; /* slightly smaller */
 }
 
 .upload-text span {
-	font-size: 1rem;
+	font-size: 1.25rem; /* slightly smaller */
 	color: #6c757d;
 }
 
@@ -662,17 +663,27 @@ input[type="date"] {
 	background: var(--primary-color);
 	color: #ffffff;
 	border: none;
-	padding: 0.6rem 1rem;
-	border-radius: 8px;
+	padding: 0.8rem 1.6rem;
+	border-radius: 10px;
 	font-family: inherit;
-	font-size: 1.2rem;
+	font-size: 1.3rem;
 	font-weight: 500;
 	cursor: pointer;
 	transition: all 0.2s ease;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
 }
 
 .upload-btn:hover {
-	background: #0a6a35;
+	background: #005d2d;
+}
+
+/* Upload button icon sizing */
+.upload-btn .material-symbols-rounded {
+	font-size: 1.6rem;
+	line-height: 1;
+	color: #ffffff;
 }
 
 .upload-filename {
@@ -721,11 +732,11 @@ input[type="date"] {
 	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 .upload-preview__thumb {
-	width: 25px;
-	height: 25px;
-	border-radius: 8px;
+	width: 48px;
+	height: 48px;
+	border-radius: 10px;
 	background: #f8f9fa;
-	border: 1px dashed #dee2e6;
+	border: 1.5px dashed #dee2e6;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -756,6 +767,24 @@ input[type="date"] {
 .upload-preview__meta .size {
 	color: #6c757d;
 	font-size: 0.95rem;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+	.upload-dropzone {
+		min-height: 170px;
+		padding: 1.5rem 1.25rem;
+		gap: 1rem;
+	}
+	.upload-dropzone .material-symbols-rounded {
+		font-size: 5rem;
+	}
+	.upload-text strong {
+		font-size: 1.5rem;
+	}
+	.upload-text span {
+		font-size: 1.2rem;
+	}
 }
 .is-hidden {
 	display: none !important;

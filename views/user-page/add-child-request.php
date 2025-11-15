@@ -221,13 +221,16 @@ $user_fname = $_SESSION['fname'] ?? '';
                         <div class="form-group" id="fileUploadGroup">
                             <label>Upload Baby's Card *</label>
                             <div class="upload-card">
-                                <div class="upload-dropzone" id="uploadDropzone" role="region" aria-label="Upload file by dragging here">
-                                    <span class="material-symbols-rounded">upload_file</span>
+                                <div class="upload-dropzone" id="uploadDropzone" role="region" aria-label="Drag & Drop or Click to Upload a file; accepted formats JPG, PNG, PDF">
+                                     <span class="material-symbols-rounded">cloud_upload</span>
                                     <div class="upload-text">
-                                        <strong>Drag & drop file here</strong>
-                                        <span>or use the Browse button</span>
-                                        <button type="button" id="triggerFileSelect" class="upload-btn">Browse</button>
-                                        <span class="upload-accepted">Accepted formats: JPG, PNG</span>
+                                        <strong>Drag & Drop or Click to Upload</strong>
+                                        <span>or press Enter/Space to browse from your device</span>
+                                        <button type="button" id="triggerFileSelect" class="upload-btn">
+                                            <span class="material-symbols-rounded">upload</span>
+                                            Choose file
+                                        </button>
+                                        <span class="upload-accepted">Accepted formats: JPG, PNG, PDF (Max size: 5MB)</span>
                                     </div>
                                 </div>
                                 <!-- Actual file input (hidden) -->
@@ -409,7 +412,22 @@ $user_fname = $_SESSION['fname'] ?? '';
                     dropzone.classList.remove('dragover');
                 });
             });
-            // Do not open file dialog when clicking dropzone; only Browser button should open
+            // Clicking anywhere on the dropzone opens the file dialog
+            dropzone.addEventListener('click', function(e) {
+                // prevent duplicate triggers when clicking the explicit Browse button or remove-file
+                if (e.target.closest('#triggerFileSelect') || e.target.closest('#removeSelectedFile')) return;
+                if (fileInput.hasAttribute('disabled')) return;
+                fileInput.click();
+            });
+
+            // Make dropzone focusable and keyboard-activatable
+            dropzone.setAttribute('tabindex', '0');
+            dropzone.addEventListener('keydown', function(e) {
+                if ((e.key === 'Enter' || e.key === ' ') && !fileInput.hasAttribute('disabled')) {
+                    e.preventDefault();
+                    fileInput.click();
+                }
+            });
 
             dropzone.addEventListener('drop', function(e) {
                 const dt = e.dataTransfer;

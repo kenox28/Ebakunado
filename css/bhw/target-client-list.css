@@ -184,3 +184,16 @@ main {
   font-size: 1.8rem;
   color: #1a1a1a;
 }
+/* Empty & Error message rows */
+.target-client-list-section .table .message-row td {
+  text-align: center;
+  padding: 2.4rem 1.2rem;
+  font-size: 1.3rem;
+  color: #6b7280;
+  font-weight: 400;
+  text-transform: none;
+}
+.target-client-list-section .table .message-row.error td {
+  color: #b91c1c;
+  font-weight: 500;
+}

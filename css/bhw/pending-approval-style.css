@@ -4,6 +4,11 @@ main {
   overflow-y: auto;
 }
 
+.pending-approval-section {
+  height: 110vh;
+}
+
+
 /* =Buttons: full base + states */
 .childinfo-actions {
   display: flex;
@@ -340,9 +345,23 @@ main {
   font-size: 1.6rem;
 }
 
+/* Empty & Error message rows (parity with immunization) */
+.pending-approval-section .table .message-row td {
+  text-align: center;
+  padding: 2.4rem 1.2rem;
+  font-size: 1.3rem;
+  color: #6b7280; /* muted gray */
+  font-weight: 400;
+  text-transform: none;
+}
+.pending-approval-section .table .message-row.error td {
+  color: #b91c1c; /* red-700 */
+  font-weight: 500;
+}
+
 /* =Panels: list (left/initial) */
 .pending-approval-panel {
-  height: 100vh;
+  /* height: 100vh; */
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -363,13 +382,13 @@ main {
 }
 
 /* =Section wrapper: flex fix to allow inner scroll */
-.pending-approval-section {
+/* .pending-approval-section {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
   overflow: hidden;
-}
+} */
 
 /* =Details panel: scroll behavior overrides */
 .childinformation-container {
@@ -576,4 +595,17 @@ main {
   background: none !important;
   color: var(--primary-color) !important;
   box-shadow: none !important;
+}
+/* Shared empty & error message rows (added children reuse same page stylesheet) */
+.pending-approval-section .table .message-row td {
+  text-align: center;
+  padding: 2.4rem 1.2rem;
+  font-size: 1.3rem;
+  color: #6b7280;
+  font-weight: 400;
+  text-transform: none;
+}
+.pending-approval-section .table .message-row.error td {
+  color: #b91c1c;
+  font-weight: 500;
 }
