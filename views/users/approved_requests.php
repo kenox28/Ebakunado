@@ -39,24 +39,38 @@ async function loadApprovedRequests(){
 				`<td style=\"padding:6px;\">${r.child_name||''}</td>`+
 				`<td style="padding:6px;">${(r.request_type||'').toUpperCase()}</td>`+
 				`<td style="padding:6px;">${(r.approved_at||'').toString().replace('T',' ').split('.')[0]}</td>`+
-            `<td style="padding:6px; text-align:center;">${url?`<a href="#" class="dl-pkg" data-id="${r.id}" data-baby="${r.baby_id||''}" data-url="${encodeURIComponent(url)}">Download Package</a>`:'-'}</td>`+
+				`<td style="padding:6px; text-align:center;"><a href="#" class="dl-babycard" data-baby="${r.baby_id||''}" data-name="${(r.child_name||'').replace(/[^A-Za-z0-9]+/g,'')}">Download Baby Card</a></td>`+
 			'</tr>';
 		});
 		html += '</tbody></table>';
 		root.innerHTML = html;
 
-    // Attach client-side ZIP builder
-    document.querySelectorAll('.dl-pkg').forEach(a => {
+    // Attach Baby Card downloader (no CHR in user portal)
+    document.querySelectorAll('.dl-babycard').forEach(a => {
         a.addEventListener('click', async (e) => {
             e.preventDefault();
-            const requestId = a.getAttribute('data-id');
             const babyId = a.getAttribute('data-baby');
-            const docUrl = decodeURIComponent(a.getAttribute('data-url')||'');
+            const preName = a.getAttribute('data-name') || '';
             try{
-                await buildAndDownloadZipClient({ requestId, babyId, docUrl });
+                const fd = new FormData();
+                fd.append('baby_id', babyId);
+                const cRes = await fetch('/ebakunado/php/supabase/users/get_child_details.php', { method: 'POST', body: fd });
+                const cJson = await cRes.json();
+                if (!(cJson && cJson.status === 'success' && cJson.data && cJson.data[0])){
+                    alert('Child details not found');
+                    return;
+                }
+                const child = cJson.data[0];
+                const iRes = await fetch('/ebakunado/php/supabase/users/get_my_immunization_records.php', { method:'POST', body: fd });
+                const iJson = await iRes.json();
+                const immunizations = Array.isArray(iJson.data) ? iJson.data : [];
+                const blob = await renderBabyCardPdf(child, immunizations);
+                const baseName = preName || `${(child.child_fname||'')}${(child.child_lname||'')}`.replace(/[^A-Za-z0-9]+/g,'');
+                const filename = `BabyCard_${baseName || 'Child'}.pdf`;
+                saveAs(blob, filename);
             }catch(err){
-                console.error('Client package build failed:', err);
-                alert('Download failed: ' + (err && err.message ? err.message : String(err)));
+                console.error('Baby Card generation failed:', err);
+                alert('Failed to generate Baby Card.');
             }
         });
     });
@@ -195,17 +209,39 @@ async function renderBabyCardPdf(child, immunizations){
     if (ex.family_no){ draw(child.family_number||'', ex.family_no.x_pct, ex.family_no.y_pct, f.details_pt||12, 'left', ex.family_no.max_width_pct||22); }
     // 6) Vaccines
     const v = (layout && layout.vaccines) || {};
-    function vkey(name){ const n=(name||'').toUpperCase(); if(n.includes('BCG'))return'BCG'; if(n.includes('HEP'))return'HEPATITIS B'; if(n.includes('PENTA')||n.includes('HIB'))return'PENTAVALENT'; if(n.includes('OPV')||n.includes('ORAL POLIO'))return'OPV'; if(n.includes('IPV')||n.includes('INACTIVATED'))return'IPV'; if(n.includes('PCV')||n.includes('PNEUMO'))return'PCV'; if(n.includes('MMR')||n.includes('MEASLES'))return'MMR'; return null; }
-    immunizations.filter(r=>r.date_given).forEach(r=>{
-        const key=vkey(r.vaccine_name); if(!key) return;
-        const dose = parseInt(r.dose_number,10)||1;
+    function vkey(name){
+        const n = (name || '').toUpperCase();
+        if (n.includes('BCG')) return 'BCG';
+        if (n.includes('HEP')) return 'HEPATITIS B';
+        if (n.includes('PENTA') || n.includes('HIB')) return 'PENTAVALENT';
+        if (n.includes('OPV') || n.includes('ORAL POLIO')) return 'OPV';
+        // IPV removed from layout/schedule
+        if (n.includes('PCV') || n.includes('PNEUMO')) return 'PCV';
+        if (n.includes('MMR') || n.includes('MEASLES')) return 'MMR';
+        return null;
+    }
+    immunizations.filter(r => r.date_given).forEach(r => {
+        const key = vkey(r.vaccine_name); if (!key) return;
+        const dose = parseInt(r.dose_number, 10) || 1;
         let xp = v.cols_x_pct ? v.cols_x_pct.c1 : 60.2;
-        if (key==='IPV'){ xp = (dose===1? (v.cols_x_pct? v.cols_x_pct.c1:60.2) : (v.cols_x_pct? v.cols_x_pct.c2:69.2)); }
-        else if (!(key==='BCG'||key==='HEPATITIS B'||key==='MMR')){
-            xp = (dose===1? (v.cols_x_pct? v.cols_x_pct.c1:60.2) : (dose===2? (v.cols_x_pct? v.cols_x_pct.c2:69.2) : (v.cols_x_pct? v.cols_x_pct.c3:78.2)));
+        if (key === 'MMR') {
+            // MMR has 2 doses → place in c1 (dose 1) or c2 (dose 2)
+            if (dose === 2) {
+                xp = (v.cols_x_pct ? v.cols_x_pct.c2 : 69.2);
+            } else {
+                xp = (v.cols_x_pct ? v.cols_x_pct.c1 : 60.2);
+            }
+        } else if (key === 'BCG' || key === 'HEPATITIS B') {
+            // Single-dose rows always use the first column
+            xp = (v.cols_x_pct ? v.cols_x_pct.c1 : 60.2);
+        } else {
+            // PENTAVALENT / OPV / PCV → 3 doses map to c1, c2, c3
+            if (dose === 1)      { xp = (v.cols_x_pct ? v.cols_x_pct.c1 : 60.2); }
+            else if (dose === 2) { xp = (v.cols_x_pct ? v.cols_x_pct.c2 : 69.2); }
+            else                 { xp = (v.cols_x_pct ? v.cols_x_pct.c3 : 78.2); }
         }
-        const y = (v.rows_y_pct && (v.rows_y_pct[key]||v.rows_y_pct[(key==='HEPB'?'HEPATITIS B':key)])) || 56.1;
-        draw(formatDateShort(r.date_given), xp, y, (f.vaccines_pt||11), 'center');
+        const y = (v.rows_y_pct && (v.rows_y_pct[key] || v.rows_y_pct[(key === 'HEPATITIS B' ? 'HEPATITIS B' : key)])) || 56.1;
+        draw(formatDateShort(r.date_given), xp, y, (f.vaccines_pt || 11), 'center');
     });
     return doc.output('blob');
 }

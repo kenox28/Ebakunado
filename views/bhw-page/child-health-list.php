@@ -221,30 +221,32 @@ if ($user_id) {
 
                 let rows = '';
                 rowsData.forEach(item => {
-                    const birthDateFmt = formatDate(item.child_birth_date);
+                    const birthDate = formatDate(item.child_birth_date);
                     rows += `<tr>
-                                <td>${item.child_fname || ''} ${item.child_lname || ''}</td>
-                                <td>${item.child_gender || ''}</td>
-                                <td>${birthDateFmt}</td>
-                                <td>${item.place_of_birth || ''}</td>
-                                <td>${item.mother_name || ''}</td>
-                                <td>${item.address || ''}</td>
-                                <td>${item.status || ''}</td>
-                                <td>
-                                    <button class="btn view-schedule-btn"
-                                            onclick="viewSchedule('${item.baby_id}', this)"
-                                            aria-expanded="false">
-                                        <span class="material-symbols-rounded btn-icon">calendar_month</span>
-                                        <span class="btn-text">Schedule</span>
-                                        <span class="material-symbols-rounded btn-chevron">expand_more</span>
-                                    </button>
-                                    <a class="btn viewCHR-btn"
-                                       href="child-health-record.php?baby_id=${encodeURIComponent(item.baby_id)}">
-                                        <span class="material-symbols-rounded btn-icon">visibility</span>
-                                        <span class="btn-text">CHR</span>
-                                    </a>
-                                </td>
-                            </tr>`;
+							<td>${item.child_fname || ''} ${item.child_lname || ''}</td>
+							<td>${item.child_gender || ''}</td>
+							<td>${birthDate}</td>
+							<td>${item.place_of_birth || ''}</td>
+							<td>${item.mother_name || ''}</td>
+							<td>${item.address || ''}</td>
+							<td>${item.status || ''}</td>
+							<td>
+								<button class="b n view-schedule-btn"
+										onclick="viewSchedule('${item.baby_id}', this)"
+										aria-expanded="false">
+									<span class="material-symbols-rounded btn-icon">calendar_month</span>
+									<span class="btn-text">Schedule</span>
+								</button>
+								<a class="btn viewCHR-btn" href="child-health-record.php?baby_id=${encodeURIComponent(item.baby_id)}">
+									<span class="material-symbols-rounded btn-icon">\nvisibility</span>
+									<span class="btn-text">View CHR</span>
+								</a>
+								<a class="btn downloadCHR-btn" href="../../php/supabase/bhw/download_chr.php?baby_id=${encodeURIComponent(item.baby_id)}">
+									<span class="material-symbols-rounded btn-icon">download</span>
+									<span class="btn-text">Download CHR</span>
+								</a>
+							</td>
+						</tr>`;
                 });
                 body.innerHTML = rows;
 

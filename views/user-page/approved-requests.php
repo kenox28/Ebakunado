@@ -147,47 +147,54 @@ async function loadApprovedRequests(){
         } else {
             let html = '';
             rows.forEach(r => {
-                const url = r.doc_url || '';
                 const type = (r.request_type || '').toUpperCase();
-                    const approvedAt = formatDate(r.approved_at);
+                const approvedAt = formatDate(r.approved_at);
+                const safeName = String(r.child_name||'').replace(/[^A-Za-z0-9]+/g,'');
                 html += `
-                <tr>
-                    <td>${r.id}</td>
-                    <td>${r.baby_id || ''}</td>
-                    <td>${r.child_name || ''}</td>
-                    <td>${type}</td>
-                    <td>${approvedAt}</td>
-                        <td class="text-center">${url ? `<a href="${toAttachment(url)}" class="download-btn dl-direct" download><span class="material-symbols-rounded" aria-hidden="true">download</span> Download</a>` : '-'}</td>
-                </tr>`;
+                <div class="request-item">
+                    <div class="request-details">
+                        <div class="request-row"><strong>ID:</strong> ${r.id}</div>
+                        <div class="request-row"><strong>Baby ID:</strong> ${r.baby_id || ''}</div>
+                        <div class="request-row"><strong>Child Name:</strong> ${r.child_name || ''}</div>
+                        <div class="request-row"><strong>Type:</strong> ${type}</div>
+                        <div class="request-row"><strong>Approved At:</strong> ${approvedAt}</div>
+                        <div class="request-actions">
+                            <a href="#" class="download-btn dl-babycard" data-baby="${r.baby_id||''}" data-name="${safeName}">
+                                <span class="material-symbols-rounded" aria-hidden="true">download</span>
+                                Download Baby Card
+                            </a>
+                        </div>
+                    </div>
+                </div>`;
             });
             tbody.innerHTML = html;
         }
 
-        // Attach direct download (no proxy)
-        document.querySelectorAll('.dl-direct').forEach(a => {
+        // Attach Baby Card download handler (no CHR download on user portal)
+        document.querySelectorAll('.dl-babycard').forEach(a => {
             a.addEventListener('click', async (e) => {
                 e.preventDefault();
+                const babyId = a.getAttribute('value');
+                const nameSafe = a.getAttribute('data-name') || '';
                 try{
-                    const href = a.getAttribute('href');
-                    const res = await fetch(href, { method: 'GET' });
-                    if (!res.ok){
-                        const text = await res.text().catch(()=> '');
-                        console.error('Cloudinary direct download error:', res.status, text);
-                        alert('Download failed: ' + (text || ('HTTP ' + res.status)));
+                    const fd = new FormData();
+                    fd.append('baby_id', babyId);
+                    const cRes = await fetch('/ebakunado/php/supabase/users/get_child_details.php', { method: 'POST', body: fd });
+                    const cJson = await cRes.json();
+                    if (!(cJson && cJson.status === 'success' && cJson.data && cJson.data[0])) {
+                        alert('Child details not found');
                         return;
                     }
-                    const blob = await res.blob();
-                    const objectUrl = URL.createObjectURL(blob);
-                    const tmp = document.createElement('a');
-                    tmp.href = objectUrl;
-                    tmp.download = 'CHR_Document_' + new Date().toISOString().slice(0,19).replace(/[:T]/g,'-') + '.pdf';
-                    document.body.appendChild(tmp);
-                    tmp.click();
-                    tmp.remove();
-                    URL.revokeObjectURL(objectUrl);
-                }catch(err){
-                    console.error('Download network error:', err);
-                    alert('Network error: ' + (err && err.message ? err.message : String(err)));
+                    const child = cJson.data[0];
+                    const iRes = await fetch('/ebakunado/php/supabase/users/get_my_immunization_records.php', { method: 'POST', body: fd });
+                    const iJson = await iRes.json();
+                    const immunizations = Array.isArray(iJson.data) ? iJson.data : [];
+                    const blob = await renderBabyCardPdf(child, immunizations);
+                    const fileName = `BabyCard_${nameSafe || ((child.child_fname||'') + (child.child_lname||''))}.pdf`;
+                    saveAs(blob, fileName);
+                } catch (err) {
+                    console.error('Baby Card generation failed:', err);
+                    alert('Failed to generate Baby Card.');
                 }
             });
         });
@@ -299,18 +306,35 @@ async function renderBabyCardPdf(child, immunizations){
     if (ex.barangay){ draw((child.address||'').split(',').pop()?.trim()||'', ex.barangay.x_pct, ex.barangay.y_pct, f.details_pt||12, 'left', ex.barangay.max_width_pct||22); }
     if (ex.family_no){ draw(child.family_number||'', ex.family_no.x_pct, ex.family_no.y_pct, f.details_pt||12, 'left', ex.family_no.max_width_pct||22); }
     const v=(layout&&layout.vaccines)||{};
-    function vkey(name){ const n=(name||'').toUpperCase(); if(n.includes('BCG'))return'BCG'; if(n.includes('HEP'))return'HEPATITIS B'; if(n.includes('PENTA')||n.includes('HIB'))return'PENTAVALENT'; if(n.includes('OPV')||n.includes('ORAL POLIO'))return'OPV'; if(n.includes('IPV')||n.includes('INACTIVATED'))return'IPV'; if(n.includes('PCV')||n.includes('PNEUMO'))return'PCV'; if(n.includes('MMR')||n.includes('MEASLES'))return'MMR'; return null; }
-    immunizations.filter(r=>r.date_given).forEach(r=>{
-        const key=vkey(r.vaccine_name); if(!key) return;
-        const dose=parseInt(r.dose_number,10)||1;
-        let xp=v.cols_x_pct? v.cols_x_pct.c1:60.2;
-        if (key==='IPV'){ xp=(dose===1? (v.cols_x_pct?v.cols_x_pct.c1:60.2):(v.cols_x_pct?v.cols_x_pct.c2:69.2)); }
-        else if (!(key==='BCG'||key==='HEPATITIS B'||key==='MMR')){
-            xp=(dose===1? (v.cols_x_pct?v.cols_x_pct.c1:60.2):(dose===2? (v.cols_x_pct?v.cols_x_pct.c2:69.2):(v.cols_x_pct?v.cols_x_pct.c3:78.2)));
-        }
-        const y=(v.rows_y_pct&&(v.rows_y_pct[key]||v.rows_y_pct[(key==='HEPB'?'HEPATITIS B':key)]))||56.1;
-        draw(formatDateShort(r.date_given), xp, y, (f.vaccines_pt||11), 'center');
-    });
+    function vkey(name){ const n=(name||'').toUpperCase(); if(n.includes('BCG'))return'BCG'; if(n.includes('HEP'))return'HEPATITIS B'; if(n.includes('PENTA')||n.includes('HIB'))return'PENTAVALENT'; if(n.includes('OPV')||n.includes('ORAL POLIO'))return'OPV'; if(n.includes('PCV')||n.includes('PNEUMO'))return'PCV'; if(n.includes('MMR')||n.includes('MEASLES'))return'MMR'; return null; }
+    immunizations
+        .filter((v) => v.date_given)
+        .forEach((v) => {
+            const key = vkey(v.vaccine_name);
+            if (!key) return;
+            const dose = parseInt(v.dose_number, 10) || 1;
+            let xp = v.cols_x_pct.c1;
+            if (key === 'MMR') {
+                // 2 doses → c1, c2
+                xp = (dose === 1) ? v.cols_x_pct.c1 : v.cols_x_pct.c2;
+            } else if (key === 'BCG' || key === 'HEPATITIS B') {
+                // single slot
+                xp = v.cols_x_pct.c1;
+            } else {
+                // PENTAVALENT / OPV / PCV → c1/c2/c3
+                if (dose === 1)      { xp = v.cols_x_pct.c1; }
+                else if (dose === 2) { xp = v.cols_x_pct.c2; }
+                else                 { xp = v.cols_x_pct.c3; }
+            }
+            const y = v.rows_y_pct[key] || v.rows_y_pct[(key==='HEPATITIS B' ? 'HEPATITIS B' : key)];
+            draw(
+                formatDateShort(v.date_given),
+                xp,
+                y,
+                f.vaccines_pt || 11,
+                'center'
+            );
+        });
     return doc.output('blob');
 }
 function loadImage(src){

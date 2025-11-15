@@ -1,5 +1,6 @@
 {
-	"background_path": "assets/images/immunization-card-clear.jpg",
+	"id": null,
+	"background_path": "assets/images/babycard.jpg",
 	"fallback_background_path": "assets/images/babycard.jpg",
 	"page": {
 		"format": "a4",
@@ -8,6 +9,7 @@
 	},
 	"fonts": {
 		"details_pt": 12,
+		"wish": null,
 		"vaccines_pt": 11
 	},
 	"boxes": {
@@ -38,7 +40,7 @@
 	"vaccines": {
 		"cols_x_pct": {
 			"c1": 60.2,
-			"c2": 67.46005387104414,
+			"c2": 67.46005383990667,
 			"c3": 74.53395547948512
 		},
 		"rows_y_pct": {
@@ -46,7 +48,6 @@
 			"HEPATITIS B": 44.10233873302365,
 			"PENTAVALENT": 48.839164220302486,
 			"OPV": 53.825296312174956,
-			"IPV": 58.437468497156985,
 			"PCV": 63.174293984435835,
 			"MMR": 68.03577277401149
 		}
