@@ -1,0 +1,313 @@
+{
+	"indicator": "length-for-age",
+	"gender": "girls",
+	"age_range": "0-60 months",
+	"unit": "cm",
+	"standards": {
+		"0": {
+			"severely_stunted": { "max": 43.6 },
+			"normal": { "min": 45.4, "max": 52.9 },
+			"tall": { "min": 52.9 }
+		},
+		"1": {
+			"severely_stunted": { "max": 47.8 },
+			"normal": { "min": 49.8, "max": 57.6 },
+			"tall": { "min": 57.6 }
+		},
+		"2": {
+			"severely_stunted": { "max": 51.0 },
+			"normal": { "min": 53.0, "max": 61.1 },
+			"tall": { "min": 61.1 }
+		},
+		"3": {
+			"severely_stunted": { "max": 53.5 },
+			"normal": { "min": 55.6, "max": 64.0 },
+			"tall": { "min": 64.0 }
+		},
+		"4": {
+			"severely_stunted": { "max": 55.6 },
+			"normal": { "min": 57.8, "max": 66.4 },
+			"tall": { "min": 66.4 }
+		},
+		"5": {
+			"severely_stunted": { "max": 57.4 },
+			"normal": { "min": 59.6, "max": 68.5 },
+			"tall": { "min": 68.5 }
+		},
+		"6": {
+			"severely_stunted": { "max": 58.9 },
+			"normal": { "min": 61.2, "max": 70.3 },
+			"tall": { "min": 70.3 }
+		},
+		"7": {
+			"severely_stunted": { "max": 60.3 },
+			"normal": { "min": 62.7, "max": 71.9 },
+			"tall": { "min": 71.9 }
+		},
+		"8": {
+			"severely_stunted": { "max": 61.7 },
+			"normal": { "min": 64.0, "max": 73.5 },
+			"tall": { "min": 73.5 }
+		},
+		"9": {
+			"severely_stunted": { "max": 62.9 },
+			"normal": { "min": 65.3, "max": 75.0 },
+			"tall": { "min": 75.0 }
+		},
+		"10": {
+			"severely_stunted": { "max": 64.1 },
+			"normal": { "min": 66.5, "max": 76.4 },
+			"tall": { "min": 76.4 }
+		},
+		"11": {
+			"severely_stunted": { "max": 65.2 },
+			"normal": { "min": 67.7, "max": 77.8 },
+			"tall": { "min": 77.8 }
+		},
+		"12": {
+			"severely_stunted": { "max": 66.3 },
+			"normal": { "min": 68.9, "max": 79.2 },
+			"tall": { "min": 79.2 }
+		},
+		"13": {
+			"severely_stunted": { "max": 67.3 },
+			"normal": { "min": 70.0, "max": 80.5 },
+			"tall": { "min": 80.5 }
+		},
+		"14": {
+			"severely_stunted": { "max": 68.3 },
+			"normal": { "min": 71.0, "max": 81.7 },
+			"tall": { "min": 81.7 }
+		},
+		"15": {
+			"severely_stunted": { "max": 69.3 },
+			"normal": { "min": 72.0, "max": 83.0 },
+			"tall": { "min": 83.0 }
+		},
+		"16": {
+			"severely_stunted": { "max": 70.2 },
+			"normal": { "min": 73.0, "max": 84.2 },
+			"tall": { "min": 84.2 }
+		},
+		"17": {
+			"severely_stunted": { "max": 71.1 },
+			"normal": { "min": 74.0, "max": 85.4 },
+			"tall": { "min": 85.4 }
+		},
+		"18": {
+			"severely_stunted": { "max": 72.0 },
+			"normal": { "min": 74.9, "max": 86.5 },
+			"tall": { "min": 86.5 }
+		},
+		"19": {
+			"severely_stunted": { "max": 72.8 },
+			"normal": { "min": 75.8, "max": 87.6 },
+			"tall": { "min": 87.6 }
+		},
+		"20": {
+			"severely_stunted": { "max": 73.7 },
+			"normal": { "min": 76.7, "max": 88.7 },
+			"tall": { "min": 88.7 }
+		},
+		"21": {
+			"severely_stunted": { "max": 74.5 },
+			"normal": { "min": 77.5, "max": 89.8 },
+			"tall": { "min": 89.8 }
+		},
+		"22": {
+			"severely_stunted": { "max": 75.2 },
+			"normal": { "min": 78.4, "max": 90.8 },
+			"tall": { "min": 90.8 }
+		},
+		"23": {
+			"severely_stunted": { "max": 76.0 },
+			"normal": { "min": 79.2, "max": 91.9 },
+			"tall": { "min": 91.9 }
+		},
+		"24": {
+			"severely_stunted": { "max": 76.7 },
+			"normal": { "min": 80.0, "max": 92.9 },
+			"tall": { "min": 92.9 }
+		},
+		"25": {
+			"severely_stunted": { "max": 76.8 },
+			"normal": { "min": 80.0, "max": 93.1 },
+			"tall": { "min": 93.1 }
+		},
+		"26": {
+			"severely_stunted": { "max": 77.5 },
+			"normal": { "min": 80.8, "max": 94.1 },
+			"tall": { "min": 94.1 }
+		},
+		"27": {
+			"severely_stunted": { "max": 78.1 },
+			"normal": { "min": 81.5, "max": 95.0 },
+			"tall": { "min": 95.0 }
+		},
+		"28": {
+			"severely_stunted": { "max": 78.8 },
+			"normal": { "min": 82.2, "max": 96.0 },
+			"tall": { "min": 96.0 }
+		},
+		"29": {
+			"severely_stunted": { "max": 79.5 },
+			"normal": { "min": 82.9, "max": 96.9 },
+			"tall": { "min": 96.9 }
+		},
+		"30": {
+			"severely_stunted": { "max": 80.1 },
+			"normal": { "min": 83.6, "max": 97.7 },
+			"tall": { "min": 97.7 }
+		},
+		"31": {
+			"severely_stunted": { "max": 80.7 },
+			"normal": { "min": 84.3, "max": 98.6 },
+			"tall": { "min": 98.6 }
+		},
+		"32": {
+			"severely_stunted": { "max": 81.3 },
+			"normal": { "min": 84.9, "max": 99.4 },
+			"tall": { "min": 99.4 }
+		},
+		"33": {
+			"severely_stunted": { "max": 81.9 },
+			"normal": { "min": 85.6, "max": 100.3 },
+			"tall": { "min": 100.3 }
+		},
+		"34": {
+			"severely_stunted": { "max": 82.5 },
+			"normal": { "min": 86.2, "max": 101.1 },
+			"tall": { "min": 101.1 }
+		},
+		"35": {
+			"severely_stunted": { "max": 83.1 },
+			"normal": { "min": 86.8, "max": 101.9 },
+			"tall": { "min": 101.9 }
+		},
+		"36": {
+			"severely_stunted": { "max": 83.6 },
+			"normal": { "min": 87.4, "max": 102.7 },
+			"tall": { "min": 102.7 }
+		},
+		"37": {
+			"severely_stunted": { "max": 84.2 },
+			"normal": { "min": 88.0, "max": 103.4 },
+			"tall": { "min": 103.4 }
+		},
+		"38": {
+			"severely_stunted": { "max": 84.7 },
+			"normal": { "min": 88.6, "max": 104.2 },
+			"tall": { "min": 104.2 }
+		},
+		"39": {
+			"severely_stunted": { "max": 85.3 },
+			"normal": { "min": 89.2, "max": 105.0 },
+			"tall": { "min": 105.0 }
+		},
+		"40": {
+			"severely_stunted": { "max": 85.8 },
+			"normal": { "min": 89.8, "max": 105.7 },
+			"tall": { "min": 105.7 }
+		},
+		"41": {
+			"severely_stunted": { "max": 86.3 },
+			"normal": { "min": 90.4, "max": 106.4 },
+			"tall": { "min": 106.4 }
+		},
+		"42": {
+			"severely_stunted": { "max": 86.8 },
+			"normal": { "min": 90.9, "max": 107.2 },
+			"tall": { "min": 107.2 }
+		},
+		"43": {
+			"severely_stunted": { "max": 87.4 },
+			"normal": { "min": 91.5, "max": 107.9 },
+			"tall": { "min": 107.9 }
+		},
+		"44": {
+			"severely_stunted": { "max": 87.9 },
+			"normal": { "min": 92.0, "max": 108.6 },
+			"tall": { "min": 108.6 }
+		},
+		"45": {
+			"severely_stunted": { "max": 88.4 },
+			"normal": { "min": 92.5, "max": 109.3 },
+			"tall": { "min": 109.3 }
+		},
+		"46": {
+			"severely_stunted": { "max": 88.9 },
+			"normal": { "min": 93.1, "max": 110.0 },
+			"tall": { "min": 110.0 }
+		},
+		"47": {
+			"severely_stunted": { "max": 89.3 },
+			"normal": { "min": 93.6, "max": 110.7 },
+			"tall": { "min": 110.7 }
+		},
+		"48": {
+			"severely_stunted": { "max": 89.8 },
+			"normal": { "min": 94.1, "max": 111.3 },
+			"tall": { "min": 111.3 }
+		},
+		"49": {
+			"severely_stunted": { "max": 90.3 },
+			"normal": { "min": 94.6, "max": 112.0 },
+			"tall": { "min": 112.0 }
+		},
+		"50": {
+			"severely_stunted": { "max": 90.7 },
+			"normal": { "min": 95.1, "max": 112.7 },
+			"tall": { "min": 112.7 }
+		},
+		"51": {
+			"severely_stunted": { "max": 91.2 },
+			"normal": { "min": 95.6, "max": 113.3 },
+			"tall": { "min": 113.3 }
+		},
+		"52": {
+			"severely_stunted": { "max": 91.6 },
+			"normal": { "min": 96.0, "max": 114.0 },
+			"tall": { "min": 114.0 }
+		},
+		"53": {
+			"severely_stunted": { "max": 92.0 },
+			"normal": { "min": 96.5, "max": 114.6 },
+			"tall": { "min": 114.6 }
+		},
+		"54": {
+			"severely_stunted": { "max": 92.4 },
+			"normal": { "min": 96.9, "max": 115.2 },
+			"tall": { "min": 115.2 }
+		},
+		"55": {
+			"severely_stunted": { "max": 92.8 },
+			"normal": { "min": 97.3, "max": 115.8 },
+			"tall": { "min": 115.8 }
+		},
+		"56": {
+			"severely_stunted": { "max": 93.2 },
+			"normal": { "min": 97.7, "max": 116.4 },
+			"tall": { "min": 116.4 }
+		},
+		"57": {
+			"severely_stunted": { "max": 93.6 },
+			"normal": { "min": 98.1, "max": 117.0 },
+			"tall": { "min": 117.0 }
+		},
+		"58": {
+			"severely_stunted": { "max": 94.0 },
+			"normal": { "min": 98.5, "max": 117.6 },
+			"tall": { "min": 117.6 }
+		},
+		"59": {
+			"severely_stunted": { "max": 94.4 },
+			"normal": { "min": 98.9, "max": 118.2 },
+			"tall": { "min": 118.2 }
+		},
+		"60": {
+			"severely_stunted": { "max": 94.8 },
+			"normal": { "min": 99.3, "max": 118.8 },
+			"tall": { "min": 118.8 }
+		}
+	}
+}

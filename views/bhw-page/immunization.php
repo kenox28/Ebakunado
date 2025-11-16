@@ -534,6 +534,7 @@ if ($user_id) {
 
         async function submitImmunizationForm() {
             const formData = new FormData();
+            
             formData.append('record_id', document.getElementById('im_record_id').value || '');
             formData.append('user_id', document.getElementById('im_user_id').value || '');
             formData.append('baby_id', document.getElementById('im_baby_id').value || '');
@@ -543,6 +544,12 @@ if ($user_id) {
             formData.append('temperature', document.getElementById('im_temperature').value || '');
             formData.append('height_cm', document.getElementById('im_height').value || '');
             formData.append('weight_kg', document.getElementById('im_weight').value || '');
+            formData.append('administered_by', document.getElementById('im_administered_by').value || '');
+            formData.append('remarks', document.getElementById('im_remarks').value || '');
+            formData.append('mark_completed', document.getElementById('im_mark_completed').checked ? '1' : '0');
+            
+            const catchUpDate = document.getElementById('im_catch_up_date')?.value || '';
+            if (catchUpDate) formData.append('catch_up_date', catchUpDate);
             
             // Add growth assessment data
             const growthWfa = document.getElementById('im_growth_wfa');
@@ -554,12 +561,6 @@ if ($user_id) {
             if (growthLfa) formData.append('growth_lfa', growthLfa.value || '');
             if (growthWfl) formData.append('growth_wfl', growthWfl.value || '');
             if (growthAgeMonths) formData.append('growth_age_months', growthAgeMonths.value || '');
-            // dose_number, lot_number, site removed - dose inferred from existing record
-            formData.append('administered_by', document.getElementById('im_administered_by').value || '');
-            formData.append('remarks', document.getElementById('im_remarks').value || '');
-            formData.append('mark_completed', document.getElementById('im_mark_completed').checked ? '1' : '0');
-            const cu = document.getElementById('im_catch_up_date');
-            if (cu && cu.value) formData.append('catch_up_date', cu.value);
 
             // Add feeding status updates if available
             const feedingCheckbox = document.getElementById('update_feeding_status');
@@ -582,10 +583,15 @@ if ($user_id) {
                     method: 'POST',
                     body: formData
                 });
-                const data = await res.json().catch(() => ({
-                    status: 'error',
-                    message: 'Invalid server response'
-                }));
+                
+                const responseText = await res.text();
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (parseErr) {
+                    data = { status: 'error', message: 'Invalid server response' };
+                }
+                
                 if (data.status === 'success') {
                     closeImmunizationForm();
                     await fetchChildHealthRecord();
@@ -595,8 +601,7 @@ if ($user_id) {
                     alert('Save failed: ' + (data.message || 'Unknown error'));
                 }
             } catch (err) {
-                alert('Network error saving immunization');
-                console.error('save_immunization error:', err);
+                alert('Network error saving immunization: ' + err.message);
             }
         }
 
@@ -675,8 +680,6 @@ if ($user_id) {
             });
             const data = await response.json();
             if (data.status === 'success') {
-
-                console.log(data.data);
                 document.querySelector('#childName').textContent = data.data[0].child_fname + ' ' + data.data[0].child_lname;
                 document.querySelector('#childGender').textContent = data.data[0].child_gender;
                 document.querySelector('#childBirthDate').textContent = data.data[0].child_birth_date;
@@ -693,8 +696,6 @@ if ($user_id) {
                 });
                 document.querySelector('.childinformation-container').style.display = 'flex';
                 document.querySelector('.table-container').style.display = 'none';
-            } else {
-                console.log(data.message);
             }
 
 
@@ -926,7 +927,6 @@ if ($user_id) {
         }
 
         async function onScanSuccess(decodedText) {
-            console.log('QR Scan success:', decodedText);
             closeScanner();
 
             // Extract baby_id from QR code
@@ -987,13 +987,8 @@ if ($user_id) {
                 });
                 const childData = await childResponse.json();
 
-                console.log('Child details response:', childData);
-                console.log('Baby ID searched:', baby_id);
-
                 if (childData.status === 'success' && childData.data && childData.data.length > 0) {
                     const child = childData.data[0];
-
-                    console.log('Child data received:', child);
 
                     // Use the user_id from child record, fallback to empty string if not available
                     const userId = child.user_id || '';

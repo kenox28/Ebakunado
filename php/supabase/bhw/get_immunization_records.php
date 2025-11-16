@@ -9,7 +9,7 @@ if (!isset($_SESSION['bhw_id']) && !isset($_SESSION['midwife_id'])) { echo json_
 $baby_id = $_GET['baby_id'] ?? '';
 if ($baby_id === '') { echo json_encode(['status'=>'error','message'=>'Missing baby_id']); exit(); }
 
-$columns = 'id,baby_id,vaccine_name,dose_number,status,schedule_date,date_given,catch_up_date,weight,height,temperature,created_at';
+$columns = 'id,baby_id,vaccine_name,dose_number,status,schedule_date,date_given,catch_up_date,weight,height,temperature,muac,remarks,created_at';
 $rows = supabaseSelect('immunization_records', $columns, ['baby_id' => $baby_id], 'schedule_date.asc');
 
 // Auto-mark missed: if schedule_date is past today and not completed

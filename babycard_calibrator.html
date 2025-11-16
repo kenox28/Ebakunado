@@ -95,6 +95,40 @@
 					assets/images/babycard.jpg)</span
 				>
 			</div>
+			<div class="controls" style="margin-top: 8px">
+				<span class="label">DOMPDF Offset (for server-side PDF):</span>
+				<label style="font-size: 12px">
+					X Offset (%):
+					<input
+						type="number"
+						id="offsetX"
+						step="0.1"
+						value="0"
+						style="width: 60px; margin-right: 10px" />
+				</label>
+				<label style="font-size: 12px">
+					Y Offset (%):
+					<input
+						type="number"
+						id="offsetY"
+						step="0.1"
+						value="0"
+						style="width: 60px; margin-right: 10px" />
+				</label>
+				<button id="applyOffset" style="padding: 6px 12px; font-size: 12px">
+					Apply Offset to All
+				</button>
+				<button
+					id="resetOffset"
+					style="padding: 6px 12px; font-size: 12px; background: #dc2626">
+					Reset
+				</button>
+				<span
+					class="label"
+					style="font-size: 11px; color: #64748b; margin-left: 10px">
+					(Adjusts all positions for DOMPDF if needed)
+				</span>
+			</div>
 			<canvas id="cv"></canvas>
 			<div class="legend">
 				<span
@@ -512,6 +546,26 @@
 					}
 				});
 			document.getElementById("saveLayout").addEventListener("click", () => {
+				// Get offset values
+				const offsetX =
+					parseFloat(document.getElementById("offsetX").value) || 0;
+				const offsetY =
+					parseFloat(document.getElementById("offsetY").value) || 0;
+
+				// Save offsets to layout JSON for DOMPDF
+				if (offsetX !== 0 || offsetY !== 0) {
+					if (!cfg.dompdf_offset) {
+						cfg.dompdf_offset = {};
+					}
+					cfg.dompdf_offset.x_pct = offsetX;
+					cfg.dompdf_offset.y_pct = offsetY;
+				} else {
+					// Remove offset if zero
+					if (cfg.dompdf_offset) {
+						delete cfg.dompdf_offset;
+					}
+				}
+
 				const blob = new Blob([JSON.stringify(cfg, null, 2)], {
 					type: "application/json",
 				});
@@ -521,6 +575,82 @@
 				document.body.appendChild(a);
 				a.click();
 				a.remove();
+			});
+
+			// Wrap loadLayout to also load offset values
+			const originalLoadLayout = loadLayout;
+			loadLayout = async function () {
+				await originalLoadLayout();
+				if (cfg && cfg.dompdf_offset) {
+					document.getElementById("offsetX").value =
+						cfg.dompdf_offset.x_pct || 0;
+					document.getElementById("offsetY").value =
+						cfg.dompdf_offset.y_pct || 0;
+				} else {
+					document.getElementById("offsetX").value = 0;
+					document.getElementById("offsetY").value = 0;
+				}
+			};
+
+			// Apply offset to all positions (for testing/visualization)
+			document.getElementById("applyOffset").addEventListener("click", () => {
+				const offsetX =
+					parseFloat(document.getElementById("offsetX").value) || 0;
+				const offsetY =
+					parseFloat(document.getElementById("offsetY").value) || 0;
+
+				if (offsetX === 0 && offsetY === 0) return;
+
+				// Apply offset to all X positions
+				if (offsetX !== 0) {
+					cfg.boxes.left_x_pct += offsetX;
+					cfg.boxes.right_x_pct += offsetX;
+					if (cfg.boxes.right_r4_x_pct) cfg.boxes.right_r4_x_pct += offsetX;
+					if (cfg.boxes.sex_m) cfg.boxes.sex_m.x_pct += offsetX;
+					if (cfg.boxes.sex_f) cfg.boxes.sex_f.x_pct += offsetX;
+					if (cfg.vaccines && cfg.vaccines.cols_x_pct) {
+						cfg.vaccines.cols_x_pct.c1 += offsetX;
+						cfg.vaccines.cols_x_pct.c2 += offsetX;
+						cfg.vaccines.cols_x_pct.c3 += offsetX;
+					}
+					if (cfg.extras) {
+						if (cfg.extras.health_center)
+							cfg.extras.health_center.x_pct += offsetX;
+						if (cfg.extras.barangay) cfg.extras.barangay.x_pct += offsetX;
+						if (cfg.extras.family_no) cfg.extras.family_no.x_pct += offsetX;
+					}
+				}
+
+				// Apply offset to all Y positions
+				if (offsetY !== 0) {
+					if (cfg.boxes.rows_y_pct) {
+						cfg.boxes.rows_y_pct.r1 += offsetY;
+						cfg.boxes.rows_y_pct.r2 += offsetY;
+						cfg.boxes.rows_y_pct.r3 += offsetY;
+						cfg.boxes.rows_y_pct.r4 += offsetY;
+					}
+					if (cfg.boxes.right_r4_y_pct) cfg.boxes.right_r4_y_pct += offsetY;
+					if (cfg.boxes.sex_m) cfg.boxes.sex_m.y_pct += offsetY;
+					if (cfg.boxes.sex_f) cfg.boxes.sex_f.y_pct += offsetY;
+					if (cfg.vaccines && cfg.vaccines.rows_y_pct) {
+						Object.keys(cfg.vaccines.rows_y_pct).forEach((k) => {
+							cfg.vaccines.rows_y_pct[k] += offsetY;
+						});
+					}
+					if (cfg.extras) {
+						if (cfg.extras.health_center)
+							cfg.extras.health_center.y_pct += offsetY;
+						if (cfg.extras.barangay) cfg.extras.barangay.y_pct += offsetY;
+						if (cfg.extras.family_no) cfg.extras.family_no.y_pct += offsetY;
+					}
+				}
+
+				draw();
+			});
+
+			document.getElementById("resetOffset").addEventListener("click", () => {
+				document.getElementById("offsetX").value = 0;
+				document.getElementById("offsetY").value = 0;
 			});
 
 			async function drawBackground() {

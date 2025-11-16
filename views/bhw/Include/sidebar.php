@@ -79,6 +79,12 @@ $user_type_label = isset($user_type_label) ? $user_type_label : ((($_SESSION['us
                         <span class="menu-label">CHR Doc Requests</span>
                     </a>
                 </li>
+                <li class="sidebar-menu-item<?php echo $currentPage === 'babycard-doc-requests.php' ? ' active' : ''; ?>">
+                    <a href="./babycard-doc-requests.php" class="menu-link">
+                        <span class="menu-icon material-symbols-rounded">credit_card</span>
+                        <span class="menu-label">Baby Card Requests</span>
+                    </a>
+                </li>
                 <li class="sidebar-menu-item<?php echo $currentPage === 'system_settings.php' ? ' active' : ''; ?>">
                     <a href="./system_settings.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">settings</span>
