@@ -27,8 +27,9 @@ if ($user_id) {
     <title>Child Health Record</title>
     <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
     <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/header.css?v=1.0.1" />
+    <link rel="stylesheet" href="../../css/sidebar.css?v=1.0.1" />
+    <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/skeleton-loading.css" />
     <link rel="stylesheet" href="../../css/bhw/child-health-record.css" />
 </head>
@@ -382,6 +383,7 @@ if ($user_id) {
                     const date = row.date_given || row.schedule_date || '';
                     const ht = row.height || row.height_cm || '';
                     const wt = row.weight || row.weight_kg || '';
+                    const muac = row.muac || row.me_ac || '';
                     const status = row.status || 'scheduled';
                     const statusText = status === 'taken' ? 'Taken' : (status === 'completed' ? 'Completed' : (status === 'missed' ? 'Missed' : 'Scheduled'));
                     const chipClass = status === 'scheduled' ? 'upcoming' : status;
@@ -392,7 +394,7 @@ if ($user_id) {
                             <td>${row.vaccine_name || ''}</td>
                             <td>${ht}</td>
                             <td>${wt}</td>
-                            <td>${row.me_ac || ''}</td>
+                            <td>${muac}</td>
                             <td><span class="chip chip--${chipClass}">${statusText}</span></td>
                             <td>${row.condition_of_baby || ''}</td>
                             <td>${row.advice_given || ''}</td>

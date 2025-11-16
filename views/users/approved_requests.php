@@ -1,5 +1,19 @@
 <?php include 'Include/header.php'; ?>
 
+<style>
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.dl-babycard {
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.dl-babycard:disabled {
+    cursor: not-allowed;
+}
+</style>
+
 <div class="content" style="padding: 16px;">
 	<h2 style="margin:0 0 12px 0;">Approved Requests</h2>
 	<div id="approvedRoot">
@@ -33,13 +47,16 @@ async function loadApprovedRequests(){
 
     rows.forEach(r => {
         const url = r.doc_url||'';
+        // Check if this is a Baby Card request (status was pendingBabyCard before approval)
+        // For Baby Card requests, doc_url contains the Baby Card PDF
+        const docUrl = r.doc_url || '';
 			html += '<tr>'+
 				`<td style="padding:6px;">${r.id}</td>`+
 				`<td style="padding:6px;">${r.baby_id||''}</td>`+
 				`<td style=\"padding:6px;\">${r.child_name||''}</td>`+
 				`<td style="padding:6px;">${(r.request_type||'').toUpperCase()}</td>`+
 				`<td style="padding:6px;">${(r.approved_at||'').toString().replace('T',' ').split('.')[0]}</td>`+
-				`<td style="padding:6px; text-align:center;"><a href="#" class="dl-babycard" data-baby="${r.baby_id||''}" data-name="${(r.child_name||'').replace(/[^A-Za-z0-9]+/g,'')}">Download Baby Card</a></td>`+
+				`<td style="padding:6px; text-align:center;"><a href="#" class="dl-babycard" data-baby="${r.baby_id||''}" data-name="${(r.child_name||'').replace(/[^A-Za-z0-9]+/g,'')}" data-doc-url="${docUrl}">Download Baby Card</a></td>`+
 			'</tr>';
 		});
 		html += '</tbody></table>';
@@ -51,26 +68,82 @@ async function loadApprovedRequests(){
             e.preventDefault();
             const babyId = a.getAttribute('data-baby');
             const preName = a.getAttribute('data-name') || '';
+            const docUrl = a.getAttribute('data-doc-url') || '';
+            
+            // Store original text and disable button
+            const originalText = a.textContent || a.innerText;
+            const originalHTML = a.innerHTML;
+            a.disabled = true;
+            a.style.pointerEvents = 'none';
+            a.style.opacity = '0.6';
+            a.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite;">⏳</span> Downloading...';
+            
             try{
+                // If doc_url exists (server-generated Baby Card), download directly
+                if (docUrl && docUrl.trim() !== '') {
+                    try {
+                        // Try proxy first to avoid CORS
+                        const proxyRes = await fetch(`/ebakunado/php/supabase/users/download_chr_doc.php?url=${encodeURIComponent(docUrl)}`, { credentials: 'same-origin' });
+                        if (proxyRes.ok) {
+                            const pdfBlob = await proxyRes.blob();
+                            const baseName = preName || 'Child';
+                            const filename = `BabyCard_${baseName}.pdf`;
+                            saveAs(pdfBlob, filename);
+                            // Restore button
+                            a.disabled = false;
+                            a.style.pointerEvents = '';
+                            a.style.opacity = '1';
+                            a.innerHTML = originalHTML;
+                            return;
+                        }
+                    } catch (err) {
+                        console.error('Proxy download failed:', err);
+                        // Proxy failed, try direct download
+                    }
+                    
+                    // Fallback: direct download
+                    window.open(docUrl, '_blank');
+                    // Restore button after a delay
+                    setTimeout(() => {
+                        a.disabled = false;
+                        a.style.pointerEvents = '';
+                        a.style.opacity = '1';
+                        a.innerHTML = originalHTML;
+                    }, 1000);
+                    return;
+                }
+                
+                // Fallback: generate client-side if doc_url is not available
+                a.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite;">⏳</span> Generating...';
                 const fd = new FormData();
                 fd.append('baby_id', babyId);
                 const cRes = await fetch('/ebakunado/php/supabase/users/get_child_details.php', { method: 'POST', body: fd });
                 const cJson = await cRes.json();
                 if (!(cJson && cJson.status === 'success' && cJson.data && cJson.data[0])){
-                    alert('Child details not found');
-                    return;
+                    throw new Error('Child details not found');
                 }
                 const child = cJson.data[0];
                 const iRes = await fetch('/ebakunado/php/supabase/users/get_my_immunization_records.php', { method:'POST', body: fd });
                 const iJson = await iRes.json();
                 const immunizations = Array.isArray(iJson.data) ? iJson.data : [];
+                a.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite;">⏳</span> Creating PDF...';
                 const blob = await renderBabyCardPdf(child, immunizations);
                 const baseName = preName || `${(child.child_fname||'')}${(child.child_lname||'')}`.replace(/[^A-Za-z0-9]+/g,'');
                 const filename = `BabyCard_${baseName || 'Child'}.pdf`;
                 saveAs(blob, filename);
+                // Restore button
+                a.disabled = false;
+                a.style.pointerEvents = '';
+                a.style.opacity = '1';
+                a.innerHTML = originalHTML;
             }catch(err){
                 console.error('Baby Card generation failed:', err);
-                alert('Failed to generate Baby Card.');
+                alert('Failed to generate Baby Card: ' + (err.message || 'Unknown error'));
+                // Restore button
+                a.disabled = false;
+                a.style.pointerEvents = '';
+                a.style.opacity = '1';
+                a.innerHTML = originalHTML;
             }
         });
     });

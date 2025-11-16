@@ -492,6 +492,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                     const date = rec.date_given || rec.schedule_date || '';
                     const ht = rec.height || rec.height_cm || '';
                     const wt = rec.weight || rec.weight_kg || '';
+                    const muac = rec.muac || '-';
                     const next = nextScheduleAfter(date);
                     ledgerHtml += `
                 <tr>
@@ -499,7 +500,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                     <td>${getValue(name)}</td>
                     <td>${getValue(ht)}</td>
                     <td>${getValue(wt)}</td>
-                    <td>-</td>
+                    <td>${getValue(muac)}</td>
                     <td>Taken</td>
                     <td>-</td>
                     <td>-</td>

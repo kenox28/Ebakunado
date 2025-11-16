@@ -323,13 +323,14 @@ foreach ($canonical as $name){
     $date = $r['date_given'] ?? $r['schedule_date'] ?? '';
     $ht = $r['height'] ?? $r['height_cm'] ?? '';
     $wt = $r['weight'] ?? $r['weight_kg'] ?? '';
+    $muac = $r['muac'] ?? '';
     $next = $nextAfter($date);
     $table->addRow();
     $table->addCell()->addText($date ? $date : '', $styleText);
     $table->addCell()->addText($name, $styleText);
     $table->addCell()->addText($ht, $styleText);
     $table->addCell()->addText($wt, $styleText);
-    $table->addCell()->addText('', $styleText);
+    $table->addCell()->addText($muac, $styleText);
     $table->addCell()->addText('Taken', $styleText);
     $table->addCell()->addText('', $styleText);
     $table->addCell()->addText('', $styleText);

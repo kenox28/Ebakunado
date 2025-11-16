@@ -1,0 +1,80 @@
+<?php
+session_start();
+header('Content-Type: application/json');
+
+$layout = [
+    "id" => null,
+    "background_path" => "assets/images/babycard.jpg",
+    "fallback_background_path" => "assets/images/babycard.jpg",
+    "page" => [
+        "format" => "a4",
+        "orientation" => "landscape",
+        "unit" => "mm"
+    ],
+    "fonts" => [
+        "details_pt" => 12,
+        "wish" => null,
+        "vaccines_pt" => 11
+    ],
+    "boxes" => [
+        "left_x_pct" => 36.917443396951924,
+        "right_x_pct" => 74.11784362016505,
+        "right_r4_x_pct" => 91.59454171160746,
+        "right_r4_y_pct" => 24.656423574721035,
+        "rows_y_pct" => [
+            "r1" => 16.92791883231871,
+            "r2" => 20.916824505816685,
+            "r3" => 24.531770272424218,
+            "r4" => 28.022061785705727
+        ],
+        "sex" => [
+            "x_pct" => 96.5,
+            "y_pct" => 35.1
+        ],
+        "sex_m" => [
+            "x_pct" => 91.51131933974345,
+            "y_pct" => 28.396022643625386
+        ],
+        "sex_f" => [
+            "x_pct" => 95.505993189216,
+            "y_pct" => 28.14671603903176
+        ],
+        "max_width_pct" => 26
+    ],
+    "vaccines" => [
+        "cols_x_pct" => [
+            "c1" => 60.2,
+            "c2" => 67.46005383990667,
+            "c3" => 74.53395547948512
+        ],
+        "rows_y_pct" => [
+            "BCG" => 39.36551324574481,
+            "HEPATITIS B" => 44.10233873302365,
+            "PENTAVALENT" => 48.839164220302486,
+            "OPV" => 53.825296312174956,
+            "PCV" => 63.174293984435835,
+            "MMR" => 68.03577277401149
+        ]
+    ],
+    "extras" => [
+        "health_center" => [
+            "text" => "Linao Health Center",
+            "x_pct" => 5.9587210635396515,
+            "y_pct" => 49.961043940973795,
+            "max_width_pct" => 22
+        ],
+        "barangay" => [
+            "x_pct" => 5.87549869167564,
+            "y_pct" => 60.43192133390597,
+            "max_width_pct" => 22
+        ],
+        "family_no" => [
+            "x_pct" => 5.709053947947616,
+            "y_pct" => 71.15210533143178,
+            "max_width_pct" => 22
+        ]
+    ]
+];
+
+echo json_encode($layout);
+?>

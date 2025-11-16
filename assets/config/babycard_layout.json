@@ -5,7 +5,16 @@
 	"page": {
 		"format": "a4",
 		"orientation": "landscape",
-		"unit": "mm"
+		"unit": "mm",
+		"_dimensions_mm": {
+			"width": 297,
+			"height": 210
+		},
+		"_dimensions_points": {
+			"width": 841.89,
+			"height": 595.28
+		},
+		"_note": "A4 Landscape: 297mm × 210mm (841.89pt × 595.28pt). All x_pct and y_pct coordinates are percentages (0-100) relative to these dimensions."
 	},
 	"fonts": {
 		"details_pt": 12,
@@ -28,20 +37,20 @@
 			"y_pct": 35.1
 		},
 		"sex_m": {
-			"x_pct": 91.51131933974345,
-			"y_pct": 28.396022643625386
+			"x_pct": 92.01131933974345,
+			"y_pct": 27.896022643625386
 		},
 		"sex_f": {
-			"x_pct": 95.505993189216,
-			"y_pct": 28.14671603903176
+			"x_pct": 96.005993189216,
+			"y_pct": 27.64671603903176
 		},
 		"max_width_pct": 26
 	},
 	"vaccines": {
 		"cols_x_pct": {
-			"c1": 60.2,
-			"c2": 67.46005383990667,
-			"c3": 74.53395547948512
+			"c1": 57.7,
+			"c2": 64.96005383990667,
+			"c3": 72.03395547948512
 		},
 		"rows_y_pct": {
 			"BCG": 39.36551324574481,
@@ -69,5 +78,9 @@
 			"y_pct": 71.15210533143178,
 			"max_width_pct": 22
 		}
+	},
+	"dompdf_offset": {
+		"x_pct": -0.9,
+		"y_pct": -1.3
 	}
 }

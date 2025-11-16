@@ -28,6 +28,15 @@ $user_fname = $_SESSION['fname'] ?? '';
     <title>Approved Requests</title>
     <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
     <link rel="stylesheet" href="../../css/main.css?v=1.0.3" />
+    <style>
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .dl-babycard {
+        transition: opacity 0.2s;
+    }
+    </style>
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/notification-style.css" />
@@ -150,6 +159,7 @@ async function loadApprovedRequests(){
                 const type = (r.request_type || '').toUpperCase();
                 const approvedAt = formatDate(r.approved_at);
                 const safeName = String(r.child_name||'').replace(/[^A-Za-z0-9]+/g,'');
+                const docUrl = r.doc_url || ''; // Server-generated Baby Card PDF URL
                 html += `
                 <div class="request-item">
                     <div class="request-details">
@@ -159,7 +169,7 @@ async function loadApprovedRequests(){
                         <div class="request-row"><strong>Type:</strong> ${type}</div>
                         <div class="request-row"><strong>Approved At:</strong> ${approvedAt}</div>
                         <div class="request-actions">
-                            <a href="#" class="download-btn dl-babycard" data-baby="${r.baby_id||''}" data-name="${safeName}">
+                            <a href="#" class="download-btn dl-babycard" data-baby="${r.baby_id||''}" data-name="${safeName}" data-doc-url="${docUrl}">
                                 <span class="material-symbols-rounded" aria-hidden="true">download</span>
                                 Download Baby Card
                             </a>
@@ -174,27 +184,81 @@ async function loadApprovedRequests(){
         document.querySelectorAll('.dl-babycard').forEach(a => {
             a.addEventListener('click', async (e) => {
                 e.preventDefault();
-                const babyId = a.getAttribute('value');
+                const babyId = a.getAttribute('data-baby');
                 const nameSafe = a.getAttribute('data-name') || '';
+                const docUrl = a.getAttribute('data-doc-url') || '';
+                
+                // Store original HTML and disable button
+                const originalHTML = a.innerHTML;
+                a.style.pointerEvents = 'none';
+                a.style.opacity = '0.6';
+                a.style.cursor = 'not-allowed';
+                a.innerHTML = '<span class="material-symbols-rounded" style="display:inline-block;animation:spin 1s linear infinite;" aria-hidden="true">sync</span> Downloading...';
+                
                 try{
+                    // If doc_url exists (server-generated Baby Card), download directly
+                    if (docUrl && docUrl.trim() !== '') {
+                        try {
+                            // Try proxy first to avoid CORS
+                            const proxyRes = await fetch(`/ebakunado/php/supabase/users/download_chr_doc.php?url=${encodeURIComponent(docUrl)}`, { credentials: 'same-origin' });
+                            if (proxyRes.ok) {
+                                const pdfBlob = await proxyRes.blob();
+                                const fileName = `BabyCard_${nameSafe || 'Child'}.pdf`;
+                                saveAs(pdfBlob, fileName);
+                                // Restore button
+                                a.style.pointerEvents = '';
+                                a.style.opacity = '1';
+                                a.style.cursor = 'pointer';
+                                a.innerHTML = originalHTML;
+                                return;
+                            }
+                        } catch (err) {
+                            console.error('Proxy download failed:', err);
+                            // Proxy failed, try direct download
+                        }
+                        
+                        // Fallback: direct download
+                        window.open(docUrl, '_blank');
+                        // Restore button after a delay
+                        setTimeout(() => {
+                            a.style.pointerEvents = '';
+                            a.style.opacity = '1';
+                            a.style.cursor = 'pointer';
+                            a.innerHTML = originalHTML;
+                        }, 1000);
+                        return;
+                    }
+                    
+                    // Fallback: generate client-side if doc_url is not available
+                    a.innerHTML = '<span class="material-symbols-rounded" style="display:inline-block;animation:spin 1s linear infinite;" aria-hidden="true">sync</span> Generating...';
                     const fd = new FormData();
                     fd.append('baby_id', babyId);
                     const cRes = await fetch('/ebakunado/php/supabase/users/get_child_details.php', { method: 'POST', body: fd });
                     const cJson = await cRes.json();
                     if (!(cJson && cJson.status === 'success' && cJson.data && cJson.data[0])) {
-                        alert('Child details not found');
-                        return;
+                        throw new Error('Child details not found');
                     }
                     const child = cJson.data[0];
                     const iRes = await fetch('/ebakunado/php/supabase/users/get_my_immunization_records.php', { method: 'POST', body: fd });
                     const iJson = await iRes.json();
                     const immunizations = Array.isArray(iJson.data) ? iJson.data : [];
+                    a.innerHTML = '<span class="material-symbols-rounded" style="display:inline-block;animation:spin 1s linear infinite;" aria-hidden="true">sync</span> Creating PDF...';
                     const blob = await renderBabyCardPdf(child, immunizations);
                     const fileName = `BabyCard_${nameSafe || ((child.child_fname||'') + (child.child_lname||''))}.pdf`;
                     saveAs(blob, fileName);
+                    // Restore button
+                    a.style.pointerEvents = '';
+                    a.style.opacity = '1';
+                    a.style.cursor = 'pointer';
+                    a.innerHTML = originalHTML;
                 } catch (err) {
                     console.error('Baby Card generation failed:', err);
-                    alert('Failed to generate Baby Card.');
+                    alert('Failed to generate Baby Card: ' + (err.message || 'Unknown error'));
+                    // Restore button
+                    a.style.pointerEvents = '';
+                    a.style.opacity = '1';
+                    a.style.cursor = 'pointer';
+                    a.innerHTML = originalHTML;
                 }
             });
         });
