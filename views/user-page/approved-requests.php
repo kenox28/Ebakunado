@@ -37,7 +37,7 @@ $user_fname = $_SESSION['fname'] ?? '';
         transition: opacity 0.2s;
     }
     </style>
-    <link rel="stylesheet" href="../../css/header.css" />
+    <link rel="stylesheet" href="../../css/header.css?v=1.0.3" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/skeleton-loading.css" />
@@ -233,13 +233,13 @@ async function loadApprovedRequests(){
                     a.innerHTML = '<span class="material-symbols-rounded" style="display:inline-block;animation:spin 1s linear infinite;" aria-hidden="true">sync</span> Generating...';
                     const fd = new FormData();
                     fd.append('baby_id', babyId);
-                    const cRes = await fetch('/ebakunado/php/supabase/users/get_child_details.php', { method: 'POST', body: fd });
+                    const cRes = await fetch('../../php/supabase/users/get_child_details.php', { method: 'POST', body: fd });
                     const cJson = await cRes.json();
                     if (!(cJson && cJson.status === 'success' && cJson.data && cJson.data[0])) {
                         throw new Error('Child details not found');
                     }
                     const child = cJson.data[0];
-                    const iRes = await fetch('/ebakunado/php/supabase/users/get_my_immunization_records.php', { method: 'POST', body: fd });
+                    const iRes = await fetch('../../php/supabase/users/get_my_immunization_records.php', { method: 'POST', body: fd });
                     const iJson = await iRes.json();
                     const immunizations = Array.isArray(iJson.data) ? iJson.data : [];
                     a.innerHTML = '<span class="material-symbols-rounded" style="display:inline-block;animation:spin 1s linear infinite;" aria-hidden="true">sync</span> Creating PDF...';
@@ -282,7 +282,7 @@ async function loadApprovedRequests(){
 async function buildAndDownloadZipClient(ctx){
     const pdfBytes = await (async () => {
         try{
-            const r1 = await fetch(`/ebakunado/php/supabase/users/download_chr_doc.php?url=${encodeURIComponent(ctx.docUrl)}`, { credentials: 'same-origin' });
+            const r1 = await fetch(`../../php/supabase/users/download_chr_doc.php?url=${encodeURIComponent(ctx.docUrl)}`, { credentials: 'same-origin' });
             if (r1.ok){ return await r1.arrayBuffer(); }
         }catch(_){}
         const r2 = await fetch(ctx.docUrl, { mode: 'cors' });
@@ -291,14 +291,14 @@ async function buildAndDownloadZipClient(ctx){
     })();
     const child = await (async () => {
         const fd = new FormData(); fd.append('baby_id', ctx.babyId);
-        const r = await fetch('/ebakunado/php/supabase/users/get_child_details.php', { method: 'POST', body: fd });
+        const r = await fetch('../../php/supabase/users/get_child_details.php', { method: 'POST', body: fd });
         const j = await r.json();
         if (!(j && j.status==='success' && j.data && j.data.length>0)) throw new Error('Child details not found');
         return j.data[0];
     })();
     const immunizations = await (async () => {
         const fd = new FormData(); fd.append('baby_id', ctx.babyId);
-        const r = await fetch('/ebakunado/php/supabase/users/get_my_immunization_records.php', { method:'POST', body: fd });
+        const r = await fetch('../../php/supabase/users/get_my_immunization_records.php', { method:'POST', body: fd });
         const j = await r.json();
         if (!(j && j.status==='success' && Array.isArray(j.data))) return [];
         return j.data;
@@ -330,10 +330,10 @@ function formatDateShort(iso){
 async function renderBabyCardPdf(child, immunizations){
     const { jsPDF } = window.jspdf;
     // Load layout
-    let layout=null; try{ const r=await fetch('/ebakunado/assets/config/babycard_layout.json',{cache:'no-store'}); layout=await r.json(); }catch(_){}
+    let layout=null; try{ const r=await fetch('../../assets/config/babycard_layout.json',{cache:'no-store'}); layout=await r.json(); }catch(_){}
     // Load background with fallback
     async function loadBg(src){ return new Promise((res)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=()=>res(null); i.src=src; }); }
-    function toAbs(p){ if (!p) return p; return p.startsWith('/ebakunado/') ? p : ('/ebakunado/' + p.replace(/^\/+/,'') ); }
+    function toAbs(p){ if (!p) return p; return p.startsWith('../../') ? p : ('../../' + p.replace(/^\/+/,'') ); }
     let bg = null;
     if (layout && layout.background_path){ bg = await loadBg(toAbs(layout.background_path)); }
     if (!bg || !bg.naturalWidth){ bg = await loadBg(toAbs((layout && layout.fallback_background_path) || '/ebakunado/assets/images/babycard.jpg')); }
@@ -412,6 +412,6 @@ function loadImage(src){
 }
 </script>
 
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
+    <script src="../../js/header-handler/profile-menu.js?v=1.0.4" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
 </body>

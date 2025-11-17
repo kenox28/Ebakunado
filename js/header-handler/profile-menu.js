@@ -1,8 +1,15 @@
 // profile-menu_v2.js (aligned to profile-menu.js behavior with header_v2.php selectors)
 document.addEventListener("DOMContentLoaded", () => {
-	const trigger = document.getElementById("profileBtn"); // clickable button in header_v2
+	let trigger = document.getElementById("profileBtn");
+	let root = document.getElementById("profileRoot");
 	const menu = document.getElementById("profileMenu");
-	const root = document.getElementById("profileRoot"); // container for outside-click detection
+
+	// Fallback for user-page header markup (uses headerUser as both trigger and root)
+	if ((!trigger || !root) && document.getElementById("headerUser")) {
+		trigger = document.getElementById("headerUser");
+		root = trigger;
+	}
+
 	if (!trigger || !menu || !root) return;
 
 	function toggleMenu(force) {

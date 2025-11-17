@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Baby Card PDF Preview</title>
+		<link
+			rel="icon"
+			type="image/png"
+			href="assets/icons/favicon_io/favicon-32x32.png" />
+		<style>
+			body {
+				margin: 0;
+				background: #f6f7fb;
+				color: #0f172a;
+				font-family: Arial, Helvetica, sans-serif;
+			}
+			.container {
+				max-width: 1100px;
+				margin: 18px auto;
+				padding: 16px;
+				background: #fff;
+				border: 1px solid #e5e7eb;
+				border-radius: 10px;
+				box-shadow: 0 8px 24px rgba(2, 6, 23, 0.06);
+			}
+			h1 {
+				margin: 0 0 12px;
+				font-size: 18px;
+			}
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 10px;
+				margin: 8px 0 12px;
+			}
+			label {
+				display: block;
+				font-size: 12px;
+				color: #334155;
+				margin: 0 0 3px;
+			}
+			input {
+				width: 100%;
+				padding: 8px;
+				border: 1px solid #cbd5e1;
+				border-radius: 6px;
+			}
+			.toolbar {
+				display: flex;
+				gap: 10px;
+				flex-wrap: wrap;
+				margin: 4px 0 12px;
+			}
+			button {
+				padding: 8px 12px;
+				border: 0;
+				background: #2563eb;
+				color: #fff;
+				border-radius: 6px;
+				cursor: pointer;
+			}
+			button.secondary {
+				background: #0ea5e9;
+			}
+			iframe {
+				width: 100%;
+				height: 80vh;
+				border: 1px solid #e2e8f0;
+				border-radius: 6px;
+			}
+		</style>
+		<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Baby Card PDF Preview (A4 Landscape, image-accurate)</h1>
+			<div class="grid">
+				<div>
+					<label>Child Name</label><input id="f_name" value="Juan Dela Cruz" />
+				</div>
+				<div>
+					<label>Date of Birth (YYYY-MM-DD)</label
+					><input id="f_dob" value="2025-10-08" />
+				</div>
+				<div>
+					<label>Place of Birth</label><input id="f_pob" value="Ormoc City" />
+				</div>
+				<div>
+					<label>Address</label
+					><input id="f_addr" value="Leyte, Ormoc, Linao" />
+				</div>
+				<div>
+					<label>Health Center</label
+					><input id="f_hc" value="Linao Health Center" />
+				</div>
+				<div><label>Barangay</label><input id="f_brgy" value="Linao" /></div>
+				<div>
+					<label>Family No.</label><input id="f_fam" value="+639123456789" />
+				</div>
+				<div>
+					<label>Mother's Name</label
+					><input id="f_mom" value="Maria Dela Cruz" />
+				</div>
+				<div>
+					<label>Father's Name</label
+					><input id="f_dad" value="Jose Dela Cruz" />
+				</div>
+				<div>
+					<label>Birth Height</label><input id="f_height" value="50cm" />
+				</div>
+				<div>
+					<label>Birth Weight</label><input id="f_weight" value="3.1kg" />
+				</div>
+				<div><label>Sex (M/F)</label><input id="f_sex" value="M" /></div>
+			</div>
+			<div class="toolbar">
+				<button id="btnRender">Render Preview</button>
+				<button id="btnDownload" class="secondary">
+					Download Baby_Card.pdf
+				</button>
+			</div>
+			<iframe id="pdfFrame" title="Baby Card PDF"></iframe>
+		</div>
+
+		<script>
+			let layout = null; // loaded from assets/config/babycard_layout.json (with fallback)
+
+			function formatDateShort(iso) {
+				if (!iso) return "";
+				const d = new Date(iso);
+				if (isNaN(d.getTime())) {
+					const p = (iso + "").split("T")[0].split("-");
+					if (p.length === 3) {
+						const m = parseInt(p[1], 10),
+							day = parseInt(p[2], 10),
+							y = (parseInt(p[0], 10) % 100).toString().padStart(2, "0");
+						return `${m}/${day}/${y}`;
+					}
+					return iso;
+				}
+				const m = d.getMonth() + 1,
+					day = d.getDate(),
+					y = (d.getFullYear() % 100).toString().padStart(2, "0");
+				return `${m}/${day}/${y}`;
+			}
+
+			function vkey(name) {
+				const n = (name || "").toUpperCase();
+				if (n.includes("BCG")) return "BCG";
+				if (n.includes("HEP")) return "HEPB";
+				if (n.includes("PENTA") || n.includes("HIB")) return "PENTA";
+				if (n.includes("OPV") || n.includes("ORAL POLIO")) return "OPV";
+				if (n.includes("IPV") || n.includes("INACTIVATED")) return "IPV";
+				if (n.includes("PCV") || n.includes("PNEUMO")) return "PCV";
+				if (n.includes("MMR") || n.includes("MEASLES")) return "MMR";
+				return null;
+			}
+
+			async function loadLayout() {
+				try {
+					const r = await fetch("assets/config/babycard_layout.json", {
+						cache: "no-store",
+					});
+					if (!r.ok) throw new Error("no layout");
+					layout = await r.json();
+				} catch (_) {
+					layout = {
+						background_path:
+							"/ebakunado/assets/images/immunization-card-clear.jpg",
+						fallback_background_path: "/ebakunado/assets/images/babycard.jpg",
+						page: { format: "a4", orientation: "landscape", unit: "mm" },
+						fonts: { details_pt: 12, vaccines_pt: 11 },
+						boxes: {
+							left_x_pct: 36,
+							right_x_pct: 77,
+							rows_y_pct: { r1: 20.9, r2: 25.7, r3: 30.4, r4: 35.1 },
+							sex: { x_pct: 96.5, y_pct: 35.1 },
+							max_width_pct: 26,
+						},
+						vaccines: {
+							cols_x_pct: { c1: 60.2, c2: 69.2, c3: 78.2 },
+							rows_y_pct: {
+								BCG: 56.1,
+								"HEPATITIS B": 61.6,
+								PENTAVALENT: 67.0,
+								OPV: 72.4,
+								IPV: 77.7,
+								PCV: 83.1,
+								MMR: 88.5,
+							},
+						},
+					};
+				}
+			}
+
+			async function makePdfBlobFromInputs() {
+				const child = {
+					name: document.getElementById("f_name").value,
+					dob: document.getElementById("f_dob").value,
+					pob: document.getElementById("f_pob").value,
+					addr: document.getElementById("f_addr").value,
+					hc: document.getElementById("f_hc").value,
+					brgy: document.getElementById("f_brgy").value,
+					fam: document.getElementById("f_fam").value,
+					mom: document.getElementById("f_mom").value,
+					dad: document.getElementById("f_dad").value,
+					height: document.getElementById("f_height").value,
+					weight: document.getElementById("f_weight").value,
+					sex: document.getElementById("f_sex").value,
+				};
+				// sample vaccines
+				const vaccines = [
+					{ vaccine_name: "BCG", dose_number: 1, date_given: "2025-10-12" },
+					{
+						vaccine_name: "HEPATITIS B",
+						dose_number: 1,
+						date_given: "2025-10-19",
+					},
+					{
+						vaccine_name: "PENTAVALENT",
+						dose_number: 1,
+						date_given: "2025-10-28",
+					},
+					{ vaccine_name: "OPV", dose_number: 1, date_given: "2025-10-28" },
+				];
+				return await createBabyCardPdfBlob(child, vaccines);
+			}
+
+			async function createBabyCardPdfBlob(child, immunizations) {
+				const { jsPDF } = window.jspdf;
+				if (!layout) await loadLayout();
+				const doc = new jsPDF({
+					orientation: layout.page?.orientation || "landscape",
+					unit: layout.page?.unit || "mm",
+					format: layout.page?.format || "a4",
+				});
+				const pageW = doc.internal.pageSize.getWidth();
+				const pageH = doc.internal.pageSize.getHeight();
+
+				// Load background (full page) with graceful fallback
+				let bg = await new Promise((resolve) => {
+					const img = new Image();
+					img.onload = () => resolve(img);
+					img.onerror = () => resolve(null);
+					img.src =
+						layout.background_path ||
+						"assets/images/immunization-card-clear.jpg";
+				});
+				if (!bg || !bg.naturalWidth) {
+					bg = await new Promise((resolve) => {
+						const fb = new Image();
+						fb.onload = () => resolve(fb);
+						fb.onerror = () => resolve(null);
+						fb.src =
+							layout.fallback_background_path || "assets/images/babycard.jpg";
+					});
+				}
+				if (!bg || !bg.naturalWidth) {
+					throw new Error("Background image not found");
+				}
+				const c = document.createElement("canvas");
+				c.width = bg.naturalWidth;
+				c.height = bg.naturalHeight;
+				c.getContext("2d").drawImage(bg, 0, 0);
+				doc.addImage(
+					c.toDataURL("image/jpeg", 0.95),
+					"JPEG",
+					0,
+					0,
+					pageW,
+					pageH
+				);
+
+				function draw(
+					text,
+					xpct,
+					ypct,
+					pt,
+					align = "left",
+					maxWidthPct = null
+				) {
+					// Guard against invalid inputs to avoid jsPDF 'Invalid arguments' error
+					const xPctNum = Number(xpct);
+					const yPctNum = Number(ypct);
+					if (!isFinite(xPctNum) || !isFinite(yPctNum)) {
+						return; // skip drawing if coordinates are invalid
+					}
+					const txt = String(text ?? "");
+					doc.setFont("helvetica", "normal");
+					let size = pt;
+					if (maxWidthPct) {
+						// auto-fit width
+						let wMax = (maxWidthPct / 100) * pageW;
+						while (size > 8) {
+							doc.setFontSize(size);
+							const w = doc.getTextWidth(txt);
+							if (w <= wMax) break;
+							size -= 0.5;
+						}
+					} else {
+						doc.setFontSize(size);
+					}
+					const x = (xPctNum / 100) * pageW;
+					const y = (yPctNum / 100) * pageH;
+					const opts =
+						align && (align === "center" || align === "right") ? { align } : {};
+					doc.setTextColor(255, 255, 255);
+					doc.text(txt, x + 0.5, y + 0.8, opts);
+					doc.setTextColor(20, 30, 40);
+					doc.text(txt, x, y, opts);
+				}
+
+				// Details (auto-fit) from layout
+				const b = layout.boxes,
+					f = layout.fonts || {};
+				draw(
+					child.name,
+					b.left_x_pct,
+					b.rows_y_pct.r1,
+					f.details_pt || 12,
+					"left",
+					b.max_width_pct || 26
+				);
+				draw(
+					formatDateShort(child.dob),
+					b.left_x_pct,
+					b.rows_y_pct.r2,
+					f.details_pt || 12,
+					"left",
+					b.max_width_pct || 26
+				);
+				draw(
+					child.pob,
+					b.left_x_pct,
+					b.rows_y_pct.r3,
+					f.details_pt || 12,
+					"left",
+					b.max_width_pct || 26
+				);
+				draw(
+					child.addr,
+					b.left_x_pct,
+					b.rows_y_pct.r4,
+					f.details_pt || 12,
+					"left",
+					b.max_width_pct || 26
+				);
+
+				draw(
+					child.mom,
+					b.right_x_pct,
+					b.rows_y_pct.r1,
+					f.details_pt || 12,
+					"left",
+					b.max_width_pct || 26
+				);
+				draw(
+					child.dad,
+					b.right_x_pct,
+					b.rows_y_pct.r2,
+					f.details_pt || 12,
+					"left",
+					b.max_width_pct || 26
+				);
+				draw(
+					child.height,
+					b.right_x_pct,
+					b.rows_y_pct.r3,
+					f.details_pt || 12,
+					"left",
+					b.max_width_pct || 26
+				);
+				// last right row uses independent x if provided
+				const rightR4X =
+					typeof b.right_r4_x_pct === "number"
+						? b.right_r4_x_pct
+						: b.right_x_pct;
+				const rightR4Y =
+					typeof b.right_r4_y_pct === "number"
+						? b.right_r4_y_pct
+						: b.rows_y_pct.r4;
+				draw(
+					child.weight,
+					rightR4X,
+					rightR4Y,
+					f.details_pt || 12,
+					"left",
+					b.max_width_pct || 26
+				);
+
+				// Mark M/F circles with X at configured positions (no letter rendering)
+				const sexUpper = (child.sex || "").toUpperCase();
+				if (sexUpper.startsWith("M") && b.sex_m) {
+					draw("X", b.sex_m.x_pct, b.sex_m.y_pct, f.details_pt || 12, "center");
+				} else if (sexUpper.startsWith("F") && b.sex_f) {
+					draw("X", b.sex_f.x_pct, b.sex_f.y_pct, f.details_pt || 12, "center");
+				}
+
+				// Extras on the left panel
+				if (layout.extras) {
+					const ex = layout.extras;
+					if (ex.health_center) {
+						draw(
+							child.hc || "",
+							ex.health_center.x_pct,
+							ex.health_center.y_pct,
+							f.details_pt || 12,
+							"left",
+							ex.health_center.max_width_pct || 22
+						);
+					}
+					if (ex.barangay) {
+						draw(
+							child.brgy || "",
+							ex.barangay.x_pct,
+							ex.barangay.y_pct,
+							f.details_pt || 12,
+							"left",
+							ex.barangay.max_width_pct || 22
+						);
+					}
+					if (ex.family_no) {
+						draw(
+							child.fam || "",
+							ex.family_no.x_pct,
+							ex.family_no.y_pct,
+							f.details_pt || 12,
+							"left",
+							ex.family_no.max_width_pct || 22
+						);
+					}
+				}
+
+				// Vaccines (11pt centered)
+				const vconf = layout.vaccines,
+					f2 = layout.fonts || {};
+				immunizations
+					.filter((v) => v.date_given)
+					.forEach((v) => {
+						const key = vkey(v.vaccine_name);
+						if (!key) return;
+						const dose = parseInt(v.dose_number, 10) || 1;
+						let xp = vconf.cols_x_pct.c1;
+						if (key === "IPV")
+							xp = dose === 1 ? vconf.cols_x_pct.c1 : vconf.cols_x_pct.c2;
+						else if (!(key === "BCG" || key === "HEPB" || key === "MMR")) {
+							xp =
+								dose === 1
+									? vconf.cols_x_pct.c1
+									: dose === 2
+									? vconf.cols_x_pct.c2
+									: vconf.cols_x_pct.c3;
+						}
+						const y =
+							vconf.rows_y_pct[key] ||
+							vconf.rows_y_pct[key === "HEPB" ? "HEPATITIS B" : key];
+						draw(
+							formatDateShort(v.date_given),
+							xp,
+							y,
+							f2.vaccines_pt || 11,
+							"center"
+						);
+					});
+
+				return doc.output("blob");
+			}
+
+			async function renderPreview() {
+				if (!layout) await loadLayout();
+				const blob = await makePdfBlobFromInputs();
+				const url = URL.createObjectURL(blob);
+				const frame = document.getElementById("pdfFrame");
+				// revoke old url if any
+				if (frame.dataset.blobUrl) {
+					URL.revokeObjectURL(frame.dataset.blobUrl);
+				}
+				frame.src = url;
+				frame.dataset.blobUrl = url;
+			}
+
+			async function downloadPdf() {
+				if (!layout) await loadLayout();
+				const blob = await makePdfBlobFromInputs();
+				saveAs(blob, "Baby_Card.pdf");
+			}
+
+			document
+				.getElementById("btnRender")
+				.addEventListener("click", renderPreview);
+			document
+				.getElementById("btnDownload")
+				.addEventListener("click", downloadPdf);
+			window.addEventListener("load", renderPreview);
+		</script>
+	</body>
+</html>

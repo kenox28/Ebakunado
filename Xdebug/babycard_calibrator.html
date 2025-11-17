@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Baby Card Calibrator</title>
+		<link
+			rel="icon"
+			type="image/png"
+			href="assets/icons/favicon_io/favicon-32x32.png" />
+		<style>
+			body {
+				margin: 0;
+				font-family: Arial, Helvetica, sans-serif;
+				background: #f6f7fb;
+				color: #0f172a;
+			}
+			.wrap {
+				max-width: 1200px;
+				margin: 16px auto;
+				padding: 12px;
+				background: #fff;
+				border: 1px solid #e5e7eb;
+				border-radius: 10px;
+				box-shadow: 0 8px 24px rgba(2, 6, 23, 0.06);
+			}
+			h1 {
+				margin: 0 0 10px;
+				font-size: 18px;
+			}
+			toolbar {
+				display: flex;
+				gap: 10px;
+				flex-wrap: wrap;
+				margin: 8px 0;
+			}
+			button {
+				padding: 8px 12px;
+				border: 0;
+				background: #2563eb;
+				color: #fff;
+				border-radius: 6px;
+				cursor: pointer;
+			}
+			.controls {
+				display: flex;
+				gap: 10px;
+				flex-wrap: wrap;
+				margin: 8px 0 12px;
+			}
+			.controls input[type="file"] {
+				display: none;
+			}
+			.label {
+				font-size: 12px;
+				color: #334155;
+			}
+			canvas {
+				width: 100%;
+				height: auto;
+				border: 1px solid #e2e8f0;
+				border-radius: 6px;
+				background: #fafafa;
+				cursor: crosshair;
+			}
+			.legend {
+				display: flex;
+				gap: 10px;
+				flex-wrap: wrap;
+				margin-top: 6px;
+			}
+			.legend span {
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				font-size: 12px;
+			}
+			.dot {
+				width: 12px;
+				height: 12px;
+				border-radius: 50%;
+				display: inline-block;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="wrap">
+			<h1>Baby Card Calibrator</h1>
+			<div class="controls">
+				<button id="loadLayout">Load layout JSON</button>
+				<input id="fileLayout" type="file" accept="application/json" />
+				<button id="saveLayout">Save layout JSON</button>
+				<span class="label"
+					>Background: assets/images/immunization-card-clear.jpg (falls back to
+					assets/images/babycard.jpg)</span
+				>
+			</div>
+			<div class="controls" style="margin-top: 8px">
+				<span class="label">DOMPDF Offset (for server-side PDF):</span>
+				<label style="font-size: 12px">
+					X Offset (%):
+					<input
+						type="number"
+						id="offsetX"
+						step="0.1"
+						value="0"
+						style="width: 60px; margin-right: 10px" />
+				</label>
+				<label style="font-size: 12px">
+					Y Offset (%):
+					<input
+						type="number"
+						id="offsetY"
+						step="0.1"
+						value="0"
+						style="width: 60px; margin-right: 10px" />
+				</label>
+				<button id="applyOffset" style="padding: 6px 12px; font-size: 12px">
+					Apply Offset to All
+				</button>
+				<button
+					id="resetOffset"
+					style="padding: 6px 12px; font-size: 12px; background: #dc2626">
+					Reset
+				</button>
+				<span
+					class="label"
+					style="font-size: 11px; color: #64748b; margin-left: 10px">
+					(Adjusts all positions for DOMPDF if needed)
+				</span>
+			</div>
+			<canvas id="cv"></canvas>
+			<div class="legend">
+				<span
+					><span class="dot" style="background: #ef4444"></span> Left rows
+					(r1-r4)</span
+				>
+				<span
+					><span class="dot" style="background: #10b981"></span> Right rows
+					(r1-r4)</span
+				>
+				<span
+					><span class="dot" style="background: #a855f7"></span> Sex (M/F)</span
+				>
+				<span
+					><span class="dot" style="background: #2563eb"></span> Vaccine row
+					centers</span
+				>
+				<span
+					><span class="dot" style="background: #f59e0b"></span> Vaccine col
+					centers</span
+				>
+				<span
+					><span class="dot" style="background: #0ea5e9"></span> Health
+					Center</span
+				>
+				<span
+					><span class="dot" style="background: #14b8a6"></span> Barangay</span
+				>
+				<span
+					><span class="dot" style="background: #f97316"></span> Family
+					No.</span
+				>
+			</div>
+		</div>
+		<script>
+			const cv = document.getElementById("cv");
+			const ctx = cv.getContext("2d");
+			const layoutUrl = "assets/config/babycard_layout.json";
+			let img = null;
+			let cfg = null;
+			let drag = null; // {type, key} being dragged
+
+			async function loadImageTry(paths) {
+				for (const p of paths) {
+					const ok = await new Promise((resolve) => {
+						const i = new Image();
+						i.onload = () => {
+							img = i;
+							resolve(true);
+						};
+						i.onerror = () => resolve(false);
+						i.src = p;
+					});
+					if (ok) return true;
+				}
+				return false;
+			}
+
+			async function loadLayout() {
+				try {
+					const res = await fetch(layoutUrl, { cache: "no-store" });
+					if (!res.ok) throw new Error("layout not found");
+					cfg = await res.json();
+				} catch (_) {
+					cfg = {
+						background_path:
+							"/ebakunado/assets/images/immunization-card-clear.jpg",
+						fallback_background_path: "/ebakunado/assets/images/babycard.jpg",
+						page: { format: "a4", orientation: "landscape", unit: "mm" },
+						fonts: { details_pt: 12, vaccines_pt: 11 },
+						boxes: {
+							left_x_pct: 36,
+							right_x_pct: 77,
+							rows_y_pct: { r1: 20.9, r2: 25.7, r3: 30.4, r4: 35.1 },
+							sex: { x_pct: 96.5, y_pct: 35.1 },
+							max_width_pct: 26,
+						},
+						vaccines: {
+							cols_x_pct: { c1: 60.2, c2: 69.2, c3: 78.2 },
+							rows_y_pct: {
+								BCG: 56.1,
+								"HEPATITIS B": 61.6,
+								PENTAVALENT: 67,
+								OPV: 72.4,
+								IPV: 77.7,
+								PCV: 83.1,
+								MMR: 88.5,
+							},
+						},
+					};
+				}
+			}
+
+			function resize() {
+				if (!img) return;
+				cv.width = img.naturalWidth;
+				cv.height = img.naturalHeight;
+				draw();
+			}
+
+			function px(xpct, total) {
+				return Math.round((xpct / 100) * total);
+			}
+
+			function draw() {
+				ctx.clearRect(0, 0, cv.width, cv.height);
+				ctx.drawImage(img, 0, 0);
+				// helpers
+				const leftX = px(cfg.boxes.left_x_pct, cv.width);
+				const rightX = px(cfg.boxes.right_x_pct, cv.width);
+				const ry = cfg.boxes.rows_y_pct;
+				const sex = cfg.boxes.sex;
+				const sexM = cfg.boxes.sex_m || sex;
+				const sexF = cfg.boxes.sex_f || sex;
+				const col = cfg.vaccines.cols_x_pct;
+				const row = cfg.vaccines.rows_y_pct;
+				const colors = {
+					left: "#ef4444",
+					right: "#10b981",
+					sex: "#a855f7",
+					vrow: "#2563eb",
+					vcol: "#f59e0b",
+					hc: "#0ea5e9",
+					brgy: "#14b8a6",
+					fam: "#f97316",
+				};
+				// left dots
+				Object.entries(ry).forEach(([k, y]) => {
+					// Left marker always uses the shared row Y
+					const pyLeft = px(y, cv.height);
+					dot(leftX, pyLeft, colors.left);
+					// Right marker: last row (r4) can use independent X and Y
+					const rx =
+						k === "r4" && typeof cfg.boxes.right_r4_x_pct === "number"
+							? px(cfg.boxes.right_r4_x_pct, cv.width)
+							: rightX;
+					const pyRight =
+						k === "r4" && typeof cfg.boxes.right_r4_y_pct === "number"
+							? px(cfg.boxes.right_r4_y_pct, cv.height)
+							: pyLeft;
+					dot(rx, pyRight, colors.right);
+				});
+				// sex markers (M/F)
+				dot(px(sexM.x_pct, cv.width), px(sexM.y_pct, cv.height), colors.sex);
+				dot(px(sexF.x_pct, cv.width), px(sexF.y_pct, cv.height), colors.sex);
+
+				// extras (optional)
+				if (cfg.extras) {
+					const ex = cfg.extras;
+					if (ex.health_center) {
+						dot(
+							px(ex.health_center.x_pct, cv.width),
+							px(ex.health_center.y_pct, cv.height),
+							colors.hc
+						);
+					}
+					if (ex.barangay) {
+						dot(
+							px(ex.barangay.x_pct, cv.width),
+							px(ex.barangay.y_pct, cv.height),
+							colors.brgy
+						);
+					}
+					if (ex.family_no) {
+						dot(
+							px(ex.family_no.x_pct, cv.width),
+							px(ex.family_no.y_pct, cv.height),
+							colors.fam
+						);
+					}
+				}
+				// vaccine rows
+				Object.entries(row).forEach(([k, y]) => {
+					dot(px(col.c1, cv.width), px(y, cv.height), colors.vrow);
+					dot(px(col.c2, cv.width), px(y, cv.height), colors.vrow);
+					dot(px(col.c3, cv.width), px(y, cv.height), colors.vrow);
+				});
+				// vaccine cols (top markers)
+				dot(px(col.c1, cv.width), px(50, cv.height), colors.vcol);
+				dot(px(col.c2, cv.width), px(50, cv.height), colors.vcol);
+				dot(px(col.c3, cv.width), px(50, cv.height), colors.vcol);
+			}
+
+			function dot(x, y, color) {
+				ctx.fillStyle = color;
+				ctx.beginPath();
+				ctx.arc(x, y, 7, 0, Math.PI * 2);
+				ctx.fill();
+			}
+
+			function hitTest(x, y) {
+				const leftX = px(cfg.boxes.left_x_pct, cv.width);
+				const rightX = px(cfg.boxes.right_x_pct, cv.width);
+				const ry = cfg.boxes.rows_y_pct;
+				const sex = cfg.boxes.sex;
+				const sexM = cfg.boxes.sex_m || sex;
+				const sexF = cfg.boxes.sex_f || sex;
+				const col = cfg.vaccines.cols_x_pct;
+				const row = cfg.vaccines.rows_y_pct;
+				const pts = [];
+				Object.entries(ry).forEach(([k, vy]) => {
+					const pyLeft = px(vy, cv.height);
+					pts.push({ type: "left_row", key: k, x: leftX, y: pyLeft });
+					const rx =
+						k === "r4" && typeof cfg.boxes.right_r4_x_pct === "number"
+							? px(cfg.boxes.right_r4_x_pct, cv.width)
+							: rightX;
+					const pyRight =
+						k === "r4" && typeof cfg.boxes.right_r4_y_pct === "number"
+							? px(cfg.boxes.right_r4_y_pct, cv.height)
+							: pyLeft;
+					pts.push({ type: "right_row", key: k, x: rx, y: pyRight });
+				});
+				pts.push({
+					type: "sex_m",
+					key: "sex_m",
+					x: px(sexM.x_pct, cv.width),
+					y: px(sexM.y_pct, cv.height),
+				});
+				pts.push({
+					type: "sex_f",
+					key: "sex_f",
+					x: px(sexF.x_pct, cv.width),
+					y: px(sexF.y_pct, cv.height),
+				});
+				if (cfg.extras) {
+					const ex = cfg.extras;
+					if (ex.health_center) {
+						pts.push({
+							type: "extra_hc",
+							key: "health_center",
+							x: px(ex.health_center.x_pct, cv.width),
+							y: px(ex.health_center.y_pct, cv.height),
+						});
+					}
+					if (ex.barangay) {
+						pts.push({
+							type: "extra_brgy",
+							key: "barangay",
+							x: px(ex.barangay.x_pct, cv.width),
+							y: px(ex.barangay.y_pct, cv.height),
+						});
+					}
+					if (ex.family_no) {
+						pts.push({
+							type: "extra_fam",
+							key: "family_no",
+							x: px(ex.family_no.x_pct, cv.width),
+							y: px(ex.family_no.y_pct, cv.height),
+						});
+					}
+				}
+				["c1", "c2", "c3"].forEach((c) => {
+					pts.push({
+						type: "vcol",
+						key: c,
+						x: px(col[c], cv.width),
+						y: px(50, cv.height),
+					});
+				});
+				Object.keys(row).forEach((rk) => {
+					pts.push({
+						type: "vrow",
+						key: rk,
+						x: px(col.c1, cv.width),
+						y: px(row[rk], cv.height),
+					});
+				});
+				return pts.find((p) => Math.hypot(p.x - x, p.y - y) <= 10) || null;
+			}
+
+			function getCanvasPoint(evt) {
+				const r = cv.getBoundingClientRect();
+				const scaleX = cv.width / r.width;
+				const scaleY = cv.height / r.height;
+				const x = (evt.clientX - r.left) * scaleX;
+				const y = (evt.clientY - r.top) * scaleY;
+				return { x, y };
+			}
+
+			cv.addEventListener("mousedown", (e) => {
+				const { x, y } = getCanvasPoint(e);
+				const h = hitTest(x, y);
+				if (h) {
+					drag = h;
+				}
+			});
+			cv.addEventListener("mousemove", (e) => {
+				if (!drag) return;
+				const { x, y } = getCanvasPoint(e);
+				if (drag.type === "left_row") {
+					cfg.boxes.left_x_pct = Math.max(
+						0,
+						Math.min(100, (x / cv.width) * 100)
+					);
+					cfg.boxes.rows_y_pct[drag.key] = Math.max(
+						0,
+						Math.min(100, (y / cv.height) * 100)
+					);
+				} else if (drag.type === "right_row") {
+					// r4 has independent X; others use shared right_x_pct
+					if (drag.key === "r4") {
+						cfg.boxes.right_r4_x_pct = Math.max(
+							0,
+							Math.min(100, (x / cv.width) * 100)
+						);
+						cfg.boxes.right_r4_y_pct = Math.max(
+							0,
+							Math.min(100, (y / cv.height) * 100)
+						);
+					} else {
+						cfg.boxes.right_x_pct = Math.max(
+							0,
+							Math.min(100, (x / cv.width) * 100)
+						);
+						cfg.boxes.rows_y_pct[drag.key] = Math.max(
+							0,
+							Math.min(100, (y / cv.height) * 100)
+						);
+					}
+				} else if (drag.type === "sex_m") {
+					cfg.boxes.sex_m = cfg.boxes.sex_m || { x_pct: 96.5, y_pct: 35.1 };
+					cfg.boxes.sex_m.x_pct = Math.max(
+						0,
+						Math.min(100, (x / cv.width) * 100)
+					);
+					cfg.boxes.sex_m.y_pct = Math.max(
+						0,
+						Math.min(100, (y / cv.height) * 100)
+					);
+				} else if (drag.type === "sex_f") {
+					cfg.boxes.sex_f = cfg.boxes.sex_f || { x_pct: 98.5, y_pct: 35.1 };
+					cfg.boxes.sex_f.x_pct = Math.max(
+						0,
+						Math.min(100, (x / cv.width) * 100)
+					);
+					cfg.boxes.sex_f.y_pct = Math.max(
+						0,
+						Math.min(100, (y / cv.height) * 100)
+					);
+				} else if (drag.type === "vcol") {
+					cfg.vaccines.cols_x_pct[drag.key] = Math.max(
+						0,
+						Math.min(100, (x / cv.width) * 100)
+					);
+				} else if (drag.type === "vrow") {
+					cfg.vaccines.rows_y_pct[drag.key] = Math.max(
+						0,
+						Math.min(100, (y / cv.height) * 100)
+					);
+				} else if (drag.type === "extra_hc") {
+					cfg.extras = cfg.extras || {};
+					cfg.extras.health_center = cfg.extras.health_center || {
+						x_pct: 21.5,
+						y_pct: 64.0,
+					};
+					cfg.extras.health_center.x_pct = Math.max(
+						0,
+						Math.min(100, (x / cv.width) * 100)
+					);
+					cfg.extras.health_center.y_pct = Math.max(
+						0,
+						Math.min(100, (y / cv.height) * 100)
+					);
+				} else if (drag.type === "extra_brgy") {
+					cfg.extras = cfg.extras || {};
+					cfg.extras.barangay = cfg.extras.barangay || {
+						x_pct: 21.5,
+						y_pct: 72.0,
+					};
+					cfg.extras.barangay.x_pct = Math.max(
+						0,
+						Math.min(100, (x / cv.width) * 100)
+					);
+					cfg.extras.barangay.y_pct = Math.max(
+						0,
+						Math.min(100, (y / cv.height) * 100)
+					);
+				} else if (drag.type === "extra_fam") {
+					cfg.extras = cfg.extras || {};
+					cfg.extras.family_no = cfg.extras.family_no || {
+						x_pct: 21.5,
+						y_pct: 80.0,
+					};
+					cfg.extras.family_no.x_pct = Math.max(
+						0,
+						Math.min(100, (x / cv.width) * 100)
+					);
+					cfg.extras.family_no.y_pct = Math.max(
+						0,
+						Math.min(100, (y / cv.height) * 100)
+					);
+				}
+				draw();
+			});
+			cv.addEventListener("mouseup", () => (drag = null));
+			cv.addEventListener("mouseleave", () => (drag = null));
+
+			document
+				.getElementById("loadLayout")
+				.addEventListener("click", () =>
+					document.getElementById("fileLayout").click()
+				);
+			document
+				.getElementById("fileLayout")
+				.addEventListener("change", async (e) => {
+					const f = e.target.files[0];
+					if (!f) return;
+					try {
+						const text = await f.text();
+						cfg = JSON.parse(text);
+						await drawBackground();
+					} catch (err) {
+						alert("Invalid JSON");
+					}
+				});
+			document.getElementById("saveLayout").addEventListener("click", () => {
+				// Get offset values
+				const offsetX =
+					parseFloat(document.getElementById("offsetX").value) || 0;
+				const offsetY =
+					parseFloat(document.getElementById("offsetY").value) || 0;
+
+				// Save offsets to layout JSON for DOMPDF
+				if (offsetX !== 0 || offsetY !== 0) {
+					if (!cfg.dompdf_offset) {
+						cfg.dompdf_offset = {};
+					}
+					cfg.dompdf_offset.x_pct = offsetX;
+					cfg.dompdf_offset.y_pct = offsetY;
+				} else {
+					// Remove offset if zero
+					if (cfg.dompdf_offset) {
+						delete cfg.dompdf_offset;
+					}
+				}
+
+				const blob = new Blob([JSON.stringify(cfg, null, 2)], {
+					type: "application/json",
+				});
+				const a = document.createElement("a");
+				a.href = URL.createObjectURL(blob);
+				a.download = "babycard_layout.json";
+				document.body.appendChild(a);
+				a.click();
+				a.remove();
+			});
+
+			// Wrap loadLayout to also load offset values
+			const originalLoadLayout = loadLayout;
+			loadLayout = async function () {
+				await originalLoadLayout();
+				if (cfg && cfg.dompdf_offset) {
+					document.getElementById("offsetX").value =
+						cfg.dompdf_offset.x_pct || 0;
+					document.getElementById("offsetY").value =
+						cfg.dompdf_offset.y_pct || 0;
+				} else {
+					document.getElementById("offsetX").value = 0;
+					document.getElementById("offsetY").value = 0;
+				}
+			};
+
+			// Apply offset to all positions (for testing/visualization)
+			document.getElementById("applyOffset").addEventListener("click", () => {
+				const offsetX =
+					parseFloat(document.getElementById("offsetX").value) || 0;
+				const offsetY =
+					parseFloat(document.getElementById("offsetY").value) || 0;
+
+				if (offsetX === 0 && offsetY === 0) return;
+
+				// Apply offset to all X positions
+				if (offsetX !== 0) {
+					cfg.boxes.left_x_pct += offsetX;
+					cfg.boxes.right_x_pct += offsetX;
+					if (cfg.boxes.right_r4_x_pct) cfg.boxes.right_r4_x_pct += offsetX;
+					if (cfg.boxes.sex_m) cfg.boxes.sex_m.x_pct += offsetX;
+					if (cfg.boxes.sex_f) cfg.boxes.sex_f.x_pct += offsetX;
+					if (cfg.vaccines && cfg.vaccines.cols_x_pct) {
+						cfg.vaccines.cols_x_pct.c1 += offsetX;
+						cfg.vaccines.cols_x_pct.c2 += offsetX;
+						cfg.vaccines.cols_x_pct.c3 += offsetX;
+					}
+					if (cfg.extras) {
+						if (cfg.extras.health_center)
+							cfg.extras.health_center.x_pct += offsetX;
+						if (cfg.extras.barangay) cfg.extras.barangay.x_pct += offsetX;
+						if (cfg.extras.family_no) cfg.extras.family_no.x_pct += offsetX;
+					}
+				}
+
+				// Apply offset to all Y positions
+				if (offsetY !== 0) {
+					if (cfg.boxes.rows_y_pct) {
+						cfg.boxes.rows_y_pct.r1 += offsetY;
+						cfg.boxes.rows_y_pct.r2 += offsetY;
+						cfg.boxes.rows_y_pct.r3 += offsetY;
+						cfg.boxes.rows_y_pct.r4 += offsetY;
+					}
+					if (cfg.boxes.right_r4_y_pct) cfg.boxes.right_r4_y_pct += offsetY;
+					if (cfg.boxes.sex_m) cfg.boxes.sex_m.y_pct += offsetY;
+					if (cfg.boxes.sex_f) cfg.boxes.sex_f.y_pct += offsetY;
+					if (cfg.vaccines && cfg.vaccines.rows_y_pct) {
+						Object.keys(cfg.vaccines.rows_y_pct).forEach((k) => {
+							cfg.vaccines.rows_y_pct[k] += offsetY;
+						});
+					}
+					if (cfg.extras) {
+						if (cfg.extras.health_center)
+							cfg.extras.health_center.y_pct += offsetY;
+						if (cfg.extras.barangay) cfg.extras.barangay.y_pct += offsetY;
+						if (cfg.extras.family_no) cfg.extras.family_no.y_pct += offsetY;
+					}
+				}
+
+				draw();
+			});
+
+			document.getElementById("resetOffset").addEventListener("click", () => {
+				document.getElementById("offsetX").value = 0;
+				document.getElementById("offsetY").value = 0;
+			});
+
+			async function drawBackground() {
+				const ok = await loadImageTry([
+					cfg.background_path,
+					cfg.fallback_background_path ||
+						"/ebakunado/assets/images/babycard.jpg",
+				]);
+				if (!ok) {
+					alert("Background image not found. Place it in assets/images/.");
+					return;
+				}
+				resize();
+			}
+
+			(async function init() {
+				await loadLayout();
+				await drawBackground();
+				window.addEventListener("resize", resize);
+			})();
+		</script>
+	</body>
+</html>

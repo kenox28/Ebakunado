@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>BHW Modal Preview</title>
+		<link rel="stylesheet" href="../../css/main.css" />
+		<link rel="stylesheet" href="../../css/modals.css" />
+		<style>
+			body {
+				font-family: "Poppins", system-ui, sans-serif;
+				min-height: 100vh;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 2rem;
+				background: #f1f5f9;
+				padding: 2rem;
+			}
+
+			.button-stack {
+				display: flex;
+				gap: 1rem;
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+
+			.preview-btn {
+				padding: 1rem 2.4rem;
+				border-radius: 999px;
+				border: none;
+				background: #2563eb;
+				color: #fff;
+				font-size: 1.4rem;
+				font-weight: 600;
+				cursor: pointer;
+				box-shadow: 0 15px 35px rgba(37, 99, 235, 0.3);
+				transition: transform 120ms ease, box-shadow 160ms ease;
+			}
+
+			.preview-btn:active {
+				transform: scale(0.97);
+			}
+
+			.preview-btn.ghost {
+				background: #fff;
+				color: #1e293b;
+				box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+				border: 1px solid rgba(148, 163, 184, 0.5);
+			}
+		</style>
+	</head>
+
+	<body>
+		<h1>Child Added Modal Preview</h1>
+		<div class="button-stack">
+			<button class="preview-btn" id="showModalBtn">Show Centered Modal</button>
+			<button class="preview-btn ghost" id="showToastBtn">Show Toast</button>
+		</div>
+
+		<div
+			class="modal-overlay"
+			id="addChildSuccessModal"
+			aria-hidden="true"
+			role="dialog"
+			aria-modal="true">
+			<div class="modal-card">
+				<div class="modal-icon">
+					<span class="material-symbols-rounded">check_circle</span>
+				</div>
+				<h3>Child Added Successfully</h3>
+				<p>
+					Provide the family code to the parent so they can claim the child.
+				</p>
+				<div class="modal-summary centered" id="addChildModalSummary">
+					<p class="family-code-label">Family Code</p>
+					<p class="family-code-value">FAM-ABC123</p>
+				</div>
+				<div class="modal-actions align-end">
+					<button type="button" class="modal-btn primary small" id="doneBtn">
+						Done
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="toast-container" id="toastContainer">
+			<div
+				class="toast"
+				id="demoToast"
+				aria-live="assertive"
+				aria-atomic="true">
+				<div class="toast-header">
+					<div class="toast-title-row">
+						<span class="material-symbols-rounded">notifications_active</span>
+						<p class="toast-title">Reminder Sent</p>
+					</div>
+					<button
+						class="toast-close"
+						id="toastCloseBtn"
+						aria-label="Dismiss toast">
+						<span class="material-symbols-rounded">close</span>
+					</button>
+				</div>
+				<p class="toast-body">3 parents confirmed attendance for tomorrow.</p>
+			</div>
+		</div>
+
+		<script>
+			const showModalBtn = document.getElementById("showModalBtn");
+			const successModal = document.getElementById("addChildSuccessModal");
+			const doneBtn = document.getElementById("doneBtn");
+			let modalTimer = null;
+
+			const showToastBtn = document.getElementById("showToastBtn");
+			const demoToast = document.getElementById("demoToast");
+			const toastCloseBtn = document.getElementById("toastCloseBtn");
+			let toastTimer = null;
+
+			function openModal() {
+				successModal.classList.add("is-visible");
+				successModal.setAttribute("aria-hidden", "false");
+				if (modalTimer) clearTimeout(modalTimer);
+				modalTimer = setTimeout(closeModal, 3000);
+			}
+
+			function closeModal() {
+				if (modalTimer) {
+					clearTimeout(modalTimer);
+					modalTimer = null;
+				}
+				successModal.classList.remove("is-visible");
+				successModal.setAttribute("aria-hidden", "true");
+			}
+
+			showModalBtn.addEventListener("click", openModal);
+			doneBtn.addEventListener("click", closeModal);
+			successModal.addEventListener("click", (event) => {
+				if (event.target === successModal) closeModal();
+			});
+			document.addEventListener("keydown", (event) => {
+				if (event.key === "Escape") closeModal();
+			});
+
+			function openToast() {
+				demoToast.classList.add("is-visible");
+				if (toastTimer) clearTimeout(toastTimer);
+				toastTimer = setTimeout(closeToast, 5000);
+			}
+
+			function closeToast() {
+				if (toastTimer) {
+					clearTimeout(toastTimer);
+					toastTimer = null;
+				}
+				demoToast.classList.remove("is-visible");
+			}
+
+			showToastBtn.addEventListener("click", openToast);
+			toastCloseBtn.addEventListener("click", closeToast);
+		</script>
+	</body>
+</html>
