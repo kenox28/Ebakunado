@@ -253,11 +253,16 @@ main {
   width: 760px;
   max-width: 95vw;
   max-height: 90vh;
-  overflow: auto;
+  overflow-y: auto;
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  padding: 16px 18px;
+  padding: 0; /* allow header border to be full-bleed */
   animation: modalIn 0.18s ease-out;
+}
+
+/* Provide padding to content below the header while keeping header full-bleed */
+.immunization-modal > :not(.immunization-header) {
+  padding: 16px 18px;
 }
 
 @keyframes modalIn {
@@ -271,11 +276,102 @@ main {
   }
 }
 
+/* QR Scanner Modal */
+.qr-overlay {
+  position: fixed;
+  inset: 0;
+  display: none; /* toggled to flex in JS */
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 10000;
+}
+
+.qr-modal {
+  background: #fff;
+  width: 640px;
+  max-width: 95vw;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  animation: modalIn 0.18s ease-out;
+  padding: 0; /* allow header border to be full-bleed */
+  overflow: hidden; /* keep rounded corners when header is full-bleed */
+}
+
+.qr-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #d0d0d0;
+  padding: 16px 18px;
+}
+.qr-title {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+.qr-title .material-symbols-rounded {
+  font-size: 20px;
+}
+
+/* QR modal body (padded content below the full-bleed header) */
+.qr-body {
+  padding: 16px 18px;
+}
+
+/* Labeled camera select field */
+.qr-field {
+  margin-bottom: 12px;
+}
+.qr-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.qr-select {
+  display: none;
+  padding: 8px 10px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font: inherit;
+  font-size: 1.2rem;
+}
+.qr-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
+}
+
+.qr-reader {
+  width: 100%;
+  min-height: 320px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.12);
+}
+
+.qr-help {
+  margin-top: 12px;
+  color: #666;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
 .immunization-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.6rem;
+  border-bottom: 1px solid #d0d0d0;
+  padding: 16px 18px;
 }
 
 .immunization-title {
@@ -323,34 +419,35 @@ main {
 /* Form: base layout */
 .immunization-form .form-container {
   display: grid;
-  gap: 12px;
-  border: 1px solid #ddd;
+  gap: 1.4rem;
+  border: none;
   border-radius: 10px;
-  padding: 12px;
 }
 
 /* Default two-column for form-group */
 .immunization-form .form-group {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px; /* slightly tighter spacing inside groups */
 }
 
-/* Row-specific layouts */
+/* Row-specific layouts (pruned) */
 .immunization-form .form-group.row-1,
-.immunization-form .form-group.row-2,
-.immunization-form .form-group.row-3,
-.immunization-form .form-group.row-4,
-.immunization-form .form-group.row-5 {
+.immunization-form .form-group.row-3 {
+  /* two-column groups */
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-
-.immunization-form .form-group.row-6 {
+.immunization-form .form-group.row-2 {
+  /* three-column measurements */
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.immunization-form .form-group.row-7 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+/* Panels row now uses row-4 class with flex layout and tighter gap */
+.immunization-form .form-group.row-4 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 8px 0;
 }
 
 /* Labels and fields */
@@ -359,7 +456,7 @@ main {
   flex-direction: column;
   gap: 6px;
   font-size: 13px;
-  color: #333;
+  color: #1a1a1a;
 }
 
 /* Inputs styling */
@@ -369,10 +466,11 @@ main {
 .immunization-form .form-group textarea,
 .immunization-form .form-group select {
   width: 100%;
-  padding: 10px 12px;
+  padding: 8px 10px; /* reduced height */
   border: 1px solid #d1d5db;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px; /* slightly smaller text to match reduced height */
+  font-family: inherit; /* inherit font family */
   background: #fff;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -383,8 +481,9 @@ main {
 .immunization-form .form-group input[type="number"]:focus,
 .immunization-form .form-group textarea:focus,
 .immunization-form .form-group select:focus {
+  outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
 }
 
 /* Form actions: buttons */
@@ -393,6 +492,8 @@ main {
   justify-content: flex-end;
   gap: 12px;
   margin-top: 16px;
+  border-top: none;
+  padding-top: 12px;
 }
 
 .immunization-form .form-actions .btn {
@@ -447,6 +548,141 @@ main {
   cursor: not-allowed;
 }
 
+/* Section headings inside the form (exclude panels) */
+.immunization-form .im-group-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+/* When inside a grid row, make the title span full width and add spacing */
+.immunization-form .form-group .im-group-title {
+  grid-column: 1 / -1;
+}
+
+/* =========================
+   Read/Write Panel Layout (scoped)
+========================= */
+.im-panel-row.im-panels-two-col {
+  display: flex;
+  /* gap: 16px; */
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
+.im-panel {
+  flex: 1 1 300px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* improve spacing in panels */
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+.im-panel-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.im-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.im-field-row {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* a bit more spacing between label and field */
+  font-size: 1.2rem;
+  flex-wrap: wrap;
+}
+.im-field-row .field-label {
+  font-weight: 500;
+  color: #1a1a1a;
+  min-width: 160px;
+}
+.im-inline-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.2rem;
+}
+.im-inline-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+.im-panel input[type="text"],
+.im-panel input[type="date"],
+.im-panel input[type="number"],
+.im-panel textarea {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font: inherit; /* includes font-family */
+  font-size: 1.2rem;
+  background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.im-panel input[type="date"] {
+  text-transform: uppercase;
+}
+.im-panel input[type="date"]::-webkit-datetime-edit {
+  text-transform: uppercase;
+}
+.im-panel input[type="text"]:focus,
+.im-panel input[type="date"]:focus,
+.im-panel input[type="number"]:focus,
+.im-panel textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
+}
+
+.im-mark-completed-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.im-mark-completed-row .im-inline-checkbox span {
+  font-weight: 500;
+}
+
+/* Remove borders and primary title color for specific panels */
+.im-panel.im-panel-feeding,
+.im-panel.im-panel-td {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0; /* rely on inner field spacing */
+}
+.im-panel.im-panel-feeding .im-panel-title,
+.im-panel.im-panel-td .im-panel-title {
+  color: #1a1a1a; /* neutral text color instead of primary */
+}
+
+/* Make TD dose date input full width inside Mother's TD panel */
+.im-panel-td input#update_td_dose,
+.im-panel-td .im-field-row input[type="date"] {
+  width: 100%;
+  flex: 1 1 100%;
+}
+
+@media (max-width: 780px) {
+  .im-panel-row.im-panels-two-col {
+    flex-direction: column;
+  }
+  .im-panel {
+    flex: 1 1 100%;
+  }
+  .im-field-row .field-label {
+    min-width: 120px;
+  }
+}
+
 .immunization-section .filters-header {
   display: inline-flex;
   align-items: center;
@@ -475,6 +711,6 @@ main {
   text-transform: none;
 }
 .immunization-section .table .message-row.error td {
-  color: #b91c1c; 
+  color: #b91c1c;
   font-weight: 500;
 }

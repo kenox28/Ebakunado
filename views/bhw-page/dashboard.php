@@ -27,7 +27,7 @@ if ($user_id) {
     <title>BHW Dashboard</title>
     <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
     <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header_v2.css" />
+    <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/skeleton-loading.css" />
@@ -35,7 +35,7 @@ if ($user_id) {
 </head>
 
 <body>
-    <?php include 'include/header_v2.php'; ?>
+    <?php include 'include/header.php'; ?>
     <?php include 'include/sidebar.php'; ?>
 
     <main>
@@ -143,7 +143,7 @@ if ($user_id) {
         </section>
     </main>
 
-    <script src="../../js/header-handler/profile-menu_v2.js" defer></script>
+    <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>

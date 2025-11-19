@@ -43,6 +43,29 @@ if ($user_id) {
     <?php include 'include/header.php'; ?>
     <?php include 'include/sidebar.php'; ?>
 
+    <!-- QR Scanner Modal -->
+    <div id="qrOverlay" class="qr-overlay">
+        <div class="qr-modal">
+            <div class="qr-header">
+                <h3 class="qr-title">
+                    <span class="material-symbols-rounded" aria-hidden="true">qr_code_scanner</span>
+                    Scan Baby QR Code for Immunization
+                </h3>
+                <button id="closeScannerBtn" class="close-btn" aria-label="Close scanner">
+                    <span class="material-symbols-rounded" aria-hidden="true">close</span>
+                </button>
+            </div>
+            <div class="qr-body">
+                <div id="cameraField" class="qr-field">
+                    <label class="qr-label" for="cameraSelect">Select camera:</label>
+                    <select id="cameraSelect" class="qr-select" aria-label="Available cameras"></select>
+                </div>
+                <div id="qrReader" class="qr-reader" aria-describedby="qrHelp"></div>
+                <p id="qrHelp" class="qr-help">Point the camera at the QR code. Tips: allow camera permission, ensure good lighting, and hold steady about 10–15 cm away.</p>
+            </div>
+        </div>
+    </div>
+
     <main>
         <section class="section-container">
             <h2 class="section-title">
@@ -111,44 +134,104 @@ if ($user_id) {
                     </thead>
                     <tbody id="childhealthrecordBody">
                         <tr class="skeleton-row">
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-1"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-2"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-3"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-4"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                            </td>
                         </tr>
                         <tr class="skeleton-row">
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-1"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-2"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-3"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-4"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                            </td>
                         </tr>
                         <tr class="skeleton-row">
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-1"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-2"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-3"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-4"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                            </td>
                         </tr>
                         <tr class="skeleton-row">
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-1"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-2"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-3"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-4"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                            </td>
                         </tr>
                         <tr class="skeleton-row">
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-1"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-2"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-3"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-text skeleton-col-4"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -157,7 +240,7 @@ if ($user_id) {
                 <div id="pageInfo" class="page-info">&nbsp;</div>
                 <div class="pager-controls">
                     <button id="prevBtn" type="button" class="pager-btn">
-                        <span class="material-symbols-rounded">chevron_backward</span>
+                        <span class="marow-2terial-symbols-rounded">chevron_backward</span>
                         Prev
                     </button>
                     <span id="pageButtons" class="page-buttons"></span>
@@ -187,19 +270,6 @@ if ($user_id) {
         </section>
     </main>
 
-    <!-- QR Scanner Modal -->
-    <div id="qrOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center;">
-        <div style="background: white; padding: 20px; border-radius: 12px; max-width: 600px; width: 90%; text-align: center;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 style="margin: 0;">Scan Baby QR Code for Immunization</h3>
-                <button id="closeScannerBtn" style="background: #dc3545; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 20px;">×</button>
-            </div>
-            <select id="cameraSelect" style="margin-bottom: 15px; padding: 8px; width: 100%; border-radius: 5px; display: none;"></select>
-            <div id="qrReader" style="width: 100%; margin: 0 auto; border: 2px solid #ddd; border-radius: 8px;"></div>
-            <p style="margin-top: 15px; color: #666; font-size: 14px;">Point the camera at the QR code</p>
-        </div>
-    </div>
-
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
@@ -215,13 +285,30 @@ if ($user_id) {
 
         // Column config used by skeleton generator: 6 columns layout
         function getImmunizationColsConfig() {
-            return [
-                { type: 'text', widthClass: 'skeleton-col-1' },
-                { type: 'text', widthClass: 'skeleton-col-2' },
-                { type: 'text', widthClass: 'skeleton-col-3' },
-                { type: 'text', widthClass: 'skeleton-col-4' },
-                { type: 'pill', widthClass: 'skeleton-col-5' },
-                { type: 'btn',  widthClass: 'skeleton-col-6' }
+            return [{
+                    type: 'text',
+                    widthClass: 'skeleton-col-1'
+                },
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-2'
+                },
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-3'
+                },
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-4'
+                },
+                {
+                    type: 'pill',
+                    widthClass: 'skeleton-col-5'
+                },
+                {
+                    type: 'btn',
+                    widthClass: 'skeleton-col-6'
+                }
             ];
         }
 
@@ -398,12 +485,25 @@ if ($user_id) {
                 };
             }
 
-            const feedingStatus = getFeedingStatusForVaccine(vaccineName, scheduleDate);
+            // Helper to get correct ordinal suffix
+            function ordinal(n) {
+                const s = ["th", "st", "nd", "rd"],
+                    v = n % 100;
+                return s[(v - 20) % 10] || s[v] || s[0];
+            }
+            const feedingStatusRaw = getFeedingStatusForVaccine(vaccineName, scheduleDate);
+            const feedingStatus = feedingStatusRaw ? {
+                ...feedingStatusRaw,
+                text: feedingStatusRaw.type === 'exclusive_breastfeeding' ?
+                    `${feedingStatusRaw.month}${ordinal(feedingStatusRaw.month)} month exclusive breastfeeding` :
+                    `${feedingStatusRaw.month}${ordinal(feedingStatusRaw.month)} month complementary feeding`
+            } : null;
             const motherTDStatus = getMotherTDStatus();
 
             const html = `
                         <div class="form-container">
                             <div class="form-group row-1">
+                                <h4 class="im-group-title">Child &amp; Vaccine Details</h4>
                                 <label>
                                     Child Name:
                                     <input type="text" id="im_child_name" value="${childName}" readonly disabled />
@@ -412,92 +512,107 @@ if ($user_id) {
                                     Vaccine:
                                     <input type="text" id="im_vaccine_name" value="${vaccineName}" readonly disabled />
                                 </label>
-                            </div>
-                            <div class="form-group row-2">
-                                <input  type="hidden" id="im_schedule_date" value="${scheduleDate}" readonly />
                                 ${catchUpDate ? `
                                 <label>
                                     Catch-up Date:
                                     <input type="date" id="im_catch_up_date" value="${catchUpDate}" readonly disabled />
+                                </label>` : ''}
+                            </div>
+
+                            <div class="form-group row-4">
+                                ${feedingStatus ? `
+                                <div class="im-panel im-panel-feeding">
+                                    <h4 class="im-panel-title">Update Feeding Status for ${vaccineName}</h4>
+                                    <div class="im-panel-body">
+                                        <div class="im-field-row">
+                                            <span class="field-label">${feedingStatus.text}:</span>
+                                            ${feedingStatus.type === 'exclusive_breastfeeding' ? `
+                                                <label class="im-inline-checkbox">
+                                                    <input type="checkbox" id="update_feeding_status" ${feedingStatus.status === '✓' ? 'checked' : ''}>
+                                                    <span>Currently breastfeeding</span>
+                                                </label>
+                                            ` : `
+                                                <input type="text" id="update_complementary_feeding" class="text-input" placeholder="Enter food given" 
+                                                    value="${feedingStatus.status !== 'Not recorded' ? feedingStatus.status : ''}">
+                                            `}
+                                        </div>
+                                    </div>
+                                </div>` : ''}
+                                <div class="im-panel im-panel-td">
+                                    <h4 class="im-panel-title">Mother's TD (Tetanus-Diphtheria) Status</h4>
+                                    <div class="im-panel-body">
+                                        <div class="im-field-row">
+                                            <span class="field-label">Completed Doses:</span>
+                                            <span>${motherTDStatus.completed}/5</span>
+                                        </div>
+                                        ${motherTDStatus.lastDose ? `
+                                        <div class="im-field-row">
+                                            <span class="field-label">Last dose:</span>
+                                            <span>${motherTDStatus.lastDose.date}</span>
+                                        </div>` : ''}
+                                        ${motherTDStatus.nextDose ? `
+                                        <div class="im-field-row">
+                                            <label for="update_td_dose" class="field-label">TD ${motherTDStatus.nextDose.dose} dose date:</label>
+                                            <input type="date" id="update_td_dose" value="${motherTDStatus.nextDose.date}">
+                                        </div>
+                                        ` : `
+                                        <div class="im-field-row">
+                                            <span class="field-label">Status:</span>
+                                            <span>✓ All TD doses completed</span>
+                                        </div>
+                                        `}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="im_schedule_date" value="${scheduleDate}" />
+                            <input type="hidden" id="im_date_taken" value="${dateToday}" />
+
+                            <div class="form-group row-2">
+                                <h4 class="im-group-title">Measurements</h4>
+                                <label>
+                                    Temperature (°C):
+                                    <input type="number" step="0.1" id="im_temperature" placeholder="e.g. 36.8" />
                                 </label>
-                            </div>` : ''}
+                                <label>
+                                    Height (cm):
+                                    <input type="number" step="0.1" id="im_height" placeholder="e.g. 60" />
+                                </label>
+                                <label>
+                                    Weight (kg):
+                                    <input type="number" step="0.01" id="im_weight" placeholder="e.g. 6.5" />
+                                </label>
+                            </div>
+
+                            <!-- Dose and Lot fields removed: dose is auto-determined from record, lot/site not in schema -->
                             <div class="form-group row-3">
-                                <input type="hidden" id="im_date_taken" value="${dateToday}" />
+                                <h4 class="im-group-title">Administration &amp; Remarks</h4>
+                                <label>
+                                    Administered By:
+                                    <input type="text" id="im_administered_by" placeholder="Name of Midwife Administering" />
+                                </label>
+                                <label>
+                                    Remarks:
+                                    <textarea id="im_remarks" rows="3"></textarea>
+                                </label>
+                            </div>
+
+                            <div class="im-panel-row im-mark-completed-row">
+                                <label class="im-inline-checkbox" for="im_mark_completed">
+                                    <input type="checkbox" id="im_mark_completed" />
+                                    <span>Mark as Taken</span>
+                                </label>
+                            </div>
+
+                            <div class="form-actions">
+                                <button class="btn cancel-btn" onclick="closeImmunizationForm()">Cancel</button>
+                                <button class="btn save-btn" onclick="submitImmunizationForm()">Save</button>
                             </div>
                         </div>
 
-                    ${feedingStatus ? `
-                    <div class="form-group row-4">
-                        <h4>Update Feeding Status for ${vaccineName}</h4>
-                        <div>
-                            <span>${feedingStatus.text}:</span>
-                            ${feedingStatus.type === 'exclusive_breastfeeding' ? `
-                                <label>
-                                    <input type="checkbox" id="update_feeding_status" ${feedingStatus.status === '✓' ? 'checked' : ''}>
-                                    <span>Currently breastfeeding</span>
-                                </label>
-                            ` : `
-                                <input type="text" id="update_complementary_feeding" placeholder="Enter food given" 
-                                    value="${feedingStatus.status !== 'Not recorded' ? feedingStatus.status : ''}">
-                            `}
-                        </div>
-                    </div>` : ''}
-
-                    <div class="form-group row-5">
-                        <h4>Mother's TD (Tetanus-Diphtheria) Status</h4>
-                        <div>
-                            <span>Completed Doses: ${motherTDStatus.completed}/5</span>
-                            ${motherTDStatus.lastDose ? `<span>Last dose: ${motherTDStatus.lastDose.date}</span>` : ''}
-                        </div>
-                        ${motherTDStatus.nextDose ? `
-                        <div>
-                            <span>TD ${motherTDStatus.nextDose.dose} dose date:</span>
-                            <input type="date" id="update_td_dose" value="${motherTDStatus.nextDose.date}">
-                        </div>
-                        ` : `
-                        <div>✓ All TD doses completed</div>
-                        `}
-                    </div>
-                        <div class="form-group row-6">
-                            <label>
-                                Temperature (°C)
-                                <input type="number" step="0.1" id="im_temperature" placeholder="e.g. 36.8" />
-                            </label>
-                            <label>
-                                Height (cm)
-                                <input type="number" step="0.1" id="im_height" placeholder="e.g. 60" />
-                            </label>
-                            <label>
-                                Weight (kg)
-                                <input type="number" step="0.01" id="im_weight" placeholder="e.g. 6.5" />
-                            </label>
-                        </div>
-
-                    <!-- Dose and Lot fields removed: dose is auto-determined from record, lot/site not in schema -->
-                        <div class="form-group row-7">
-                            <label>
-                                Administered By
-                                <input type="text" id="im_administered_by" placeholder="Name" />
-                            </label>
-                            <label>
-                                Remarks
-                                <textarea id="im_remarks" rows="3"></textarea>
-                            </label>
-                            <label for="im_mark_completed">
-                                <input type="checkbox" id="im_mark_completed" />
-                                Mark as Taken
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button class="btn cancel-btn" onclick="closeImmunizationForm()">Cancel</button>
-                        <button class="btn save-btn" onclick="submitImmunizationForm()">Save</button>
-                    </div>
-
-                    <input type="hidden" id="im_record_id" value="${recordId}" />
-                    <input type="hidden" id="im_user_id" value="${userId}" />
-                    <input type="hidden" id="im_baby_id" value="${babyId}" />
+                        <input type="hidden" id="im_record_id" value="${recordId}" />
+                        <input type="hidden" id="im_user_id" value="${userId}" />
+                        <input type="hidden" id="im_baby_id" value="${babyId}" />
                 `;
 
             document.getElementById('immunizationFormContainer').innerHTML = html;
@@ -683,7 +798,7 @@ if ($user_id) {
             const options = [
                 '<option value="" disabled selected>Vaccines</option>',
                 '<option value="all">All</option>'
-        ];
+            ];
 
             // Get unique vaccines from the loaded data
             const vaccines = [...new Set(chrRecords.map(item => item.vaccine_name).filter(v => v))].sort();
@@ -838,6 +953,8 @@ if ($user_id) {
                 if (camSel) camSel.innerHTML = '';
 
                 if (devices && devices.length > 0) {
+                    const field = document.getElementById('cameraField');
+                    if (field) field.style.display = 'block';
                     if (camSel) {
                         devices.forEach((d, idx) => {
                             const opt = document.createElement('option');
