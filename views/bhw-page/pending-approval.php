@@ -1,8 +1,7 @@
 <?php session_start(); ?>
 <?php
-// Handle both BHW and Midwife sessions (but BHW should only see BHW features)
 $user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
-$user_types = $_SESSION['user_type']; // Default to bhw for BHW pages
+$user_types = $_SESSION['user_type'];
 $user_name = $_SESSION['fname'] ?? 'User';
 $user_fullname = $_SESSION['fname'] . " " . $_SESSION['lname'];
 if ($user_types != 'midwifes') {
@@ -26,8 +25,8 @@ if ($user_id) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Approval</title>
     <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <!-- <link rel="stylesheet" href="../../css/main.css" /> -->
-    <link rel="stylesheet" href="../../css/main.css?v=20251106" />
+    <link rel="stylesheet" href="../../css/main.css" />
+    <!-- <link rel="stylesheet" href="../../css/main.css?v=20251106" /> -->
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/notification-style.css" />
@@ -193,6 +192,12 @@ if ($user_id) {
             </div>
 
             <div class="childinformation-container">
+                <div class="pa-top-actions">
+                    <button class="btn back-btn" onclick="backToList()" id="closeButton">
+                        <span class="material-symbols-rounded">arrow_back</span>
+                        Back
+                    </button>
+                </div>
                 <div class="child-information childinfo-header">
                     <h1 class="section-heading">
                         <span class="material-symbols-rounded">
@@ -201,8 +206,7 @@ if ($user_id) {
                         Child Information Review
                     </h1>
                     <div class="childinfo-actions">
-                        <button class="btn back-btn" onclick="backToList()" id="closeButton">Back</button>
-                        <button class="btn reject-btn" id="rejectButton" style="background: #dc3545; color: white; margin-right: 10px;">Reject</button>
+                        <button class="btn reject-btn" id="rejectButton">Reject</button>
                         <button class="btn accept-btn" id="acceptButton">Accept Record</button>
                     </div>
                 </div>
@@ -327,7 +331,6 @@ if ($user_id) {
                         Child's Vaccination Records
                     </h2>
                     <div class="vaccination-record-list" id="vaccinationRecordsContainer">
-                        <!-- Dynamic content: skeleton table, data rows, or message -->
                     </div>
                 </div>
             </div>
@@ -335,52 +338,55 @@ if ($user_id) {
 
     </main>
 
+    <div id="childImageOverlay" class="childimage-overlay" style="display:none;">
+        <img id="childImageLarge" alt="Baby Card Full View" src="" />
+    </div>
+
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script>
-        // Column config for skeleton rows in Pending Approval (9 visible columns)
         function getPendingColsConfig() {
             return [{
                     type: 'text',
                     widthClass: 'skeleton-col-1'
-                }, // Child Name
+                },
                 {
                     type: 'text',
                     widthClass: 'skeleton-col-2'
-                }, // Gender
+                },
                 {
                     type: 'text',
                     widthClass: 'skeleton-col-3'
-                }, // Birth Date
+                },
                 {
                     type: 'text',
                     widthClass: 'skeleton-col-4'
-                }, // Place of Birth
+                },
                 {
                     type: 'text',
                     widthClass: 'skeleton-col-5'
-                }, // Mother's Name
+                },
                 {
                     type: 'text',
                     widthClass: 'skeleton-col-3'
-                }, // Father's Name
+                },
                 {
                     type: 'text',
                     widthClass: 'skeleton-col-2'
-                }, // Address
+                },
                 {
                     type: 'pill',
                     widthClass: 'skeleton-col-5'
-                }, // Status
+                },
                 {
                     type: 'btn',
                     widthClass: 'skeleton-col-6'
-                } // Action
+                }
             ];
         }
-        // Date formatting helper: "Mon D, YYYY"
+
         function formatDate(dateStr) {
             if (!dateStr) return '';
             const d = new Date(dateStr);
@@ -391,7 +397,6 @@ if ($user_id) {
                 year: 'numeric'
             });
         }
-        // Pager spinner CSS (primary color)
         (function ensureSpinnerCss() {
             if (document.getElementById('pagerSpinnerCss')) return;
             const style = document.createElement('style');
@@ -423,9 +428,7 @@ if ($user_id) {
             paState.page = page;
             paState.loading = true;
 
-            // Ensure pager is visible during fetch/skeleton (parity with Immunization)
             if (pager) pager.style.display = '';
-            // Keep a neutral page-info visible during loading
             if (pageInfo && (!pageInfo.textContent || pageInfo.textContent === '\u00A0')) {
                 pageInfo.textContent = `Showing 0-0 of 0 entries`;
             }
@@ -437,7 +440,6 @@ if ($user_id) {
                 if (typeof applyTableSkeleton === 'function') {
                     applyTableSkeleton(body, getPendingColsConfig(), limit);
                 }
-                // Removed fallback "Loading..." text (skeleton rows already in initial markup)
             }
 
             try {
@@ -576,9 +578,7 @@ if ($user_id) {
             if (typeof applyTableSkeleton === 'function') {
                 applyTableSkeleton(body, getPendingColsConfig(), 10);
             }
-            // Removed fallback "Loading..." text; rely on existing static skeleton rows if utility absent.
             try {
-                // const res = await fetch('../../php/bhw/get_child_health_records.php');
                 const res = await fetch('../../php/supabase/bhw/pending_chr.php');
                 const data = await res.json();
                 if (data.status !== 'success') {
@@ -640,7 +640,6 @@ if ($user_id) {
         }
 
 
-        // Store original data for cancel functionality
         let originalChildData = {};
 
         async function viewChildInformation(baby_id) {
@@ -654,10 +653,8 @@ if ($user_id) {
             if (data.status === 'success') {
                 console.log(data.data);
 
-                // Store original data for cancel functionality
                 originalChildData = data.data[0];
 
-                // Populate input fields
                 document.querySelector('#childName').value = data.data[0].child_fname + ' ' + data.data[0].child_lname;
                 document.querySelector('#childGender').value = data.data[0].child_gender;
                 document.querySelector('#childBirthDate').value = data.data[0].child_birth_date;
@@ -672,26 +669,20 @@ if ($user_id) {
                 document.querySelector('#childBirthOrder').value = data.data[0].birth_order || 'Single';
                 document.querySelector('#childImage').src = data.data[0].babys_card;
 
-                // Store baby_id for later use
                 document.querySelector('.childinformation-container').dataset.babyId = baby_id;
 
-                // Set up accept button
                 document.querySelector('#acceptButton').onclick = () => {
                     acceptRecord(baby_id);
                 };
 
-                // Set up reject button
                 document.querySelector('#rejectButton').onclick = () => {
                     rejectRecord(baby_id);
                 };
 
-                // Load vaccination records
                 await loadVaccinationRecords(baby_id);
 
-                // Default to read-only on open
                 setChildInfoEditing(false);
 
-                // Show details, hide list + header section
                 document.querySelector('.childinformation-container').style.display = 'flex';
                 document.querySelector('.pending-approval-panel').style.display = 'none';
                 const headerSection = document.querySelector('.section-container');
@@ -702,11 +693,9 @@ if ($user_id) {
         }
 
         function backToList() {
-            // Restore header, filters/table panel, and pager
             if (typeof showDetailsView === 'function') {
                 showDetailsView(false);
             } else {
-                // Fallback if showDetailsView isn’t available
                 const header = document.querySelector('.section-container');
                 const listPanel = document.querySelector('.pending-approval-panel');
                 const pager = document.getElementById('paPager');
@@ -717,38 +706,36 @@ if ($user_id) {
                 if (details) details.style.display = 'none';
             }
 
-            // Refresh current page (keeps filters and pager state)
             loadPending((paState && paState.page) ? paState.page : 1, {
                 keep: true
             });
         }
 
-        // Vaccination records skeleton + table renderer (removes redundant spinner/loading text)
         function getVaccinationColsConfig() {
             return [{
                     type: 'text',
                     widthClass: 'skeleton-col-2'
-                }, // Vaccine
+                },
                 {
                     type: 'text',
                     widthClass: 'skeleton-col-6'
-                }, // Dose
+                },
                 {
                     type: 'text',
                     widthClass: 'skeleton-col-3'
-                }, // Schedule Date
+                },
                 {
                     type: 'text',
                     widthClass: 'skeleton-col-3'
-                }, // Catch-up Date
+                },
                 {
                     type: 'text',
                     widthClass: 'skeleton-col-3'
-                }, // Date Given
+                },
                 {
                     type: 'pill',
                     widthClass: 'skeleton-col-5'
-                } // Status
+                }
             ];
         }
 
@@ -766,7 +753,6 @@ if ($user_id) {
             if (typeof applyTableSkeleton === 'function') {
                 applyTableSkeleton(tbody, getVaccinationColsConfig(), 14);
             }
-            // Removed fallback "Loading..." text for vaccination records; skeleton preferred.
             try {
                 const response = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
                 const data = await response.json();
@@ -821,7 +807,6 @@ if ($user_id) {
         }
 
 
-        // Deprecated client-side filter (replaced by server-side loadPending)
         function filterTable() {}
 
         function viewChrImage(urlEnc) {
@@ -845,7 +830,6 @@ if ($user_id) {
         async function acceptRecord(baby_id) {
             const formData = new FormData();
             formData.append('baby_id', baby_id);
-            // const response = await fetch('../../php/bhw/accept_chr.php', { method: 'POST', body: formData });
             const response = await fetch('../../php/supabase/bhw/accept_chr.php', {
                 method: 'POST',
                 body: formData
@@ -880,9 +864,7 @@ if ($user_id) {
         }
 
 
-        // Wire filters and pager
         document.addEventListener('DOMContentLoaded', () => {
-            // existing bindings
             document.getElementById('paPrevBtn').addEventListener('click', () => {
                 if (paState.loading) return;
                 const nextPage = Math.max(1, (paState.page || 1) - 1);
@@ -911,7 +893,6 @@ if ($user_id) {
                 });
             });
 
-            // Icon click focuses the corresponding input/select
             document.querySelectorAll('.pending-approval-section .filters .select-with-icon').forEach(w => {
                 const icon = w.querySelector('.material-symbols-rounded');
                 const ctrl = w.querySelector('input, select');
@@ -921,7 +902,6 @@ if ($user_id) {
                 }
             });
 
-            // Initial load should replace initial skeleton; do not keep previous rows
             loadPending(1, {
                 keep: false
             });
@@ -933,7 +913,6 @@ if ($user_id) {
             overlay.style.display = 'flex';
             console.log('[QR] Opening scanner...');
             try {
-                // Check camera permissions/devices first
                 const devices = await Html5Qrcode.getCameras().catch(err => {
                     console.log('[QR] getCameras error:', err);
                     return [];
@@ -942,7 +921,6 @@ if ($user_id) {
                 if (!devices || devices.length === 0) {
                     console.warn('[QR] No camera devices found. Use image upload.');
                 }
-                // Populate camera select
                 const camSel = document.getElementById('cameraSelect');
                 camSel.innerHTML = '';
                 if (devices && devices.length > 0) {
@@ -953,7 +931,6 @@ if ($user_id) {
                         camSel.appendChild(opt);
                     });
                     camSel.style.display = 'inline-block';
-                    // Try enabling torch control if supported (via capabilities check after start)
                 } else {
                     camSel.style.display = 'none';
                 }
@@ -972,7 +949,6 @@ if ($user_id) {
                     onScanFailure
                 );
                 console.log('[QR] Scanner started');
-                // Show torch button if track supports torch
                 try {
                     const stream = await html5QrcodeInstance.getState() ? document.querySelector('#qrReader video')?.srcObject : null;
                     const track = stream && stream.getVideoTracks ? stream.getVideoTracks()[0] : null;
@@ -1000,9 +976,7 @@ if ($user_id) {
                     await html5QrcodeInstance.stop();
                     await html5QrcodeInstance.clear();
                 }
-            } catch (_) {
-                /* ignore */
-            }
+            } catch (_) {}
         }
 
         async function switchCamera(e) {
@@ -1105,7 +1079,6 @@ if ($user_id) {
             }
             console.log('[QR] Scanning from image:', file.name, file.type, file.size);
             try {
-                // Use Html5Qrcode to scan file
                 const result = await Html5QrcodeScanner.scanFile(file, true);
                 console.log('[QR] Image scan result:', result);
                 onScanSuccess(result);
@@ -1114,7 +1087,6 @@ if ($user_id) {
                 alert('Unable to read QR from image.');
             }
         }
-        // Save child information changes
         async function saveChildInfo() {
             const baby_id = document.querySelector('.childinformation-container').dataset.babyId;
             if (!baby_id) {
@@ -1122,7 +1094,6 @@ if ($user_id) {
                 return;
             }
 
-            // Get form data
             const nameParts = document.querySelector('#childName').value.trim().split(' ');
             const child_fname = nameParts[0] || '';
             const child_lname = nameParts.slice(1).join(' ') || '';
@@ -1158,13 +1129,11 @@ if ($user_id) {
 
                 if (data.status === 'success') {
                     alert('Child information updated successfully!');
-                    // Update original data for reset functionality
                     originalChildData = {
                         ...originalChildData,
                         ...updateData
                     };
 
-                    // Exit edit mode and show Edit button again
                     setChildInfoEditing(false);
                 } else {
                     alert('Failed to update child information: ' + data.message);
@@ -1175,7 +1144,6 @@ if ($user_id) {
             }
         }
 
-        // Cancel = revert values and exit edit mode (replaces reset function)
         function cancelEdit() {
             const orig = window.originalChildData || originalChildData || null;
             if (!orig || Object.keys(orig).length === 0) {
@@ -1198,7 +1166,6 @@ if ($user_id) {
         }
 
         async function logoutBhw() {
-            // const response = await fetch('../../php/bhw/logout.php', { method: 'POST' });
             const response = await fetch('../../php/supabase/bhw/logout.php', {
                 method: 'POST'
             });
@@ -1210,7 +1177,6 @@ if ($user_id) {
             }
         }
 
-        // Edit mode controls: hide Edit during editing; show Save/Cancel via CSS
         function setChildInfoEditing(editing) {
             const details = document.querySelector('.childinfo-details');
             if (!details) return;
@@ -1219,16 +1185,13 @@ if ($user_id) {
                 el.disabled = !editing;
             });
 
-            // Toggle editing class (controls Save/Cancel visibility via CSS)
             details.classList.toggle('editing', editing);
 
-            // Toggle Edit button visibility (no "Done" state)
             const editBtn = document.getElementById('editChildInfoBtn');
             if (editBtn) {
                 editBtn.style.display = editing ? 'none' : '';
             }
 
-            // Also enable/disable Save/Reset buttons
             details.querySelectorAll('.childinfo-buttons button').forEach(btn => {
                 btn.disabled = !editing;
             });
@@ -1258,7 +1221,6 @@ if ($user_id) {
             }
         }
 
-        // Ensure View shows details-only AFTER data is fetched and placed
         async function viewChildInformation(baby_id) {
             const formData = new FormData();
             formData.append('baby_id', baby_id);
@@ -1291,15 +1253,18 @@ if ($user_id) {
                 document.querySelector('#childDeliveryType').value = row.delivery_type || 'Normal';
                 document.querySelector('#childBirthOrder').value = row.birth_order || 'Single';
                 document.querySelector('#childImage').src = row.babys_card || '';
+                const childImgEl = document.getElementById('childImage');
+                if (childImgEl) {
+                    childImgEl.style.cursor = 'zoom-in';
+                    childImgEl.onclick = () => openChildImage(childImgEl.src);
+                }
 
                 document.querySelector('.childinformation-container').dataset.babyId = baby_id;
 
-                // Set up accept button
                 document.querySelector('#acceptButton').onclick = () => {
                     acceptRecord(baby_id);
                 };
 
-                // Set up reject button
                 document.querySelector('#rejectButton').onclick = () => {
                     rejectRecord(baby_id);
                 };
@@ -1313,7 +1278,6 @@ if ($user_id) {
             }
         }
 
-        // Cancel = revert values and exit edit mode
         function cancelEdit() {
             const orig = window.originalChildData || originalChildData || null;
             if (!orig || Object.keys(orig).length === 0) {
@@ -1335,7 +1299,43 @@ if ($user_id) {
             setChildInfoEditing(false);
         }
 
-        // (Removed preview-eye-btn and image preview overlay handlers to revert to past style)
+        function openChildImage(src) {
+            if (!src) return;
+            const overlay = document.getElementById('childImageOverlay');
+            const large = document.getElementById('childImageLarge');
+            if (!overlay || !large) return;
+            large.src = src;
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeChildImage() {
+            const overlay = document.getElementById('childImageOverlay');
+            const large = document.getElementById('childImageLarge');
+            if (overlay) overlay.style.display = 'none';
+            if (large) large.src = '';
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const overlay = document.getElementById('childImageOverlay');
+            if (overlay) {
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) closeChildImage();
+                });
+            }
+            const thumb = document.getElementById('childImage');
+            if (thumb) {
+                thumb.addEventListener('click', () => {
+                    if (thumb.src) openChildImage(thumb.src);
+                });
+            }
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const ov = document.getElementById('childImageOverlay');
+                    if (ov && ov.style.display === 'flex') closeChildImage();
+                }
+            });
+        });
     </script>
 </body>
 

@@ -51,7 +51,6 @@
   background: white;
   border: 1px solid #ddd;
   border-radius: 8px;
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */
   z-index: 1000;
   height: 500px;
   max-height: 500px;
@@ -62,23 +61,14 @@
   display: none;
 }
 
-/* When dropdown is visible (inline style set by JS), pin it to the right side of the viewport */
 .notification-dropdown[style*="display: block"] {
   position: fixed;
-  top: 64px; /* below header */
+  top: 60px;
   right: 16px;
   left: auto;
   width: min(400px, calc(100vw - 32px));
   max-height: min(500px, calc(100vh - 96px));
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
-}
-
-@media (max-width: 480px) {
-  .notification-dropdown[style*="display: block"] {
-    top: 56px;
-    right: 12px;
-    width: calc(100vw - 24px);
-  }
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
 .notification-header {
@@ -103,7 +93,7 @@
 
 .notification-header button {
   background: transparent;
-  color: #1976d2; 
+  color: #1976d2;
   border: none;
   padding: 0;
   border-radius: 0;
@@ -116,7 +106,7 @@
 
 .notification-header button:hover {
   background: transparent;
-  color: #0d47a1; 
+  color: #0d47a1;
   text-decoration: underline;
 }
 
@@ -239,6 +229,10 @@
   margin-bottom: 10px;
 }
 @keyframes notif-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

@@ -22,12 +22,60 @@ main {
   width: 100%;
   margin: 0;
   border-collapse: collapse;
-  table-layout: fixed;
+  table-layout: auto; /* allow natural widths to prevent overlap */
 }
 .child-health-list-section .table tr.sched-row > td > table th,
 .child-health-list-section .table tr.sched-row > td > table td {
   padding: 0.5rem 0.75rem;
+  white-space: nowrap; /* default: keep most columns on one line */
+}
+/* Make Vaccine column wrap instead of overlapping */
+.child-health-list-section .table tr.sched-row > td > table th:nth-child(1),
+.child-health-list-section .table tr.sched-row > td > table td:nth-child(1) {
+  white-space: normal;
+  word-break: break-word;
+}
+/* Keep Dose No. compact and centered */
+.child-health-list-section .table tr.sched-row > td > table th:nth-child(2),
+.child-health-list-section .table tr.sched-row > td > table td:nth-child(2) {
+  width: 88px;
+  text-align: center;
   white-space: nowrap;
+}
+/* Due and Date Given fixed widths */
+.child-health-list-section .table tr.sched-row > td > table th:nth-child(3),
+.child-health-list-section .table tr.sched-row > td > table td:nth-child(3),
+.child-health-list-section .table tr.sched-row > td > table th:nth-child(4),
+.child-health-list-section .table tr.sched-row > td > table td:nth-child(4) {
+  width: 130px;
+}
+/* Status column sized for chip */
+.child-health-list-section .table tr.sched-row > td > table th:nth-child(5),
+.child-health-list-section .table tr.sched-row > td > table td:nth-child(5) {
+  width: 140px;
+}
+/* Catch-up Date reasonable width */
+.child-health-list-section .table tr.sched-row > td > table th:nth-child(6),
+.child-health-list-section .table tr.sched-row > td > table td:nth-child(6) {
+  width: 150px;
+}
+
+/* Responsiveness: relax fixed widths on narrower viewports */
+@media (max-width: 1200px) {
+  .child-health-list-section .table tr.sched-row > td > table th:nth-child(3),
+  .child-health-list-section .table tr.sched-row > td > table td:nth-child(3),
+  .child-health-list-section .table tr.sched-row > td > table th:nth-child(4),
+  .child-health-list-section .table tr.sched-row > td > table td:nth-child(4) {
+    width: 110px;
+  }
+  .child-health-list-section .table tr.sched-row > td > table th:nth-child(5),
+  .child-health-list-section .table tr.sched-row > td > table td:nth-child(5) {
+    width: 120px;
+  }
+  .child-health-list-section .table tr.sched-row > td > table th:nth-child(6),
+  .child-health-list-section .table tr.sched-row > td > table td:nth-child(6) {
+    width: 130px;
+  }
 }
 .child-health-list-section .table tr.sched-row > td > table thead {
   background: #f2f2f2;

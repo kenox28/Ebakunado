@@ -23,6 +23,7 @@ if ($user_types != 'midwifes') {
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/bhw/profile-management.css" />
 </head>
 

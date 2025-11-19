@@ -129,30 +129,28 @@ if ($user_id) {
                     </thead>
                     <tbody id="tclBody">
                         <tr class="skeleton-row">
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-6"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-6"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-pill skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td> <!-- Name -->
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td> <!-- Sex -->
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td> <!-- DOB -->
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td> <!-- Mother -->
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td> <!-- Address -->
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td> <!-- BCG -->
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td> <!-- HepB -->
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td> <!-- Penta1 -->
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td> <!-- Penta2 -->
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td> <!-- Penta3 -->
+                            <td><div class="skeleton skeleton-text skeleton-col-6"></div></td> <!-- OPV1 -->
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td> <!-- OPV2 -->
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td> <!-- OPV3 -->
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td> <!-- PCV1 -->
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td> <!-- PCV2 -->
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td> <!-- PCV3 -->
+                            <td><div class="skeleton skeleton-text skeleton-col-6"></div></td> <!-- MCV1 -->
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td> <!-- MCV2 -->
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td> <!-- Weight -->
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td> <!-- Height -->
+                            <td><div class="skeleton skeleton-pill skeleton-col-4"></div></td> <!-- Status -->
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td> <!-- Remarks -->
                         </tr>
                         <tr class="skeleton-row">
                             <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
@@ -175,10 +173,8 @@ if ($user_id) {
                             <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-pill skeleton-col-4"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-pill skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
                         </tr>
                     </tbody>
                 </table>
@@ -219,15 +215,23 @@ if ($user_id) {
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
-        // Column config for TCL (25 columns; use pill for Status column)
+        // Column config for TCL (22 underlying columns; Status at index 20)
+        const TCL_TOTAL_COLS = 22;
         function getTclColsConfig() {
             const cols = [];
-            for (let i = 0; i < 25; i++) {
+            for (let i = 0; i < TCL_TOTAL_COLS; i++) {
                 const widthClass = `skeleton-col-${(i % 6) + 1}`;
-                const type = (i === 23) ? 'pill' : 'text'; // 0-based: 23 => 24th column (Status)
+                const type = (i === 20) ? 'pill' : 'text';
                 cols.push({ type, widthClass });
             }
             return cols;
+        }
+        // Date formatting helper
+        function formatDate(dateStr){
+            if(!dateStr) return '';
+            const d = new Date(dateStr);
+            if(isNaN(d.getTime())) return dateStr;
+            return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
         }
         let tclRecords = [];
         let tclPage = 1;
@@ -270,9 +274,9 @@ if ($user_id) {
                 const data = await res.json();
                 if (data.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 25, kind: 'error' });
+                        renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: TCL_TOTAL_COLS, kind: 'error' });
                     } else {
-                        body.innerHTML = '<tr class="message-row error"><td colspan="25">Failed to load data. Please try again.</td></tr>';
+                        body.innerHTML = `<tr class="message-row error"><td colspan="${TCL_TOTAL_COLS}">Failed to load data. Please try again.</td></tr>`;
                     }
                     updateTclPager(1, false);
                     updateTclInfo(0, 0, 0, 0);
@@ -286,9 +290,9 @@ if ($user_id) {
             } catch (e) {
                 console.error('Error loading TCL data:', e);
                 if (typeof renderTableMessage === 'function') {
-                    renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 25, kind: 'error' });
+                    renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: TCL_TOTAL_COLS, kind: 'error' });
                 } else {
-                    body.innerHTML = '<tr class="message-row error"><td colspan="25">Failed to load data. Please try again.</td></tr>';
+                    body.innerHTML = `<tr class="message-row error"><td colspan="${TCL_TOTAL_COLS}">Failed to load data. Please try again.</td></tr>`;
                 }
                 updateTclPager(1, false);
                 updateTclInfo(0, 0, 0, 0);
@@ -299,9 +303,9 @@ if ($user_id) {
             const body = document.querySelector('#tclBody');
             if (!records || records.length === 0) {
                 if (typeof renderTableMessage === 'function') {
-                    renderTableMessage(body, 'No records found', { colspan: 25 });
+                    renderTableMessage(body, 'No records found', { colspan: TCL_TOTAL_COLS });
                 } else {
-                    body.innerHTML = '<tr class="message-row"><td colspan="25">No records found</td></tr>';
+                    body.innerHTML = `<tr class="message-row"><td colspan="${TCL_TOTAL_COLS}">No records found</td></tr>`;
                 }
                 return;
             }
@@ -312,7 +316,7 @@ if ($user_id) {
                 <tr>
                     <td>${item.child_name || ''}</td>
                     <td>${item.sex || ''}</td>
-                    <td>${item.date_of_birth || ''}</td>
+                    <td>${formatDate(item.date_of_birth) || ''}</td>
                     <td>${item.mother_name || ''}</td>
                     <td>${item.address || ''}</td>
                     <td>${getVaccineCell(item.BCG)}</td>

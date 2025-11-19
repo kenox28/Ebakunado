@@ -54,32 +54,77 @@ $user_fname = $_SESSION['fname'] ?? '';
                 </div>
             </div>
         </div>
-
-        <div class="header-user"
-            id="headerUser"
-            role="button"
-            tabindex="0"
-            aria-haspopup="menu"
-            aria-expanded="false"
-            aria-controls="profileMenu">
-            <img
-                class="user-avatar"
-                src="<?php echo !empty($noprofile) ? htmlspecialchars($noprofile) : '../../assets/images/user-profile.png'; ?>"
-                alt="User Profile" />
-            <h2 class="user-display-name"><?php echo htmlspecialchars($fname); ?></h2>
-            <span class="icon-dropdown material-symbols-rounded">keyboard_arrow_down</span>
-
-            <!-- Popover Menu -->
-            <div id="profileMenu" class="profile-menu" role="menu" aria-hidden="true" hidden>
-                <a class="menu-item" href="../../views/user-page/profile-management.php" role="menuitem">
-                    <span class="material-symbols-rounded">person</span>
-                    My Account
-                </a>
-                <a class="menu-item" href="#" role="menuitem" onclick="logoutUser()">
-                    <span class="material-symbols-rounded">logout</span>
-                    Logout
-                </a>
-            </div>
+        <?php
+        // Replicated dropdown-root structure from BHW header
+        $sessionProfileImg = isset($_SESSION['profileimg']) ? trim((string)$_SESSION['profileimg']) : '';
+        $headerProfileImg = ($sessionProfileImg && $sessionProfileImg !== 'noprofile.png')
+            ? $sessionProfileImg
+            : '../../assets/images/user-profile.png';
+        $emailDisplay = isset($_SESSION['email']) ? htmlspecialchars((string)$_SESSION['email']) : '—';
+        $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
+        $user_type = $_SESSION['user_type'] ?? 'User';
+        $has_user_role = false;
+        if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available_roles'])) {
+            $has_user_role = true;
+        }
+        $current_role_lower = strtolower((string)$user_type);
+        $switch_target_label = ($current_role_lower === 'parent' || $current_role_lower === 'parent/user') ? 'BHW' : 'Parent';
+        // Derive display role (append / Parent when base role is just User)
+        if (!isset($user_role_display)) {
+            $user_role_display = $user_type;
+            $lower = strtolower($user_type);
+            if ($lower === 'user' && stripos($user_type, 'parent') === false) {
+                $user_role_display = 'User / Parent';
+            } elseif ($lower === 'parent' && stripos($user_type, 'user') === false) {
+                $user_role_display = 'Parent / User';
+            } elseif (strpos($lower, 'parent') !== false && strpos($lower, 'user') !== false) {
+                // Already combined, keep as-is
+                $user_role_display = $user_type;
+            }
+        }
+        ?>
+        <div class="dropdown-root" id="profileRoot">
+            <button id="profileBtn" class="profile-trigger" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="profileMenu">
+                <img class="user-avatar" alt="User avatar" src="<?php echo htmlspecialchars($headerProfileImg); ?>" />
+                <span class="user-meta">
+                    <span class="user-name"><?php echo htmlspecialchars($fname); ?></span>
+                    <span class="user-role"><?php echo htmlspecialchars($user_role_display); ?></span>
+                </span>
+                <span class="icon-dropdown material-symbols-rounded" aria-hidden="true">expand_more</span>
+            </button>
+            <nav id="profileMenu" class="panel profile" role="menu" aria-label="User menu" aria-hidden="true" hidden>
+                <div class="profile-card">
+                    <div class="avatar-wrap">
+                        <img class="user-avatar lg" alt="User avatar" src="<?php echo htmlspecialchars($headerProfileImg); ?>" />
+                    </div>
+                    <div class="info">
+                        <h3 class="name"><?php echo htmlspecialchars($user_fullname); ?></h3>
+                        <p class="role"><?php echo htmlspecialchars($user_role_display); ?></p>
+                        <p class="email"><?php echo $emailDisplay; ?></p>
+                    </div>
+                </div>
+                <div class="menu-group" aria-label="Account">
+                    <a class="menu-item" href="../../views/user-page/profile-management.php" role="menuitem"><span class="material-symbols-rounded">person</span>My Account</a>
+                    <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">badge</span>View Profile</a>
+                    <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">settings</span>Settings</a>
+                </div>
+                <div class="menu-group" aria-label="Context">
+                    <?php if ($has_user_role): ?>
+                        <a class="menu-item" href="#" role="menuitem" onclick="switchToParentView(); return false;" aria-label="Switch role to <?php echo htmlspecialchars($switch_target_label); ?>">
+                            <span class="material-symbols-rounded" aria-hidden="true">account_circle</span>
+                            Switch Role
+                            <span class="tag" data-target-role="<?php echo htmlspecialchars($switch_target_label); ?>">
+                                <span class="material-symbols-rounded" aria-hidden="true">sync_alt</span>
+                                <?php echo htmlspecialchars($switch_target_label); ?>
+                            </span>
+                        </a>
+                    <?php endif; ?>
+                    <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">lock</span>Privacy & Security</a>
+                </div>
+                <div class="menu-group" aria-label="Danger zone">
+                    <button class="menu-item danger" type="button" role="menuitem" onclick="logoutUser()"><span class="material-symbols-rounded">logout</span>Logout</button>
+                </div>
+            </nav>
         </div>
     </div>
 </header>

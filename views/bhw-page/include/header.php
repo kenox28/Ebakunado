@@ -67,6 +67,7 @@
                     </div>
                     <div class="info">
                         <h3 class="name"><?php echo htmlspecialchars($user_fullname); ?></h3>
+                        <p class="role"><?php echo htmlspecialchars($user_type); ?></p>
                         <p class="email"><?php echo $emailDisplay; ?></p>
 
                     </div>

@@ -77,6 +77,7 @@ if ($user_id) {
                             <th>Address</th>
                             <th>Status</th>
                             <th>Schedule</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="childhealthrecordBody">
@@ -89,6 +90,12 @@ if ($user_id) {
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
                             <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
                             <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                            <td>
+                                <div class="skeleton-actions-pair">
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                </div>
+                            </td>
                         </tr>
                         <tr class="skeleton-row">
                             <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
@@ -99,6 +106,12 @@ if ($user_id) {
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
                             <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
                             <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                            <td>
+                                <div class="skeleton-actions-pair">
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                </div>
+                            </td>
                         </tr>
                         <tr class="skeleton-row">
                             <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
@@ -109,6 +122,12 @@ if ($user_id) {
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
                             <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
                             <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
+                            <td>
+                                <div class="skeleton-actions-pair">
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -134,7 +153,7 @@ if ($user_id) {
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
-        // Column config for skeleton (8 visible columns)
+        // Column config for skeleton (9 visible columns)
         function getChildHealthListColsConfig() {
             return [
                 { type: 'text', widthClass: 'skeleton-col-1' }, // Fullname
@@ -144,7 +163,8 @@ if ($user_id) {
                 { type: 'text', widthClass: 'skeleton-col-5' }, // Mother
                 { type: 'text', widthClass: 'skeleton-col-3' }, // Address
                 { type: 'pill', widthClass: 'skeleton-col-5' }, // Status
-                { type: 'btn',  widthClass: 'skeleton-col-6' }  // Schedule/CHR actions
+                { type: 'btn',  widthClass: 'skeleton-col-6' }, // Schedule
+                { type: 'btn',  widthClass: 'skeleton-col-6' }  // Action (paired buttons via post-adjust)
             ];
         }
         // Date formatting helper: Mon D, YYYY
@@ -153,6 +173,62 @@ if ($user_id) {
             const d = new Date(dateStr);
             if(isNaN(d.getTime())) return dateStr; // fallback if invalid
             return d.toLocaleDateString(undefined,{ month:'short', day:'numeric', year:'numeric'});
+        }
+        // --- Status chips (use main.css .chip styles, with dynamic fallback like CHR) ---
+        (function initChipRegistry(){
+            if (!window.__CHIP_STYLE_REG__) window.__CHIP_STYLE_REG__ = new Set();
+        })();
+
+        function sanitizeStatus(val){
+            return String(val || '').trim().toLowerCase();
+        }
+
+        function escapeHtml(str){
+            return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[s]));
+        }
+
+        function ensureChipStyle(variant, colors){
+            const key = 'chip--' + variant;
+            const reg = window.__CHIP_STYLE_REG__;
+            if (reg && reg.has(key)) return;
+            const style = document.createElement('style');
+            const { bg, fg, bd } = colors || {};
+            const css = `.chip--${variant}{background:${bg||'#f3f4f6'};color:${fg||'#374151'};border:1px solid ${bd||'#e5e7eb'};}`;
+            style.textContent = css;
+            document.head.appendChild(style);
+            if (reg) reg.add(key);
+        }
+
+        function statusVariantFromText(status){
+            const s = sanitizeStatus(status);
+            if (!s) return 'default';
+            // Map common keywords to existing variants from main.css
+            if (s.includes('taken') || s.includes('given') || s === 'done') return 'taken';
+            if (s.includes('upcoming') || s.includes('due') || s.includes('scheduled')) return 'upcoming';
+            if (s.includes('missed') || s.includes('overdue')) return 'missed';
+            if (s.includes('complete')) return 'completed';
+            if (s.includes('transfer')) return 'transferred';
+            // Additional statuses we want styled similarly to CHR dynamic approach
+            if (s === 'pending' || s === 'for approval' || s === 'awaiting') return 'pending';
+            if (s === 'accepted') return 'accepted';
+            if (s === 'approved' || s === 'active') return 'approved';
+            if (s === 'rejected' || s === 'inactive' || s === 'declined') return 'rejected';
+            return 'default';
+        }
+
+        function renderStatusChip(status){
+            const raw = (status == null ? '' : String(status));
+            const variant = statusVariantFromText(raw);
+            // Inject dynamic styles for new variants not present in main.css
+            if (variant === 'pending') {
+                ensureChipStyle('pending', { bg: '#fff4e5', fg: '#8a5a00', bd: '#ffd8a8' });
+            } else if (variant === 'approved') {
+                ensureChipStyle('approved', { bg: '#e6f4ea', fg: '#137333', bd: '#b7dec2' });
+            } else if (variant === 'rejected') {
+                ensureChipStyle('rejected', { bg: '#fdecea', fg: '#b3261e', bd: '#f5c6c3' });
+            }
+            // Known variants (taken, upcoming, missed, completed, transferred, default) already exist in main.css
+            return `<span class="chip chip--${variant}">${escapeHtml(raw)}</span>`;
         }
         // pager CSS
         (function() {
@@ -184,6 +260,15 @@ if ($user_id) {
             if (!keep) {
                 if (typeof applyTableSkeleton === 'function') {
                     applyTableSkeleton(body, getChildHealthListColsConfig(), chlLimit);
+                    // Post-adjust: make last column show two skeleton buttons side-by-side
+                    try {
+                        body.querySelectorAll('tr.skeleton-row').forEach(tr => {
+                            const lastTd = tr.querySelector('td:last-child');
+                            if (lastTd) {
+                                lastTd.innerHTML = '<div class="skeleton-actions-pair"><div class="skeleton skeleton-btn skeleton-col-6"></div><div class="skeleton skeleton-btn skeleton-col-6"></div></div>';
+                            }
+                        });
+                    } catch (_) {}
                 }
                 // Removed fallback "Loading..." text; rely on static skeleton rows if utility unavailable.
             }
@@ -201,9 +286,9 @@ if ($user_id) {
                 const data = await res.json();
                 if (data.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 8, kind: 'error' });
+                        renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 9, kind: 'error' });
                     } else {
-                        body.innerHTML = '<tr class="message-row error"><td colspan="8">Failed to load data. Please try again.</td></tr>';
+                        body.innerHTML = '<tr class="message-row error"><td colspan="9">Failed to load data. Please try again.</td></tr>';
                     }
                     updateChlPagination(0, page, chlLimit, false);
                     return;
@@ -211,9 +296,9 @@ if ($user_id) {
                 const rowsData = Array.isArray(data.data) ? data.data : [];
                 if (rowsData.length === 0) {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(body, 'No records found', { colspan: 8 });
+                        renderTableMessage(body, 'No records found', { colspan: 9 });
                     } else {
-                        body.innerHTML = '<tr class="message-row"><td colspan="8">No records found</td></tr>';
+                        body.innerHTML = '<tr class="message-row"><td colspan="9">No records found</td></tr>';
                     }
                     updateChlPagination(data.total || 0, data.page || page, data.limit || chlLimit, false);
                     return;
@@ -229,23 +314,26 @@ if ($user_id) {
 							<td>${item.place_of_birth || ''}</td>
 							<td>${item.mother_name || ''}</td>
 							<td>${item.address || ''}</td>
-							<td>${item.status || ''}</td>
-							<td>
-								<button class="b n view-schedule-btn"
-										onclick="viewSchedule('${item.baby_id}', this)"
-										aria-expanded="false">
-									<span class="material-symbols-rounded btn-icon">calendar_month</span>
-									<span class="btn-text">Schedule</span>
-								</button>
-								<a class="btn viewCHR-btn" href="child-health-record.php?baby_id=${encodeURIComponent(item.baby_id)}">
-									<span class="material-symbols-rounded btn-icon">\nvisibility</span>
-									<span class="btn-text">View CHR</span>
-								</a>
-								<a class="btn downloadCHR-btn" href="../../php/supabase/bhw/download_chr.php?baby_id=${encodeURIComponent(item.baby_id)}">
-									<span class="material-symbols-rounded btn-icon">download</span>
-									<span class="btn-text">Download CHR</span>
-								</a>
-							</td>
+						<td>${renderStatusChip(item.status)}</td>
+                            <td>
+                                <button class="btn view-schedule-btn"
+                                        onclick="viewSchedule('${item.baby_id}', this)"
+                                        aria-expanded="false">
+                                    <span class="material-symbols-rounded btn-icon">calendar_month</span>
+                                    <span class="btn-text">Schedule</span>
+                                    <span class="material-symbols-rounded btn-chevron">expand_more</span>
+                                </button>
+                            </td>
+                            <td>
+                                <a class="btn viewCHR-btn" href="child-health-record.php?baby_id=${encodeURIComponent(item.baby_id)}">
+                                    <span class="material-symbols-rounded btn-icon">visibility</span>
+                                    <span class="btn-text">View CHR</span>
+                                </a>
+                                <a class="btn downloadCHR-btn" href="../../php/supabase/bhw/download_chr.php?baby_id=${encodeURIComponent(item.baby_id)}">
+                                    <span class="material-symbols-rounded btn-icon">download</span>
+                                    <span class="btn-text">Download CHR</span>
+                                </a>
+                            </td>
 						</tr>`;
                 });
                 body.innerHTML = rows;
@@ -255,9 +343,9 @@ if ($user_id) {
                 updateChlPagination(data.total || 0, chlPage, data.limit || chlLimit, canNext);
             } catch (e) {
                 if (typeof renderTableMessage === 'function') {
-                    renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 8, kind: 'error' });
+                    renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 9, kind: 'error' });
                 } else {
-                    body.innerHTML = '<tr class="message-row error"><td colspan="8">Failed to load data. Please try again.</td></tr>';
+                    body.innerHTML = '<tr class="message-row error"><td colspan="9">Failed to load data. Please try again.</td></tr>';
                 }
                 updateChlPagination(0, page, chlLimit, false);
             }
@@ -541,6 +629,8 @@ if ($user_id) {
             if (hasSchedRow) next.remove();
 
             btn.dataset.loading = '1';
+            // Immediate visual feedback: rotate chevron before data loads
+            btn.setAttribute('aria-expanded', 'true');
 
             try {
                 const res = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
@@ -558,15 +648,15 @@ if ($user_id) {
                 if (data.status !== 'success' || !data.data || data.data.length === 0) {
                     html += '<div class="small">No schedule</div>';
                 } else {
-                    html += '<table class="small"><tr><th>Vaccine</th><th>Dose #</th><th>Due</th><th>Date Given</th><th>Status</th><th>Catch-up Date</th></tr>';
+                    html += '<table class="small"><tr><th>Vaccine</th><th>Dose No.</th><th>Due</th><th>Date Given</th><th>Status</th><th>Catch-up Date</th></tr>';
                     data.data.forEach(r => {
                         html += `<tr>
                             <td>${r.vaccine_name}</td>
                             <td>${r.dose_number}</td>
                             <td>${formatDate(r.schedule_date)}</td>
                             <td>${formatDate(r.date_given)}</td>
-                            <td>${r.status}</td>
-                            <td>${((r.status || '').toLowerCase() === 'missed') ? (r.catch_up_date || '') : ''}</td>
+                            <td>${renderStatusChip(r.status)}</td>
+                            <td>${((r.status || '').toLowerCase() === 'missed') ? formatDate(r.catch_up_date) : ''}</td>
                         </tr>`;
                     });
                     html += '</table>';
@@ -574,9 +664,7 @@ if ($user_id) {
 
                 html += '</td></tr>';
                 tr.insertAdjacentHTML('afterend', html);
-
-                // Mark expanded (keeps chevron rotated via CSS)
-                btn.setAttribute('aria-expanded', 'true');
+                // Expanded already set prior to fetch for early icon rotation
             } catch (e) {
                 console.error('Error loading schedule:', e);
                 btn.setAttribute('aria-expanded', 'false');

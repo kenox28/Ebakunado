@@ -211,14 +211,15 @@ if ($user_id) {
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
-        function formatDate(dateString) {
+        // Format date as: short month name, numeric day, full year (e.g., Jan 5, 2025)
+        function formatDateLong(dateString) {
             if (!dateString) return '';
             const d = new Date(dateString);
             if (Number.isNaN(d.getTime())) return String(dateString);
             return d.toLocaleDateString('en-US', {
-                month: 'numeric',
+                month: 'short',
                 day: 'numeric',
-                year: '2-digit'
+                year: 'numeric'
             });
         }
 
@@ -380,7 +381,9 @@ if ($user_id) {
 
                 let ledgerHtml = '';
                 allRows.forEach(row => {
-                    const date = row.date_given || row.schedule_date || '';
+                    const rawDate = row.date_given || row.schedule_date || '';
+                    const date = formatDateLong(rawDate);
+                    const catchUpDate = formatDateLong(row.catch_up_date || '');
                     const ht = row.height || row.height_cm || '';
                     const wt = row.weight || row.weight_kg || '';
                     const muac = row.muac || row.me_ac || '';
@@ -398,7 +401,7 @@ if ($user_id) {
                             <td><span class="chip chip--${chipClass}">${statusText}</span></td>
                             <td>${row.condition_of_baby || ''}</td>
                             <td>${row.advice_given || ''}</td>
-                            <td>${row.catch_up_date || ''}</td>
+                            <td>${catchUpDate}</td>
                             <td>${row.remarks || ''}</td>
                         </tr>`;
                 });

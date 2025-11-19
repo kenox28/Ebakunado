@@ -55,7 +55,7 @@
   border-radius: 8px;
 }
 .skeleton-number {
-  height: 34px; 
+  height: 34px;
   border-radius: 8px;
 }
 .skeleton-avatar {
@@ -101,17 +101,48 @@
 }
 
 /* Semantic sizes for inline field placeholders (span-sized) */
-.skeleton-field-xs { width: 60px; }
-.skeleton-field-s { width: 100px; }
-.skeleton-field-m { width: 160px; }
-.skeleton-field-l { width: 220px; }
-.skeleton-field-xl { width: 320px; }
-.skeleton-field-tick { width: 18px; }
+.skeleton-field-xs {
+  width: 60px;
+}
+.skeleton-field-s {
+  width: 100px;
+}
+.skeleton-field-m {
+  width: 160px;
+}
+.skeleton-field-l {
+  width: 220px;
+}
+.skeleton-field-xl {
+  width: 320px;
+}
+.skeleton-field-tick {
+  width: 18px;
+}
 
 /* Row padding to keep skeleton height consistent with table rows */
 .skeleton-row td {
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+/* Center skeletons in the last column of tables */
+.table tbody tr.skeleton-row td:last-child {
+  text-align: center;
+}
+.table tbody tr.skeleton-row td:last-child .skeleton-btn {
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Helper: pair of skeleton buttons inline (for action column) */
+.skeleton-actions-pair {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
 }
 
 /* ==========================================================
@@ -169,8 +200,12 @@
   border-radius: 8px;
 }
 /* Specific widths to mirror actual buttons */
-.child-list-item.skeleton-card .child-actions .skeleton-btn-view { width: 90px; }
-.child-list-item.skeleton-card .child-actions .skeleton-btn-schedule { width: 150px; }
+.child-list-item.skeleton-card .child-actions .skeleton-btn-view {
+  width: 90px;
+}
+.child-list-item.skeleton-card .child-actions .skeleton-btn-schedule {
+  width: 150px;
+}
 
 /* Ensure avatar placeholder matches card size expectations */
 .child-list-item.skeleton-card .qr-area .skeleton-avatar {
@@ -189,10 +224,19 @@
   display: inline-block;
   transition: opacity 260ms ease;
 }
-.card-number.is-loading .number-value { opacity: 0; }
-.card-number.is-loading .skeleton-placeholder { opacity: 1; }
-.card-number.is-loaded .number-value { opacity: 1; }
-.card-number.is-loaded .skeleton-placeholder { opacity: 0; pointer-events: none; }
+.card-number.is-loading .number-value {
+  opacity: 0;
+}
+.card-number.is-loading .skeleton-placeholder {
+  opacity: 1;
+}
+.card-number.is-loaded .number-value {
+  opacity: 1;
+}
+.card-number.is-loaded .skeleton-placeholder {
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* Overlay shimmer dots atop where number will appear, for clean cross-fade */
 .card-number .skeleton-placeholder {

@@ -371,9 +371,14 @@ th {
   color: #0b6aa2;
   border: 1px solid #cfe8ff;
 }
+.chip--accepted {
+  background: #e6f4ea;
+  color: #137333;
+  border: 1px solid #b7dec2;
+}
 .chip--default {
-  background: #f3f4f6;
-  color: #374151;
+  background: #f9fafb;
+  color: #4b5563;
   border: 1px solid #e5e7eb;
 }
 
