@@ -57,7 +57,7 @@ if (empty($birth_date)) {
 // 4) Vaccine list per RA 10152 (common infant schedule)
 $vaccines = [
     ['BCG', 'at birth'],
-    ['Hepatitis B (Birth dose)', 'at birth'],
+    ['Hepatitis B', 'at birth'],
     ['Pentavalent (DPT-HepB-Hib) - 1st', '6 weeks'],
     ['OPV - 1st', '6 weeks'],
     ['PCV - 1st', '6 weeks'],
@@ -67,7 +67,6 @@ $vaccines = [
     ['Pentavalent (DPT-HepB-Hib) - 3rd', '14 weeks'],
     ['OPV - 3rd', '14 weeks'],
     ['PCV - 3rd', '14 weeks'],
-    ['IPV', '14 weeks'],
     ['MMR / Measles - 1st', '9 months'],
     ['MMR / Measles - 2nd', '12 months']
 ];
@@ -84,14 +83,26 @@ function compute_due_date($birth, $sched) {
 
 // 6) Insert schedule rows into new schema
 $ins = $connect->prepare("INSERT INTO immunization_records (baby_id, vaccine_name, dose_number, status, catch_up_date) VALUES (?, ?, ?, 'scheduled', ?)");
-$doseNum = 1;
+
+// Per-series dose derivation
+function derive_dose_number_mysql($vname) {
+    $n = strtoupper((string)$vname);
+    if (strpos($n, ' - 1ST') !== false) return 1;
+    if (strpos($n, ' - 2ND') !== false) return 2;
+    if (strpos($n, ' - 3RD') !== false) return 3;
+    if (strpos($n, 'MMR / MEASLES - 1ST') !== false) return 1;
+    if (strpos($n, 'MMR / MEASLES - 2ND') !== false) return 2;
+    if (strpos($n, 'BCG') !== false) return 1;
+    if (strpos($n, 'HEP') !== false) return 1;
+    return 1;
+}
 foreach ($vaccines as $v) {
     $vname = $v[0];
     $sched = $v[1];
     $due = compute_due_date($birth_date, $sched);
-    $ins->bind_param('ssis', $baby_id, $vname, $doseNum, $due);
+    $dose = derive_dose_number_mysql($vname);
+    $ins->bind_param('ssis', $baby_id, $vname, $dose, $due);
     $ins->execute();
-    $doseNum++;
 }
 $ins->close();
 

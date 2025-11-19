@@ -28,8 +28,9 @@ $user_fname = $_SESSION['fname'] ?? '';
     <title>Dashboard</title>
     <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
     <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
+    <link rel="stylesheet" href="../../css/header.css?v=1.0.2" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
+
     <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/skeleton-loading.css" />
     <link rel="stylesheet" href="../../css/user/dashboard.css" />
@@ -133,7 +134,7 @@ $user_fname = $_SESSION['fname'] ?? '';
         </section>
     </main>
 
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
+    <script src="../../js/header-handler/profile-menu.js?v=1.0.4" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>

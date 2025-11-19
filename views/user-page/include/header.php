@@ -1,3 +1,26 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+	header("Location: ../login.php");
+	exit();
+}
+
+
+// Get user information from session
+$user_id = $_SESSION['user_id'] ?? '';
+$fname = $_SESSION['fname'] ?? 'User';
+$lname = $_SESSION['lname'] ?? '';
+$email = $_SESSION['email'] ?? '';
+$phone = $_SESSION['phone_number'] ?? '';
+$noprofile = $_SESSION['profileimg'] ?? '';
+$gender = $_SESSION['gender'] ?? '';
+$place = $_SESSION['place'] ?? '';
+$user_fname = $_SESSION['fname'] ?? '';
+?>
+
+<link rel="stylesheet" href="../../css/modals.css" />
+
 <header class="header">
     <div class="header-left">
         <button
@@ -47,7 +70,7 @@
             <span class="icon-dropdown material-symbols-rounded">keyboard_arrow_down</span>
 
             <!-- Popover Menu -->
-            <div id="profileMenu" class="profile-menu" role="menu" aria-hidden="true">
+            <div id="profileMenu" class="profile-menu" role="menu" aria-hidden="true" hidden>
                 <a class="menu-item" href="../../views/user-page/profile-management.php" role="menuitem">
                     <span class="material-symbols-rounded">person</span>
                     My Account
@@ -61,6 +84,7 @@
     </div>
 </header>
 
+<script src="../../js/utils/ui-feedback.js"></script>
 <script>
     let notifications = [];
     let notificationDropdownOpen = false;
@@ -249,38 +273,54 @@
         });
     });
     async function logoutUser() {
+        if (!window.UIFeedback) {
+            window.location.href = "../../php/supabase/users/logout.php";
+            return;
+        }
 
-    // window.location.href = "/ebakunado/php/supabase/users/logout.php"
-    const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "You will be logged out of the system",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#e74c3c",
-        cancelButtonColor: "#95a5a6",
-        confirmButtonText: "Yes, logout",
-    });
-
-    if (result.isConfirmed) {
-        const response = await fetch("/ebakunado/php/supabase/users/logout.php", {
-            method: "POST",
+        const confirmResult = await UIFeedback.showModal({
+            title: "Logout",
+            message: "You will be logged out of the system.",
+            icon: "warning",
+            confirmText: "Yes, logout",
+            cancelText: "Cancel",
+            showCancel: true
         });
 
-        const data = await response.json();
+        if (confirmResult?.action !== "confirm") return;
 
-        if (data.status === "success") {
-            Swal.fire({
-                icon: "success",
-                title: "Logged Out",
-                text: "You have been successfully logged out",
-                showConfirmButton: false,
-                timer: 1500,
-            }).then(() => {
-                window.location.href = "../../views/landing-page/landing-page.html";
+        const closeLoader = UIFeedback.showLoader("Logging out...");
+        try {
+            const response = await fetch("../../php/supabase/users/logout.php", {
+                method: "POST"
             });
-        } else {
-            Swal.fire("Error!", data.message, "error");
+            const data = await response.json();
+            closeLoader();
+
+            if (data.status === "success") {
+                UIFeedback.showToast({
+                    title: "Logged out",
+                    message: "You have been successfully logged out.",
+                    variant: "success",
+                    duration: 3000
+                });
+                setTimeout(() => {
+                    window.location.href = "../../views/landing-page/landing-page.html";
+                }, 800);
+            } else {
+                UIFeedback.showToast({
+                    title: "Logout failed",
+                    message: data.message || "Please try again.",
+                    variant: "error"
+                });
+            }
+        } catch (error) {
+            closeLoader();
+            UIFeedback.showToast({
+                title: "Network error",
+                message: "Please check your connection and try again.",
+                variant: "error"
+            });
         }
-    }
     }
 </script>

@@ -22,6 +22,7 @@ if ($user_types != 'midwifes') {
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/notification-style.css" />
+    <link rel="stylesheet" href="../../css/modals.css" />
     <link rel="stylesheet" href="../../css/bhw/add-child.css" />
 </head>
 
@@ -121,29 +122,14 @@ if ($user_types != 'midwifes') {
                     </div>
 
                     <div class="form-grid">
-                        <?php
-                        $user_fname = $_SESSION['fname'] ?? '';
-                        $gender = $_SESSION['gender'] ?? '';
-                        ?>
-                        <?php if ($gender == 'Male'): ?>
-                            <div class="form-group">
-                                <label for="father_name">Father Name</label>
-                                <input type="text" id="father_name" name="father_name" value="<?php echo htmlspecialchars($user_fname); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="mother_name">Mother Name *</label>
-                                <input type="text" id="mother_name" name="mother_name" placeholder="Enter mother's name" required>
-                            </div>
-                        <?php else: ?>
-                            <div class="form-group">
-                                <label for="mother_name">Mother Name *</label>
-                                <input type="text" id="mother_name" name="mother_name" value="<?php echo htmlspecialchars($user_fname); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="father_name">Father Name</label>
-                                <input type="text" id="father_name" name="father_name" placeholder="Enter father's name">
-                            </div>
-                        <?php endif; ?>
+                        <div class="form-group">
+                            <label for="mother_name">Mother Name *</label>
+                            <input type="text" id="mother_name" name="mother_name" placeholder="Enter mother's name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="father_name">Father Name</label>
+                            <input type="text" id="father_name" name="father_name" placeholder="Enter father's name">
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -197,16 +183,13 @@ if ($user_types != 'midwifes') {
 
                     <div class="checkbox-grid">
                         <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="BCG"> BCG (Tuberculosis)</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="HEPAB1 (w/in 24 hrs)"> HEPAB1 (w/in 24 hrs)</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="HEPAB1 (More than 24hrs)"> HEPAB1 (More than 24hrs)</label>
+                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Hepatitis B"> Hepatitis B (Birth dose)</label>
                         <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 1st"> Pentavalent (DPT-HepB-Hib) - 1st</label>
                         <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 1st"> OPV - 1st (Oral Polio)</label>
                         <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 1st"> PCV - 1st (Pneumococcal)</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Rota Virus Vaccine - 1st"> Rota Virus Vaccine - 1st</label>
                         <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 2nd"> Pentavalent (DPT-HepB-Hib) - 2nd</label>
                         <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 2nd"> OPV - 2nd (Oral Polio)</label>
                         <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 2nd"> PCV - 2nd (Pneumococcal)</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Rota Virus Vaccine - 2nd"> Rota Virus Vaccine - 2nd</label>
                         <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 3rd"> Pentavalent (DPT-HepB-Hib) - 3rd</label>
                         <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 3rd"> OPV - 3rd (Oral Polio)</label>
                         <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 3rd"> PCV - 3rd (Pneumococcal)</label>
@@ -222,6 +205,22 @@ if ($user_types != 'midwifes') {
                 <div id="resultMessage" class="result-message"></div>
             </form>
         </section>
+
+        <div class="modal-overlay" id="addChildSuccessModal" aria-hidden="true" role="dialog" aria-modal="true">
+            <div class="modal-card">
+                <div class="modal-icon">
+                    <span class="material-symbols-rounded">check_circle</span>
+                </div>
+                <h3>Child Added Successfully</h3>
+                <p>Provide the family code to the parent so they can claim the child.</p>
+                <div class="modal-summary centered" id="addChildModalSummary"></div>
+                <div class="modal-actions align-end">
+                    <button type="button" class="modal-btn primary small" id="addChildModalDone">
+                        Done
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <script src="../../js/header-handler/profile-menu.js" defer></script>
         <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
@@ -245,6 +244,55 @@ if ($user_types != 'midwifes') {
                     }
                 });
             });
+
+            const successModal = document.getElementById('addChildSuccessModal');
+            const modalSummary = document.getElementById('addChildModalSummary');
+            const addChildModalDone = document.getElementById('addChildModalDone');
+            let modalCloseTimer = null;
+
+            function openAddChildModal(details) {
+                if (!successModal || !modalSummary) return;
+                const lines = [];
+                if (details.familyCode) {
+                    lines.push(`
+                        <p class="family-code-label">Family Code</p>
+                        <p class="family-code-value">${details.familyCode}</p>
+                    `);
+                } else {
+                    lines.push('<p>No family code generated.</p>');
+                }
+                modalSummary.innerHTML = lines.join('');
+                successModal.classList.add('is-visible');
+                successModal.setAttribute('aria-hidden', 'false');
+                if (modalCloseTimer) {
+                    clearTimeout(modalCloseTimer);
+                }
+                modalCloseTimer = setTimeout(() => {
+                    closeAddChildModal();
+                }, 3000);
+            }
+
+            function closeAddChildModal() {
+                if (!successModal) return;
+                if (modalCloseTimer) {
+                    clearTimeout(modalCloseTimer);
+                    modalCloseTimer = null;
+                }
+                successModal.classList.remove('is-visible');
+                successModal.setAttribute('aria-hidden', 'true');
+            }
+
+            successModal?.addEventListener('click', (event) => {
+                if (event.target === successModal) {
+                    closeAddChildModal();
+                }
+            });
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    closeAddChildModal();
+                }
+            });
+            addChildModalDone?.addEventListener('click', closeAddChildModal);
 
             document.addEventListener('DOMContentLoaded', function() {
                 loadProvinces();
@@ -353,22 +401,15 @@ if ($user_types != 'midwifes') {
                     const data = await response.json();
                     if (data.status === 'success') {
                         resultDiv.className = 'result-message result-success';
-                        let qrMessage = data.qr_code ? '<p style="color: #28a745; font-weight: bold;">🎯 QR Code generated successfully!</p>' : '';
-                        resultDiv.innerHTML = `
-                <h3>✅ Child Added Successfully!</h3>
-                <p><strong>Family Code:</strong> ${data.family_code}</p>
-                <p><strong>Baby ID:</strong> ${data.baby_id}</p>
-                ${qrMessage}
-                <p><strong>Share this link with the parent:</strong></p>
-                <p style="background: #f0f0f0; padding: 10px; border-radius: 4px; word-break: break-all;">${data.share_link}</p>
-                <p style="margin-top: 15px;"><em>The parent can use the family code to claim this child in their account.</em></p>
-                <p style="margin-top: 15px;">
-                    <a href="bhw-added-children.php" style="display: inline-block; padding: 8px 16px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin-top: 10px;">
-                        View Added Children
-                    </a>
-                </p>
-            `;
-                        resultDiv.style.display = 'block';
+                        resultDiv.style.display = 'none';
+                        resultDiv.innerHTML = '';
+                        const qrMessage = data.qr_code ? 'QR Code generated successfully!' : '';
+                        openAddChildModal({
+                            familyCode: data.family_code,
+                            babyId: data.baby_id,
+                            shareLink: data.share_link,
+                            qrMessage
+                        });
                         this.reset();
                         document.querySelectorAll('.radio-option').forEach(option => option.classList.remove('selected'));
                         document.querySelectorAll('.checkbox-option').forEach(option => option.classList.remove('checked'));

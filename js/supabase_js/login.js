@@ -4,6 +4,45 @@ document.addEventListener("DOMContentLoaded", function () {
 	setupForgotPasswordHandlers();
 });
 
+const Feedback = {
+	toast({ title, message, variant = "info" }) {
+		if (
+			window.UIFeedback &&
+			typeof window.UIFeedback.showToast === "function"
+		) {
+			window.UIFeedback.showToast({ title, message, variant });
+		} else {
+			alert(`${title}\n${message}`);
+		}
+	},
+	modal(options) {
+		if (
+			window.UIFeedback &&
+			typeof window.UIFeedback.showModal === "function"
+		) {
+			return window.UIFeedback.showModal(options);
+		}
+		return Promise.resolve(null);
+	},
+	loader(message) {
+		if (
+			window.UIFeedback &&
+			typeof window.UIFeedback.showLoader === "function"
+		) {
+			return window.UIFeedback.showLoader(message);
+		}
+		return () => {};
+	},
+	closeModal() {
+		if (
+			window.UIFeedback &&
+			typeof window.UIFeedback.closeModal === "function"
+		) {
+			window.UIFeedback.closeModal();
+		}
+	},
+};
+
 // Fetch CSRF token from server
 async function generateCSRFToken() {
 	try {
@@ -34,22 +73,13 @@ async function loginFun(e) {
 
 	// Client-side validation
 	if (!emailOrPhone || !password) {
-		Swal.fire({
-			icon: "error",
-			title: "Validation Error!",
-			text: "Email/Phone and password are required.",
+		Feedback.toast({
+			title: "Validation Error",
+			message: "Email/Phone and password are required.",
+			variant: "error",
 		});
 		return;
 	}
-
-	// Swal.fire({
-	// 	title: "Logging in...",
-	// 	text: "Please wait while we verify your credentials.",
-	// 	allowOutsideClick: false,
-	// 	didOpen: () => {
-	// 		Swal.showLoading();
-	// 	},
-	// });
 
 	const formdata = new FormData(loginForm);
 
@@ -74,19 +104,18 @@ async function loginFun(e) {
 			data = JSON.parse(text);
 			if (data.status === "failed") {
 				console.log(data);
-				Swal.fire({
-					icon: "error",
-					title: "Login failed!",
-					text: data.message,
+				Feedback.toast({
+					title: "Login failed",
+					message: data.message,
+					variant: "error",
 				});
 				return;
 			}
-			// Do not show SweetAlert on success or already_logged_in; proceed to redirect
 		} catch (e) {
-			Swal.fire({
-				icon: "error",
+			Feedback.toast({
 				title: "Server error",
-				text: text,
+				message: text,
+				variant: "error",
 			});
 			return;
 		}
@@ -94,66 +123,21 @@ async function loginFun(e) {
 		if (data.status === "success") {
 			console.log("Login success - user_type:", data.user_type);
 			if (data.user_type === "super_admin") {
-				// 	Swal.fire({
-				// 		icon: "success",
-				// 		title: "Welcome Super Admin!",
-				// 		text: data.message,
-				// 		confirmButtonText: "Continue",
-				// 	}).then(() => {
-				// 		console.log("Redirecting to superadmin dashboard");
-				// 		window.location.href = "superadmin/dashboard.php";
-				// 	});
 				console.log("Redirecting to superadmin dashboard");
 				window.location.href = "../../views/superadmin/dashboard.php";
 			} else if (data.user_type === "admin") {
-				// Swal.fire({
-				// 	icon: "success",
-				// 	title: "Welcome Admin!",
-				// 	text: data.message,
-				// 	confirmButtonText: "Continue",
-				// }).then(() => {
-				// 	console.log("Redirecting to admin home");
-				// 	window.location.href = "../views/admin/home.php";
-				// });
 				console.log("Redirecting to admin home");
 				window.location.href = "../../views/admin/home.php";
 			} else if (data.user_type === "bhw") {
 				console.log("BHW login successful, showing SweetAlert");
-				// Swal.fire({
-				// 	icon: "success",
-				// 	title: "Welcome BHW!",
-				// 	text: data.message,
-				// 	confirmButtonText: "Continue",
-				// }).then(() => {
-				// 	console.log("Redirecting to BHW home");
-				// 	window.location.href = "../views/bhw/home.php";
-				// });
 				console.log("Redirecting to BHW home");
 				window.location.href = "../../views/bhw-page/dashboard.php";
 			} else if (data.user_type === "midwife") {
 				console.log("Midwife login successful, showing SweetAlert");
-				// Swal.fire({
-				// 	icon: "success",
-				// 	title: "Welcome Midwife!",
-				// 	text: data.message,
-				// 	confirmButtonText: "Continue",
-				// }).then(() => {
-				// 	console.log("Redirecting to midwives home");
-				// 	window.location.href = "../views/midwives/home.php";
-				// });
 				console.log("Redirecting to BHW home");
 				window.location.href = "../../views/bhw-page/dashboard.php";
 			} else {
 				console.log("User login successful, showing SweetAlert");
-				// Swal.fire({
-				// 	icon: "success",
-				// 	title: "Welcome back!",
-				// 	text: data.message,
-				// 	confirmButtonText: "Continue",
-				// }).then(() => {
-				// 	console.log("Redirecting to users home");
-				// 	window.location.href = "../views/users/home.php";
-				// });
 				console.log("Redirecting to users home");
 				window.location.href = "../../views/users/home.php";
 			}
@@ -176,20 +160,19 @@ async function loginFun(e) {
 				window.location.href = "../../views/users/home.php";
 			}
 		} else {
-			Swal.fire({
-				icon: "error",
-				title: "Login Failed!",
-				text: data.message,
+			Feedback.toast({
+				title: "Login failed",
+				message: data.message,
+				variant: "error",
 			});
-			// console.log(Date.message);
 		}
 	} catch (error) {
 		console.error("Network error:", error);
-		// Swal.fire({
-		// 	icon: "error",
-		// 	title: "Network Error!",
-		// 	text: "Please check your internet connection and try again.",
-		// });
+		Feedback.toast({
+			title: "Network error",
+			message: "Please check your internet connection and try again.",
+			variant: "error",
+		});
 	}
 }
 
@@ -233,22 +216,15 @@ async function handleForgotPassword(e) {
 	const emailPhone = document.getElementById("email_phone").value;
 
 	if (!emailPhone) {
-		Swal.fire({
-			icon: "error",
-			title: "Validation Error!",
-			text: "Please enter your email or phone number.",
+		Feedback.toast({
+			title: "Validation error",
+			message: "Please enter your email or phone number.",
+			variant: "error",
 		});
 		return;
 	}
 
-	Swal.fire({
-		title: "Sending OTP...",
-		text: "Please wait while we send your verification code.",
-		allowOutsideClick: false,
-		didOpen: () => {
-			Swal.showLoading();
-		},
-	});
+	const closeLoader = Feedback.loader("Sending OTP...");
 
 	try {
 		const formData = new FormData();
@@ -265,110 +241,105 @@ async function handleForgotPassword(e) {
 
 		const data = await response.json();
 
+		closeLoader();
+
 		if (data.status === "success") {
-			Swal.close();
 			showResetOTPPopup(data.contact_type);
 		} else {
-			Swal.fire({
-				icon: "error",
-				title: "Failed to Send OTP!",
-				text: data.message,
+			Feedback.toast({
+				title: "Failed to send OTP",
+				message: data.message,
+				variant: "error",
 			});
 		}
 	} catch (error) {
+		closeLoader();
 		console.error("Network/Fetch error:", error);
-		Swal.fire({
-			icon: "error",
-			title: "Network Error!",
-			text: "Failed to send OTP. Please try again.",
+		Feedback.toast({
+			title: "Network error",
+			message: "Failed to send OTP. Please try again.",
+			variant: "error",
 		});
 	}
 }
 
-// Show OTP popup for password reset
 async function showResetOTPPopup(contactType) {
-	return new Promise((resolve) => {
-		let timeLeft = 300; // 5 minutes
+	let countdownTimer = null;
+	let timeLeft = 300;
 
-		const { value: otp } = Swal.fire({
-			title: "Enter Verification Code",
-			html: `
-				<p>We sent a verification code to your ${
-					contactType === "email" ? "email address" : "phone number"
-				}.</p>
-				<input type="text" id="reset-otp-input" class="swal2-input" placeholder="Enter 6-digit code" maxlength="6" style="text-align: center; font-size: 18px; letter-spacing: 3px;">
-				<div id="reset-timer" style="margin-top: 10px; color: #666;">Time remaining: <span id="reset-countdown">5:00</span></div>
-			`,
-			focusConfirm: false,
-			showCancelButton: true,
-			confirmButtonText: "Verify",
-			cancelButtonText: "Cancel",
-			allowOutsideClick: false,
-			didOpen: () => {
-				const input = document.getElementById("reset-otp-input");
-				const countdown = document.getElementById("reset-countdown");
+	const result = await Feedback.modal({
+		title: "Enter Verification Code",
+		message: `We sent a verification code to your ${
+			contactType === "email" ? "email address" : "phone number"
+		}.`,
+		icon: "info",
+		confirmText: "Verify",
+		cancelText: "Cancel",
+		showCancel: true,
+		autoClose: 300000,
+		html: `
+			<input type="text" id="reset-otp-input" class="modal-otp-input" placeholder="Enter 6-digit code" maxlength="6" autocomplete="one-time-code" />
+			<p class="modal-otp-helper" data-role="otpHelper">Enter the 6-digit code sent to you.</p>
+			<div class="modal-otp-timer">Time remaining: <span id="reset-countdown">5:00</span></div>
+		`,
+		onOpen(card) {
+			const input = card.querySelector("#reset-otp-input");
+			const countdown = card.querySelector("#reset-countdown");
+			const helper = card.querySelector("[data-role='otpHelper']");
 
+			if (input) {
 				input.focus();
-
-				// Auto-format OTP input
-				input.addEventListener("input", function (e) {
-					this.value = this.value.replace(/[^0-9]/g, "");
+				input.addEventListener("input", () => {
+					input.value = input.value.replace(/[^0-9]/g, "");
+					helper.textContent = "Enter the 6-digit code sent to you.";
+					helper.classList.remove("is-error");
 				});
-
-				// Start countdown timer
-				const timer = setInterval(() => {
-					timeLeft--;
-					const minutes = Math.floor(timeLeft / 60);
-					const seconds = timeLeft % 60;
-					countdown.textContent = `${minutes}:${seconds
-						.toString()
-						.padStart(2, "0")}`;
-
-					if (timeLeft <= 0) {
-						clearInterval(timer);
-						Swal.close();
-						Swal.fire({
-							icon: "error",
-							title: "OTP Expired",
-							text: "The verification code has expired. Please request a new one.",
-						});
-					}
-				}, 1000);
-
-				// Clean up timer when modal closes
-				Swal.getConfirmButton().addEventListener("click", () =>
-					clearInterval(timer)
-				);
-				Swal.getCancelButton().addEventListener("click", () =>
-					clearInterval(timer)
-				);
-			},
-			preConfirm: () => {
-				const otp = document.getElementById("reset-otp-input").value;
-				if (!otp || otp.length !== 6) {
-					Swal.showValidationMessage("Please enter a valid 6-digit code");
-					return false;
-				}
-				return otp;
-			},
-		}).then(async (result) => {
-			if (result.isConfirmed) {
-				await verifyResetOTP(result.value);
 			}
-		});
+
+			countdownTimer = setInterval(() => {
+				timeLeft--;
+				const minutes = Math.floor(timeLeft / 60);
+				const seconds = timeLeft % 60;
+				countdown.textContent = `${minutes}:${seconds
+					.toString()
+					.padStart(2, "0")}`;
+				if (timeLeft <= 0) {
+					clearInterval(countdownTimer);
+				}
+			}, 1000);
+		},
+		onClose() {
+			if (countdownTimer) {
+				clearInterval(countdownTimer);
+			}
+		},
+		beforeConfirm(card) {
+			const input = card.querySelector("#reset-otp-input");
+			const helper = card.querySelector("[data-role='otpHelper']");
+			const value = input.value.trim();
+			if (value.length !== 6) {
+				helper.textContent = "Please enter a valid 6-digit code.";
+				helper.classList.add("is-error");
+				return false;
+			}
+			return value;
+		},
 	});
+
+	if (result?.action === "confirm" && result.data) {
+		await verifyResetOTP(result.data, contactType);
+	} else if (result?.action === "timeout") {
+		Feedback.toast({
+			title: "OTP expired",
+			message: "The verification code has expired. Please request a new one.",
+			variant: "error",
+		});
+	}
 }
 
 // Verify reset OTP
-async function verifyResetOTP(otp) {
-	Swal.fire({
-		title: "Verifying...",
-		text: "Please wait while we verify your code.",
-		allowOutsideClick: false,
-		didOpen: () => {
-			Swal.showLoading();
-		},
-	});
+async function verifyResetOTP(otp, contactType) {
+	const closeLoader = Feedback.loader("Verifying code...");
 
 	try {
 		const formData = new FormData();
@@ -385,107 +356,109 @@ async function verifyResetOTP(otp) {
 
 		const data = await response.json();
 
+		closeLoader();
+
 		if (data.status === "success") {
-			Swal.close();
 			showNewPasswordForm();
 		} else {
-			Swal.fire({
-				icon: "error",
-				title: "Verification Failed!",
-				text: data.message,
-			}).then(() => {
-				// Show OTP popup again
-				showResetOTPPopup();
+			Feedback.toast({
+				title: "Verification failed",
+				message: data.message,
+				variant: "error",
 			});
+			showResetOTPPopup(contactType);
 		}
 	} catch (error) {
+		closeLoader();
 		console.error("Error verifying OTP:", error);
-		Swal.fire({
-			icon: "error",
-			title: "Error!",
-			text: "Failed to verify OTP. Please try again.",
+		Feedback.toast({
+			title: "Error verifying OTP",
+			message: "Please try again.",
+			variant: "error",
 		});
 	}
 }
 
 // Show new password form
 async function showNewPasswordForm() {
-	const { value: formValues } = await Swal.fire({
+	const result = await Feedback.modal({
 		title: "Set New Password",
+		message: "Create a strong password for your account.",
+		icon: "info",
+		confirmText: "Reset Password",
+		cancelText: "Cancel",
+		showCancel: true,
 		html: `
-			<input type="password" id="new-password" class="swal2-input" placeholder="Enter new password" style="margin-bottom: 10px;">
-			<input type="password" id="confirm-password" class="swal2-input" placeholder="Confirm new password">
-			<div style="margin-top: 10px; font-size: 12px; color: #666;">
-				Password must be at least 8 characters long and contain:<br>
-				• At least 1 uppercase letter<br>
-				• At least 1 lowercase letter<br>
-				• At least 1 number<br>
-				• At least 1 special character
+			<div class="modal-field-group">
+				<label for="new-password">New Password</label>
+				<input type="password" id="new-password" class="modal-input" placeholder="Enter new password" />
 			</div>
+			<div class="modal-field-group">
+				<label for="confirm-password">Confirm Password</label>
+				<input type="password" id="confirm-password" class="modal-input" placeholder="Confirm new password" />
+			</div>
+			<p class="modal-hint" data-role="passwordHelper">
+				Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
+			</p>
 		`,
-		focusConfirm: false,
-		showCancelButton: true,
-		confirmButtonText: "Reset Password",
-		cancelButtonText: "Cancel",
-		allowOutsideClick: false,
-		preConfirm: () => {
-			const newPassword = document.getElementById("new-password").value;
-			const confirmPassword = document.getElementById("confirm-password").value;
+		beforeConfirm(card) {
+			const newPassword = card.querySelector("#new-password").value;
+			const confirmPassword = card.querySelector("#confirm-password").value;
+			const helper = card.querySelector("[data-role='passwordHelper']");
+
+			const setError = (msg) => {
+				helper.textContent = msg;
+				helper.classList.add("is-error");
+			};
 
 			if (!newPassword || !confirmPassword) {
-				Swal.showValidationMessage("Both password fields are required");
+				setError("Both password fields are required.");
 				return false;
 			}
 
 			if (newPassword !== confirmPassword) {
-				Swal.showValidationMessage("Passwords do not match");
+				setError("Passwords do not match.");
 				return false;
 			}
 
-			// Password strength validation (same as create_account.php)
 			const passwordErrors = [];
-			if (newPassword.length < 8) {
+			if (newPassword.length < 8)
 				passwordErrors.push("at least 8 characters long");
-			}
-			if (!/[A-Z]/.test(newPassword)) {
-				passwordErrors.push("at least one uppercase letter");
-			}
-			if (!/[a-z]/.test(newPassword)) {
-				passwordErrors.push("at least one lowercase letter");
-			}
-			if (!/[0-9]/.test(newPassword)) {
-				passwordErrors.push("at least one number");
-			}
-			if (!/[^A-Za-z0-9]/.test(newPassword)) {
-				passwordErrors.push("at least one special character");
-			}
+			if (!/[A-Z]/.test(newPassword))
+				passwordErrors.push("one uppercase letter");
+			if (!/[a-z]/.test(newPassword))
+				passwordErrors.push("one lowercase letter");
+			if (!/[0-9]/.test(newPassword)) passwordErrors.push("one number");
+			if (!/[^A-Za-z0-9]/.test(newPassword))
+				passwordErrors.push("one special character");
 
 			if (passwordErrors.length > 0) {
-				Swal.showValidationMessage(
-					"Password must contain " + passwordErrors.join(", ")
-				);
+				setError("Password must contain " + passwordErrors.join(", ") + ".");
 				return false;
 			}
 
 			return { newPassword, confirmPassword };
 		},
+		onOpen(card) {
+			const helper = card.querySelector("[data-role='passwordHelper']");
+			card.querySelectorAll(".modal-input").forEach((input) => {
+				input.addEventListener("input", () => {
+					helper.classList.remove("is-error");
+					helper.textContent =
+						"Password must be at least 8 characters and include uppercase, lowercase, number, and special character.";
+				});
+			});
+		},
 	});
 
-	if (formValues) {
-		await resetPassword(formValues.newPassword, formValues.confirmPassword);
+	if (result?.action === "confirm") {
+		await resetPassword(result.data.newPassword, result.data.confirmPassword);
 	}
 }
 
 // Reset password
 async function resetPassword(newPassword, confirmPassword) {
-	Swal.fire({
-		title: "Resetting Password...",
-		text: "Please wait while we update your password.",
-		allowOutsideClick: false,
-		didOpen: () => {
-			Swal.showLoading();
-		},
-	});
+	const closeLoader = Feedback.loader("Resetting password...");
 
 	try {
 		const formData = new FormData();
@@ -500,31 +473,34 @@ async function resetPassword(newPassword, confirmPassword) {
 
 		const data = await response.json();
 
+		closeLoader();
+
 		if (data.status === "success") {
-			Swal.fire({
+			await Feedback.modal({
+				title: "Password reset successful",
+				message: data.message,
 				icon: "success",
-				title: "Password Reset Successful!",
-				text: data.message,
-				confirmButtonText: "Login Now",
-			}).then(() => {
-				// Return to login form
-				document.getElementById("forgotPasswordForm").style.display = "none";
-				document.getElementById("LoginForm").style.display = "block";
-				document.getElementById("email_phone").value = "";
+				confirmText: "Login now",
+				showCancel: false,
 			});
+
+			document.getElementById("forgotPasswordForm").style.display = "none";
+			document.getElementById("LoginForm").style.display = "block";
+			document.getElementById("email_phone").value = "";
 		} else {
-			Swal.fire({
-				icon: "error",
-				title: "Reset Failed!",
-				text: data.message,
+			Feedback.toast({
+				title: "Reset failed",
+				message: data.message,
+				variant: "error",
 			});
 		}
 	} catch (error) {
+		closeLoader();
 		console.error("Error resetting password:", error);
-		Swal.fire({
-			icon: "error",
-			title: "Error!",
-			text: "Failed to reset password. Please try again.",
+		Feedback.toast({
+			title: "Error",
+			message: "Failed to reset password. Please try again.",
+			variant: "error",
 		});
 	}
 }

@@ -1,0 +1,787 @@
+{
+	"indicator": "weight-for-height",
+	"gender": "girls",
+	"age_range": "2-5 years",
+	"unit": "kg",
+	"height_unit": "cm",
+	"note": "For children 2-5 years old (standing height). Length (recumbent) for 0-2 years uses weight-for-length-girls.json",
+	"standards": {
+		"65": {
+			"sam": { "max": 5.6 },
+			"mam": { "min": 5.6, "max": 6.1 },
+			"normal": { "min": 6.1, "max": 8.7 },
+			"overweight": { "min": 8.7, "max": 9.7 },
+			"obese": { "min": 9.7 }
+		},
+		"65.5": {
+			"sam": { "max": 5.7 },
+			"mam": { "min": 5.7, "max": 6.2 },
+			"normal": { "min": 6.2, "max": 8.9 },
+			"overweight": { "min": 8.9, "max": 9.9 },
+			"obese": { "min": 9.9 }
+		},
+		"66": {
+			"sam": { "max": 5.8 },
+			"mam": { "min": 5.8, "max": 6.3 },
+			"normal": { "min": 6.3, "max": 9.1 },
+			"overweight": { "min": 9.1, "max": 10.1 },
+			"obese": { "min": 10.1 }
+		},
+		"66.5": {
+			"sam": { "max": 5.9 },
+			"mam": { "min": 5.9, "max": 6.4 },
+			"normal": { "min": 6.4, "max": 9.3 },
+			"overweight": { "min": 9.3, "max": 10.3 },
+			"obese": { "min": 10.3 }
+		},
+		"67": {
+			"sam": { "max": 6.0 },
+			"mam": { "min": 6.0, "max": 6.5 },
+			"normal": { "min": 6.5, "max": 9.5 },
+			"overweight": { "min": 9.5, "max": 10.5 },
+			"obese": { "min": 10.5 }
+		},
+		"67.5": {
+			"sam": { "max": 6.1 },
+			"mam": { "min": 6.1, "max": 6.6 },
+			"normal": { "min": 6.6, "max": 9.7 },
+			"overweight": { "min": 9.7, "max": 10.7 },
+			"obese": { "min": 10.7 }
+		},
+		"68": {
+			"sam": { "max": 6.2 },
+			"mam": { "min": 6.2, "max": 6.7 },
+			"normal": { "min": 6.7, "max": 9.9 },
+			"overweight": { "min": 9.9, "max": 10.9 },
+			"obese": { "min": 10.9 }
+		},
+		"68.5": {
+			"sam": { "max": 6.3 },
+			"mam": { "min": 6.3, "max": 6.8 },
+			"normal": { "min": 6.8, "max": 10.1 },
+			"overweight": { "min": 10.1, "max": 11.1 },
+			"obese": { "min": 11.1 }
+		},
+		"69": {
+			"sam": { "max": 6.4 },
+			"mam": { "min": 6.4, "max": 6.9 },
+			"normal": { "min": 6.9, "max": 10.3 },
+			"overweight": { "min": 10.3, "max": 11.3 },
+			"obese": { "min": 11.3 }
+		},
+		"69.5": {
+			"sam": { "max": 6.5 },
+			"mam": { "min": 6.5, "max": 7.0 },
+			"normal": { "min": 7.0, "max": 10.5 },
+			"overweight": { "min": 10.5, "max": 11.5 },
+			"obese": { "min": 11.5 }
+		},
+		"70": {
+			"sam": { "max": 6.6 },
+			"mam": { "min": 6.6, "max": 7.1 },
+			"normal": { "min": 7.1, "max": 10.7 },
+			"overweight": { "min": 10.7, "max": 11.7 },
+			"obese": { "min": 11.7 }
+		},
+		"70.5": {
+			"sam": { "max": 6.7 },
+			"mam": { "min": 6.7, "max": 7.2 },
+			"normal": { "min": 7.2, "max": 10.9 },
+			"overweight": { "min": 10.9, "max": 11.9 },
+			"obese": { "min": 11.9 }
+		},
+		"71": {
+			"sam": { "max": 6.8 },
+			"mam": { "min": 6.8, "max": 7.3 },
+			"normal": { "min": 7.3, "max": 11.1 },
+			"overweight": { "min": 11.1, "max": 12.1 },
+			"obese": { "min": 12.1 }
+		},
+		"71.5": {
+			"sam": { "max": 6.9 },
+			"mam": { "min": 6.9, "max": 7.4 },
+			"normal": { "min": 7.4, "max": 11.3 },
+			"overweight": { "min": 11.3, "max": 12.3 },
+			"obese": { "min": 12.3 }
+		},
+		"72": {
+			"sam": { "max": 7.0 },
+			"mam": { "min": 7.0, "max": 7.5 },
+			"normal": { "min": 7.5, "max": 11.5 },
+			"overweight": { "min": 11.5, "max": 12.5 },
+			"obese": { "min": 12.5 }
+		},
+		"72.5": {
+			"sam": { "max": 7.1 },
+			"mam": { "min": 7.1, "max": 7.6 },
+			"normal": { "min": 7.6, "max": 11.7 },
+			"overweight": { "min": 11.7, "max": 12.7 },
+			"obese": { "min": 12.7 }
+		},
+		"73": {
+			"sam": { "max": 7.2 },
+			"mam": { "min": 7.2, "max": 7.7 },
+			"normal": { "min": 7.7, "max": 11.9 },
+			"overweight": { "min": 11.9, "max": 12.9 },
+			"obese": { "min": 12.9 }
+		},
+		"73.5": {
+			"sam": { "max": 7.3 },
+			"mam": { "min": 7.3, "max": 7.8 },
+			"normal": { "min": 7.8, "max": 12.1 },
+			"overweight": { "min": 12.1, "max": 13.1 },
+			"obese": { "min": 13.1 }
+		},
+		"74": {
+			"sam": { "max": 7.4 },
+			"mam": { "min": 7.4, "max": 7.9 },
+			"normal": { "min": 7.9, "max": 12.3 },
+			"overweight": { "min": 12.3, "max": 13.3 },
+			"obese": { "min": 13.3 }
+		},
+		"74.5": {
+			"sam": { "max": 7.5 },
+			"mam": { "min": 7.5, "max": 8.0 },
+			"normal": { "min": 8.0, "max": 12.5 },
+			"overweight": { "min": 12.5, "max": 13.5 },
+			"obese": { "min": 13.5 }
+		},
+		"75": {
+			"sam": { "max": 7.6 },
+			"mam": { "min": 7.6, "max": 8.1 },
+			"normal": { "min": 8.1, "max": 12.7 },
+			"overweight": { "min": 12.7, "max": 13.7 },
+			"obese": { "min": 13.7 }
+		},
+		"75.5": {
+			"sam": { "max": 7.7 },
+			"mam": { "min": 7.7, "max": 8.2 },
+			"normal": { "min": 8.2, "max": 12.9 },
+			"overweight": { "min": 12.9, "max": 13.9 },
+			"obese": { "min": 13.9 }
+		},
+		"76": {
+			"sam": { "max": 7.8 },
+			"mam": { "min": 7.8, "max": 8.3 },
+			"normal": { "min": 8.3, "max": 13.1 },
+			"overweight": { "min": 13.1, "max": 14.1 },
+			"obese": { "min": 14.1 }
+		},
+		"76.5": {
+			"sam": { "max": 7.9 },
+			"mam": { "min": 7.9, "max": 8.4 },
+			"normal": { "min": 8.4, "max": 13.3 },
+			"overweight": { "min": 13.3, "max": 14.3 },
+			"obese": { "min": 14.3 }
+		},
+		"77": {
+			"sam": { "max": 8.0 },
+			"mam": { "min": 8.0, "max": 8.5 },
+			"normal": { "min": 8.5, "max": 13.5 },
+			"overweight": { "min": 13.5, "max": 14.5 },
+			"obese": { "min": 14.5 }
+		},
+		"77.5": {
+			"sam": { "max": 8.1 },
+			"mam": { "min": 8.1, "max": 8.6 },
+			"normal": { "min": 8.6, "max": 13.7 },
+			"overweight": { "min": 13.7, "max": 14.7 },
+			"obese": { "min": 14.7 }
+		},
+		"78": {
+			"sam": { "max": 8.2 },
+			"mam": { "min": 8.2, "max": 8.7 },
+			"normal": { "min": 8.7, "max": 13.9 },
+			"overweight": { "min": 13.9, "max": 14.9 },
+			"obese": { "min": 14.9 }
+		},
+		"78.5": {
+			"sam": { "max": 8.3 },
+			"mam": { "min": 8.3, "max": 8.8 },
+			"normal": { "min": 8.8, "max": 14.1 },
+			"overweight": { "min": 14.1, "max": 15.1 },
+			"obese": { "min": 15.1 }
+		},
+		"79": {
+			"sam": { "max": 8.4 },
+			"mam": { "min": 8.4, "max": 8.9 },
+			"normal": { "min": 8.9, "max": 14.3 },
+			"overweight": { "min": 14.3, "max": 15.3 },
+			"obese": { "min": 15.3 }
+		},
+		"79.5": {
+			"sam": { "max": 8.5 },
+			"mam": { "min": 8.5, "max": 9.0 },
+			"normal": { "min": 9.0, "max": 14.5 },
+			"overweight": { "min": 14.5, "max": 15.5 },
+			"obese": { "min": 15.5 }
+		},
+		"80": {
+			"sam": { "max": 8.6 },
+			"mam": { "min": 8.6, "max": 9.1 },
+			"normal": { "min": 9.1, "max": 14.7 },
+			"overweight": { "min": 14.7, "max": 15.7 },
+			"obese": { "min": 15.7 }
+		},
+		"80.5": {
+			"sam": { "max": 8.7 },
+			"mam": { "min": 8.7, "max": 9.2 },
+			"normal": { "min": 9.2, "max": 14.9 },
+			"overweight": { "min": 14.9, "max": 15.9 },
+			"obese": { "min": 15.9 }
+		},
+		"81": {
+			"sam": { "max": 8.8 },
+			"mam": { "min": 8.8, "max": 9.3 },
+			"normal": { "min": 9.3, "max": 15.1 },
+			"overweight": { "min": 15.1, "max": 16.1 },
+			"obese": { "min": 16.1 }
+		},
+		"81.5": {
+			"sam": { "max": 8.9 },
+			"mam": { "min": 8.9, "max": 9.4 },
+			"normal": { "min": 9.4, "max": 15.3 },
+			"overweight": { "min": 15.3, "max": 16.3 },
+			"obese": { "min": 16.3 }
+		},
+		"82": {
+			"sam": { "max": 9.0 },
+			"mam": { "min": 9.0, "max": 9.5 },
+			"normal": { "min": 9.5, "max": 15.5 },
+			"overweight": { "min": 15.5, "max": 16.5 },
+			"obese": { "min": 16.5 }
+		},
+		"82.5": {
+			"sam": { "max": 9.1 },
+			"mam": { "min": 9.1, "max": 9.6 },
+			"normal": { "min": 9.6, "max": 15.7 },
+			"overweight": { "min": 15.7, "max": 16.7 },
+			"obese": { "min": 16.7 }
+		},
+		"83": {
+			"sam": { "max": 9.2 },
+			"mam": { "min": 9.2, "max": 9.7 },
+			"normal": { "min": 9.7, "max": 15.9 },
+			"overweight": { "min": 15.9, "max": 16.9 },
+			"obese": { "min": 16.9 }
+		},
+		"83.5": {
+			"sam": { "max": 9.3 },
+			"mam": { "min": 9.3, "max": 9.8 },
+			"normal": { "min": 9.8, "max": 16.1 },
+			"overweight": { "min": 16.1, "max": 17.1 },
+			"obese": { "min": 17.1 }
+		},
+		"84": {
+			"sam": { "max": 9.4 },
+			"mam": { "min": 9.4, "max": 9.9 },
+			"normal": { "min": 9.9, "max": 16.3 },
+			"overweight": { "min": 16.3, "max": 17.3 },
+			"obese": { "min": 17.3 }
+		},
+		"84.5": {
+			"sam": { "max": 9.5 },
+			"mam": { "min": 9.5, "max": 10.0 },
+			"normal": { "min": 10.0, "max": 16.5 },
+			"overweight": { "min": 16.5, "max": 17.5 },
+			"obese": { "min": 17.5 }
+		},
+		"85": {
+			"sam": { "max": 9.6 },
+			"mam": { "min": 9.6, "max": 10.1 },
+			"normal": { "min": 10.1, "max": 16.7 },
+			"overweight": { "min": 16.7, "max": 17.7 },
+			"obese": { "min": 17.7 }
+		},
+		"85.5": {
+			"sam": { "max": 9.7 },
+			"mam": { "min": 9.7, "max": 10.2 },
+			"normal": { "min": 10.2, "max": 16.9 },
+			"overweight": { "min": 16.9, "max": 17.9 },
+			"obese": { "min": 17.9 }
+		},
+		"86": {
+			"sam": { "max": 9.8 },
+			"mam": { "min": 9.8, "max": 10.3 },
+			"normal": { "min": 10.3, "max": 17.1 },
+			"overweight": { "min": 17.1, "max": 18.1 },
+			"obese": { "min": 18.1 }
+		},
+		"86.5": {
+			"sam": { "max": 9.9 },
+			"mam": { "min": 9.9, "max": 10.4 },
+			"normal": { "min": 10.4, "max": 17.3 },
+			"overweight": { "min": 17.3, "max": 18.3 },
+			"obese": { "min": 18.3 }
+		},
+		"87": {
+			"sam": { "max": 10.0 },
+			"mam": { "min": 10.0, "max": 10.5 },
+			"normal": { "min": 10.5, "max": 17.5 },
+			"overweight": { "min": 17.5, "max": 18.5 },
+			"obese": { "min": 18.5 }
+		},
+		"87.5": {
+			"sam": { "max": 10.1 },
+			"mam": { "min": 10.1, "max": 10.6 },
+			"normal": { "min": 10.6, "max": 17.7 },
+			"overweight": { "min": 17.7, "max": 18.7 },
+			"obese": { "min": 18.7 }
+		},
+		"88": {
+			"sam": { "max": 10.2 },
+			"mam": { "min": 10.2, "max": 10.7 },
+			"normal": { "min": 10.7, "max": 17.9 },
+			"overweight": { "min": 17.9, "max": 18.9 },
+			"obese": { "min": 18.9 }
+		},
+		"88.5": {
+			"sam": { "max": 10.3 },
+			"mam": { "min": 10.3, "max": 10.8 },
+			"normal": { "min": 10.8, "max": 18.1 },
+			"overweight": { "min": 18.1, "max": 19.1 },
+			"obese": { "min": 19.1 }
+		},
+		"89": {
+			"sam": { "max": 10.4 },
+			"mam": { "min": 10.4, "max": 10.9 },
+			"normal": { "min": 10.9, "max": 18.3 },
+			"overweight": { "min": 18.3, "max": 19.3 },
+			"obese": { "min": 19.3 }
+		},
+		"89.5": {
+			"sam": { "max": 10.5 },
+			"mam": { "min": 10.5, "max": 11.0 },
+			"normal": { "min": 11.0, "max": 18.5 },
+			"overweight": { "min": 18.5, "max": 19.5 },
+			"obese": { "min": 19.5 }
+		},
+		"90": {
+			"sam": { "max": 10.6 },
+			"mam": { "min": 10.6, "max": 11.1 },
+			"normal": { "min": 11.1, "max": 18.7 },
+			"overweight": { "min": 18.7, "max": 19.7 },
+			"obese": { "min": 19.7 }
+		},
+		"90.5": {
+			"sam": { "max": 10.7 },
+			"mam": { "min": 10.7, "max": 11.2 },
+			"normal": { "min": 11.2, "max": 18.9 },
+			"overweight": { "min": 18.9, "max": 19.9 },
+			"obese": { "min": 19.9 }
+		},
+		"91": {
+			"sam": { "max": 10.8 },
+			"mam": { "min": 10.8, "max": 11.3 },
+			"normal": { "min": 11.3, "max": 19.1 },
+			"overweight": { "min": 19.1, "max": 20.1 },
+			"obese": { "min": 20.1 }
+		},
+		"91.5": {
+			"sam": { "max": 10.9 },
+			"mam": { "min": 10.9, "max": 11.4 },
+			"normal": { "min": 11.4, "max": 19.3 },
+			"overweight": { "min": 19.3, "max": 20.3 },
+			"obese": { "min": 20.3 }
+		},
+		"92": {
+			"sam": { "max": 11.0 },
+			"mam": { "min": 11.0, "max": 11.5 },
+			"normal": { "min": 11.5, "max": 19.5 },
+			"overweight": { "min": 19.5, "max": 20.5 },
+			"obese": { "min": 20.5 }
+		},
+		"92.5": {
+			"sam": { "max": 11.1 },
+			"mam": { "min": 11.1, "max": 11.6 },
+			"normal": { "min": 11.6, "max": 19.7 },
+			"overweight": { "min": 19.7, "max": 20.7 },
+			"obese": { "min": 20.7 }
+		},
+		"93": {
+			"sam": { "max": 11.2 },
+			"mam": { "min": 11.2, "max": 11.7 },
+			"normal": { "min": 11.7, "max": 19.9 },
+			"overweight": { "min": 19.9, "max": 20.9 },
+			"obese": { "min": 20.9 }
+		},
+		"93.5": {
+			"sam": { "max": 11.3 },
+			"mam": { "min": 11.3, "max": 11.8 },
+			"normal": { "min": 11.8, "max": 20.1 },
+			"overweight": { "min": 20.1, "max": 21.1 },
+			"obese": { "min": 21.1 }
+		},
+		"94": {
+			"sam": { "max": 11.4 },
+			"mam": { "min": 11.4, "max": 11.9 },
+			"normal": { "min": 11.9, "max": 20.3 },
+			"overweight": { "min": 20.3, "max": 21.3 },
+			"obese": { "min": 21.3 }
+		},
+		"94.5": {
+			"sam": { "max": 11.5 },
+			"mam": { "min": 11.5, "max": 12.0 },
+			"normal": { "min": 12.0, "max": 20.5 },
+			"overweight": { "min": 20.5, "max": 21.5 },
+			"obese": { "min": 21.5 }
+		},
+		"95": {
+			"sam": { "max": 11.6 },
+			"mam": { "min": 11.6, "max": 12.1 },
+			"normal": { "min": 12.1, "max": 20.7 },
+			"overweight": { "min": 20.7, "max": 21.7 },
+			"obese": { "min": 21.7 }
+		},
+		"95.5": {
+			"sam": { "max": 11.7 },
+			"mam": { "min": 11.7, "max": 12.2 },
+			"normal": { "min": 12.2, "max": 20.9 },
+			"overweight": { "min": 20.9, "max": 21.9 },
+			"obese": { "min": 21.9 }
+		},
+		"96": {
+			"sam": { "max": 11.8 },
+			"mam": { "min": 11.8, "max": 12.3 },
+			"normal": { "min": 12.3, "max": 21.1 },
+			"overweight": { "min": 21.1, "max": 22.1 },
+			"obese": { "min": 22.1 }
+		},
+		"96.5": {
+			"sam": { "max": 11.9 },
+			"mam": { "min": 11.9, "max": 12.4 },
+			"normal": { "min": 12.4, "max": 21.3 },
+			"overweight": { "min": 21.3, "max": 22.3 },
+			"obese": { "min": 22.3 }
+		},
+		"97": {
+			"sam": { "max": 12.0 },
+			"mam": { "min": 12.0, "max": 12.5 },
+			"normal": { "min": 12.5, "max": 21.5 },
+			"overweight": { "min": 21.5, "max": 22.5 },
+			"obese": { "min": 22.5 }
+		},
+		"97.5": {
+			"sam": { "max": 12.1 },
+			"mam": { "min": 12.1, "max": 12.6 },
+			"normal": { "min": 12.6, "max": 21.7 },
+			"overweight": { "min": 21.7, "max": 22.7 },
+			"obese": { "min": 22.7 }
+		},
+		"98": {
+			"sam": { "max": 12.2 },
+			"mam": { "min": 12.2, "max": 12.7 },
+			"normal": { "min": 12.7, "max": 21.9 },
+			"overweight": { "min": 21.9, "max": 22.9 },
+			"obese": { "min": 22.9 }
+		},
+		"98.5": {
+			"sam": { "max": 12.3 },
+			"mam": { "min": 12.3, "max": 12.8 },
+			"normal": { "min": 12.8, "max": 22.1 },
+			"overweight": { "min": 22.1, "max": 23.1 },
+			"obese": { "min": 23.1 }
+		},
+		"99": {
+			"sam": { "max": 12.4 },
+			"mam": { "min": 12.4, "max": 12.9 },
+			"normal": { "min": 12.9, "max": 22.3 },
+			"overweight": { "min": 22.3, "max": 23.3 },
+			"obese": { "min": 23.3 }
+		},
+		"99.5": {
+			"sam": { "max": 12.5 },
+			"mam": { "min": 12.5, "max": 13.0 },
+			"normal": { "min": 13.0, "max": 22.5 },
+			"overweight": { "min": 22.5, "max": 23.5 },
+			"obese": { "min": 23.5 }
+		},
+		"100": {
+			"sam": { "max": 12.6 },
+			"mam": { "min": 12.6, "max": 13.1 },
+			"normal": { "min": 13.1, "max": 22.7 },
+			"overweight": { "min": 22.7, "max": 23.7 },
+			"obese": { "min": 23.7 }
+		},
+		"100.5": {
+			"sam": { "max": 12.7 },
+			"mam": { "min": 12.7, "max": 13.2 },
+			"normal": { "min": 13.2, "max": 22.9 },
+			"overweight": { "min": 22.9, "max": 23.9 },
+			"obese": { "min": 23.9 }
+		},
+		"101": {
+			"sam": { "max": 12.8 },
+			"mam": { "min": 12.8, "max": 13.3 },
+			"normal": { "min": 13.3, "max": 23.1 },
+			"overweight": { "min": 23.1, "max": 24.1 },
+			"obese": { "min": 24.1 }
+		},
+		"101.5": {
+			"sam": { "max": 12.9 },
+			"mam": { "min": 12.9, "max": 13.4 },
+			"normal": { "min": 13.4, "max": 23.3 },
+			"overweight": { "min": 23.3, "max": 24.3 },
+			"obese": { "min": 24.3 }
+		},
+		"102": {
+			"sam": { "max": 13.0 },
+			"mam": { "min": 13.0, "max": 13.5 },
+			"normal": { "min": 13.5, "max": 23.5 },
+			"overweight": { "min": 23.5, "max": 24.5 },
+			"obese": { "min": 24.5 }
+		},
+		"102.5": {
+			"sam": { "max": 13.1 },
+			"mam": { "min": 13.1, "max": 13.6 },
+			"normal": { "min": 13.6, "max": 23.7 },
+			"overweight": { "min": 23.7, "max": 24.7 },
+			"obese": { "min": 24.7 }
+		},
+		"103": {
+			"sam": { "max": 13.2 },
+			"mam": { "min": 13.2, "max": 13.7 },
+			"normal": { "min": 13.7, "max": 23.9 },
+			"overweight": { "min": 23.9, "max": 24.9 },
+			"obese": { "min": 24.9 }
+		},
+		"103.5": {
+			"sam": { "max": 13.3 },
+			"mam": { "min": 13.3, "max": 13.8 },
+			"normal": { "min": 13.8, "max": 24.1 },
+			"overweight": { "min": 24.1, "max": 25.1 },
+			"obese": { "min": 25.1 }
+		},
+		"104": {
+			"sam": { "max": 13.4 },
+			"mam": { "min": 13.4, "max": 13.9 },
+			"normal": { "min": 13.9, "max": 24.3 },
+			"overweight": { "min": 24.3, "max": 25.3 },
+			"obese": { "min": 25.3 }
+		},
+		"104.5": {
+			"sam": { "max": 13.5 },
+			"mam": { "min": 13.5, "max": 14.0 },
+			"normal": { "min": 14.0, "max": 24.5 },
+			"overweight": { "min": 24.5, "max": 25.5 },
+			"obese": { "min": 25.5 }
+		},
+		"105": {
+			"sam": { "max": 13.6 },
+			"mam": { "min": 13.6, "max": 14.1 },
+			"normal": { "min": 14.1, "max": 24.7 },
+			"overweight": { "min": 24.7, "max": 25.7 },
+			"obese": { "min": 25.7 }
+		},
+		"105.5": {
+			"sam": { "max": 13.7 },
+			"mam": { "min": 13.7, "max": 14.2 },
+			"normal": { "min": 14.2, "max": 24.9 },
+			"overweight": { "min": 24.9, "max": 25.9 },
+			"obese": { "min": 25.9 }
+		},
+		"106": {
+			"sam": { "max": 13.8 },
+			"mam": { "min": 13.8, "max": 14.3 },
+			"normal": { "min": 14.3, "max": 25.1 },
+			"overweight": { "min": 25.1, "max": 26.1 },
+			"obese": { "min": 26.1 }
+		},
+		"106.5": {
+			"sam": { "max": 13.9 },
+			"mam": { "min": 13.9, "max": 14.4 },
+			"normal": { "min": 14.4, "max": 25.3 },
+			"overweight": { "min": 25.3, "max": 26.3 },
+			"obese": { "min": 26.3 }
+		},
+		"107": {
+			"sam": { "max": 14.0 },
+			"mam": { "min": 14.0, "max": 14.5 },
+			"normal": { "min": 14.5, "max": 25.5 },
+			"overweight": { "min": 25.5, "max": 26.5 },
+			"obese": { "min": 26.5 }
+		},
+		"107.5": {
+			"sam": { "max": 14.1 },
+			"mam": { "min": 14.1, "max": 14.6 },
+			"normal": { "min": 14.6, "max": 25.7 },
+			"overweight": { "min": 25.7, "max": 26.7 },
+			"obese": { "min": 26.7 }
+		},
+		"108": {
+			"sam": { "max": 14.2 },
+			"mam": { "min": 14.2, "max": 14.7 },
+			"normal": { "min": 14.7, "max": 25.9 },
+			"overweight": { "min": 25.9, "max": 26.9 },
+			"obese": { "min": 26.9 }
+		},
+		"108.5": {
+			"sam": { "max": 14.3 },
+			"mam": { "min": 14.3, "max": 14.8 },
+			"normal": { "min": 14.8, "max": 26.1 },
+			"overweight": { "min": 26.1, "max": 27.1 },
+			"obese": { "min": 27.1 }
+		},
+		"109": {
+			"sam": { "max": 14.4 },
+			"mam": { "min": 14.4, "max": 14.9 },
+			"normal": { "min": 14.9, "max": 26.3 },
+			"overweight": { "min": 26.3, "max": 27.3 },
+			"obese": { "min": 27.3 }
+		},
+		"109.5": {
+			"sam": { "max": 14.45 },
+			"mam": { "min": 14.45, "max": 15.35 },
+			"normal": { "min": 15.35, "max": 26.7 },
+			"overweight": { "min": 26.7, "max": 27.5 },
+			"obese": { "min": 27.5 }
+		},
+		"110": {
+			"sam": { "max": 14.5 },
+			"mam": { "min": 14.5, "max": 15.8 },
+			"normal": { "min": 15.8, "max": 23.1 },
+			"overweight": { "min": 23.1, "max": 25.7 },
+			"obese": { "min": 25.7 }
+		},
+		"110.5": {
+			"sam": { "max": 14.5 },
+			"mam": { "min": 14.5, "max": 15.8 },
+			"normal": { "min": 15.8, "max": 23.1 },
+			"overweight": { "min": 23.1, "max": 25.7 },
+			"obese": { "min": 25.7 }
+		},
+		"111": {
+			"sam": { "max": 14.5 },
+			"mam": { "min": 14.5, "max": 15.8 },
+			"normal": { "min": 15.8, "max": 23.1 },
+			"overweight": { "min": 23.1, "max": 25.7 },
+			"obese": { "min": 25.7 }
+		},
+		"111.5": {
+			"sam": { "max": 14.7 },
+			"mam": { "min": 14.7, "max": 16.0 },
+			"normal": { "min": 16.0, "max": 23.4 },
+			"overweight": { "min": 23.4, "max": 26.0 },
+			"obese": { "min": 26.0 }
+		},
+		"112": {
+			"sam": { "max": 14.8 },
+			"mam": { "min": 14.8, "max": 16.2 },
+			"normal": { "min": 16.2, "max": 23.6 },
+			"overweight": { "min": 23.6, "max": 26.2 },
+			"obese": { "min": 26.2 }
+		},
+		"112.5": {
+			"sam": { "max": 15.0 },
+			"mam": { "min": 15.0, "max": 16.3 },
+			"normal": { "min": 16.3, "max": 23.9 },
+			"overweight": { "min": 23.9, "max": 26.5 },
+			"obese": { "min": 26.5 }
+		},
+		"113": {
+			"sam": { "max": 15.1 },
+			"mam": { "min": 15.1, "max": 16.5 },
+			"normal": { "min": 16.5, "max": 24.2 },
+			"overweight": { "min": 24.2, "max": 26.8 },
+			"obese": { "min": 26.8 }
+		},
+		"113.5": {
+			"sam": { "max": 15.3 },
+			"mam": { "min": 15.3, "max": 16.7 },
+			"normal": { "min": 16.7, "max": 24.4 },
+			"overweight": { "min": 24.4, "max": 27.1 },
+			"obese": { "min": 27.1 }
+		},
+		"114": {
+			"sam": { "max": 15.4 },
+			"mam": { "min": 15.4, "max": 16.8 },
+			"normal": { "min": 16.8, "max": 24.7 },
+			"overweight": { "min": 24.7, "max": 27.4 },
+			"obese": { "min": 27.4 }
+		},
+		"114.5": {
+			"sam": { "max": 15.6 },
+			"mam": { "min": 15.6, "max": 17.0 },
+			"normal": { "min": 17.0, "max": 25.0 },
+			"overweight": { "min": 25.0, "max": 27.8 },
+			"obese": { "min": 27.8 }
+		},
+		"115": {
+			"sam": { "max": 15.7 },
+			"mam": { "min": 15.7, "max": 17.2 },
+			"normal": { "min": 17.2, "max": 25.2 },
+			"overweight": { "min": 25.2, "max": 28.1 },
+			"obese": { "min": 28.1 }
+		},
+		"115.5": {
+			"sam": { "max": 15.9 },
+			"mam": { "min": 15.9, "max": 17.3 },
+			"normal": { "min": 17.3, "max": 25.5 },
+			"overweight": { "min": 25.5, "max": 28.4 },
+			"obese": { "min": 28.4 }
+		},
+		"116": {
+			"sam": { "max": 16.0 },
+			"mam": { "min": 16.0, "max": 17.5 },
+			"normal": { "min": 17.5, "max": 25.8 },
+			"overweight": { "min": 25.8, "max": 28.7 },
+			"obese": { "min": 28.7 }
+		},
+		"116.5": {
+			"sam": { "max": 16.2 },
+			"mam": { "min": 16.2, "max": 17.7 },
+			"normal": { "min": 17.7, "max": 26.1 },
+			"overweight": { "min": 26.1, "max": 29.0 },
+			"obese": { "min": 29.0 }
+		},
+		"117": {
+			"sam": { "max": 16.3 },
+			"mam": { "min": 16.3, "max": 17.8 },
+			"normal": { "min": 17.8, "max": 26.3 },
+			"overweight": { "min": 26.3, "max": 29.3 },
+			"obese": { "min": 29.3 }
+		},
+		"117.5": {
+			"sam": { "max": 16.5 },
+			"mam": { "min": 16.5, "max": 18.0 },
+			"normal": { "min": 18.0, "max": 26.6 },
+			"overweight": { "min": 26.6, "max": 29.6 },
+			"obese": { "min": 29.6 }
+		},
+		"118": {
+			"sam": { "max": 16.6 },
+			"mam": { "min": 16.6, "max": 18.2 },
+			"normal": { "min": 18.2, "max": 26.9 },
+			"overweight": { "min": 26.9, "max": 29.9 },
+			"obese": { "min": 29.9 }
+		},
+		"118.5": {
+			"sam": { "max": 16.8 },
+			"mam": { "min": 16.8, "max": 18.4 },
+			"normal": { "min": 18.4, "max": 27.2 },
+			"overweight": { "min": 27.2, "max": 30.3 },
+			"obese": { "min": 30.3 }
+		},
+		"119": {
+			"sam": { "max": 16.9 },
+			"mam": { "min": 16.9, "max": 18.5 },
+			"normal": { "min": 18.5, "max": 27.4 },
+			"overweight": { "min": 27.4, "max": 30.6 },
+			"obese": { "min": 30.6 }
+		},
+		"119.5": {
+			"sam": { "max": 17.1 },
+			"mam": { "min": 17.1, "max": 18.7 },
+			"normal": { "min": 18.7, "max": 27.7 },
+			"overweight": { "min": 27.7, "max": 30.9 },
+			"obese": { "min": 30.9 }
+		},
+		"120": {
+			"sam": { "max": 17.3 },
+			"mam": { "min": 17.3, "max": 18.9 },
+			"normal": { "min": 18.9, "max": 28.0 },
+			"overweight": { "min": 28.0, "max": 31.2 },
+			"obese": { "min": 31.2 }
+		}
+	}
+}

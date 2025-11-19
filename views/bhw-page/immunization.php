@@ -37,6 +37,7 @@ if ($user_id) {
         <link rel="stylesheet" href="../../css/notification-style.css" />
         <link rel="stylesheet" href="../../css/skeleton-loading.css" />
         <link rel="stylesheet" href="../../css/bhw/immunization-style.css">
+        <link rel="stylesheet" href="../../css/bhw/growth-assessment.css">
     </head>
 
 <body>
@@ -271,6 +272,7 @@ if ($user_id) {
     </main>
 
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="../../js/growth-standards/who-growth-calculator.js" defer></script>
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="../../js/utils/skeleton-loading.js" defer></script>
@@ -584,6 +586,19 @@ if ($user_id) {
                                 </label>
                             </div>
 
+                        <!-- Growth Assessment Section -->
+                        <div class="form-group row-growth-assessment" id="growthAssessmentSection" style="display: none;">
+                            <div class="growth-assessment-container">
+                                <h4 class="growth-assessment-title">
+                                    <span class="material-symbols-rounded">monitor_heart</span>
+                                    Growth Assessment
+                                </h4>
+                                <div class="growth-assessment-content" id="growthAssessmentContent">
+                                    <p class="growth-assessment-placeholder">Enter height and weight to see growth assessment</p>
+                                </div>
+                            </div>
+                        </div>
+
                             <!-- Dose and Lot fields removed: dose is auto-determined from record, lot/site not in schema -->
                             <div class="form-group row-3">
                                 <h4 class="im-group-title">Administration &amp; Remarks</h4>
@@ -613,10 +628,18 @@ if ($user_id) {
                         <input type="hidden" id="im_record_id" value="${recordId}" />
                         <input type="hidden" id="im_user_id" value="${userId}" />
                         <input type="hidden" id="im_baby_id" value="${babyId}" />
+                    <input type="hidden" id="im_child_birth_date" value="" />
+                    <input type="hidden" id="im_child_gender" value="" />
                 `;
 
             document.getElementById('immunizationFormContainer').innerHTML = html;
             document.getElementById('immunizationOverlay').style.display = 'flex';
+            
+            // Fetch child details for growth assessment
+            fetchChildDetailsForGrowth(babyId);
+            
+            // Add event listeners for height and weight inputs
+            setupGrowthAssessmentListeners();
         }
 
         function closeImmunizationForm() {
@@ -626,6 +649,7 @@ if ($user_id) {
 
         async function submitImmunizationForm() {
             const formData = new FormData();
+            
             formData.append('record_id', document.getElementById('im_record_id').value || '');
             formData.append('user_id', document.getElementById('im_user_id').value || '');
             formData.append('baby_id', document.getElementById('im_baby_id').value || '');
@@ -635,12 +659,23 @@ if ($user_id) {
             formData.append('temperature', document.getElementById('im_temperature').value || '');
             formData.append('height_cm', document.getElementById('im_height').value || '');
             formData.append('weight_kg', document.getElementById('im_weight').value || '');
-            // dose_number, lot_number, site removed - dose inferred from existing record
             formData.append('administered_by', document.getElementById('im_administered_by').value || '');
             formData.append('remarks', document.getElementById('im_remarks').value || '');
             formData.append('mark_completed', document.getElementById('im_mark_completed').checked ? '1' : '0');
-            const cu = document.getElementById('im_catch_up_date');
-            if (cu && cu.value) formData.append('catch_up_date', cu.value);
+            
+            const catchUpDate = document.getElementById('im_catch_up_date')?.value || '';
+            if (catchUpDate) formData.append('catch_up_date', catchUpDate);
+            
+            // Add growth assessment data
+            const growthWfa = document.getElementById('im_growth_wfa');
+            const growthLfa = document.getElementById('im_growth_lfa');
+            const growthWfl = document.getElementById('im_growth_wfl');
+            const growthAgeMonths = document.getElementById('im_growth_age_months');
+            
+            if (growthWfa) formData.append('growth_wfa', growthWfa.value || '');
+            if (growthLfa) formData.append('growth_lfa', growthLfa.value || '');
+            if (growthWfl) formData.append('growth_wfl', growthWfl.value || '');
+            if (growthAgeMonths) formData.append('growth_age_months', growthAgeMonths.value || '');
 
             // Add feeding status updates if available
             const feedingCheckbox = document.getElementById('update_feeding_status');
@@ -663,10 +698,15 @@ if ($user_id) {
                     method: 'POST',
                     body: formData
                 });
-                const data = await res.json().catch(() => ({
-                    status: 'error',
-                    message: 'Invalid server response'
-                }));
+                
+                const responseText = await res.text();
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (parseErr) {
+                    data = { status: 'error', message: 'Invalid server response' };
+                }
+                
                 if (data.status === 'success') {
                     closeImmunizationForm();
                     await fetchChildHealthRecord();
@@ -676,8 +716,7 @@ if ($user_id) {
                     alert('Save failed: ' + (data.message || 'Unknown error'));
                 }
             } catch (err) {
-                alert('Network error saving immunization');
-                console.error('save_immunization error:', err);
+                alert('Network error saving immunization: ' + err.message);
             }
         }
 
@@ -756,8 +795,6 @@ if ($user_id) {
             });
             const data = await response.json();
             if (data.status === 'success') {
-
-                console.log(data.data);
                 document.querySelector('#childName').textContent = data.data[0].child_fname + ' ' + data.data[0].child_lname;
                 document.querySelector('#childGender').textContent = data.data[0].child_gender;
                 document.querySelector('#childBirthDate').textContent = data.data[0].child_birth_date;
@@ -774,8 +811,6 @@ if ($user_id) {
                 });
                 document.querySelector('.childinformation-container').style.display = 'flex';
                 document.querySelector('.table-container').style.display = 'none';
-            } else {
-                console.log(data.message);
             }
 
 
@@ -1009,7 +1044,6 @@ if ($user_id) {
         }
 
         async function onScanSuccess(decodedText) {
-            console.log('QR Scan success:', decodedText);
             closeScanner();
 
             // Extract baby_id from QR code
@@ -1070,13 +1104,8 @@ if ($user_id) {
                 });
                 const childData = await childResponse.json();
 
-                console.log('Child details response:', childData);
-                console.log('Baby ID searched:', baby_id);
-
                 if (childData.status === 'success' && childData.data && childData.data.length > 0) {
                     const child = childData.data[0];
-
-                    console.log('Child data received:', child);
 
                     // Use the user_id from child record, fallback to empty string if not available
                     const userId = child.user_id || '';
@@ -1137,6 +1166,208 @@ if ($user_id) {
             // Call the existing openImmunizationForm function
             openImmunizationForm(tempBtn);
         }
+
+        /**
+         * Fetch child details for growth assessment
+         */
+        async function fetchChildDetailsForGrowth(babyId) {
+            if (!babyId) return;
+
+            try {
+                const formData = new FormData();
+                formData.append('baby_id', babyId);
+                const response = await fetch('../../php/supabase/bhw/get_child_details.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success' && data.data && data.data.length > 0) {
+                    const child = data.data[0];
+                    const birthDateInput = document.getElementById('im_child_birth_date');
+                    const genderInput = document.getElementById('im_child_gender');
+                    
+                    if (birthDateInput) birthDateInput.value = child.child_birth_date || '';
+                    if (genderInput) genderInput.value = child.child_gender || '';
+                }
+            } catch (error) {
+                console.error('Error fetching child details for growth assessment:', error);
+            }
+        }
+
+        /**
+         * Setup event listeners for growth assessment
+         */
+        function setupGrowthAssessmentListeners() {
+            const heightInput = document.getElementById('im_height');
+            const weightInput = document.getElementById('im_weight');
+
+            if (heightInput && weightInput) {
+                // Debounce function to avoid too many calculations
+                let assessmentTimeout;
+                const calculateGrowth = () => {
+                    clearTimeout(assessmentTimeout);
+                    assessmentTimeout = setTimeout(() => {
+                        performGrowthAssessment();
+                    }, 500); // Wait 500ms after user stops typing
+                };
+
+                heightInput.addEventListener('input', calculateGrowth);
+                weightInput.addEventListener('input', calculateGrowth);
+            }
+        }
+
+        /**
+         * Perform growth assessment
+         */
+        async function performGrowthAssessment() {
+            const birthDate = document.getElementById('im_child_birth_date')?.value;
+            const gender = document.getElementById('im_child_gender')?.value;
+            const weight = parseFloat(document.getElementById('im_weight')?.value);
+            const height = parseFloat(document.getElementById('im_height')?.value);
+            const assessmentSection = document.getElementById('growthAssessmentSection');
+            const assessmentContent = document.getElementById('growthAssessmentContent');
+
+            if (!birthDate || !gender) {
+                // Child details not loaded yet
+                if (assessmentSection) assessmentSection.style.display = 'none';
+                return;
+            }
+
+            if (!weight && !height) {
+                if (assessmentSection) assessmentSection.style.display = 'none';
+                return;
+            }
+
+            try {
+                await growthCalculator.loadStandards();
+                const assessment = await growthCalculator.assessGrowth(birthDate, gender, weight, height);
+
+                if (assessment.error) {
+                    if (assessmentContent) {
+                        assessmentContent.innerHTML = `<p class="growth-assessment-error">${assessment.error}</p>`;
+                    }
+                    if (assessmentSection) assessmentSection.style.display = 'block';
+                    return;
+                }
+
+                // Display assessment results
+                let html = '<div class="growth-indicators">';
+                
+                if (assessment.ageMonths !== null && assessment.ageMonths !== undefined) {
+                    html += `<div class="growth-info"><strong>Age:</strong> ${assessment.ageMonths} months</div>`;
+                }
+
+                // Weight-for-Age
+                if (assessment.weightForAge) {
+                    const wfa = assessment.weightForAge;
+                    html += `
+                        <div class="growth-indicator">
+                            <div class="indicator-label">Weight-for-Age:</div>
+                            <div class="indicator-value ${wfa.color}">
+                                <span class="indicator-icon">${wfa.icon}</span>
+                                <span class="indicator-text">${wfa.label}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Length-for-Age (only for 0-11 months)
+                if (assessment.lengthForAge) {
+                    const lfa = assessment.lengthForAge;
+                    html += `
+                        <div class="growth-indicator">
+                            <div class="indicator-label">Length-for-Age:</div>
+                            <div class="indicator-value ${lfa.color}">
+                                <span class="indicator-icon">${lfa.icon}</span>
+                                <span class="indicator-text">${lfa.label}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Weight-for-Length
+                if (assessment.weightForLength) {
+                    const wfl = assessment.weightForLength;
+                    html += `
+                        <div class="growth-indicator">
+                            <div class="indicator-label">Weight-for-Length:</div>
+                            <div class="indicator-value ${wfl.color}">
+                                <span class="indicator-icon">${wfl.icon}</span>
+                                <span class="indicator-text">${wfl.label}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                html += '</div>';
+
+                if (assessmentContent) {
+                    assessmentContent.innerHTML = html;
+                }
+                if (assessmentSection) {
+                    assessmentSection.style.display = 'block';
+                }
+
+                // Store assessment data in hidden fields for saving
+                storeGrowthAssessmentData(assessment);
+
+            } catch (error) {
+                console.error('Error performing growth assessment:', error);
+                if (assessmentContent) {
+                    assessmentContent.innerHTML = '<p class="growth-assessment-error">Error calculating growth assessment</p>';
+                }
+                if (assessmentSection) assessmentSection.style.display = 'block';
+            }
+        }
+
+        /**
+         * Store growth assessment data in hidden fields
+         */
+        function storeGrowthAssessmentData(assessment) {
+            // Create or update hidden fields for growth assessment
+            let container = document.getElementById('immunizationFormContainer');
+            if (!container) return;
+
+            // Remove existing growth assessment hidden fields
+            const existingFields = container.querySelectorAll('[id^="im_growth_"]');
+            existingFields.forEach(field => field.remove());
+
+            // Add new hidden fields
+            if (assessment.weightForAge) {
+                const wfaField = document.createElement('input');
+                wfaField.type = 'hidden';
+                wfaField.id = 'im_growth_wfa';
+                wfaField.value = assessment.weightForAge.status;
+                container.appendChild(wfaField);
+            }
+
+            if (assessment.lengthForAge) {
+                const lfaField = document.createElement('input');
+                lfaField.type = 'hidden';
+                lfaField.id = 'im_growth_lfa';
+                lfaField.value = assessment.lengthForAge.status;
+                container.appendChild(lfaField);
+            }
+
+            if (assessment.weightForLength) {
+                const wflField = document.createElement('input');
+                wflField.type = 'hidden';
+                wflField.id = 'im_growth_wfl';
+                wflField.value = assessment.weightForLength.status;
+                container.appendChild(wflField);
+            }
+
+            // Store age in months
+            if (assessment.ageMonths !== null && assessment.ageMonths !== undefined) {
+                const ageField = document.createElement('input');
+                ageField.type = 'hidden';
+                ageField.id = 'im_growth_age_months';
+                ageField.value = assessment.ageMonths;
+                container.appendChild(ageField);
+            }
+        }
+        
     </script>
 
 </body>

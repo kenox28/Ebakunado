@@ -1,4 +1,5 @@
 </main>
+		<script src="../../js/utils/ui-feedback.js"></script>
 		<script>
 			(function () {
 				var button = document.querySelector(".menu-button");
@@ -18,38 +19,54 @@
 			}
 
 			async function logoutUser() {
+				if (!window.UIFeedback) {
+					window.location.href = "../../php/supabase/users/logout.php";
+					return;
+				}
 
-				// window.location.href = "/ebakunado/php/supabase/users/logout.php"
-				const result = await Swal.fire({
-					title: "Are you sure?",
-					text: "You will be logged out of the system",
-					icon: "question",
-					showCancelButton: true,
-					confirmButtonColor: "#e74c3c",
-					cancelButtonColor: "#95a5a6",
-					confirmButtonText: "Yes, logout",
+				const confirmResult = await UIFeedback.showModal({
+					title: "Logout",
+					message: "You will be logged out of the system.",
+					icon: "warning",
+					confirmText: "Yes, logout",
+					cancelText: "Cancel",
+					showCancel: true
 				});
 
-				if (result.isConfirmed) {
-					const response = await fetch("/ebakunado/php/supabase/users/logout.php", {
-						method: "POST",
-					});
+				if (confirmResult?.action !== "confirm") return;
 
+				const closeLoader = UIFeedback.showLoader("Logging out...");
+				try {
+					const response = await fetch("../../php/supabase/users/logout.php", {
+						method: "POST"
+					});
 					const data = await response.json();
+					closeLoader();
 
 					if (data.status === "success") {
-						Swal.fire({
-							icon: "success",
-							title: "Logged Out",
-							text: "You have been successfully logged out",
-							showConfirmButton: false,
-							timer: 1500,
-						}).then(() => {
-							window.location.href = "../../views/landing-page/landing-page.html";
+						UIFeedback.showToast({
+							title: "Logged out",
+							message: "You have been successfully logged out.",
+							variant: "success",
+							duration: 3000
 						});
+						setTimeout(() => {
+							window.location.href = "../../views/landing-page/landing-page.html";
+						}, 800);
 					} else {
-						Swal.fire("Error!", data.message, "error");
+						UIFeedback.showToast({
+							title: "Logout failed",
+							message: data.message || "Please try again.",
+							variant: "error"
+						});
 					}
+				} catch (error) {
+					closeLoader();
+					UIFeedback.showToast({
+						title: "Network error",
+						message: "Please check your connection and try again.",
+						variant: "error"
+					});
 				}
 			}
 

@@ -30,7 +30,14 @@ try {
     $height_cm = $_POST['height_cm'] ?? '';
     $weight_kg = $_POST['weight_kg'] ?? '';
     $administered_by = $_POST['administered_by'] ?? '';
+    $remarks = $_POST['remarks'] ?? '';
     $mark_completed = isset($_POST['mark_completed']) ? ($_POST['mark_completed'] === '1') : false;
+    
+    // Growth assessment data
+    $growth_wfa = $_POST['growth_wfa'] ?? '';
+    $growth_lfa = $_POST['growth_lfa'] ?? '';
+    $growth_wfl = $_POST['growth_wfl'] ?? '';
+    $growth_age_months = $_POST['growth_age_months'] ?? '';
     
     // Feeding status updates
     $update_feeding_status = $_POST['update_feeding_status'] ?? '';
@@ -41,18 +48,24 @@ try {
     $record = null;
     if ($record_id !== '') {
         $rec = supabaseSelect('immunization_records', 'id,baby_id,vaccine_name,dose_number,status,schedule_date,date_given,weight,height,temperature,administered_by', [ 'id' => $record_id ], null, 1);
-        if ($rec && is_array($rec) && count($rec) > 0) { $record = $rec[0]; }
+        if ($rec && is_array($rec) && count($rec) > 0) { 
+            $record = $rec[0];
+        }
     } else if ($baby_id !== '' && $vaccine_name !== '' && ($schedule_date !== '' || $catch_up_date !== '')) {
+        $lookup_conditions = ($catch_up_date !== ''
+            ? [ 'baby_id' => $baby_id, 'vaccine_name' => $vaccine_name, 'catch_up_date' => $catch_up_date ]
+            : [ 'baby_id' => $baby_id, 'vaccine_name' => $vaccine_name, 'schedule_date' => $schedule_date ]);
+        
         $rec = supabaseSelect(
             'immunization_records',
             'id,baby_id,vaccine_name,dose_number,status,schedule_date,date_given,weight,height,temperature,administered_by',
-            ($catch_up_date !== ''
-                ? [ 'baby_id' => $baby_id, 'vaccine_name' => $vaccine_name, 'catch_up_date' => $catch_up_date ]
-                : [ 'baby_id' => $baby_id, 'vaccine_name' => $vaccine_name, 'schedule_date' => $schedule_date ]),
+            $lookup_conditions,
             null,
             1
         );
-        if ($rec && is_array($rec) && count($rec) > 0) { $record = $rec[0]; }
+        if ($rec && is_array($rec) && count($rec) > 0) { 
+            $record = $rec[0];
+        }
     }
 
     if (!$record) {
@@ -66,6 +79,17 @@ try {
     if ($height_cm !== '') { $update['height'] = (float)$height_cm; }
     if ($weight_kg !== '') { $update['weight'] = (float)$weight_kg; }
     if ($administered_by !== '') { $update['administered_by'] = $administered_by; }
+    if ($remarks !== '') { $update['remarks'] = $remarks; }
+    
+    // Growth assessment classifications
+    if ($growth_wfa !== '') { $update['growth_wfa'] = $growth_wfa; }
+    if ($growth_lfa !== '') { $update['growth_lfa'] = $growth_lfa; }
+    if ($growth_wfl !== '') { 
+        $update['growth_wfl'] = $growth_wfl;
+        // MUAC stores the same classification as weight-for-length/height (obese, normal, etc.)
+        $update['muac'] = $growth_wfl;
+    }
+    if ($growth_age_months !== '') { $update['growth_age_months'] = (int)$growth_age_months; }
 
     if ($date_taken !== '') {
         $update['date_given'] = $date_taken; // Expecting Y-m-d from client
@@ -80,7 +104,10 @@ try {
     }
 
     // Always update updated timestamp if column exists (named 'updated' in schema)
-    $update['updated'] = date('Y-m-d H:i:s');
+    // Only add if we have other fields to update (to avoid unnecessary updates)
+    if (count($update) > 0) {
+        $update['updated'] = date('Y-m-d H:i:s');
+    }
 
     if (count($update) === 0) {
         echo json_encode([ 'status' => 'error', 'message' => 'No fields to update' ]);
@@ -89,9 +116,21 @@ try {
 
     $res = supabaseUpdate('immunization_records', $update, [ 'id' => $record['id'] ]);
 
-    if ($res === false || (is_array($res) && count($res) === 0)) {
-        echo json_encode([ 'status' => 'error', 'message' => 'Update failed or no rows affected' ]);
+    if ($res === false) {
+        $error = getSupabase()->getLastError() ?? 'Unknown error';
+        echo json_encode([ 'status' => 'error', 'message' => 'Update failed: ' . $error ]);
         exit();
+    }
+    
+    // Empty array result means no rows changed, but this can be OK if values are already set
+    // Verify the record still exists and update was processed
+    if (is_array($res) && count($res) === 0) {
+        $verify = supabaseSelect('immunization_records', 'id,status,date_given', [ 'id' => $record['id'] ], null, 1);
+        if (!$verify || count($verify) === 0) {
+            echo json_encode([ 'status' => 'error', 'message' => 'Record not found after update attempt' ]);
+            exit();
+        }
+        // If we were updating status but it didn't change, that's OK - continue
     }
 
     // Log activity: BHW/Midwife recorded immunization (when mark_completed=1)

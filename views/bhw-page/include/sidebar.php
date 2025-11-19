@@ -100,6 +100,14 @@ if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available
                         <span class="menu-label">CHR Doc Requests</span>
                     </a>
                 </li>
+
+                <!-- Baby Card Requests (Midwife only) -->
+                <li class="sidebar-menu-item<?php echo $currentPage === 'babycard-doc-requests.php' ? ' active' : ''; ?>">
+                    <a href="../../views/bhw-page/babycard-doc-requests.php" class="menu-link">
+                        <span class="menu-icon material-symbols-rounded">credit_card</span>
+                        <span class="menu-label">Baby Card Requests</span>
+                    </a>
+                </li>
                 <?php endif; ?>
             </ul>
         </div>

@@ -1,0 +1,149 @@
+/* Growth Assessment Styles */
+
+.form-group.row-growth-assessment {
+	grid-column: 1 / -1;
+	margin-top: 8px;
+}
+
+.growth-assessment-container {
+	background: #f8f9fa;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	padding: 16px;
+	margin-top: 8px;
+}
+
+.growth-assessment-title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--primary-color);
+	margin: 0 0 12px 0;
+}
+
+.growth-assessment-title .material-symbols-rounded {
+	font-size: 20px;
+}
+
+.growth-assessment-content {
+	font-size: 13px;
+}
+
+.growth-assessment-placeholder {
+	color: #666;
+	font-style: italic;
+	margin: 0;
+	text-align: center;
+	padding: 8px 0;
+}
+
+.growth-assessment-error {
+	color: #dc3545;
+	margin: 0;
+	padding: 8px;
+	background: #fff5f5;
+	border-radius: 4px;
+	border-left: 3px solid #dc3545;
+}
+
+.growth-indicators {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.growth-info {
+	padding: 8px 12px;
+	background: #e8f4f0;
+	border-radius: 6px;
+	color: #1a1a1a;
+	font-size: 13px;
+	margin-bottom: 4px;
+}
+
+.growth-indicator {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 12px;
+	background: #fff;
+	border-radius: 6px;
+	border: 1px solid #e0e0e0;
+	transition: all 0.2s ease;
+}
+
+.growth-indicator:hover {
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.indicator-label {
+	font-weight: 500;
+	color: #333;
+	font-size: 13px;
+}
+
+.indicator-value {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-weight: 600;
+	font-size: 13px;
+	padding: 4px 10px;
+	border-radius: 4px;
+}
+
+.indicator-value.red {
+	background: #fee;
+	color: #c33;
+	border: 1px solid #fcc;
+}
+
+.indicator-value.orange {
+	background: #fff4e6;
+	color: #d97706;
+	border: 1px solid #ffd89b;
+}
+
+.indicator-value.green {
+	background: #f0fdf4;
+	color: #16a34a;
+	border: 1px solid #bbf7d0;
+}
+
+.indicator-value.yellow {
+	background: #fefce8;
+	color: #ca8a04;
+	border: 1px solid #fef08a;
+}
+
+.indicator-value.blue {
+	background: #eff6ff;
+	color: #2563eb;
+	border: 1px solid #bfdbfe;
+}
+
+.indicator-icon {
+	font-size: 14px;
+}
+
+.indicator-text {
+	font-size: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.growth-indicator {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
+	}
+
+	.indicator-value {
+		width: 100%;
+		justify-content: flex-start;
+	}
+}
+
+

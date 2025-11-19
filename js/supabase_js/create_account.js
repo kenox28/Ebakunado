@@ -17,6 +17,45 @@ document.addEventListener("DOMContentLoaded", function () {
 	// No need for OTP field listeners since we use popup now
 });
 
+const Feedback = {
+	toast({ title, message, variant = "info" }) {
+		if (
+			window.UIFeedback &&
+			typeof window.UIFeedback.showToast === "function"
+		) {
+			window.UIFeedback.showToast({ title, message, variant });
+		} else {
+			alert(`${title}\n${message}`);
+		}
+	},
+	modal(options) {
+		if (
+			window.UIFeedback &&
+			typeof window.UIFeedback.showModal === "function"
+		) {
+			return window.UIFeedback.showModal(options);
+		}
+		return Promise.resolve(null);
+	},
+	loader(message) {
+		if (
+			window.UIFeedback &&
+			typeof window.UIFeedback.showLoader === "function"
+		) {
+			return window.UIFeedback.showLoader(message);
+		}
+		return () => {};
+	},
+	closeModal() {
+		if (
+			window.UIFeedback &&
+			typeof window.UIFeedback.closeModal === "function"
+		) {
+			window.UIFeedback.closeModal();
+		}
+	},
+};
+
 // Fetch CSRF token from server
 async function generateCSRFToken() {
 	try {
@@ -41,23 +80,15 @@ async function sendOTPAutomatically(phoneNumber) {
 	// Validate Philippine phone number format
 	const phoneRegex = /^(09|\+639)\d{9}$/;
 	if (!phoneRegex.test(phoneNumber)) {
-		Swal.fire({
-			icon: "error",
-			title: "Invalid Phone Number!",
-			text: "Please enter a valid Philippine phone number (09xxxxxxxxx).",
+		Feedback.toast({
+			title: "Invalid phone number",
+			message: "Please enter a valid Philippine phone number (09xxxxxxxxx).",
+			variant: "error",
 		});
 		return false;
 	}
 
-	// Show loading
-	Swal.fire({
-		title: "Sending OTP...",
-		text: "Please wait while we send the verification code to your phone.",
-		allowOutsideClick: false,
-		didOpen: () => {
-			Swal.showLoading();
-		},
-	});
+	const closeLoader = Feedback.loader("Sending OTP...");
 
 	try {
 		const formData = new FormData();
@@ -73,148 +104,149 @@ async function sendOTPAutomatically(phoneNumber) {
 		try {
 			data = JSON.parse(responseText);
 		} catch (e) {
-			Swal.fire({
-				icon: "error",
-				title: "Failed to Send OTP!",
-				text: "Invalid server response. Please try again.",
+			closeLoader();
+			Feedback.toast({
+				title: "Failed to send OTP",
+				message: "Invalid server response. Please try again.",
+				variant: "error",
 			});
 			return false;
 		}
 
+		closeLoader();
+
 		if (data.status === "success") {
-			Swal.close();
+			Feedback.toast({
+				title: "OTP sent",
+				message: "Please check your phone for the verification code.",
+				variant: "success",
+			});
 			return true;
 		} else {
-			Swal.fire({
-				icon: "error",
-				title: "Failed to Send OTP!",
-				text: data.message || "Failed to send OTP. Please try again.",
+			Feedback.toast({
+				title: "Failed to send OTP",
+				message: data.message || "Please try again.",
+				variant: "error",
 			});
 			return false;
 		}
 	} catch (error) {
+		closeLoader();
 		console.error("Error sending OTP:", error);
 		console.error("Error details:", error.message, error.stack);
-		Swal.fire({
-			icon: "error",
-			title: "Error!",
-			text: "Failed to send OTP. Please check console for details.",
+		Feedback.toast({
+			title: "Error sending OTP",
+			message: "Failed to send OTP. Please try again.",
+			variant: "error",
 		});
 		return false;
 	}
 }
 
 async function showOTPPopup() {
-	return new Promise((resolve) => {
-		let timeLeft = 300; // 5 minutes
-		let timerInterval;
+	let timeLeft = 300;
+	let timerInterval = null;
 
-		const startTimer = () => {
+	const result = await Feedback.modal({
+		title: "Enter Verification Code",
+		message: "We've sent a 6-digit verification code to your phone number.",
+		icon: "info",
+		confirmText: "Verify",
+		cancelText: "Cancel",
+		showCancel: true,
+		autoClose: 300000,
+		html: `
+			<input type="text" id="swal-otp-input" class="modal-otp-input" placeholder="Enter 6-digit code" maxlength="6" autocomplete="one-time-code" />
+			<p class="modal-otp-helper" data-role="otpHelper">Enter the 6-digit code sent to you.</p>
+			<div class="modal-otp-timer">Code expires in: <span id="swal-timer">5:00</span></div>
+		`,
+		onOpen(card) {
+			const input = card.querySelector("#swal-otp-input");
+			const helper = card.querySelector("[data-role='otpHelper']");
+			const countdown = card.querySelector("#swal-timer");
+
+			if (input) {
+				input.focus();
+				input.addEventListener("input", () => {
+					input.value = input.value.replace(/[^0-9]/g, "");
+					helper.textContent = "Enter the 6-digit code sent to you.";
+					helper.classList.remove("is-error");
+				});
+			}
+
 			timerInterval = setInterval(() => {
 				timeLeft--;
 				const minutes = Math.floor(timeLeft / 60);
 				const seconds = timeLeft % 60;
-
-				const timerElement = document.getElementById("swal-timer");
-				if (timerElement) {
-					timerElement.textContent = `${minutes}:${seconds
-						.toString()
-						.padStart(2, "0")}`;
-				}
-
+				countdown.textContent = `${minutes}:${seconds
+					.toString()
+					.padStart(2, "0")}`;
 				if (timeLeft <= 0) {
 					clearInterval(timerInterval);
-					Swal.fire({
-						icon: "error",
-						title: "OTP Expired!",
-						text: "The verification code has expired. Please try again.",
-					});
-					resolve(false);
 				}
 			}, 1000);
-		};
-
-		Swal.fire({
-			title: "Enter Verification Code",
-			html: `
-				<p>We've sent a 6-digit verification code to your phone number.</p>
-				<input type="text" id="swal-otp-input" class="swal2-input" placeholder="Enter 6-digit code" maxlength="6" style="font-size: 18px; text-align: center; letter-spacing: 2px;">
-				<div style="margin-top: 10px; color: #666; font-size: 14px;">
-					Code expires in: <span id="swal-timer">5:00</span>
-				</div>
-			`,
-			showCancelButton: true,
-			confirmButtonText: "Verify",
-			cancelButtonText: "Cancel",
-			allowOutsideClick: false,
-			preConfirm: async () => {
-				const otpCode = document.getElementById("swal-otp-input").value.trim();
-
-				if (!otpCode || otpCode.length !== 6) {
-					Swal.showValidationMessage(
-						"Please enter the 6-digit verification code"
-					);
-					return false;
-				}
-
-				// Show loading
-				Swal.showLoading();
-
-				try {
-					const formData = new FormData();
-					formData.append("otp", otpCode);
-
-					const response = await fetch("../php/supabase/verify_otp.php", {
-						method: "POST",
-						body: formData,
-					});
-
-					const data = await response.json();
-
-					if (data.status === "success") {
-						return true;
-					} else {
-						Swal.showValidationMessage(data.message);
-						return false;
-					}
-				} catch (error) {
-					console.error("Error verifying OTP:", error);
-					Swal.showValidationMessage("Failed to verify OTP. Please try again.");
-					return false;
-				}
-			},
-			didOpen: () => {
-				startTimer();
-
-				// Auto-format input (numbers only)
-				const input = document.getElementById("swal-otp-input");
-				input.addEventListener("input", (e) => {
-					e.target.value = e.target.value.replace(/[^0-9]/g, "");
-				});
-
-				// Focus on input
-				input.focus();
-			},
-			willClose: () => {
-				if (timerInterval) {
-					clearInterval(timerInterval);
-				}
-			},
-		}).then((result) => {
-			if (result.isConfirmed && result.value) {
-				Swal.fire({
-					icon: "success",
-					title: "Verified!",
-					text: "Phone number verified successfully!",
-					timer: 1500,
-					showConfirmButton: false,
-				});
-				resolve(true);
-			} else {
-				resolve(false);
+		},
+		onClose() {
+			if (timerInterval) {
+				clearInterval(timerInterval);
 			}
-		});
+		},
+		beforeConfirm: async (card) => {
+			const input = card.querySelector("#swal-otp-input");
+			const helper = card.querySelector("[data-role='otpHelper']");
+			const otpCode = input.value.trim();
+
+			if (!otpCode || otpCode.length !== 6) {
+				helper.textContent = "Please enter the 6-digit verification code.";
+				helper.classList.add("is-error");
+				return false;
+			}
+
+			helper.textContent = "Verifying code...";
+			helper.classList.remove("is-error");
+
+			try {
+				const formData = new FormData();
+				formData.append("otp", otpCode);
+
+				const response = await fetch("../php/supabase/verify_otp.php", {
+					method: "POST",
+					body: formData,
+				});
+
+				const data = await response.json();
+
+				if (data.status === "success") {
+					return true;
+				} else {
+					helper.textContent = data.message;
+					helper.classList.add("is-error");
+					return false;
+				}
+			} catch (error) {
+				console.error("Error verifying OTP:", error);
+				helper.textContent = "Failed to verify OTP. Please try again.";
+				helper.classList.add("is-error");
+				return false;
+			}
+		},
 	});
+
+	if (result?.action === "confirm" && result.data) {
+		Feedback.toast({
+			title: "Verified",
+			message: "Phone number verified successfully!",
+			variant: "success",
+		});
+		return true;
+	} else if (result?.action === "timeout") {
+		Feedback.toast({
+			title: "OTP expired",
+			message: "The verification code has expired. Please request a new one.",
+			variant: "error",
+		});
+	}
+	return false;
 }
 
 // Initialize password validation
@@ -403,10 +435,11 @@ async function CreateFun(e) {
 
 	// Client-side validation - check BEFORE OTP to give immediate feedback
 	if (!fname || !lname || !email || !number || !password || !confirmPassword) {
-		Swal.fire({
-			icon: "error",
-			title: "Validation Error!",
-			text: "First name, last name, email, phone number, password, and confirm password are required.",
+		Feedback.toast({
+			title: "Missing information",
+			message:
+				"First name, last name, email, phone number, password, and confirm password are required.",
+			variant: "error",
 		});
 		return;
 	}
@@ -414,10 +447,10 @@ async function CreateFun(e) {
 	// Email format validation
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	if (!emailRegex.test(email)) {
-		Swal.fire({
-			icon: "error",
-			title: "Invalid Email!",
-			text: "Please enter a valid email address.",
+		Feedback.toast({
+			title: "Invalid email",
+			message: "Please enter a valid email address.",
+			variant: "error",
 		});
 		return;
 	}
@@ -425,36 +458,31 @@ async function CreateFun(e) {
 	// Phone number validation
 	const phoneRegex = /^[0-9]{10,15}$/;
 	if (!phoneRegex.test(number)) {
-		Swal.fire({
-			icon: "error",
-			title: "Invalid Phone Number!",
-			text: "Please enter a valid phone number (10-15 digits).",
+		Feedback.toast({
+			title: "Invalid phone number",
+			message: "Please enter a valid phone number (10-15 digits).",
+			variant: "error",
 		});
 		return;
 	}
 
 	// Password validation check (using real-time validation state)
 	if (!passwordValid) {
-		Swal.fire({
-			icon: "error",
-			title: "Password Requirements Not Met!",
-			html:
-				"Please ensure your password meets all requirements:<br>" +
-				"• At least 8 characters<br>" +
-				"• 1 uppercase letter<br>" +
-				"• 1 lowercase letter<br>" +
-				"• 1 number<br>" +
-				"• 1 special character",
+		Feedback.toast({
+			title: "Password requirements not met",
+			message:
+				"Please ensure your password has 8 characters, uppercase, lowercase, number, and special character.",
+			variant: "error",
 		});
 		return;
 	}
 
 	// Check for weak password
 	if (isWeakPassword(password)) {
-		Swal.fire({
-			icon: "error",
-			title: "Weak Password!",
-			text: "Please choose a stronger password that is not commonly used.",
+		Feedback.toast({
+			title: "Weak password",
+			message: "Please choose a stronger password that is not commonly used.",
+			variant: "error",
 		});
 		return;
 	}
@@ -465,20 +493,20 @@ async function CreateFun(e) {
 
 	// Explicit password match check - this MUST pass before proceeding
 	if (password !== confirmPassword) {
-		Swal.fire({
-			icon: "error",
-			title: "Password Mismatch!",
-			text: "Passwords do not match. Please try again.",
+		Feedback.toast({
+			title: "Password mismatch",
+			message: "Passwords do not match. Please try again.",
+			variant: "error",
 		});
 		return; // Stop form submission
 	}
 
 	// Also verify the validation state variable
 	if (!passwordsMatch) {
-		Swal.fire({
-			icon: "error",
-			title: "Password Mismatch!",
-			text: "Passwords do not match. Please try again.",
+		Feedback.toast({
+			title: "Password mismatch",
+			message: "Passwords do not match. Please try again.",
+			variant: "error",
 		});
 		return; // Stop form submission
 	}
@@ -496,15 +524,7 @@ async function CreateFun(e) {
 		return; // User cancelled or OTP verification failed
 	}
 
-	// Show loading state
-	Swal.fire({
-		title: "Creating Account...",
-		text: "Please wait while we set up your account.",
-		allowOutsideClick: false,
-		didOpen: () => {
-			Swal.showLoading();
-		},
-	});
+	const closeLoader = Feedback.loader("Creating account...");
 
 	const formdata = new FormData(createForm);
 
@@ -519,43 +539,45 @@ async function CreateFun(e) {
 		try {
 			data = JSON.parse(text);
 		} catch (e) {
+			closeLoader();
 			console.log("Server error:\n" + text);
-			Swal.fire({
-				icon: "error",
-				title: "Server Error!",
-				text: "An unexpected error occurred. Please try again.",
+			Feedback.toast({
+				title: "Server error",
+				message: "An unexpected error occurred. Please try again.",
+				variant: "error",
 			});
 			return;
 		}
 
+		closeLoader();
+
 		if (data.status === "success") {
-			Swal.fire({
+			await Feedback.modal({
+				title: "Account created",
+				message: data.message,
 				icon: "success",
-				title: "Success!",
-				text: data.message,
-				confirmButtonText: "Continue to Login",
-			}).then(() => {
-				window.location.href = "../views/auth/login.php";
+				confirmText: "Continue to Login",
+				showCancel: false,
 			});
+			window.location.href = "../views/auth/login.php";
 		} else {
-			// Log detailed debug info if provided by the server
 			if (data.debug) {
 				console.log("Create account debug:", data.debug);
 			}
-			// Always log the full response for troubleshooting
 			console.log("Create account response:", data);
-			Swal.fire({
-				icon: "error",
-				title: "Error!",
-				text: data.message,
+			Feedback.toast({
+				title: "Registration failed",
+				message: data.message,
+				variant: "error",
 			});
 		}
 	} catch (error) {
+		closeLoader();
 		console.error("Network error:", error);
-		Swal.fire({
-			icon: "error",
-			title: "Network Error!",
-			text: "Please check your internet connection and try again.",
+		Feedback.toast({
+			title: "Network error",
+			message: "Please check your internet connection and try again.",
+			variant: "error",
 		});
 	}
 }

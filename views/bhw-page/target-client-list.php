@@ -101,10 +101,9 @@ if ($user_id) {
                             <th rowspan="2">Mother's Name</th>
                             <th rowspan="2">Address</th>
                             <th colspan="1">BCG</th>
-                            <th colspan="2">HEPAB1</th>
+                            <th colspan="1">Hepatitis B</th>
                             <th colspan="3">PENTAVALENT</th>
                             <th colspan="3">OPV</th>
-                            <th colspan="2">ROTA VIRUS</th>
                             <th colspan="3">PCV</th>
                             <th colspan="2">MCV</th>
                             <th rowspan="2">Weight (kg)</th>
@@ -114,16 +113,13 @@ if ($user_id) {
                         </tr>
                         <tr>
                             <th>1st Dose</th>
-                            <th>w/in 24 hrs</th>
-                            <th>More than 24hrs</th>
+                            <th>Dose</th>
                             <th>1</th>
                             <th>2</th>
                             <th>3</th>
                             <th>1</th>
                             <th>2</th>
                             <th>3</th>
-                            <th>1</th>
-                            <th>2</th>
                             <th>1</th>
                             <th>2</th>
                             <th>3</th>
@@ -320,16 +316,13 @@ if ($user_id) {
                     <td>${item.mother_name || ''}</td>
                     <td>${item.address || ''}</td>
                     <td>${getVaccineCell(item.BCG)}</td>
-                    <td>${getVaccineCell(item['HEPAB1_w_in_24hrs'])}</td>
-                    <td>${getVaccineCell(item['HEPAB1_more_than_24hrs'])}</td>
+                    <td>${getVaccineCell(item['Hepatitis B'])}</td>
                     <td>${getVaccineCell(item['Penta 1'])}</td>
                     <td>${getVaccineCell(item['Penta 2'])}</td>
                     <td>${getVaccineCell(item['Penta 3'])}</td>
                     <td>${getVaccineCell(item['OPV 1'])}</td>
                     <td>${getVaccineCell(item['OPV 2'])}</td>
                     <td>${getVaccineCell(item['OPV 3'])}</td>
-                    <td>${getVaccineCell(item['Rota 1'])}</td>
-                    <td>${getVaccineCell(item['Rota 2'])}</td>
                     <td>${getVaccineCell(item['PCV 1'])}</td>
                     <td>${getVaccineCell(item['PCV 2'])}</td>
                     <td>${getVaccineCell(item['PCV 3'])}</td>
@@ -426,8 +419,8 @@ if ($user_id) {
 
             const headers = [
                 'Child Name', 'Sex', 'Date of Birth', 'Mother\'s Name', 'Address',
-                'BCG', 'HEPAB1 (w/in 24hrs)', 'HEPAB1 (More than 24hrs)', 'Penta 1', 'Penta 2', 'Penta 3',
-                'OPV 1', 'OPV 2', 'OPV 3', 'Rota 1', 'Rota 2', 'PCV 1', 'PCV 2', 'PCV 3',
+                'BCG', 'Hepatitis B', 'Penta 1', 'Penta 2', 'Penta 3',
+                'OPV 1', 'OPV 2', 'OPV 3', 'PCV 1', 'PCV 2', 'PCV 3',
                 'MCV1 (AMV)', 'MCV2 (MMR)', 'Weight (kg)', 'Height (cm)', 'Status', 'Remarks'
             ];
 
@@ -440,16 +433,13 @@ if ($user_id) {
                     `"${item.mother_name}"`,
                     `"${item.address}"`,
                     `"${item.BCG}"`,
-                    `"${item['HEPAB1_w_in_24hrs']}"`,
-                    `"${item['HEPAB1_more_than_24hrs']}"`,
+                    `"${item['Hepatitis B']}"`,
                     `"${item['Penta 1']}"`,
                     `"${item['Penta 2']}"`,
                     `"${item['Penta 3']}"`,
                     `"${item['OPV 1']}"`,
                     `"${item['OPV 2']}"`,
                     `"${item['OPV 3']}"`,
-                    `"${item['Rota 1']}"`,
-                    `"${item['Rota 2']}"`,
                     `"${item['PCV 1']}"`,
                     `"${item['PCV 2']}"`,
                     `"${item['PCV 3']}"`,

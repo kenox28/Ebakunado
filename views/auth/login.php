@@ -9,6 +9,7 @@ session_start();
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
 	<link rel="stylesheet" href="../../css/fonts.css" />
+	<link rel="stylesheet" href="../../css/modals.css" />
 	<link rel="stylesheet" href="../../css/variables.css" />
 	<link rel="stylesheet" href="../../css/login-style.css?v=1.0.1" />
 	<link rel="stylesheet" href="../../css/queries.css?v=1.0.1" />
@@ -151,8 +152,8 @@ session_start();
 	</main>
 
 		<script src="../../js/auth-handler/password-toggle.js"></script>
+		<script src="../../js/utils/ui-feedback.js"></script>
 		<script src="../../js/supabase_js/login.js?v=1.0.24"></script>
-		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 		
 	</body>
 </html>

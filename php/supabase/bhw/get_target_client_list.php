@@ -52,11 +52,9 @@ try {
 			// Build vaccination status per child
 			$vac = [
 				'BCG' => '',
-				'HEPAB1_w_in_24hrs' => '',
-				'HEPAB1_more_than_24hrs' => '',
+				'Hepatitis B' => '',
 				'Penta 1' => '', 'Penta 2' => '', 'Penta 3' => '',
 				'OPV 1' => '', 'OPV 2' => '', 'OPV 3' => '',
-				'Rota 1' => '', 'Rota 2' => '',
 				'PCV 1' => '', 'PCV 2' => '', 'PCV 3' => '',
 				'MCV1_AMV' => '', 'MCV2_MMR' => ''
 			];
@@ -70,16 +68,13 @@ try {
 				foreach ($immRecs as $rec) {
 					$vk = '';
 					if ($rec['vaccine_name'] === 'BCG') { $vk = 'BCG'; }
-					elseif ($rec['vaccine_name'] === 'HEPAB1 (w/in 24 hrs)') { $vk = 'HEPAB1_w_in_24hrs'; }
-					elseif ($rec['vaccine_name'] === 'HEPAB1 (More than 24hrs)') { $vk = 'HEPAB1_more_than_24hrs'; }
+					elseif ($rec['vaccine_name'] === 'Hepatitis B') { $vk = 'Hepatitis B'; }
 					elseif ($rec['vaccine_name'] === 'Pentavalent (DPT-HepB-Hib) - 1st') { $vk = 'Penta 1'; }
 					elseif ($rec['vaccine_name'] === 'Pentavalent (DPT-HepB-Hib) - 2nd') { $vk = 'Penta 2'; }
 					elseif ($rec['vaccine_name'] === 'Pentavalent (DPT-HepB-Hib) - 3rd') { $vk = 'Penta 3'; }
 					elseif ($rec['vaccine_name'] === 'OPV - 1st') { $vk = 'OPV 1'; }
 					elseif ($rec['vaccine_name'] === 'OPV - 2nd') { $vk = 'OPV 2'; }
 					elseif ($rec['vaccine_name'] === 'OPV - 3rd') { $vk = 'OPV 3'; }
-					elseif ($rec['vaccine_name'] === 'Rota Virus Vaccine - 1st') { $vk = 'Rota 1'; }
-					elseif ($rec['vaccine_name'] === 'Rota Virus Vaccine - 2nd') { $vk = 'Rota 2'; }
 					elseif ($rec['vaccine_name'] === 'PCV - 1st') { $vk = 'PCV 1'; }
 					elseif ($rec['vaccine_name'] === 'PCV - 2nd') { $vk = 'PCV 2'; }
 					elseif ($rec['vaccine_name'] === 'PCV - 3rd') { $vk = 'PCV 3'; }
@@ -120,11 +115,9 @@ try {
 				'mother_name' => $child['mother_name'] ?? '',
 				'address' => $child['address'] ?? '',
 				'BCG' => $vac['BCG'],
-				'HEPAB1_w_in_24hrs' => $vac['HEPAB1_w_in_24hrs'],
-				'HEPAB1_more_than_24hrs' => $vac['HEPAB1_more_than_24hrs'],
+				'Hepatitis B' => $vac['Hepatitis B'],
 				'Penta 1' => $vac['Penta 1'], 'Penta 2' => $vac['Penta 2'], 'Penta 3' => $vac['Penta 3'],
 				'OPV 1' => $vac['OPV 1'], 'OPV 2' => $vac['OPV 2'], 'OPV 3' => $vac['OPV 3'],
-				'Rota 1' => $vac['Rota 1'], 'Rota 2' => $vac['Rota 2'],
 				'PCV 1' => $vac['PCV 1'], 'PCV 2' => $vac['PCV 2'], 'PCV 3' => $vac['PCV 3'],
 				'MCV1_AMV' => $vac['MCV1_AMV'], 'MCV2_MMR' => $vac['MCV2_MMR'],
 				'weight' => $child['birth_weight'] ?? '',

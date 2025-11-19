@@ -307,6 +307,17 @@
 						</div>
 					</div>
 
+					<!-- Growth Assessment Section -->
+					<div id="growthAssessmentSection" style="display:none; background:#f0f7ff; border:1px solid #b3d9ff; border-radius:4px; padding:12px; margin-top:12px; margin-bottom:10px;">
+						<h4 style="margin:0 0 10px 0; font-size:14px; color:#0056b3; display:flex; align-items:center; gap:6px;">
+							<span style="font-size:18px;">📊</span>
+							Growth Assessment
+						</h4>
+						<div id="growthAssessmentContent" style="font-size:12px; color:#333;">
+							<p style="margin:0; color:#666;">Enter height and weight to see growth assessment</p>
+						</div>
+					</div>
+
 					<!-- Dose and Lot fields removed: dose is auto-determined from record, lot/site not in schema -->
 
                     <div style="display:grid; grid-template-columns: 1fr; gap:10px; margin-top:10px;">
@@ -329,10 +340,18 @@
 					<input type="hidden" id="im_record_id" value="${recordId}" />
 					<input type="hidden" id="im_user_id" value="${userId}" />
 					<input type="hidden" id="im_baby_id" value="${babyId}" />
+					<input type="hidden" id="im_child_birth_date" value="" />
+					<input type="hidden" id="im_child_gender" value="" />
 				`;
 
 		document.getElementById('immunizationFormContainer').innerHTML = html;
 		document.getElementById('immunizationOverlay').style.display = 'flex';
+		
+		// Fetch child details for growth assessment
+		fetchChildDetailsForGrowth(babyId);
+		
+		// Add event listeners for height and weight inputs
+		setupGrowthAssessmentListeners();
 	}
 
 	function closeImmunizationForm() {
@@ -373,23 +392,39 @@
 			formData.append('update_complementary_feeding', feedingInput.value || '');
 		}
 
+		// Add growth assessment data
+		const growthWfa = document.getElementById('im_growth_wfa');
+		const growthLfa = document.getElementById('im_growth_lfa');
+		const growthWfl = document.getElementById('im_growth_wfl');
+		const growthAgeMonths = document.getElementById('im_growth_age_months');
+		
+		if (growthWfa) formData.append('growth_wfa', growthWfa.value || '');
+		if (growthLfa) formData.append('growth_lfa', growthLfa.value || '');
+		if (growthWfl) formData.append('growth_wfl', growthWfl.value || '');
+		if (growthAgeMonths) formData.append('growth_age_months', growthAgeMonths.value || '');
 
-				try{
-                const res = await fetch('/ebakunado/php/supabase/shared/save_immunization.php', { method: 'POST', body: formData });
-					const data = await res.json().catch(() => ({ status: 'error', message: 'Invalid server response' }));
-					if (data.status === 'success'){
-						closeImmunizationForm();
-						await getChildHealthRecord();
-						applyFilters();
-						alert('Immunization saved successfully');
-					}else{
-						alert('Save failed: ' + (data.message || 'Unknown error'));
-					}
-				}catch(err){
-					alert('Network error saving immunization');
-					console.error('save_immunization error:', err);
-				}
+		try {
+			const res = await fetch('/ebakunado/php/supabase/shared/save_immunization.php', { method: 'POST', body: formData });
+			const responseText = await res.text();
+			let data;
+			try {
+				data = JSON.parse(responseText);
+			} catch (parseErr) {
+				data = { status: 'error', message: 'Invalid server response' };
 			}
+			
+			if (data.status === 'success') {
+				closeImmunizationForm();
+				await getChildHealthRecord();
+				applyFilters();
+				alert('Immunization saved successfully');
+			} else {
+				alert('Save failed: ' + (data.message || 'Unknown error'));
+			}
+		} catch(err) {
+			alert('Network error saving immunization: ' + err.message);
+		}
+	}
 
 	function renderTable(records) {
 		const body = document.querySelector('#childhealthrecordBody');
@@ -446,8 +481,6 @@
 				const response = await fetch('/ebakunado/php/supabase/bhw/child_information.php', { method: 'POST', body: formData });
 				const data = await response.json();
 				if (data.status === 'success') {
-					
-					console.log(data.data);
 					document.querySelector('#childName').textContent = data.data[0].child_fname + ' ' + data.data[0].child_lname;
 					document.querySelector('#childGender').textContent = data.data[0].child_gender;
 					document.querySelector('#childBirthDate').textContent = data.data[0].child_birth_date;
@@ -462,8 +495,6 @@
 					document.querySelector('#acceptButton').addEventListener('click', () => { acceptRecord(baby_id); });
 					document.querySelector('.childinformation-container').style.display = 'flex';
 					document.querySelector('.table-container').style.display = 'none';
-				} else {
-					console.log(data.message);
 				}
 
 
@@ -612,6 +643,205 @@
 				if (data.status === 'success') { window.location.href = '../../views/auth/login.php'; }
 				else { alert('Logout failed: ' + data.message); }
 			}
+
+			/**
+			 * Fetch child details for growth assessment
+			 */
+			async function fetchChildDetailsForGrowth(babyId) {
+				if (!babyId) return;
+
+				try {
+					const formData = new FormData();
+					formData.append('baby_id', babyId);
+					const response = await fetch('/ebakunado/php/supabase/bhw/get_child_details.php', {
+						method: 'POST',
+						body: formData
+					});
+					const data = await response.json();
+					
+					if (data.status === 'success' && data.data && data.data.length > 0) {
+						const child = data.data[0];
+						const birthDateInput = document.getElementById('im_child_birth_date');
+						const genderInput = document.getElementById('im_child_gender');
+						
+						if (birthDateInput) birthDateInput.value = child.child_birth_date || '';
+						if (genderInput) genderInput.value = child.child_gender || '';
+					}
+				} catch (error) {
+					console.error('Error fetching child details for growth assessment:', error);
+				}
+			}
+
+			/**
+			 * Setup event listeners for growth assessment
+			 */
+			function setupGrowthAssessmentListeners() {
+				const heightInput = document.getElementById('im_height');
+				const weightInput = document.getElementById('im_weight');
+
+				if (heightInput && weightInput) {
+					// Debounce function to avoid too many calculations
+					let assessmentTimeout;
+					const calculateGrowth = () => {
+						clearTimeout(assessmentTimeout);
+						assessmentTimeout = setTimeout(() => {
+							performGrowthAssessment();
+						}, 500); // Wait 500ms after user stops typing
+					};
+
+					heightInput.addEventListener('input', calculateGrowth);
+					weightInput.addEventListener('input', calculateGrowth);
+				}
+			}
+
+			/**
+			 * Perform growth assessment
+			 */
+			async function performGrowthAssessment() {
+				const birthDate = document.getElementById('im_child_birth_date')?.value;
+				const gender = document.getElementById('im_child_gender')?.value;
+				const weight = parseFloat(document.getElementById('im_weight')?.value);
+				const height = parseFloat(document.getElementById('im_height')?.value);
+				const assessmentSection = document.getElementById('growthAssessmentSection');
+				const assessmentContent = document.getElementById('growthAssessmentContent');
+
+				if (!birthDate || !gender) {
+					// Child details not loaded yet
+					if (assessmentSection) assessmentSection.style.display = 'none';
+					return;
+				}
+
+				if (!weight && !height) {
+					if (assessmentSection) assessmentSection.style.display = 'none';
+					return;
+				}
+
+				try {
+					await growthCalculator.loadStandards();
+					const assessment = await growthCalculator.assessGrowth(birthDate, gender, weight, height);
+
+					if (assessment.error) {
+						if (assessmentContent) {
+							assessmentContent.innerHTML = `<p style="margin:0; color:#dc3545;">${assessment.error}</p>`;
+						}
+						if (assessmentSection) assessmentSection.style.display = 'block';
+						return;
+					}
+
+					// Display assessment results
+					let html = '<div style="display:flex; flex-direction:column; gap:8px;">';
+					
+					if (assessment.ageMonths !== null && assessment.ageMonths !== undefined) {
+						html += `<div style="font-weight:bold; color:#0056b3; margin-bottom:4px;">Age: ${assessment.ageMonths} months</div>`;
+					}
+
+					// Weight-for-Age
+					if (assessment.weightForAge) {
+						const wfa = assessment.weightForAge;
+						const colorMap = { 'normal': '#28a745', 'underweight': '#ffc107', 'severely_underweight': '#dc3545' };
+						const bgColor = colorMap[wfa.status] || '#6c757d';
+						html += `
+							<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; background:${bgColor}15; border-left:3px solid ${bgColor}; border-radius:3px;">
+								<span style="font-weight:bold;">Weight-for-Age:</span>
+								<span style="color:${bgColor}; font-weight:bold;">${wfa.icon} ${wfa.label}</span>
+							</div>
+						`;
+					}
+
+					// Length-for-Age (only for 0-11 months)
+					if (assessment.lengthForAge) {
+						const lfa = assessment.lengthForAge;
+						const colorMap = { 'normal': '#28a745', 'stunted': '#ffc107', 'severely_stunted': '#dc3545', 'tall': '#17a2b8' };
+						const bgColor = colorMap[lfa.status] || '#6c757d';
+						html += `
+							<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; background:${bgColor}15; border-left:3px solid ${bgColor}; border-radius:3px;">
+								<span style="font-weight:bold;">Length-for-Age:</span>
+								<span style="color:${bgColor}; font-weight:bold;">${lfa.icon} ${lfa.label}</span>
+							</div>
+						`;
+					}
+
+					// Weight-for-Length
+					if (assessment.weightForLength) {
+						const wfl = assessment.weightForLength;
+						const colorMap = { 'normal': '#28a745', 'sam': '#dc3545', 'mam': '#ffc107', 'overweight': '#ff9800', 'obese': '#f44336' };
+						const bgColor = colorMap[wfl.status] || '#6c757d';
+						html += `
+							<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; background:${bgColor}15; border-left:3px solid ${bgColor}; border-radius:3px;">
+								<span style="font-weight:bold;">Weight-for-Length:</span>
+								<span style="color:${bgColor}; font-weight:bold;">${wfl.icon} ${wfl.label}</span>
+							</div>
+						`;
+					}
+
+					html += '</div>';
+
+					if (assessmentContent) {
+						assessmentContent.innerHTML = html;
+					}
+					if (assessmentSection) {
+						assessmentSection.style.display = 'block';
+					}
+
+					// Store assessment data in hidden fields for saving
+					storeGrowthAssessmentData(assessment);
+
+				} catch (error) {
+					console.error('Error performing growth assessment:', error);
+					if (assessmentContent) {
+						assessmentContent.innerHTML = '<p style="margin:0; color:#dc3545;">Error calculating growth assessment</p>';
+					}
+					if (assessmentSection) assessmentSection.style.display = 'block';
+				}
+			}
+
+			/**
+			 * Store growth assessment data in hidden fields
+			 */
+			function storeGrowthAssessmentData(assessment) {
+				// Create or update hidden fields for growth assessment
+				let container = document.getElementById('immunizationFormContainer');
+				if (!container) return;
+
+				// Remove existing growth assessment hidden fields
+				const existingFields = container.querySelectorAll('[id^="im_growth_"]');
+				existingFields.forEach(field => field.remove());
+
+				// Add new hidden fields
+				if (assessment.weightForAge) {
+					const wfaField = document.createElement('input');
+					wfaField.type = 'hidden';
+					wfaField.id = 'im_growth_wfa';
+					wfaField.value = assessment.weightForAge.status;
+					container.appendChild(wfaField);
+				}
+
+				if (assessment.lengthForAge) {
+					const lfaField = document.createElement('input');
+					lfaField.type = 'hidden';
+					lfaField.id = 'im_growth_lfa';
+					lfaField.value = assessment.lengthForAge.status;
+					container.appendChild(lfaField);
+				}
+
+				if (assessment.weightForLength) {
+					const wflField = document.createElement('input');
+					wflField.type = 'hidden';
+					wflField.id = 'im_growth_wfl';
+					wflField.value = assessment.weightForLength.status;
+					container.appendChild(wflField);
+				}
+
+				// Store age in months
+				if (assessment.ageMonths !== null && assessment.ageMonths !== undefined) {
+					const ageField = document.createElement('input');
+					ageField.type = 'hidden';
+					ageField.id = 'im_growth_age_months';
+					ageField.value = assessment.ageMonths;
+					container.appendChild(ageField);
+				}
+			}
 		</script>
+		<script src="/ebakunado/js/growth-standards/who-growth-calculator.js"></script>
 
 <?php include 'Include/footer.php'; ?>

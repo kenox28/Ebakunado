@@ -16,7 +16,7 @@ $phone = $_SESSION['phone_number'] ?? '';
 $noprofile = $_SESSION['profileimg'] ?? '';
 $gender = $_SESSION['gender'] ?? '';
 $place = $_SESSION['place'] ?? '';
-$user_fname = $_SESSION['fname'] ?? '';
+$user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
 ?>
 
 <!DOCTYPE html>
@@ -31,6 +31,7 @@ $user_fname = $_SESSION['fname'] ?? '';
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/notification-style.css" />
+    <link rel="stylesheet" href="../../css/modals.css" />
     <link rel="stylesheet" href="../../css/user/add-child-request.css?v=1.0.1" />
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -146,7 +147,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                         <?php if ($gender == 'Male'): ?>
                             <div class="form-group">
                                 <label for="father_name">Father Name</label>
-                                <input type="text" name="father_name" value="<?php echo $user_fname; ?>">
+                                <input type="text" name="father_name" value="<?php echo htmlspecialchars(trim($user_fname)); ?>">
                             </div>
                             <div class="form-group">
                                 <label for="mother_name">Mother Name *</label>
@@ -155,7 +156,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                         <?php else: ?>
                             <div class="form-group">
                                 <label for="mother_name">Mother Name *</label>
-                                <input value="example" type="text" name="mother_name" value="<?php echo $user_fname; ?>" required>
+                                <input value="example" type="text" name="mother_name" value="<?php echo htmlspecialchars(trim($user_fname)); ?>" required>
                             </div>
                             <div class="form-group">
                                 <label for="father_name">Father Name</label>
@@ -263,16 +264,13 @@ $user_fname = $_SESSION['fname'] ?? '';
 
                             <div class="checkbox-grid">
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="BCG"> BCG (Tuberculosis)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="HEPAB1 (w/in 24 hrs)"> HEPAB1 (w/in 24 hrs)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="HEPAB1 (More than 24hrs)"> HEPAB1 (More than 24hrs)</label>
+                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Hepatitis B"> Hepatitis B (Birth dose)</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 1st"> Pentavalent (DPT-HepB-Hib) - 1st</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 1st"> OPV - 1st (Oral Polio)</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 1st"> PCV - 1st (Pneumococcal)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Rota Virus Vaccine - 1st"> Rota Virus Vaccine - 1st</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 2nd"> Pentavalent (DPT-HepB-Hib) - 2nd</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 2nd"> OPV - 2nd (Oral Polio)</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 2nd"> PCV - 2nd (Pneumococcal)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Rota Virus Vaccine - 2nd"> Rota Virus Vaccine - 2nd</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 3rd"> Pentavalent (DPT-HepB-Hib) - 3rd</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 3rd"> OPV - 3rd (Oral Polio)</label>
                                 <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 3rd"> PCV - 3rd (Pneumococcal)</label>
@@ -296,6 +294,28 @@ $user_fname = $_SESSION['fname'] ?? '';
         </section>
     </main>
 
+    <div class="modal-overlay" id="requestSuccessModal" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <button class="modal-close" id="requestModalClose" aria-label="Close success modal">
+                <span class="material-symbols-rounded">close</span>
+            </button>
+            <div class="modal-icon">
+                <span class="material-symbols-rounded">check_circle</span>
+            </div>
+            <h3>Request Submitted</h3>
+            <p>Your child's health record was added successfully.</p>
+            <div class="modal-summary" id="requestModalSummary"></div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn primary" id="requestModalPrimary">
+                    View My Children
+                </button>
+                <button type="button" class="modal-btn secondary" id="requestModalSecondary">
+                    Add Another Request
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script>
@@ -303,6 +323,61 @@ $user_fname = $_SESSION['fname'] ?? '';
         document.getElementById('requestform').addEventListener('submit', function(e) {
             e.preventDefault();
             Request_Immunization();
+        });
+
+        const requestSuccessModal = document.getElementById('requestSuccessModal');
+        const requestModalSummary = document.getElementById('requestModalSummary');
+        const requestModalPrimary = document.getElementById('requestModalPrimary');
+        const requestModalSecondary = document.getElementById('requestModalSecondary');
+        const requestModalClose = document.getElementById('requestModalClose');
+
+        function openRequestSuccessModal(details) {
+            if (!requestSuccessModal || !requestModalSummary) return;
+            const lines = [];
+            if (details.babyId) {
+                lines.push(`<p><strong>Baby ID:</strong> ${details.babyId}</p>`);
+            }
+            if (details.totalRecords !== undefined && details.totalRecords !== null) {
+                lines.push(`<p><strong>Total vaccine records:</strong> ${details.totalRecords}</p>`);
+            }
+            if (details.vaccinesTransferred && Number(details.vaccinesTransferred) > 0) {
+                lines.push(`<p><strong>Vaccines taken:</strong> ${details.vaccinesTransferred}</p>`);
+                lines.push(`<p><strong>Vaccines scheduled:</strong> ${details.vaccinesScheduled ?? 0}</p>`);
+                lines.push('<p>Taken vaccines are marked as "taken" with their actual schedule dates. Remaining vaccines are scheduled for future appointments.</p>');
+            } else {
+                lines.push('<p>All vaccines are scheduled for future appointments.</p>');
+            }
+            requestModalSummary.innerHTML = lines.join('');
+            requestSuccessModal.classList.add('is-visible');
+            requestSuccessModal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeRequestSuccessModal() {
+            if (!requestSuccessModal) return;
+            requestSuccessModal.classList.remove('is-visible');
+            requestSuccessModal.setAttribute('aria-hidden', 'true');
+        }
+
+        requestModalClose?.addEventListener('click', closeRequestSuccessModal);
+        requestSuccessModal?.addEventListener('click', (event) => {
+            if (event.target === requestSuccessModal) {
+                closeRequestSuccessModal();
+            }
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeRequestSuccessModal();
+            }
+        });
+        requestModalPrimary?.addEventListener('click', () => {
+            window.location.href = 'children_list.php';
+        });
+        requestModalSecondary?.addEventListener('click', () => {
+            closeRequestSuccessModal();
+            document.getElementById('requestform').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
         });
 
         // Upload UI wiring
@@ -470,20 +545,12 @@ $user_fname = $_SESSION['fname'] ?? '';
                 });
 
                 if (data.status === 'success') {
-                    let message = 'Child health record saved successfully!\n';
-                    message += 'Baby ID: ' + data.baby_id + '\n';
-                    message += 'Total vaccine records created: ' + data.total_records_created + '\n';
-
-                    if (data.vaccines_transferred > 0) {
-                        message += 'Vaccines taken: ' + data.vaccines_transferred + '\n';
-                        message += 'Vaccines scheduled: ' + data.vaccines_scheduled + '\n';
-                        message += 'Taken vaccines are marked as "taken" status with actual schedule dates.\n';
-                        message += 'Remaining vaccines are scheduled for future appointments.\n';
-                    } else {
-                        message += 'All vaccines scheduled for future appointments.\n';
-                    }
-
-                    alert(message);
+                    openRequestSuccessModal({
+                        babyId: data.baby_id,
+                        totalRecords: data.total_records_created,
+                        vaccinesTransferred: data.vaccines_transferred,
+                        vaccinesScheduled: data.vaccines_scheduled
+                    });
                     formEl.reset();
                     // reset file UI explicitly since reset may not trigger change
                     (function() {

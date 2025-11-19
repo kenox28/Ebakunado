@@ -14,9 +14,7 @@ session_start();
   <link rel="stylesheet" href="../css/variables.css" />
   <link rel="stylesheet" href="../css/create-account-style.css?v=1.0.3" />
   <link rel="stylesheet" href="/css/queries.css" />
-
-  <!-- SweetAlert2 for better notifications -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="../css/modals.css?v=1.0.1" />
 </head>
 
 <body class="page-create-account">
@@ -278,6 +276,7 @@ session_start();
 
   <script src="/ebakunado/js/auth-handler/password-toggle.js"></script>
   <script src="/ebakunado/js/auth-handler/create-account-stepper.js?v=1.0.1"></script>
+  <script src="/ebakunado/js/utils/ui-feedback.js"></script>
   <script src="/ebakunado/js/supabase_js/create_account.js?v=1.0.11"></script>
 </body>
 
