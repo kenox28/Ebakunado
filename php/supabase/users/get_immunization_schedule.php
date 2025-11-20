@@ -32,7 +32,7 @@ try {
     foreach ($baby_ids as $baby_id) {
         $vaccinations = supabaseSelect(
             'immunization_records',
-            'id,baby_id,vaccine_name,dose_number,schedule_date,catch_up_date,date_given,status',
+            'id,baby_id,vaccine_name,dose_number,schedule_date,batch_schedule_date,catch_up_date,date_given,status',
             ['baby_id' => $baby_id],
             'schedule_date.asc'
         );
@@ -55,6 +55,7 @@ try {
                     'vaccine_name' => $vaccination['vaccine_name'],
                     'dose_number' => $vaccination['dose_number'],
                     'schedule_date' => $vaccination['schedule_date'],
+                    'batch_schedule_date' => $vaccination['batch_schedule_date'],
                     'catch_up_date' => $vaccination['catch_up_date'],
                     'date_given' => $vaccination['date_given'],
                     'status' => $vaccination['status']
@@ -66,7 +67,9 @@ try {
     // Sort by child name, then by schedule date
     usort($immunization_records, function($a, $b) {
         if ($a['child_name'] === $b['child_name']) {
-            return strtotime($a['schedule_date']) - strtotime($b['schedule_date']);
+            $aDate = $a['batch_schedule_date'] ?? $a['schedule_date'] ?? $a['catch_up_date'] ?? '';
+            $bDate = $b['batch_schedule_date'] ?? $b['schedule_date'] ?? $b['catch_up_date'] ?? '';
+            return strcmp($aDate, $bDate);
         }
         return strcmp($a['child_name'], $b['child_name']);
     });

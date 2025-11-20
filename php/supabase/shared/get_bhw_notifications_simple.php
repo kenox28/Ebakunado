@@ -60,17 +60,19 @@ try {
         }
     }
     
-    // 2. Check for today's immunization schedules
+    // 2. Check for today's immunization schedules (batch-aware)
     $today = date('Y-m-d');
     $today_schedules = supabaseSelect('immunization_records', 
-        'id,baby_id,vaccine_name,dose_number,schedule_date,status', 
-        ['schedule_date' => $today, 'status' => 'scheduled'], 
+        'id,baby_id,vaccine_name,dose_number,schedule_date,batch_schedule_date,status', 
+        ['status' => 'scheduled'], 
         'schedule_date.asc', 
-        10
+        200
     );
     
     if ($today_schedules && count($today_schedules) > 0) {
         foreach ($today_schedules as $schedule) {
+            $targetDate = $schedule['batch_schedule_date'] ?? $schedule['schedule_date'] ?? '';
+            if ($targetDate !== $today) { continue; }
             // Get child info
             $child_info = supabaseSelect('child_health_records', 'child_fname,child_lname', ['baby_id' => $schedule['baby_id']], null, 1);
             $child_name = 'Unknown Child';
@@ -86,7 +88,7 @@ try {
                 'message' => $schedule['vaccine_name'] . ' (Dose ' . $schedule['dose_number'] . ') for ' . $child_name,
                 'action' => 'View immunization schedule',
                 'action_url' => './immunization.php',
-                'timestamp' => $schedule['schedule_date'],
+                'timestamp' => $targetDate,
                 'unread' => true,
                 'icon' => '💉'
             ];
@@ -95,14 +97,16 @@ try {
     
     // 3. Check for missed schedules
     $missed_schedules = supabaseSelect('immunization_records', 
-        'id,baby_id,vaccine_name,dose_number,schedule_date,status', 
-        ['schedule_date.lt' => $today, 'status' => 'scheduled'], 
+        'id,baby_id,vaccine_name,dose_number,schedule_date,batch_schedule_date,status', 
+        ['status' => 'scheduled'], 
         'schedule_date.desc', 
-        5
+        200
     );
     
     if ($missed_schedules && count($missed_schedules) > 0) {
         foreach ($missed_schedules as $missed) {
+            $targetDate = $missed['batch_schedule_date'] ?? $missed['schedule_date'] ?? '';
+            if ($targetDate === '' || $targetDate >= $today) { continue; }
             // Get child info
             $child_info = supabaseSelect('child_health_records', 'child_fname,child_lname', ['baby_id' => $missed['baby_id']], null, 1);
             $child_name = 'Unknown Child';
@@ -110,7 +114,7 @@ try {
                 $child_name = $child_info[0]['child_fname'] . ' ' . $child_info[0]['child_lname'];
             }
             
-            $days_missed = (strtotime($today) - strtotime($missed['schedule_date'])) / (60 * 60 * 24);
+            $days_missed = (strtotime($today) - strtotime($targetDate)) / (60 * 60 * 24);
             
             $notifications[] = [
                 'id' => 'missed_schedule_' . $missed['id'],
@@ -120,7 +124,7 @@ try {
                 'message' => $missed['vaccine_name'] . ' (Dose ' . $missed['dose_number'] . ') for ' . $child_name . ' - ' . round($days_missed) . ' days overdue',
                 'action' => 'Schedule catch-up',
                 'action_url' => './immunization.php',
-                'timestamp' => $missed['schedule_date'],
+                'timestamp' => $targetDate,
                 'unread' => true,
                 'icon' => '⚠️'
             ];

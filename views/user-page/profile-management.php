@@ -32,14 +32,14 @@ $user_fname = $_SESSION['fname'] ?? '';
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/bhw/profile-management.css?v=1.0.4" />
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="../../css/modals.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
     <?php include 'include/header.php'; ?>
     <?php include 'include/sidebar.php'; ?>
+    <script src="../../js/utils/ui-feedback.js"></script>
 
     <main>
         <section class="profile-management-section">
@@ -268,13 +268,25 @@ $user_fname = $_SESSION['fname'] ?? '';
 
                 if (data.status === 'success') {
                     document.getElementById('profileImage').src = data.imageUrl;
-                    Swal.fire('Success!', 'Profile photo updated successfully', 'success');
+                    UIFeedback.showToast({
+                        title: 'Profile updated',
+                        message: 'Profile photo updated successfully.',
+                        variant: 'success'
+                    });
                 } else {
-                    Swal.fire('Error!', data.message, 'error');
+                    UIFeedback.showToast({
+                        title: 'Upload failed',
+                        message: data.message || 'Unable to update profile photo.',
+                        variant: 'error'
+                    });
                 }
             } catch (error) {
                 console.error('Error uploading photo:', error);
-                Swal.fire('Error!', 'Failed to upload photo', 'error');
+                UIFeedback.showToast({
+                    title: 'Upload failed',
+                    message: 'Failed to upload photo.',
+                    variant: 'error'
+                });
             }
         }
 
@@ -293,14 +305,26 @@ $user_fname = $_SESSION['fname'] ?? '';
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    Swal.fire('Success!', 'Profile updated successfully', 'success');
-                    loadProfileData(); // Refresh the display
+                    UIFeedback.showToast({
+                        title: 'Profile updated',
+                        message: 'Your profile information was saved.',
+                        variant: 'success'
+                    });
+                    loadProfileData();
                 } else {
-                    Swal.fire('Error!', data.message, 'error');
+                    UIFeedback.showToast({
+                        title: 'Update failed',
+                        message: data.message || 'Unable to update profile.',
+                        variant: 'error'
+                    });
                 }
             } catch (error) {
                 console.error('Error updating profile:', error);
-                Swal.fire('Error!', 'Failed to update profile', 'error');
+                UIFeedback.showToast({
+                    title: 'Update failed',
+                    message: 'Failed to update profile.',
+                    variant: 'error'
+                });
             }
         });
     </script>

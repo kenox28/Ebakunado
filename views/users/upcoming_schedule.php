@@ -18,7 +18,8 @@
                             <tr>
 							<th>Vaccine</th>
 							<th>Dose</th>
-							<th>Schedule Date</th>
+							<th>Guideline Date</th>
+                            <th>Batch Date</th>
 							<th>Catch Up Date</th>
 							<th>Status</th>
                             </tr>
@@ -150,15 +151,17 @@
             const status = getVaccineStatus(record);
             const statusText = getStatusText(record, status);
             
-            // Format dates
-            const scheduleDate = record.schedule_date ? formatDate(record.schedule_date) : 'Not scheduled';
+            // Format dates - prioritize batch date
+            const guidelineDate = record.schedule_date ? formatDate(record.schedule_date) : 'Not scheduled';
+            const batchDate = record.batch_schedule_date ? formatDate(record.batch_schedule_date) : '-';
             const catchUpDate = record.catch_up_date ? formatDate(record.catch_up_date) : '-';
             
             rowsHTML += `
                 <tr>
                     <td>${record.vaccine_name}</td>
                     <td>${getDoseText(record.dose_number)}</td>
-                    <td>${scheduleDate}</td>
+                    <td>${guidelineDate}</td>
+                    <td>${batchDate}</td>
                     <td>${catchUpDate}</td>
                     <td style="color: ${getStatusColor(status)}">${statusText}</td>
                 </tr>
@@ -170,12 +173,14 @@
 
     function getVaccineStatus(record) {
         const today = new Date().toISOString().split('T')[0];
+        // Prioritize batch_schedule_date over schedule_date
+        const targetDate = record.batch_schedule_date || record.schedule_date || record.catch_up_date || '';
         
         if (record.status === 'completed' || record.status === 'taken') {
             return 'completed';
-        } else if (record.status === 'missed' || (record.schedule_date && record.schedule_date < today)) {
+        } else if (record.status === 'missed' || (targetDate && targetDate < today)) {
             return 'overdue';
-        } else if (record.schedule_date && record.schedule_date >= today) {
+        } else if (targetDate && targetDate >= today) {
             return 'upcoming';
         } else {
             return 'missing';
@@ -210,13 +215,17 @@
     }
 
     function getStatusText(record, status) {
+        const guidelineDate = record.schedule_date ? formatDate(record.schedule_date) : null;
+        const batchDate = record.batch_schedule_date ? formatDate(record.batch_schedule_date) : null;
+        // Prioritize batch date for display
+        const targetDisplay = batchDate || guidelineDate || '';
         switch(status) {
             case 'completed':
                 return record.date_given ? `Completed ${formatDate(record.date_given)}` : 'Completed';
             case 'overdue':
-                return record.schedule_date ? `Overdue ${formatDate(record.schedule_date)}` : 'Overdue';
+                return targetDisplay ? `Overdue ${targetDisplay}${batchDate ? ' (Batch)' : ''}` : 'Overdue';
             case 'upcoming':
-                return record.schedule_date ? `Upcoming ${formatDate(record.schedule_date)}` : 'Upcoming';
+                return targetDisplay ? `Upcoming ${targetDisplay}${batchDate ? ' (Batch)' : ''}` : 'Upcoming';
             default:
                 return 'Missing Previous Dose';
         }

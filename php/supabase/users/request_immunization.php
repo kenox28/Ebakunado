@@ -173,6 +173,7 @@ try {
         ['PCV - 2nd', '10 weeks'],
         ['Pentavalent (DPT-HepB-Hib) - 3rd', '14 weeks'],
         ['OPV - 3rd', '14 weeks'],
+        ['IPV', '14 weeks'],
         ['PCV - 3rd', '14 weeks'],
         ['MCV1 (AMV)', '9 months'],
         ['MCV2 (MMR)', '12 months']
@@ -207,6 +208,7 @@ try {
         if (strpos($n, 'MCV2') !== false || strpos($n, '(MMR)') !== false) return 2;
         if (strpos($n, 'BCG') !== false) return 1;
         if (strpos($n, 'HEP') !== false) return 1;
+        if (strpos($n, 'IPV') !== false) return 1;
         return 1;
     }
 
@@ -230,6 +232,7 @@ try {
                 'dose_number' => derive_dose_number($vname),
                 'status' => $is_transferred ? 'taken' : 'scheduled',
                 'schedule_date' => $due,
+                'batch_schedule_date' => null,
                 'catch_up_date' => null,
                 'date_given' => $is_transferred ? $due : null,
                 'created_at' => date('Y-m-d H:i:s')

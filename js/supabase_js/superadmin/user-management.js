@@ -3,6 +3,7 @@
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", function () {
 	getUsers();
+	loadAddUserProvinces();
 });
 
 // Fetch and display users (reusing from home.js)
@@ -51,6 +52,126 @@ function toggleAllUsers() {
 	checkboxes.forEach((checkbox) => {
 		checkbox.checked = selectAll.checked;
 	});
+}
+
+// Show add user form
+function showAddUserForm() {
+	const form = document.getElementById("addUserForm");
+	form.style.display = "block";
+	form.scrollIntoView({ behavior: "smooth" });
+}
+
+// Cancel add user
+function cancelAddUser() {
+	const form = document.getElementById("addUserForm");
+	form.style.display = "none";
+
+	// Clear form fields
+	document.getElementById("add_user_fname").value = "";
+	document.getElementById("add_user_lname").value = "";
+	document.getElementById("add_user_email").value = "";
+	document.getElementById("add_user_phone").value = "";
+	document.getElementById("add_user_gender").value = "";
+	document.getElementById("add_user_password").value = "";
+	document.getElementById("add_user_confirm_password").value = "";
+	document.getElementById("add_user_province").value = "";
+	document.getElementById("add_user_city_municipality").value = "";
+	document.getElementById("add_user_barangay").value = "";
+	document.getElementById("add_user_purok").value = "";
+	
+	// Reset place dropdowns
+	document.getElementById("add_user_city_municipality").innerHTML = '<option value="">Select City/Municipality</option>';
+	document.getElementById("add_user_barangay").innerHTML = '<option value="">Select Barangay</option>';
+	document.getElementById("add_user_purok").innerHTML = '<option value="">Select Purok</option>';
+}
+
+// Save user (create new) - No OTP verification
+async function saveUser() {
+	const fname = document.getElementById("add_user_fname").value.trim();
+	const lname = document.getElementById("add_user_lname").value.trim();
+	const email = document.getElementById("add_user_email").value.trim();
+	const phone = document.getElementById("add_user_phone").value.trim();
+	const gender = document.getElementById("add_user_gender").value;
+	const password = document.getElementById("add_user_password").value;
+	const confirmPassword = document.getElementById("add_user_confirm_password").value;
+	const province = document.getElementById("add_user_province").value;
+	const city = document.getElementById("add_user_city_municipality").value;
+	const barangay = document.getElementById("add_user_barangay").value;
+	const purok = document.getElementById("add_user_purok").value;
+
+	// Validation
+	if (!fname || !lname || !email || !phone || !gender || !password || !confirmPassword || !province || !city || !barangay || !purok) {
+		Swal.fire("Error!", "Please fill in all fields", "error");
+		return;
+	}
+
+	if (password !== confirmPassword) {
+		Swal.fire("Error!", "Passwords do not match", "error");
+		return;
+	}
+
+	if (password.length < 8) {
+		Swal.fire("Error!", "Password must be at least 8 characters long", "error");
+		return;
+	}
+
+	const formData = new FormData();
+	formData.append("fname", fname);
+	formData.append("lname", lname);
+	formData.append("email", email);
+	formData.append("number", phone);
+	formData.append("password", password);
+	formData.append("confirm_password", confirmPassword);
+	formData.append("gender", gender);
+	formData.append("province", province);
+	formData.append("city_municipality", city);
+	formData.append("barangay", barangay);
+	formData.append("purok", purok);
+
+	try {
+		console.log("Sending user creation request...");
+		const response = await fetch("../../php/supabase/superadmin/create_user.php", {
+			method: "POST",
+			body: formData,
+		});
+
+		console.log("Response status:", response.status);
+		console.log("Response statusText:", response.statusText);
+		console.log("Response headers:", response.headers);
+
+		const text = await response.text();
+		console.log("Raw response text:", text);
+		
+		let data;
+		try {
+			data = JSON.parse(text);
+			console.log("Parsed JSON data:", data);
+		} catch (e) {
+			console.error("JSON Parse Error:", e);
+			console.error("Failed to parse response as JSON. Raw text:", text);
+			Swal.fire("Error!", "Server returned invalid response. Please check the console for details.", "error");
+			return;
+		}
+
+		if (data.status === "success") {
+			console.log("User created successfully!");
+			Swal.fire("Success!", "User created successfully", "success");
+			cancelAddUser();
+			getUsers();
+		} else {
+			console.error("Create user failed. Response data:", data);
+			if (data.debug) {
+				console.error("Debug information:", data.debug);
+			}
+			Swal.fire("Error!", data.message || "Failed to create user", "error");
+		}
+	} catch (error) {
+		console.error("Network/Fetch Error:", error);
+		console.error("Error name:", error.name);
+		console.error("Error message:", error.message);
+		console.error("Error stack:", error.stack);
+		Swal.fire("Error!", "Failed to save user: " + error.message, "error");
+	}
 }
 
 // Edit user function (reusing from home.js with place editing)
@@ -440,6 +561,113 @@ async function loadEditUserPuroks() {
 		for (const item of data) {
 			const selected = item.purok === currentPurok ? "selected" : "";
 			purokSelect.innerHTML += `<option value="${item.purok}" ${selected}>${item.purok}</option>`;
+		}
+	} catch (error) {
+		console.error("Error loading puroks:", error);
+	}
+}
+
+// Place loading functions for Add User Form
+async function loadAddUserProvinces() {
+	try {
+		const response = await fetch(
+			"../../php/supabase/admin/get_places.php?type=provinces"
+		);
+		const data = await response.json();
+
+		const provinceSelect = document.getElementById("add_user_province");
+		if (!provinceSelect) return;
+		
+		provinceSelect.innerHTML = '<option value="">Select Province</option>';
+
+		for (const item of data) {
+			provinceSelect.innerHTML += `<option value="${item.province}">${item.province}</option>`;
+		}
+	} catch (error) {
+		console.error("Error loading provinces:", error);
+	}
+}
+
+async function loadAddUserCities() {
+	const province = document.getElementById("add_user_province").value;
+	const citySelect = document.getElementById("add_user_city_municipality");
+	const barangaySelect = document.getElementById("add_user_barangay");
+	const purokSelect = document.getElementById("add_user_purok");
+
+	// Reset dependent dropdowns
+	citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+	barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+	purokSelect.innerHTML = '<option value="">Select Purok</option>';
+
+	if (!province) return;
+
+	try {
+		const response = await fetch(
+			`../../php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
+				province
+			)}`
+		);
+		const data = await response.json();
+
+		for (const item of data) {
+			citySelect.innerHTML += `<option value="${item.city_municipality}">${item.city_municipality}</option>`;
+		}
+	} catch (error) {
+		console.error("Error loading cities:", error);
+	}
+}
+
+async function loadAddUserBarangays() {
+	const province = document.getElementById("add_user_province").value;
+	const city = document.getElementById("add_user_city_municipality").value;
+	const barangaySelect = document.getElementById("add_user_barangay");
+	const purokSelect = document.getElementById("add_user_purok");
+
+	// Reset dependent dropdowns
+	barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+	purokSelect.innerHTML = '<option value="">Select Purok</option>';
+
+	if (!province || !city) return;
+
+	try {
+		const response = await fetch(
+			`../../php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+				province
+			)}&city_municipality=${encodeURIComponent(city)}`
+		);
+		const data = await response.json();
+
+		for (const item of data) {
+			barangaySelect.innerHTML += `<option value="${item.barangay}">${item.barangay}</option>`;
+		}
+	} catch (error) {
+		console.error("Error loading barangays:", error);
+	}
+}
+
+async function loadAddUserPuroks() {
+	const province = document.getElementById("add_user_province").value;
+	const city = document.getElementById("add_user_city_municipality").value;
+	const barangay = document.getElementById("add_user_barangay").value;
+	const purokSelect = document.getElementById("add_user_purok");
+
+	// Reset purok dropdown
+	purokSelect.innerHTML = '<option value="">Select Purok</option>';
+
+	if (!province || !city || !barangay) return;
+
+	try {
+		const response = await fetch(
+			`../../php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+				province
+			)}&city_municipality=${encodeURIComponent(
+				city
+			)}&barangay=${encodeURIComponent(barangay)}`
+		);
+		const data = await response.json();
+
+		for (const item of data) {
+			purokSelect.innerHTML += `<option value="${item.purok}">${item.purok}</option>`;
 		}
 	} catch (error) {
 		console.error("Error loading puroks:", error);

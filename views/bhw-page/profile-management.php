@@ -24,6 +24,7 @@ if ($user_types != 'midwifes') {
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
     <link rel="stylesheet" href="../../css/bhw/profile-management.css" />
+    <link rel="stylesheet" href="../../css/modals.css" />
 </head>
 
 <body>
@@ -163,7 +164,7 @@ if ($user_types != 'midwifes') {
         </section>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../../js/utils/ui-feedback.js"></script>
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="../../js/auth-handler/password-toggle.js"></script>
@@ -223,19 +224,30 @@ if ($user_types != 'midwifes') {
                 
                 if (data.status === 'success') {
                     document.getElementById('profileImage').src = data.imageUrl;
-                    // Also update header and sidebar avatars immediately without reload
                     try {
                         var headerAvatar = document.querySelector('.header .user-avatar');
                         if (headerAvatar) headerAvatar.src = data.imageUrl;
                         var sidebarAvatar = document.querySelector('.sidebar .profile-avatar');
                         if (sidebarAvatar) sidebarAvatar.src = data.imageUrl;
                     } catch (e) {}
-                    Swal.fire('Success!', 'Profile photo updated successfully', 'success');
+                    UIFeedback.showToast({
+                        title: 'Profile updated',
+                        message: 'Profile photo updated successfully.',
+                        variant: 'success'
+                    });
                 } else {
-                    Swal.fire('Error!', data.message, 'error');
+                    UIFeedback.showToast({
+                        title: 'Upload failed',
+                        message: data.message || 'Unable to update profile photo.',
+                        variant: 'error'
+                    });
                 }
             } catch (error) {
-                Swal.fire('Error!', 'Failed to upload photo', 'error');
+                UIFeedback.showToast({
+                    title: 'Upload failed',
+                    message: 'Failed to upload photo.',
+                    variant: 'error'
+                });
             }
         }
 
@@ -262,20 +274,25 @@ if ($user_types != 'midwifes') {
                 }
                 
                 if (data.status === 'success') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'Profile updated successfully',
-                        timer: 1500,
-                        showConfirmButton: false
+                    UIFeedback.showToast({
+                        title: 'Profile updated',
+                        message: 'Profile updated successfully.',
+                        variant: 'success'
                     });
-                    // Auto-refresh the profile data
                     loadProfileData();
                 } else {
-                    Swal.fire('Error!', data.message, 'error');
+                    UIFeedback.showToast({
+                        title: 'Update failed',
+                        message: data.message || 'Unable to update profile.',
+                        variant: 'error'
+                    });
                 }
             } catch (error) {
-                Swal.fire('Error!', 'Failed to update profile', 'error');
+                UIFeedback.showToast({
+                    title: 'Update failed',
+                    message: 'Failed to update profile.',
+                    variant: 'error'
+                });
             }
         });
     </script>

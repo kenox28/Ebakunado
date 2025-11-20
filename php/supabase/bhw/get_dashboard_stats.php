@@ -156,6 +156,101 @@ try {
         $overdue_count = count($missed_schedules);
     }
 
+    // 8. Monthly Vaccine Counts
+    function getMonthlyVaccineCounts($targetMonth) {
+        // Get first and last day of the month
+        $firstDay = date('Y-m-01', strtotime($targetMonth . '-01'));
+        $lastDay = date('Y-m-t', strtotime($firstDay));
+        
+        // All 14 vaccines in order
+        $allVaccines = [
+            'BCG',
+            'Hepatitis B',
+            'Pentavalent (DPT-HepB-Hib) - 1st',
+            'OPV - 1st',
+            'PCV - 1st',
+            'Pentavalent (DPT-HepB-Hib) - 2nd',
+            'OPV - 2nd',
+            'PCV - 2nd',
+            'Pentavalent (DPT-HepB-Hib) - 3rd',
+            'OPV - 3rd',
+            'IPV',
+            'PCV - 3rd',
+            'MCV1 (AMV)',
+            'MCV2 (MMR)'
+        ];
+        
+        // Get all accepted children
+        $children = supabaseSelect('child_health_records', 'baby_id', ['status' => 'accepted']) ?: [];
+        $babyIds = array_column($children, 'baby_id');
+        
+        if (empty($babyIds)) {
+            // Return all vaccines with 0 count
+            $result = [];
+            foreach ($allVaccines as $vaccine) {
+                $result[] = ['name' => $vaccine, 'count' => 0];
+            }
+            return $result;
+        }
+        
+        // Fetch immunization records for the month
+        $immunizations = [];
+        $batchSize = 200;
+        $offset = 0;
+        while (true) {
+            $batch = supabaseSelect(
+                'immunization_records',
+                'id,baby_id,vaccine_name,schedule_date,status',
+                ['baby_id' => $babyIds],
+                'schedule_date.asc',
+                $batchSize,
+                $offset
+            );
+            if (!$batch || count($batch) === 0) break;
+            $immunizations = array_merge($immunizations, $batch);
+            if (count($batch) < $batchSize) break;
+            $offset += $batchSize;
+        }
+        
+        // Filter by month and status
+        $monthRecords = array_filter($immunizations, function($r) use ($firstDay, $lastDay) {
+            $scheduleDate = $r['schedule_date'] ?? '';
+            $status = strtolower($r['status'] ?? '');
+            return $scheduleDate >= $firstDay && $scheduleDate <= $lastDay && $status === 'scheduled';
+        });
+        
+        // Count by vaccine
+        $counts = [];
+        foreach ($monthRecords as $record) {
+            $vaccineName = $record['vaccine_name'] ?? '';
+            if ($vaccineName) {
+                $counts[$vaccineName] = ($counts[$vaccineName] ?? 0) + 1;
+            }
+        }
+        
+        // Build result with all 14 vaccines
+        $result = [];
+        foreach ($allVaccines as $vaccine) {
+            $result[] = [
+                'name' => $vaccine,
+                'count' => $counts[$vaccine] ?? 0
+            ];
+        }
+        
+        return $result;
+    }
+    
+    $currentMonth = date('Y-m');
+    $nextMonth = date('Y-m', strtotime('+1 month'));
+    $currentMonthName = date('F Y');
+    $nextMonthName = date('F Y', strtotime('+1 month'));
+    
+    $currentMonthVaccines = getMonthlyVaccineCounts($currentMonth);
+    $nextMonthVaccines = getMonthlyVaccineCounts($nextMonth);
+    
+    $currentMonthTotal = array_sum(array_column($currentMonthVaccines, 'count'));
+    $nextMonthTotal = array_sum(array_column($nextMonthVaccines, 'count'));
+
     // Set proper JSON header
     header('Content-Type: application/json');
 
@@ -173,7 +268,21 @@ try {
             'recent_activities' => $recent_activities,
             'pending_approvals_list' => $pending_approvals ? array_slice($pending_approvals, 0, 5) : [],
             'today_schedules_list' => $today_schedules ? array_slice($today_schedules, 0, 5) : [],
-            'tomorrow_schedules_list' => $tomorrow_schedules ? array_slice($tomorrow_schedules, 0, 5) : []
+            'tomorrow_schedules_list' => $tomorrow_schedules ? array_slice($tomorrow_schedules, 0, 5) : [],
+            'monthly_vaccines' => [
+                'current_month' => [
+                    'month' => $currentMonth,
+                    'month_name' => $currentMonthName,
+                    'total' => $currentMonthTotal,
+                    'vaccines' => $currentMonthVaccines
+                ],
+                'next_month' => [
+                    'month' => $nextMonth,
+                    'month_name' => $nextMonthName,
+                    'total' => $nextMonthTotal,
+                    'vaccines' => $nextMonthVaccines
+                ]
+            ]
         ]
     ]);
 

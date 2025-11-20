@@ -44,6 +44,14 @@ if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available
                     </a>
                 </li>
 
+                <!-- Vaccination Planner -->
+                <li class="sidebar-menu-item<?php echo $currentPage === 'vaccination-planner.php' ? ' active' : ''; ?>">
+                    <a href="../../views/bhw-page/vaccination-planner.php" class="menu-link">
+                        <span class="menu-icon material-symbols-rounded">event_note</span>
+                        <span class="menu-label">Vaccination Planner</span>
+                    </a>
+                </li>
+
                 <!-- Immunization -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'immunization.php' ? ' active' : ''; ?>">
                     <a href="../../views/bhw-page/immunization.php" class="menu-link">

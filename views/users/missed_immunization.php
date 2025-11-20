@@ -258,8 +258,11 @@
 
         let cardsHTML = '';
         Object.values(groupedVaccines).forEach(record => {
-            const daysOverdue = record.schedule_date ? 
-                Math.ceil((new Date() - new Date(record.schedule_date)) / (1000 * 60 * 60 * 24)) : 0;
+            const targetDate = record.batch_schedule_date || record.schedule_date || '';
+            const daysOverdue = targetDate ? 
+                Math.ceil((new Date() - new Date(targetDate)) / (1000 * 60 * 60 * 24)) : 0;
+            const guidelineDate = record.schedule_date ? formatDate(record.schedule_date) : 'Not scheduled';
+            const batchDate = record.batch_schedule_date ? formatDate(record.batch_schedule_date) : null;
             
             cardsHTML += `
                 <div class="vaccine-card">
@@ -267,6 +270,8 @@
                         <div class="vaccine-info">
                             <h4>${record.vaccine_name}</h4>
                             <p>${getDoseText(record.dose_number)}</p>
+                            ${batchDate ? `<p style="font-size: 12px; color: #666; margin-top: 4px;"><strong>Batch Date:</strong> ${batchDate}</p>` : ''}
+                            <p style="font-size: 12px; color: #999; margin-top: 2px;">Guideline: ${guidelineDate}</p>
                         </div>
                         <div class="status-badge">
                             <span class="status-icon">!</span>
@@ -288,6 +293,16 @@
             4: 'Fourth Dose'
         };
         return doseMap[doseNumber] || `Dose ${doseNumber}`;
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            month: '2-digit', 
+            day: '2-digit', 
+            year: 'numeric' 
+        });
     }
 
     // Load data when page loads

@@ -16,7 +16,8 @@
 						<tr>
 							<th>Vaccine</th>
 							<th>Dose #</th>
-							<th>Schedule Date</th>
+							<th>Guideline Date</th>
+							<th>Batch Date</th>
 							<th>Status</th>
 						</tr>
 					</thead>
@@ -102,7 +103,15 @@
         }
         getChildDetails();
 
-
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                month: '2-digit', 
+                day: '2-digit', 
+                year: 'numeric' 
+            });
+        }
 
         document.getElementById('closeQrCodeButton').addEventListener('click', () => {
             document.getElementById('childQrCodeContainer').style.display = 'none';
@@ -126,10 +135,13 @@
                 scheduleBody.innerHTML = '';
                 immunizationSchedule.forEach(immunization => {
                     const row = document.createElement('tr');
+                    const guidelineDate = immunization.schedule_date ? formatDate(immunization.schedule_date) : 'Not scheduled';
+                    const batchDate = immunization.batch_schedule_date ? formatDate(immunization.batch_schedule_date) : '-';
                     row.innerHTML = `
                         <td>${immunization.vaccine_name}</td>
                         <td>${immunization.dose_number}</td>
-                        <td>${immunization.schedule_date}</td>
+                        <td>${guidelineDate}</td>
+                        <td>${batchDate}</td>
                         <td>${immunization.status}</td>
                     `;
                     scheduleBody.appendChild(row);

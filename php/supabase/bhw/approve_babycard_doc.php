@@ -139,6 +139,16 @@ try {
         'doc_url' => $doc_url,
         'approved_at' => date('Y-m-d H:i:s')
     ], ['id' => $request_id]);
+
+    // If transfer request, mark child as transferred/hidden from active list
+    $requestType = strtolower((string)($req['request_type'] ?? ''));
+    if ($requestType === 'transfer') {
+        $transferUpdate = [
+            'status' => 'transfer',
+            'date_updated' => date('Y-m-d H:i:s')
+        ];
+        @supabaseUpdate('child_health_records', $transferUpdate, ['baby_id' => $req['baby_id']]);
+    }
     
     // Log activity: BHW/Midwife approved Baby Card document request
     try {

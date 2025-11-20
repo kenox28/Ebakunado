@@ -1,0 +1,230 @@
+// eBakunado Database Schema
+// Import this file at https://dbdiagram.io
+
+Table users {
+  id integer [primary key, increment]
+  user_id varchar(255)
+  fname varchar(50)
+  lname varchar(50)
+  email varchar(50)
+  passw varchar(255)
+  phone_number varchar(20)
+  salt varchar(64)
+  profileimg varchar(255)
+  failed_attempts integer [default: 0]
+  lockout_time timestamp
+  gender varchar(255)
+  place varchar(255)
+  created_at timestamp [default: `now()`]
+  updated timestamp [default: `now()`]
+  role varchar(255) [default: 'user']
+  philhealth_no varchar
+  nhts varchar
+}
+
+Table admin {
+  id integer [primary key, increment]
+  admin_id varchar [not null, unique]
+  fname varchar [not null]
+  lname varchar [not null]
+  email varchar [not null, unique]
+  pass varchar [not null]
+  profileimg varchar [default: 'noprofile.png']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+}
+
+Table super_admin {
+  id integer [primary key, increment]
+  super_admin_id varchar [not null, unique]
+  fname varchar [not null]
+  lname varchar [not null]
+  email varchar [not null, unique]
+  pass varchar [not null]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+}
+
+Table midwives {
+  id integer [primary key, increment]
+  midwife_id varchar
+  fname varchar
+  lname varchar
+  email varchar
+  pass varchar
+  phone_number varchar
+  salt varchar
+  profileimg varchar [default: 'noprofile.png']
+  gender varchar
+  place varchar
+  permissions varchar [default: 'view']
+  last_active timestamp
+  created_at timestamp [default: `now()`]
+  updated timestamp [default: `now()`]
+  role varchar
+}
+
+Table bhw {
+  id integer [primary key, increment]
+  bhw_id varchar
+  fname varchar
+  lname varchar
+  email varchar
+  pass varchar
+  phone_number varchar
+  salt varchar
+  profileimg varchar
+  gender varchar
+  place varchar
+  permissions varchar [default: 'view']
+  last_active timestamp
+  created_at timestamp [default: `now()`]
+  updated timestamp [default: `now()`]
+  role varchar
+}
+
+Table child_health_records {
+  id integer [primary key, increment]
+  user_id varchar(255) [not null]
+  baby_id varchar(255) [not null]
+  child_fname varchar(100) [not null]
+  child_lname varchar(100) [not null]
+  child_gender varchar(10)
+  child_birth_date date [not null]
+  place_of_birth varchar(255)
+  mother_name varchar(100) [not null]
+  father_name varchar(100)
+  address varchar(255) [not null]
+  birth_weight numeric
+  birth_height numeric
+  birth_attendant varchar(100)
+  babys_card varchar(500)
+  delivery_type varchar(100)
+  birth_order varchar(100)
+  date_created timestamp [default: `now()`]
+  date_updated timestamp [default: `now()`]
+  status varchar(50) [default: 'pending']
+  qr_code varchar(255)
+  exclusive_breastfeeding_1mo boolean [default: false]
+  exclusive_breastfeeding_2mo boolean [default: false]
+  exclusive_breastfeeding_3mo boolean [default: false]
+  exclusive_breastfeeding_4mo boolean [default: false]
+  exclusive_breastfeeding_5mo boolean [default: false]
+  exclusive_breastfeeding_6mo boolean [default: false]
+  complementary_feeding_6mo varchar(255)
+  complementary_feeding_7mo varchar(255)
+  complementary_feeding_8mo varchar(255)
+  lpm date
+  allergies varchar
+  blood_type varchar
+  family_planning varchar
+}
+
+Table immunization_records {
+  id integer [primary key, increment]
+  baby_id varchar(50)
+  vaccine_name varchar(100)
+  dose_number integer
+  weight numeric
+  height numeric
+  temperature numeric
+  status varchar(50)
+  schedule_date date
+  batch_schedule_date date
+  date_given date
+  catch_up_date date
+  administered_by varchar(255)
+  created_at timestamp [default: `now()`]
+  updated timestamp [default: `now()`]
+  growth_wfa text
+  growth_lfa text
+  growth_wfl text
+  growth_age_months integer
+  muac text
+  remarks text
+}
+
+Table chrdocrequest {
+  id bigint [primary key, increment]
+  user_id varchar(255) [not null]
+  baby_id varchar(255) [not null]
+  status varchar(32) [not null, default: 'pendingCHR']
+  request_type varchar(255) [not null]
+  doc_url text
+  created_at timestamp [default: `now()`]
+  approved_at timestamp
+}
+
+Table mother_tetanus_doses {
+  id integer [primary key, increment]
+  user_id varchar
+  dose1_date date
+  dose2_date date
+  dose3_date date
+  dose4_date date
+  dose5_date date
+  date_created timestamp [default: `now()`]
+  date_updated timestamp [default: `now()`]
+}
+
+Table notification_logs {
+  id integer [primary key, increment]
+  baby_id varchar [not null]
+  user_id varchar [not null]
+  type varchar [not null]
+  message text [not null]
+  notification_date date [not null]
+  sms_sent boolean [default: false]
+  email_sent boolean [default: false]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+Table activity_logs {
+  log_id integer [primary key, increment]
+  user_id varchar
+  user_type varchar
+  action_type varchar [not null]
+  description text [not null]
+  ip_address varchar
+  created_at timestamp [default: `now()`]
+}
+
+Table system_settings {
+  user_id varchar [primary key, not null]
+  email_username varchar [not null]
+  email_password varchar [not null]
+  sms_api_key varchar [not null]
+  sms_device_id varchar [not null]
+  notification_time time [default: '02:40:00']
+  system_name varchar [default: 'eBakunado']
+  health_center_name varchar [default: 'City Health Department, Ormoc City']
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+  user_type varchar
+}
+
+Table locations {
+  id integer [primary key, increment]
+  province varchar [not null]
+  city_municipality varchar [not null]
+  barangay varchar [not null]
+  purok varchar [not null]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+}
+
+// Relationships
+Ref: child_health_records.user_id > users.user_id
+Ref: immunization_records.baby_id > child_health_records.baby_id
+Ref: chrdocrequest.user_id > users.user_id
+Ref: chrdocrequest.baby_id > child_health_records.baby_id
+Ref: mother_tetanus_doses.user_id > users.user_id
+Ref: notification_logs.user_id > users.user_id
+Ref: notification_logs.baby_id > child_health_records.baby_id
+Ref: activity_logs.user_id > users.user_id
+Ref: system_settings.user_id > users.user_id
+
+
+
+

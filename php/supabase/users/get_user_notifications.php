@@ -51,32 +51,38 @@ try {
         }
 
         foreach ($baby_ids as $baby_id) {
-            $today_schedules = supabaseSelect('immunization_records', 
-                'id,vaccine_name,dose_number,schedule_date,status', 
-                ['baby_id' => $baby_id, 'schedule_date' => $today], 
-                null, 10
+            $today_schedules = supabaseSelect(
+                'immunization_records', 
+                'id,vaccine_name,dose_number,schedule_date,batch_schedule_date,status', 
+                ['baby_id' => $baby_id], 
+                null, 200
             );
             
-            // Filter out completed ones
             if ($today_schedules) {
-                $today_schedules = array_filter($today_schedules, function($schedule) {
-                    return $schedule['status'] !== 'completed' && $schedule['status'] !== 'taken';
+                $today_schedules = array_filter($today_schedules, function($schedule) use ($today) {
+                    $status = $schedule['status'] ?? '';
+                    $targetDate = $schedule['batch_schedule_date'] ?? $schedule['schedule_date'] ?? '';
+                    if ($status === 'completed' || $status === 'taken') {
+                        return false;
+                    }
+                    return $targetDate === $today;
                 });
             }
 
             if ($today_schedules) {
                 foreach ($today_schedules as $schedule) {
                     $child_name = $children_lookup[$baby_id] ?? 'Unknown Child';
+                    $targetDate = $schedule['batch_schedule_date'] ?? $schedule['schedule_date'] ?? $today;
                     $notifications[] = [
                         'id' => 'today_schedule_' . $schedule['id'],
                         'type' => 'today_schedule',
                         'priority' => 'high',
                         'title' => 'Today\'s Vaccination',
-                        'message' => $schedule['vaccine_name'] . ' (Dose ' . $schedule['dose_number'] . ') for ' . $child_name . ' is scheduled today',
+                        'message' => $schedule['vaccine_name'] . ' (Dose ' . $schedule['dose_number'] . ') for ' . $child_name . ' is scheduled for ' . date('M d, Y', strtotime($targetDate)),
                         'action' => 'View today\'s schedule',
                         'action_url' => './upcoming_schedule.php?baby_id=' . urlencode($baby_id),
                         'baby_id' => $baby_id,
-                        'timestamp' => date('Y-m-d H:i:s', strtotime($schedule['schedule_date'])),
+                        'timestamp' => date('Y-m-d H:i:s', strtotime($targetDate)),
                         'unread' => true,
                         'icon' => '💉'
                     ];
@@ -89,32 +95,38 @@ try {
     $tomorrow = date('Y-m-d', strtotime('+1 day'));
     if ($children) {
         foreach ($baby_ids as $baby_id) {
-            $tomorrow_schedules = supabaseSelect('immunization_records', 
-                'id,vaccine_name,dose_number,schedule_date,status', 
-                ['baby_id' => $baby_id, 'schedule_date' => $tomorrow], 
-                null, 5
+            $tomorrow_schedules = supabaseSelect(
+                'immunization_records', 
+                'id,vaccine_name,dose_number,schedule_date,batch_schedule_date,status', 
+                ['baby_id' => $baby_id], 
+                null, 200
             );
             
-            // Filter out completed ones
             if ($tomorrow_schedules) {
-                $tomorrow_schedules = array_filter($tomorrow_schedules, function($schedule) {
-                    return $schedule['status'] !== 'completed' && $schedule['status'] !== 'taken';
+                $tomorrow_schedules = array_filter($tomorrow_schedules, function($schedule) use ($tomorrow) {
+                    $status = $schedule['status'] ?? '';
+                    $targetDate = $schedule['batch_schedule_date'] ?? $schedule['schedule_date'] ?? '';
+                    if ($status === 'completed' || $status === 'taken') {
+                        return false;
+                    }
+                    return $targetDate === $tomorrow;
                 });
             }
 
             if ($tomorrow_schedules) {
                 foreach ($tomorrow_schedules as $schedule) {
                     $child_name = $children_lookup[$baby_id] ?? 'Unknown Child';
+                    $targetDate = $schedule['batch_schedule_date'] ?? $schedule['schedule_date'] ?? $tomorrow;
                     $notifications[] = [
                         'id' => 'tomorrow_schedule_' . $schedule['id'],
                         'type' => 'tomorrow_schedule',
                         'priority' => 'medium',
-                        'title' => 'Tomorrow\'s Vaccination',
-                        'message' => $schedule['vaccine_name'] . ' (Dose ' . $schedule['dose_number'] . ') for ' . $child_name . ' is scheduled tomorrow',
+                        'title' => 'Upcoming Vaccination',
+                        'message' => $schedule['vaccine_name'] . ' (Dose ' . $schedule['dose_number'] . ') for ' . $child_name . ' is scheduled on ' . date('M d, Y', strtotime($targetDate)),
                         'action' => 'View upcoming schedule',
                         'action_url' => './upcoming_schedule.php?baby_id=' . urlencode($baby_id),
                         'baby_id' => $baby_id,
-                        'timestamp' => date('Y-m-d H:i:s', strtotime($schedule['schedule_date'])),
+                        'timestamp' => date('Y-m-d H:i:s', strtotime($targetDate)),
                         'unread' => true,
                         'icon' => '📅'
                     ];
@@ -126,33 +138,38 @@ try {
     // 4. Missed Vaccination Schedules
     if ($children) {
         foreach ($baby_ids as $baby_id) {
-            $missed_schedules = supabaseSelect('immunization_records', 
-                'id,vaccine_name,dose_number,schedule_date,status', 
-                ['baby_id' => $baby_id, 'schedule_date.lt' => $today], 
-                null, 10
+            $missed_schedules = supabaseSelect(
+                'immunization_records', 
+                'id,vaccine_name,dose_number,schedule_date,batch_schedule_date,status', 
+                ['baby_id' => $baby_id], 
+                null, 200
             );
             
-            // Filter out completed ones
             if ($missed_schedules) {
-                $missed_schedules = array_filter($missed_schedules, function($schedule) {
-                    return $schedule['status'] !== 'completed' && $schedule['status'] !== 'taken';
+                $missed_schedules = array_filter($missed_schedules, function($schedule) use ($today) {
+                    if ($schedule['status'] === 'completed' || $schedule['status'] === 'taken') {
+                        return false;
+                    }
+                    $targetDate = $schedule['batch_schedule_date'] ?? $schedule['schedule_date'] ?? '';
+                    return $targetDate !== '' && $targetDate < $today;
                 });
             }
 
             if ($missed_schedules) {
                 foreach ($missed_schedules as $missed) {
                     $child_name = $children_lookup[$baby_id] ?? 'Unknown Child';
-                    $days_missed = (strtotime($today) - strtotime($missed['schedule_date'])) / (60 * 60 * 24);
+                    $targetDate = $missed['batch_schedule_date'] ?? $missed['schedule_date'] ?? $today;
+                    $days_missed = (strtotime($today) - strtotime($targetDate)) / (60 * 60 * 24);
                     $notifications[] = [
                         'id' => 'missed_schedule_' . $missed['id'],
                         'type' => 'missed_schedule',
                         'priority' => 'urgent',
                         'title' => 'Missed Vaccination',
-                        'message' => $missed['vaccine_name'] . ' (Dose ' . $missed['dose_number'] . ') for ' . $child_name . ' - ' . round($days_missed) . ' days overdue',
+                        'message' => $missed['vaccine_name'] . ' (Dose ' . $missed['dose_number'] . ') for ' . $child_name . ' - ' . round($days_missed) . ' days overdue (target: ' . date('M d, Y', strtotime($targetDate)) . ')',
                         'action' => 'View missed vaccinations',
                         'action_url' => './upcoming_schedule.php?baby_id=' . urlencode($baby_id),
                         'baby_id' => $baby_id,
-                        'timestamp' => date('Y-m-d H:i:s', strtotime($missed['schedule_date'])),
+                        'timestamp' => date('Y-m-d H:i:s', strtotime($targetDate)),
                         'unread' => true,
                         'icon' => '⚠️'
                     ];

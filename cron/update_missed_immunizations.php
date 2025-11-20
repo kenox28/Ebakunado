@@ -57,7 +57,7 @@ try {
     do {
         $records = supabaseSelect(
             'immunization_records',
-            'id,baby_id,vaccine_name,dose_number,status,schedule_date,date_given,catch_up_date',
+            'id,baby_id,vaccine_name,dose_number,status,schedule_date,batch_schedule_date,date_given,catch_up_date',
             ['status' => $statusesToCheck],
             'schedule_date.asc',
             $batchSize,
@@ -81,8 +81,9 @@ try {
             $status = strtolower(trim($record['status'] ?? ''));
             $dateGiven = $record['date_given'] ?? null;
             $scheduleDate = $record['schedule_date'] ?? null;
+            $batchScheduleDate = $record['batch_schedule_date'] ?? null;
             $catchUpDate = $record['catch_up_date'] ?? null;
-            $baseDate = $scheduleDate ?: $catchUpDate;
+            $baseDate = $batchScheduleDate ?: ($scheduleDate ?: $catchUpDate);
 
             if (empty($baseDate)) {
                 $skipped++;

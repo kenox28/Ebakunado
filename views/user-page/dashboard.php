@@ -36,6 +36,17 @@ $user_fname = $_SESSION['fname'] ?? '';
     <link rel="stylesheet" href="../../css/user/dashboard.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .child-schedule--guideline {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .child-schedule--batch {
+            font-size: 0.9rem;
+            color: #0c5460;
+            font-weight: 500;
+        }
+    </style>
 </head>
 
 <body>
@@ -205,7 +216,9 @@ $user_fname = $_SESSION['fname'] ?? '';
             html += `<div class=\"children-list-label\">${label}</div>`;
             items.forEach(it => {
                 const name = it.name || 'Unknown Child';
-                const upcoming = it.upcoming_date ? formatDate(it.upcoming_date) : (currentFilter === 'upcoming' ? 'No date' : '');
+                const actualDate = it.upcoming_date ? formatDate(it.upcoming_date) : (currentFilter === 'upcoming' ? 'No date' : '');
+                const guidelineDate = it.upcoming_guideline ? formatDate(it.upcoming_guideline) : null;
+                const batchDate = it.upcoming_batch ? formatDate(it.upcoming_batch) : null;
                 const vaccine = it.upcoming_vaccine || '';
 
                 // Build missed details HTML if showing missed immunizations (show only closest missed)
@@ -213,12 +226,14 @@ $user_fname = $_SESSION['fname'] ?? '';
                 if (currentFilter === 'missed' && it.closest_missed) {
                     const detail = it.closest_missed;
                     const scheduleDate = detail.schedule_date ? formatDate(detail.schedule_date) : 'Not scheduled';
+                    const batchMissed = detail.batch_schedule_date ? formatDate(detail.batch_schedule_date) : null;
                     const catchUpDate = detail.catch_up_date ? formatDate(detail.catch_up_date) : '-';
                     missedDetailsHtml = `
                      <div class="missed-detail">
                          <div class="missed-meta">
                              <strong>${detail.vaccine_name} (Dose ${detail.dose_number})</strong><br>
-                             <span class="text-muted">Scheduled: ${scheduleDate}</span><br>
+                             <span class="text-muted">Guideline: ${scheduleDate}</span><br>
+                             ${batchMissed ? `<span class="text-muted">Batch: ${batchMissed}</span><br>` : ''}
                              <span class="text-danger">Catch Up: ${catchUpDate}</span>
                          </div>
                          ${it.missed_count > 1 ? `<div class="more-missed">...and ${it.missed_count - 1} more missed vaccination(s)</div>` : ''}
@@ -237,7 +252,11 @@ $user_fname = $_SESSION['fname'] ?? '';
                     <div class="child-item-body">
                         <div class="child-details">
                         <h3 class="child-name">${name}</h3>
-                        ${currentFilter==='upcoming' ? `<p class="child-schedule"><strong>Next:</strong> ${upcoming}</p>` : ''}
+                        ${currentFilter==='upcoming' ? `
+                            <p class="child-schedule"><strong>Next:</strong> ${actualDate}${batchDate ? ' <span class="batch-badge">(Batch)</span>' : ''}</p>
+                            ${batchDate ? `<p class="child-schedule child-schedule--batch"><strong>Batch Date:</strong> ${batchDate}</p>` : ''}
+                            ${guidelineDate ? `<p class="child-schedule child-schedule--guideline">Guideline: ${guidelineDate}</p>` : ''}
+                        ` : ''}
                         ${badge}
                         ${missedDetailsHtml}
                         </div>
@@ -371,7 +390,9 @@ $user_fname = $_SESSION['fname'] ?? '';
             acceptedChildren.forEach(child => {
                 const fullName = child.name || 'Unknown Child';
                 const babyId = child.baby_id || '';
-                const upcomingSchedule = child.schedule_date ? formatDate(child.schedule_date) : 'No upcoming schedule';
+                const actualSchedule = child.schedule_date ? formatDate(child.schedule_date) : 'No upcoming schedule';
+                const guidelineSchedule = child.next_guideline_date ? formatDate(child.next_guideline_date) : null;
+                const batchSchedule = child.next_batch_date ? formatDate(child.next_batch_date) : null;
                 const vaccineName = child.vaccine || 'No vaccine scheduled';
                 const qrHtml = child.qr_code ?
                     `<button class=\"qr-btn\" onclick=\"showQrModal('${String(child.qr_code || '').replace(/'/g, "\\'")}')\"><img class=\"qr-img\" src=\"${child.qr_code}\" alt=\"QR Code\"></button>` :
@@ -383,7 +404,9 @@ $user_fname = $_SESSION['fname'] ?? '';
                         <div class="child-item-body">
                             <div class="child-details">
                             <h3 class="child-name">${fullName}</h3>
-                            <p class="child-schedule"><strong>Next:</strong> ${upcomingSchedule}</p>
+                            <p class="child-schedule"><strong>Next:</strong> ${actualSchedule}${batchSchedule ? ' (Batch)' : ''}</p>
+                            ${guidelineSchedule ? `<p class="child-schedule child-schedule--guideline">Guideline: ${guidelineSchedule}</p>` : ''}
+                            ${batchSchedule ? `<p class="child-schedule child-schedule--batch">Batch: ${batchSchedule}</p>` : ''}
                             <p class="child-vaccine">${vaccineName}</p>
                         </div>
                             ${qrBlock}

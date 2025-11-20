@@ -280,26 +280,28 @@ function resetToDefaults() {
 }
 
 function showSuccess(message) {
-    Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: message,
-        showConfirmButton: true
-    });
+    if (window.UIFeedback) {
+        window.UIFeedback.showToast({
+            title: 'Success',
+            message: message,
+            variant: 'success'
+        });
+    }
 }
 
 function showError(message) {
-    Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: message,
-        showConfirmButton: true
-    });
+    if (window.UIFeedback) {
+        window.UIFeedback.showToast({
+            title: 'Error',
+            message: message,
+            variant: 'error'
+        });
+    }
 }
 
 function logoutSuperAdmin() {
     window.location.href = '../../php/supabase/superadmin/logout.php';
 }
 </script>
-
+<script src="../../js/utils/ui-feedback.js"></script>
 <?php include 'includes/footer.php'; ?>

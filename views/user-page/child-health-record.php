@@ -178,6 +178,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                                 <th>Condition of Baby</th>
                                 <th>Advice Given</th>
                                 <th>Next Sched Date</th>
+                                <th>Batch Date</th>
                                 <th>Remarks</th>
                             </tr>
                         </thead>
@@ -274,7 +275,7 @@ $user_fname = $_SESSION['fname'] ?? '';
             if (typeof applyTableSkeleton === 'function' && ledgerBody) {
                 applyTableSkeleton(ledgerBody, getLedgerColsConfig(), 10);
             } else if (ledgerBody) {
-                ledgerBody.innerHTML = '<tr><td colspan="10" class="loading-cell">Loading...</td></tr>';
+                ledgerBody.innerHTML = '<tr><td colspan="11" class="loading-cell">Loading...</td></tr>';
             }
 
             try {
@@ -418,18 +419,18 @@ $user_fname = $_SESSION['fname'] ?? '';
                 const schedRes = await fetch(`/ebakunado/php/supabase/users/get_immunization_schedule.php?baby_id=${encodeURIComponent(babyId)}`);
                 if (!schedRes.ok) {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', { colspan: 10, kind: 'error' });
+                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', { colspan: 11, kind: 'error' });
                     } else {
-                        ledgerBody.innerHTML = '<tr class="message-row error"><td colspan="10">Failed to load data. Please try again.</td></tr>';
+                        ledgerBody.innerHTML = '<tr class="message-row error"><td colspan="11">Failed to load data. Please try again.</td></tr>';
                     }
                     return;
                 }
                 const schedJson = await schedRes.json();
                 if (!schedJson || schedJson.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', { colspan: 10, kind: 'error' });
+                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', { colspan: 11, kind: 'error' });
                     } else {
-                        ledgerBody.innerHTML = '<tr class="message-row error"><td colspan="10">Failed to load data. Please try again.</td></tr>';
+                        ledgerBody.innerHTML = '<tr class="message-row error"><td colspan="11">Failed to load data. Please try again.</td></tr>';
                     }
                     return;
                 }
@@ -444,11 +445,17 @@ $user_fname = $_SESSION['fname'] ?? '';
                     const future = allRows
                         .filter(r => (r.status !== 'taken' && r.status !== 'completed'))
                         .filter(r => {
-                            const due = r.catch_up_date || r.schedule_date || '';
+                            const due = r.catch_up_date || r.batch_schedule_date || r.schedule_date || '';
                             return due && String(due) > String(dateStr);
                         })
-                        .sort((a, b) => String((a.catch_up_date || a.schedule_date) || '').localeCompare(String((b.catch_up_date || b.schedule_date) || '')));
-                    return future.length ? (future[0].catch_up_date || future[0].schedule_date || '') : '';
+                        .sort((a, b) => {
+                            const aDate = a.catch_up_date || a.batch_schedule_date || a.schedule_date || '';
+                            const bDate = b.catch_up_date || b.batch_schedule_date || b.schedule_date || '';
+                            return String(aDate).localeCompare(String(bDate));
+                        });
+                    if (!future.length) return '';
+                    const next = future[0];
+                    return next.catch_up_date || next.batch_schedule_date || next.schedule_date || '';
                 }
 
                 // Canonical vaccine order to avoid duplicates and ensure clear display
@@ -489,11 +496,24 @@ $user_fname = $_SESSION['fname'] ?? '';
                 canonical.forEach(name => {
                     const rec = bestByName[name];
                     if (!rec) return; // show only taken vaccines
-                    const date = rec.date_given || rec.schedule_date || '';
+                    const date = rec.date_given || rec.batch_schedule_date || rec.schedule_date || '';
                     const ht = rec.height || rec.height_cm || '';
                     const wt = rec.weight || rec.weight_kg || '';
                     const muac = rec.muac || '-';
                     const next = nextScheduleAfter(date);
+                    // Get next schedule details including batch date
+                    const nextRecord = allRows
+                        .filter(r => (r.status !== 'taken' && r.status !== 'completed'))
+                        .filter(r => {
+                            const due = r.catch_up_date || r.batch_schedule_date || r.schedule_date || '';
+                            return due && String(due) > String(date);
+                        })
+                        .sort((a, b) => {
+                            const aDate = a.catch_up_date || a.batch_schedule_date || a.schedule_date || '';
+                            const bDate = b.catch_up_date || b.batch_schedule_date || b.schedule_date || '';
+                            return String(aDate).localeCompare(String(bDate));
+                        })[0];
+                    const nextBatchDate = nextRecord?.batch_schedule_date ? formatDate(nextRecord.batch_schedule_date) : '-';
                     ledgerHtml += `
                 <tr>
                     <td>${getValue(formatDate(date))}</td>
@@ -505,15 +525,16 @@ $user_fname = $_SESSION['fname'] ?? '';
                     <td>-</td>
                     <td>-</td>
                     <td>${getValue(formatDate(next))}</td>
+                    <td>${getValue(nextBatchDate)}</td>
                     <td>-</td>
                 </tr>`;
                 });
 
                 if (!ledgerHtml) {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(ledgerBody, 'No records found', { colspan: 10 });
+                        renderTableMessage(ledgerBody, 'No records found', { colspan: 11 });
                     } else {
-                        ledgerBody.innerHTML = '<tr class="message-row"><td colspan="10">No records found</td></tr>';
+                        ledgerBody.innerHTML = '<tr class="message-row"><td colspan="11">No records found</td></tr>';
                     }
                 } else {
                     ledgerBody.innerHTML = ledgerHtml;
@@ -524,9 +545,9 @@ $user_fname = $_SESSION['fname'] ?? '';
                 const ledgerBody = document.getElementById('ledgerBody');
                 if (ledgerBody) {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', { colspan: 10, kind: 'error' });
+                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', { colspan: 11, kind: 'error' });
                     } else {
-                        ledgerBody.innerHTML = '<tr class="message-row error"><td colspan="10">Failed to load data. Please try again.</td></tr>';
+                        ledgerBody.innerHTML = '<tr class="message-row error"><td colspan="11">Failed to load data. Please try again.</td></tr>';
                     }
                 }
             }

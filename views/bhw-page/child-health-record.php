@@ -380,7 +380,7 @@ if ($user_id) {
 
                 let ledgerHtml = '';
                 allRows.forEach(row => {
-                    const date = row.date_given || row.schedule_date || '';
+                    const date = row.date_given || row.batch_schedule_date || row.schedule_date || '';
                     const ht = row.height || row.height_cm || '';
                     const wt = row.weight || row.weight_kg || '';
                     const muac = row.muac || row.me_ac || '';

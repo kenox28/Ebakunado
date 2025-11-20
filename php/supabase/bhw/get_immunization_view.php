@@ -38,7 +38,7 @@ $children = supabaseSelect('child_health_records', 'id,user_id,baby_id,child_fna
 		while (true) {
 			$batch = supabaseSelect(
 				'immunization_records',
-				'id,baby_id,vaccine_name,dose_number,schedule_date,catch_up_date,date_given,status,created_at',
+				'id,baby_id,vaccine_name,dose_number,schedule_date,batch_schedule_date,catch_up_date,date_given,status,created_at',
 				$conditions,
 				'schedule_date.asc',
 				$batchSize,
@@ -52,7 +52,7 @@ $children = supabaseSelect('child_health_records', 'id,user_id,baby_id,child_fna
 	} else {
 		$immunizations = supabaseSelect(
 			'immunization_records',
-			'id,baby_id,vaccine_name,dose_number,schedule_date,catch_up_date,date_given,status,created_at',
+			'id,baby_id,vaccine_name,dose_number,schedule_date,batch_schedule_date,catch_up_date,date_given,status,created_at',
 			[],
 			'schedule_date.asc',
 			$limit,
@@ -69,13 +69,14 @@ $children = supabaseSelect('child_health_records', 'id,user_id,baby_id,child_fna
         // Date filter: either schedule or catch-up exactly matches
         if ($dateSel !== '') {
             $sd = (string)($r['schedule_date'] ?? '');
+            $bd = (string)($r['batch_schedule_date'] ?? '');
             $cd = (string)($r['catch_up_date'] ?? '');
-            if ($sd !== $dateSel && $cd !== $dateSel) return false;
+            if ($sd !== $dateSel && $bd !== $dateSel && $cd !== $dateSel) return false;
         }
         // Status filter
         if ($statusSel !== 'all') {
             $status = strtolower((string)($r['status'] ?? ''));
-            $due = (string)($r['catch_up_date'] ?? ($r['schedule_date'] ?? ''));
+            $due = (string)($r['batch_schedule_date'] ?? ($r['schedule_date'] ?? ''));
             if ($statusSel === 'upcoming') {
                 // Show only scheduled items; keep those due today or in the future
                 if ($status !== 'scheduled') return false;
@@ -125,6 +126,7 @@ $children = supabaseSelect('child_health_records', 'id,user_id,baby_id,child_fna
             'vaccine_name' => $imm['vaccine_name'],
             'dose_number' => $imm['dose_number'] ?? null,
             'schedule_date' => $imm['schedule_date'],
+            'batch_schedule_date' => $imm['batch_schedule_date'],
             'catch_up_date' => $imm['catch_up_date'],
             'date_given' => $imm['date_given'] ?? null,
             'status' => $imm['status'],

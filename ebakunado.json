@@ -1,0 +1,1898 @@
+{
+	"canvas": {
+		"scrollTop": 0,
+		"scrollLeft": 0,
+		"zoomLevel": 1
+	},
+	"tableCollection": [
+		{
+			"id": "table_users",
+			"name": "users",
+			"comment": "",
+			"columns": [
+				{
+					"id": "col_users_id",
+					"name": "id",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "",
+					"option": {
+						"primaryKey": true,
+						"notNull": true,
+						"autoIncrement": true
+					},
+					"ui": {}
+				},
+				{
+					"id": "col_users_user_id",
+					"name": "user_id",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_fname",
+					"name": "fname",
+					"comment": "",
+					"dataType": "VARCHAR(50)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_lname",
+					"name": "lname",
+					"comment": "",
+					"dataType": "VARCHAR(50)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_email",
+					"name": "email",
+					"comment": "",
+					"dataType": "VARCHAR(50)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_passw",
+					"name": "passw",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_phone_number",
+					"name": "phone_number",
+					"comment": "",
+					"dataType": "VARCHAR(20)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_salt",
+					"name": "salt",
+					"comment": "",
+					"dataType": "VARCHAR(64)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_profileimg",
+					"name": "profileimg",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_failed_attempts",
+					"name": "failed_attempts",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "0",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_lockout_time",
+					"name": "lockout_time",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_gender",
+					"name": "gender",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_place",
+					"name": "place",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_created_at",
+					"name": "created_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_updated",
+					"name": "updated",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_role",
+					"name": "role",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "user",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_philhealth_no",
+					"name": "philhealth_no",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_users_nhts",
+					"name": "nhts",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				}
+			],
+			"ui": {
+				"x": 100,
+				"y": 100,
+				"widthName": 100,
+				"widthComment": 100,
+				"color": ""
+			}
+		},
+		{
+			"id": "table_admin",
+			"name": "admin",
+			"comment": "",
+			"columns": [
+				{
+					"id": "col_admin_id",
+					"name": "id",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "",
+					"option": {
+						"primaryKey": true,
+						"notNull": true,
+						"autoIncrement": true
+					},
+					"ui": {}
+				},
+				{
+					"id": "col_admin_admin_id",
+					"name": "admin_id",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true, "unique": true },
+					"ui": {}
+				},
+				{
+					"id": "col_admin_fname",
+					"name": "fname",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_admin_lname",
+					"name": "lname",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_admin_email",
+					"name": "email",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true, "unique": true },
+					"ui": {}
+				},
+				{
+					"id": "col_admin_pass",
+					"name": "pass",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_admin_profileimg",
+					"name": "profileimg",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "noprofile.png",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_admin_created_at",
+					"name": "created_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_admin_updated_at",
+					"name": "updated_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				}
+			],
+			"ui": {
+				"x": 400,
+				"y": 100,
+				"widthName": 100,
+				"widthComment": 100,
+				"color": ""
+			}
+		},
+		{
+			"id": "table_super_admin",
+			"name": "super_admin",
+			"comment": "",
+			"columns": [
+				{
+					"id": "col_super_admin_id",
+					"name": "id",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "",
+					"option": {
+						"primaryKey": true,
+						"notNull": true,
+						"autoIncrement": true
+					},
+					"ui": {}
+				},
+				{
+					"id": "col_super_admin_super_admin_id",
+					"name": "super_admin_id",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true, "unique": true },
+					"ui": {}
+				},
+				{
+					"id": "col_super_admin_fname",
+					"name": "fname",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_super_admin_lname",
+					"name": "lname",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_super_admin_email",
+					"name": "email",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true, "unique": true },
+					"ui": {}
+				},
+				{
+					"id": "col_super_admin_pass",
+					"name": "pass",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_super_admin_created_at",
+					"name": "created_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_super_admin_updated_at",
+					"name": "updated_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				}
+			],
+			"ui": {
+				"x": 700,
+				"y": 100,
+				"widthName": 100,
+				"widthComment": 100,
+				"color": ""
+			}
+		},
+		{
+			"id": "table_midwives",
+			"name": "midwives",
+			"comment": "",
+			"columns": [
+				{
+					"id": "col_midwives_id",
+					"name": "id",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "",
+					"option": {
+						"primaryKey": true,
+						"notNull": true,
+						"autoIncrement": true
+					},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_midwife_id",
+					"name": "midwife_id",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_fname",
+					"name": "fname",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_lname",
+					"name": "lname",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_email",
+					"name": "email",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_pass",
+					"name": "pass",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_phone_number",
+					"name": "phone_number",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_salt",
+					"name": "salt",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_profileimg",
+					"name": "profileimg",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "noprofile.png",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_gender",
+					"name": "gender",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_place",
+					"name": "place",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_permissions",
+					"name": "permissions",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "view",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_last_active",
+					"name": "last_active",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_created_at",
+					"name": "created_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_updated",
+					"name": "updated",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_midwives_role",
+					"name": "role",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				}
+			],
+			"ui": {
+				"x": 100,
+				"y": 400,
+				"widthName": 100,
+				"widthComment": 100,
+				"color": ""
+			}
+		},
+		{
+			"id": "table_bhw",
+			"name": "bhw",
+			"comment": "",
+			"columns": [
+				{
+					"id": "col_bhw_id",
+					"name": "id",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "",
+					"option": {
+						"primaryKey": true,
+						"notNull": true,
+						"autoIncrement": true
+					},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_bhw_id",
+					"name": "bhw_id",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_fname",
+					"name": "fname",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_lname",
+					"name": "lname",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_email",
+					"name": "email",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_pass",
+					"name": "pass",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_phone_number",
+					"name": "phone_number",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_salt",
+					"name": "salt",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_profileimg",
+					"name": "profileimg",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_gender",
+					"name": "gender",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_place",
+					"name": "place",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_permissions",
+					"name": "permissions",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "view",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_last_active",
+					"name": "last_active",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_created_at",
+					"name": "created_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_updated",
+					"name": "updated",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_bhw_role",
+					"name": "role",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				}
+			],
+			"ui": {
+				"x": 400,
+				"y": 400,
+				"widthName": 100,
+				"widthComment": 100,
+				"color": ""
+			}
+		},
+		{
+			"id": "table_child_health_records",
+			"name": "child_health_records",
+			"comment": "",
+			"columns": [
+				{
+					"id": "col_chr_id",
+					"name": "id",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "",
+					"option": {
+						"primaryKey": true,
+						"notNull": true,
+						"autoIncrement": true
+					},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_user_id",
+					"name": "user_id",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_chr_baby_id",
+					"name": "baby_id",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_chr_child_fname",
+					"name": "child_fname",
+					"comment": "",
+					"dataType": "VARCHAR(100)",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_chr_child_lname",
+					"name": "child_lname",
+					"comment": "",
+					"dataType": "VARCHAR(100)",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_chr_child_gender",
+					"name": "child_gender",
+					"comment": "",
+					"dataType": "VARCHAR(10)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_child_birth_date",
+					"name": "child_birth_date",
+					"comment": "",
+					"dataType": "DATE",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_chr_place_of_birth",
+					"name": "place_of_birth",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_mother_name",
+					"name": "mother_name",
+					"comment": "",
+					"dataType": "VARCHAR(100)",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_chr_father_name",
+					"name": "father_name",
+					"comment": "",
+					"dataType": "VARCHAR(100)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_address",
+					"name": "address",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_chr_birth_weight",
+					"name": "birth_weight",
+					"comment": "",
+					"dataType": "NUMERIC",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_birth_height",
+					"name": "birth_height",
+					"comment": "",
+					"dataType": "NUMERIC",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_birth_attendant",
+					"name": "birth_attendant",
+					"comment": "",
+					"dataType": "VARCHAR(100)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_babys_card",
+					"name": "babys_card",
+					"comment": "",
+					"dataType": "VARCHAR(500)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_delivery_type",
+					"name": "delivery_type",
+					"comment": "",
+					"dataType": "VARCHAR(100)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_birth_order",
+					"name": "birth_order",
+					"comment": "",
+					"dataType": "VARCHAR(100)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_date_created",
+					"name": "date_created",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_date_updated",
+					"name": "date_updated",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_status",
+					"name": "status",
+					"comment": "",
+					"dataType": "VARCHAR(50)",
+					"default": "pending",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_qr_code",
+					"name": "qr_code",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_exclusive_breastfeeding_1mo",
+					"name": "exclusive_breastfeeding_1mo",
+					"comment": "",
+					"dataType": "BOOLEAN",
+					"default": "false",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_exclusive_breastfeeding_2mo",
+					"name": "exclusive_breastfeeding_2mo",
+					"comment": "",
+					"dataType": "BOOLEAN",
+					"default": "false",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_exclusive_breastfeeding_3mo",
+					"name": "exclusive_breastfeeding_3mo",
+					"comment": "",
+					"dataType": "BOOLEAN",
+					"default": "false",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_exclusive_breastfeeding_4mo",
+					"name": "exclusive_breastfeeding_4mo",
+					"comment": "",
+					"dataType": "BOOLEAN",
+					"default": "false",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_exclusive_breastfeeding_5mo",
+					"name": "exclusive_breastfeeding_5mo",
+					"comment": "",
+					"dataType": "BOOLEAN",
+					"default": "false",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_exclusive_breastfeeding_6mo",
+					"name": "exclusive_breastfeeding_6mo",
+					"comment": "",
+					"dataType": "BOOLEAN",
+					"default": "false",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_complementary_feeding_6mo",
+					"name": "complementary_feeding_6mo",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_complementary_feeding_7mo",
+					"name": "complementary_feeding_7mo",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_complementary_feeding_8mo",
+					"name": "complementary_feeding_8mo",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_lpm",
+					"name": "lpm",
+					"comment": "",
+					"dataType": "DATE",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_allergies",
+					"name": "allergies",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_blood_type",
+					"name": "blood_type",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_chr_family_planning",
+					"name": "family_planning",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				}
+			],
+			"ui": {
+				"x": 100,
+				"y": 700,
+				"widthName": 150,
+				"widthComment": 100,
+				"color": ""
+			}
+		},
+		{
+			"id": "table_immunization_records",
+			"name": "immunization_records",
+			"comment": "",
+			"columns": [
+				{
+					"id": "col_ir_id",
+					"name": "id",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "",
+					"option": {
+						"primaryKey": true,
+						"notNull": true,
+						"autoIncrement": true
+					},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_baby_id",
+					"name": "baby_id",
+					"comment": "",
+					"dataType": "VARCHAR(50)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_vaccine_name",
+					"name": "vaccine_name",
+					"comment": "",
+					"dataType": "VARCHAR(100)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_dose_number",
+					"name": "dose_number",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_weight",
+					"name": "weight",
+					"comment": "",
+					"dataType": "NUMERIC",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_height",
+					"name": "height",
+					"comment": "",
+					"dataType": "NUMERIC",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_temperature",
+					"name": "temperature",
+					"comment": "",
+					"dataType": "NUMERIC",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_status",
+					"name": "status",
+					"comment": "",
+					"dataType": "VARCHAR(50)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_schedule_date",
+					"name": "schedule_date",
+					"comment": "",
+					"dataType": "DATE",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_date_given",
+					"name": "date_given",
+					"comment": "",
+					"dataType": "DATE",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_catch_up_date",
+					"name": "catch_up_date",
+					"comment": "",
+					"dataType": "DATE",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_administered_by",
+					"name": "administered_by",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_created_at",
+					"name": "created_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_updated",
+					"name": "updated",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_growth_wfa",
+					"name": "growth_wfa",
+					"comment": "",
+					"dataType": "TEXT",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_growth_lfa",
+					"name": "growth_lfa",
+					"comment": "",
+					"dataType": "TEXT",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_growth_wfl",
+					"name": "growth_wfl",
+					"comment": "",
+					"dataType": "TEXT",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_growth_age_months",
+					"name": "growth_age_months",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_muac",
+					"name": "muac",
+					"comment": "",
+					"dataType": "TEXT",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ir_remarks",
+					"name": "remarks",
+					"comment": "",
+					"dataType": "TEXT",
+					"default": "",
+					"option": {},
+					"ui": {}
+				}
+			],
+			"ui": {
+				"x": 700,
+				"y": 700,
+				"widthName": 150,
+				"widthComment": 100,
+				"color": ""
+			}
+		},
+		{
+			"id": "table_chrdocrequest",
+			"name": "chrdocrequest",
+			"comment": "",
+			"columns": [
+				{
+					"id": "col_cdr_id",
+					"name": "id",
+					"comment": "",
+					"dataType": "BIGINT",
+					"default": "",
+					"option": {
+						"primaryKey": true,
+						"notNull": true,
+						"autoIncrement": true
+					},
+					"ui": {}
+				},
+				{
+					"id": "col_cdr_user_id",
+					"name": "user_id",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_cdr_baby_id",
+					"name": "baby_id",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_cdr_status",
+					"name": "status",
+					"comment": "",
+					"dataType": "VARCHAR(32)",
+					"default": "pendingCHR",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_cdr_request_type",
+					"name": "request_type",
+					"comment": "",
+					"dataType": "VARCHAR(255)",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_cdr_doc_url",
+					"name": "doc_url",
+					"comment": "",
+					"dataType": "TEXT",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_cdr_created_at",
+					"name": "created_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_cdr_approved_at",
+					"name": "approved_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "",
+					"option": {},
+					"ui": {}
+				}
+			],
+			"ui": {
+				"x": 1000,
+				"y": 400,
+				"widthName": 100,
+				"widthComment": 100,
+				"color": ""
+			}
+		},
+		{
+			"id": "table_mother_tetanus_doses",
+			"name": "mother_tetanus_doses",
+			"comment": "",
+			"columns": [
+				{
+					"id": "col_mtd_id",
+					"name": "id",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "",
+					"option": {
+						"primaryKey": true,
+						"notNull": true,
+						"autoIncrement": true
+					},
+					"ui": {}
+				},
+				{
+					"id": "col_mtd_user_id",
+					"name": "user_id",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_mtd_dose1_date",
+					"name": "dose1_date",
+					"comment": "",
+					"dataType": "DATE",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_mtd_dose2_date",
+					"name": "dose2_date",
+					"comment": "",
+					"dataType": "DATE",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_mtd_dose3_date",
+					"name": "dose3_date",
+					"comment": "",
+					"dataType": "DATE",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_mtd_dose4_date",
+					"name": "dose4_date",
+					"comment": "",
+					"dataType": "DATE",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_mtd_dose5_date",
+					"name": "dose5_date",
+					"comment": "",
+					"dataType": "DATE",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_mtd_date_created",
+					"name": "date_created",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_mtd_date_updated",
+					"name": "date_updated",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				}
+			],
+			"ui": {
+				"x": 1000,
+				"y": 100,
+				"widthName": 100,
+				"widthComment": 100,
+				"color": ""
+			}
+		},
+		{
+			"id": "table_notification_logs",
+			"name": "notification_logs",
+			"comment": "",
+			"columns": [
+				{
+					"id": "col_nl_id",
+					"name": "id",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "",
+					"option": {
+						"primaryKey": true,
+						"notNull": true,
+						"autoIncrement": true
+					},
+					"ui": {}
+				},
+				{
+					"id": "col_nl_baby_id",
+					"name": "baby_id",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_nl_user_id",
+					"name": "user_id",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_nl_type",
+					"name": "type",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_nl_message",
+					"name": "message",
+					"comment": "",
+					"dataType": "TEXT",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_nl_notification_date",
+					"name": "notification_date",
+					"comment": "",
+					"dataType": "DATE",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_nl_sms_sent",
+					"name": "sms_sent",
+					"comment": "",
+					"dataType": "BOOLEAN",
+					"default": "false",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_nl_email_sent",
+					"name": "email_sent",
+					"comment": "",
+					"dataType": "BOOLEAN",
+					"default": "false",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_nl_created_at",
+					"name": "created_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "CURRENT_TIMESTAMP",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_nl_updated_at",
+					"name": "updated_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "CURRENT_TIMESTAMP",
+					"option": {},
+					"ui": {}
+				}
+			],
+			"ui": {
+				"x": 1300,
+				"y": 100,
+				"widthName": 100,
+				"widthComment": 100,
+				"color": ""
+			}
+		},
+		{
+			"id": "table_activity_logs",
+			"name": "activity_logs",
+			"comment": "",
+			"columns": [
+				{
+					"id": "col_al_log_id",
+					"name": "log_id",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "",
+					"option": {
+						"primaryKey": true,
+						"notNull": true,
+						"autoIncrement": true
+					},
+					"ui": {}
+				},
+				{
+					"id": "col_al_user_id",
+					"name": "user_id",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_al_user_type",
+					"name": "user_type",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_al_action_type",
+					"name": "action_type",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_al_description",
+					"name": "description",
+					"comment": "",
+					"dataType": "TEXT",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_al_ip_address",
+					"name": "ip_address",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_al_created_at",
+					"name": "created_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				}
+			],
+			"ui": {
+				"x": 1300,
+				"y": 400,
+				"widthName": 100,
+				"widthComment": 100,
+				"color": ""
+			}
+		},
+		{
+			"id": "table_system_settings",
+			"name": "system_settings",
+			"comment": "",
+			"columns": [
+				{
+					"id": "col_ss_user_id",
+					"name": "user_id",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "primaryKey": true, "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_ss_email_username",
+					"name": "email_username",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_ss_email_password",
+					"name": "email_password",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_ss_sms_api_key",
+					"name": "sms_api_key",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_ss_sms_device_id",
+					"name": "sms_device_id",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_ss_notification_time",
+					"name": "notification_time",
+					"comment": "",
+					"dataType": "TIME",
+					"default": "02:40:00",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ss_system_name",
+					"name": "system_name",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "eBakunado",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ss_health_center_name",
+					"name": "health_center_name",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "City Health Department, Ormoc City",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ss_created_at",
+					"name": "created_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "CURRENT_TIMESTAMP",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ss_updated_at",
+					"name": "updated_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "CURRENT_TIMESTAMP",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_ss_user_type",
+					"name": "user_type",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": {},
+					"ui": {}
+				}
+			],
+			"ui": {
+				"x": 1300,
+				"y": 700,
+				"widthName": 150,
+				"widthComment": 100,
+				"color": ""
+			}
+		},
+		{
+			"id": "table_locations",
+			"name": "locations",
+			"comment": "",
+			"columns": [
+				{
+					"id": "col_loc_id",
+					"name": "id",
+					"comment": "",
+					"dataType": "INTEGER",
+					"default": "",
+					"option": {
+						"primaryKey": true,
+						"notNull": true,
+						"autoIncrement": true
+					},
+					"ui": {}
+				},
+				{
+					"id": "col_loc_province",
+					"name": "province",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_loc_city_municipality",
+					"name": "city_municipality",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_loc_barangay",
+					"name": "barangay",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_loc_purok",
+					"name": "purok",
+					"comment": "",
+					"dataType": "VARCHAR",
+					"default": "",
+					"option": { "notNull": true },
+					"ui": {}
+				},
+				{
+					"id": "col_loc_created_at",
+					"name": "created_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				},
+				{
+					"id": "col_loc_updated_at",
+					"name": "updated_at",
+					"comment": "",
+					"dataType": "TIMESTAMP",
+					"default": "now()",
+					"option": {},
+					"ui": {}
+				}
+			],
+			"ui": {
+				"x": 1000,
+				"y": 700,
+				"widthName": 100,
+				"widthComment": 100,
+				"color": ""
+			}
+		}
+	],
+	"relationshipCollection": [
+		{
+			"id": "rel_chr_users",
+			"identification": false,
+			"relationshipType": "ZeroN",
+			"startRelationshipType": "Zero",
+			"startTableId": "table_child_health_records",
+			"startColumnId": "col_chr_user_id",
+			"endRelationshipType": "N",
+			"endTableId": "table_users",
+			"endColumnId": "col_users_user_id"
+		},
+		{
+			"id": "rel_ir_chr",
+			"identification": false,
+			"relationshipType": "ZeroN",
+			"startRelationshipType": "Zero",
+			"startTableId": "table_immunization_records",
+			"startColumnId": "col_ir_baby_id",
+			"endRelationshipType": "N",
+			"endTableId": "table_child_health_records",
+			"endColumnId": "col_chr_baby_id"
+		},
+		{
+			"id": "rel_cdr_users",
+			"identification": false,
+			"relationshipType": "ZeroN",
+			"startRelationshipType": "Zero",
+			"startTableId": "table_chrdocrequest",
+			"startColumnId": "col_cdr_user_id",
+			"endRelationshipType": "N",
+			"endTableId": "table_users",
+			"endColumnId": "col_users_user_id"
+		},
+		{
+			"id": "rel_cdr_chr",
+			"identification": false,
+			"relationshipType": "ZeroN",
+			"startRelationshipType": "Zero",
+			"startTableId": "table_chrdocrequest",
+			"startColumnId": "col_cdr_baby_id",
+			"endRelationshipType": "N",
+			"endTableId": "table_child_health_records",
+			"endColumnId": "col_chr_baby_id"
+		},
+		{
+			"id": "rel_mtd_users",
+			"identification": false,
+			"relationshipType": "ZeroN",
+			"startRelationshipType": "Zero",
+			"startTableId": "table_mother_tetanus_doses",
+			"startColumnId": "col_mtd_user_id",
+			"endRelationshipType": "N",
+			"endTableId": "table_users",
+			"endColumnId": "col_users_user_id"
+		},
+		{
+			"id": "rel_nl_users",
+			"identification": false,
+			"relationshipType": "ZeroN",
+			"startRelationshipType": "Zero",
+			"startTableId": "table_notification_logs",
+			"startColumnId": "col_nl_user_id",
+			"endRelationshipType": "N",
+			"endTableId": "table_users",
+			"endColumnId": "col_users_user_id"
+		},
+		{
+			"id": "rel_nl_chr",
+			"identification": false,
+			"relationshipType": "ZeroN",
+			"startRelationshipType": "Zero",
+			"startTableId": "table_notification_logs",
+			"startColumnId": "col_nl_baby_id",
+			"endRelationshipType": "N",
+			"endTableId": "table_child_health_records",
+			"endColumnId": "col_chr_baby_id"
+		},
+		{
+			"id": "rel_al_users",
+			"identification": false,
+			"relationshipType": "ZeroN",
+			"startRelationshipType": "Zero",
+			"startTableId": "table_activity_logs",
+			"startColumnId": "col_al_user_id",
+			"endRelationshipType": "N",
+			"endTableId": "table_users",
+			"endColumnId": "col_users_user_id"
+		},
+		{
+			"id": "rel_ss_users",
+			"identification": false,
+			"relationshipType": "ZeroOne",
+			"startRelationshipType": "Zero",
+			"startTableId": "table_system_settings",
+			"startColumnId": "col_ss_user_id",
+			"endRelationshipType": "One",
+			"endTableId": "table_users",
+			"endColumnId": "col_users_user_id"
+		}
+	],
+	"indexCollection": []
+}

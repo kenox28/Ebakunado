@@ -111,23 +111,34 @@ baby_id: string (required)
 			"vaccine_name": "BCG",
 			"dose_number": "1",
 			"date_given": "2020-06-01",
-			"status": "taken"
+			"status": "taken",
+			"schedule_date": "2020-06-01",
+			"batch_schedule_date": null
 		},
 		{
 			"vaccine_name": "PENTAVALENT",
 			"dose_number": "1",
 			"date_given": "2020-06-15",
-			"status": "taken"
+			"status": "taken",
+			"schedule_date": "2020-06-15",
+			"batch_schedule_date": "2020-06-18"
 		},
 		{
 			"vaccine_name": "HEPATITIS B",
 			"dose_number": "1",
 			"date_given": "2020-06-15",
-			"status": "taken"
+			"status": "taken",
+			"schedule_date": "2020-06-15",
+			"batch_schedule_date": null
 		}
 	]
 }
 ```
+
+> **Batch-aware schedules**  
+> Every immunization record now exposes both the guideline `schedule_date` (per national EPI) and an optional `batch_schedule_date`.  
+> - If `batch_schedule_date` is present, show it to parents as the actual appointment while still referencing the guideline date for context.  
+> - When building reminders or dashboards in Flutter, use `batch_schedule_date ?? schedule_date` as the operational date.
 
 ---
 
