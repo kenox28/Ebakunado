@@ -384,6 +384,26 @@ if ($user_id) {
             nextBtn.onclick = () => { if (canNext) getChildHealthRecord(page + 1, { keep: true }); };
         }
 
+        // Immediate schedule skeleton for collapse expansion
+        function buildScheduleSkeletonTableHTML() {
+            return `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Vaccine</th>
+                            <th>Dose No.</th>
+                            <th>Due</th>
+                            <th>Date Given</th>
+                            <th>Status</th>
+                            <th>Catch-up Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="sched-body">
+                        <tr class="loading"><td colspan="6"><span class="loading"><i class="material-symbols-rounded">hourglass_top</i> Loading schedule...</span></td></tr>
+                    </tbody>
+                </table>`;
+        }
+
     window.addEventListener('DOMContentLoaded', () => getChildHealthRecord(1, { keep: false }));
         document.addEventListener('DOMContentLoaded', () => {
             const applyBtn = document.getElementById('chlApplyFiltersBtn');
@@ -410,67 +430,72 @@ if ($user_id) {
 
 
         let html5QrcodeInstance = null;
-        async function openScanner() {
-            const overlay = document.getElementById('qrOverlay');
-            overlay.style.display = 'flex';
-            console.log('[QR] Opening scanner...');
+        async function viewSchedule(baby_id, btn) {
+            const tr = btn.closest('tr');
+            const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+            const next = tr.nextElementSibling;
+            const hasSchedRow = next && next.classList.contains('sched-row');
+
+            if (btn.dataset.loading === '1') return;
+
+            // Collapse if already open
+            if (isExpanded && hasSchedRow) {
+                next.remove();
+                btn.setAttribute('aria-expanded', 'false');
+                return;
+            }
+
+            // Remove any stray sched row before inserting fresh
+            if (hasSchedRow) next.remove();
+
+            // Expand immediately with a skeleton table (no delay)
+            btn.dataset.loading = '1';
+            btn.setAttribute('aria-expanded', 'true');
+
+            const detailsRow = document.createElement('tr');
+            detailsRow.className = 'sched-row';
+            const td = document.createElement('td');
+            td.colSpan = tr.cells.length || 9;
+            td.innerHTML = buildScheduleSkeletonTableHTML();
+            detailsRow.appendChild(td);
+            tr.parentNode.insertBefore(detailsRow, tr.nextElementSibling);
+
             try {
-                // Check camera permissions/devices first
-                const devices = await Html5Qrcode.getCameras().catch(err => {
-                    console.log('[QR] getCameras error:', err);
-                    return [];
+                const res = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
+                const data = await res.json();
+
+                const tbody = detailsRow.querySelector('.sched-body');
+                if (!data || data.status !== 'success') {
+                    if (tbody) tbody.innerHTML = '<tr class="message-row error"><td colspan="6">Failed to load data. Please try again.</td></tr>';
+                    return;
+                }
+                const rows = Array.isArray(data.data) ? data.data : [];
+                if (rows.length === 0) {
+                    if (tbody) tbody.innerHTML = '<tr class="message-row"><td colspan="6">No records found</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                rows.forEach(r => {
+                    const status = (r.status || '').toString();
+                    const showCatch = status.trim().toLowerCase() === 'missed';
+                    html += `<tr>
+                        <td>${escapeHtml(r.vaccine_name || '')}</td>
+                        <td style="text-align:center">${escapeHtml(String(r.dose_number || ''))}</td>
+                        <td>${escapeHtml(formatDate(r.schedule_date) || '')}</td>
+                        <td>${escapeHtml(formatDate(r.date_given) || '')}</td>
+                        <td>${renderStatusChip(status)}</td>
+                        <td>${showCatch ? escapeHtml(formatDate(r.catch_up_date) || '') : ''}</td>
+                    </tr>`;
                 });
-                console.log('[QR] Cameras found:', devices);
-                if (!devices || devices.length === 0) {
-                    console.warn('[QR] No camera devices found. Use image upload.');
-                }
-                // Populate camera select
-                const camSel = document.getElementById('cameraSelect');
-                camSel.innerHTML = '';
-                if (devices && devices.length > 0) {
-                    devices.forEach((d, idx) => {
-                        const opt = document.createElement('option');
-                        opt.value = d.id;
-                        opt.textContent = d.label || ('Camera ' + (idx + 1));
-                        camSel.appendChild(opt);
-                    });
-                    camSel.style.display = 'inline-block';
-                    // Try enabling torch control if supported (via capabilities check after start)
-                } else {
-                    camSel.style.display = 'none';
-                }
-                if (!html5QrcodeInstance) {
-                    html5QrcodeInstance = new Html5Qrcode("qrReader");
-                }
-                await html5QrcodeInstance.start({
-                        facingMode: "environment"
-                    }, {
-                        fps: 12,
-                        qrbox: 360,
-                        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-                        disableFlip: true
-                    },
-                    onScanSuccess,
-                    onScanFailure
-                );
-                console.log('[QR] Scanner started');
-                // Show torch button if track supports torch
-                try {
-                    const stream = await html5QrcodeInstance.getState() ? document.querySelector('#qrReader video')?.srcObject : null;
-                    const track = stream && stream.getVideoTracks ? stream.getVideoTracks()[0] : null;
-                    const caps = track && track.getCapabilities ? track.getCapabilities() : {};
-                    const torchBtn = document.getElementById('torchBtn');
-                    if (caps && caps.torch !== undefined) {
-                        torchBtn.style.display = 'inline-block';
-                    } else {
-                        torchBtn.style.display = 'none';
-                    }
-                } catch (_) {
-                    document.getElementById('torchBtn').style.display = 'none';
-                }
+                if (tbody) tbody.innerHTML = html;
             } catch (e) {
-                console.error('[QR] Camera error:', e);
-                alert('Camera error: ' + e);
+                console.error('Error loading schedule:', e);
+                const tbody = detailsRow.querySelector('.sched-body');
+                if (tbody) tbody.innerHTML = '<tr class="message-row error"><td colspan="6">Failed to load data. Please try again.</td></tr>';
+                btn.setAttribute('aria-expanded', 'false');
+            } finally {
+                delete btn.dataset.loading;
             }
         }
 

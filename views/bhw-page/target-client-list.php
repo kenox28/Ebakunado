@@ -24,7 +24,7 @@ if ($user_id) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Target Client List</title>
+    <title>Target Client List (TCL)</title>
     <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="../../css/header.css" />
@@ -95,62 +95,28 @@ if ($user_id) {
                 <table class="table" id="tclTable">
                     <thead>
                         <tr>
-                            <th rowspan="2">Name of Child</th>
-                            <th rowspan="2">Sex</th>
-                            <th rowspan="2">Date of Birth</th>
-                            <th rowspan="2">Mother's Name</th>
-                            <th rowspan="2">Address</th>
-                            <th colspan="1">BCG</th>
-                            <th colspan="1">Hepatitis B</th>
-                            <th colspan="3">PENTAVALENT</th>
-                            <th colspan="3">OPV</th>
-                            <th colspan="3">PCV</th>
-                            <th colspan="2">MCV</th>
-                            <th rowspan="2">Weight (kg)</th>
-                            <th rowspan="2">Height (cm)</th>
-                            <th rowspan="2">Status</th>
-                            <th rowspan="2">Remarks</th>
-                        </tr>
-                        <tr>
-                            <th>1st Dose</th>
-                            <th>Dose</th>
-                            <th>1</th>
-                            <th>2</th>
-                            <th>3</th>
-                            <th>1</th>
-                            <th>2</th>
-                            <th>3</th>
-                            <th>1</th>
-                            <th>2</th>
-                            <th>3</th>
-                            <th>MCV1 (AMV)</th>
-                            <th>MCV2 (MMR)</th>
+                            <th>Name of Child</th>
+                            <th>Sex</th>
+                            <th>Date of Birth</th>
+                            <th>Mother's Name</th>
+                            <th>Address</th>
+                            <th>Weight (kg)</th>
+                            <th>Height (cm)</th>
+                            <th>Status</th>
+                            <th>Remarks</th>
                         </tr>
                     </thead>
                     <tbody id="tclBody">
                         <tr class="skeleton-row">
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td> <!-- Name -->
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td> <!-- Sex -->
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td> <!-- DOB -->
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td> <!-- Mother -->
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td> <!-- Address -->
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td> <!-- BCG -->
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td> <!-- HepB -->
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td> <!-- Penta1 -->
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td> <!-- Penta2 -->
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td> <!-- Penta3 -->
-                            <td><div class="skeleton skeleton-text skeleton-col-6"></div></td> <!-- OPV1 -->
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td> <!-- OPV2 -->
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td> <!-- OPV3 -->
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td> <!-- PCV1 -->
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td> <!-- PCV2 -->
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td> <!-- PCV3 -->
-                            <td><div class="skeleton skeleton-text skeleton-col-6"></div></td> <!-- MCV1 -->
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td> <!-- MCV2 -->
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td> <!-- Weight -->
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td> <!-- Height -->
-                            <td><div class="skeleton skeleton-pill skeleton-col-4"></div></td> <!-- Status -->
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td> <!-- Remarks -->
+                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
+                            <td><div class="skeleton skeleton-pill skeleton-col-4"></div></td>
+                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
                         </tr>
                         <tr class="skeleton-row">
                             <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
@@ -158,19 +124,6 @@ if ($user_id) {
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-6"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-6"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
                             <td><div class="skeleton skeleton-pill skeleton-col-4"></div></td>
@@ -215,16 +168,20 @@ if ($user_id) {
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
-        // Column config for TCL (22 underlying columns; Status at index 20)
-        const TCL_TOTAL_COLS = 22;
+        // Column config for TCL collapsed view (9 columns)
+        const TCL_TOTAL_COLS = 9;
         function getTclColsConfig() {
-            const cols = [];
-            for (let i = 0; i < TCL_TOTAL_COLS; i++) {
-                const widthClass = `skeleton-col-${(i % 6) + 1}`;
-                const type = (i === 20) ? 'pill' : 'text';
-                cols.push({ type, widthClass });
-            }
-            return cols;
+            return [
+                { type: 'text', widthClass: 'skeleton-col-1' }, // Name
+                { type: 'text', widthClass: 'skeleton-col-2' }, // Sex
+                { type: 'text', widthClass: 'skeleton-col-3' }, // DOB
+                { type: 'text', widthClass: 'skeleton-col-4' }, // Mother
+                { type: 'text', widthClass: 'skeleton-col-5' }, // Address
+                { type: 'text', widthClass: 'skeleton-col-2' }, // Weight
+                { type: 'text', widthClass: 'skeleton-col-3' }, // Height
+                { type: 'pill', widthClass: 'skeleton-col-4' }, // Status
+                { type: 'text', widthClass: 'skeleton-col-5' }  // Remarks
+            ];
         }
         // Date formatting helper
         function formatDate(dateStr){
@@ -312,32 +269,34 @@ if ($user_id) {
 
             let rows = '';
             records.forEach(item => {
+                const vaccines = {
+                    BCG: item.BCG,
+                    'Hepatitis B': item['Hepatitis B'],
+                    'Penta 1': item['Penta 1'],
+                    'Penta 2': item['Penta 2'],
+                    'Penta 3': item['Penta 3'],
+                    'OPV 1': item['OPV 1'],
+                    'OPV 2': item['OPV 2'],
+                    'OPV 3': item['OPV 3'],
+                    'PCV 1': item['PCV 1'],
+                    'PCV 2': item['PCV 2'],
+                    'PCV 3': item['PCV 3'],
+                    'MCV1 (AMV)': item['MCV1_AMV'],
+                    'MCV2 (MMR)': item['MCV2_MMR']
+                };
+                const vaccinesJson = encodeURIComponent(JSON.stringify(vaccines));
                 rows += `
-                <tr>
-                    <td>${item.child_name || ''}</td>
+                <tr class="tcl-row" data-vaccines='${vaccinesJson}'>
+                    <td class="tcl-name-cell"><button type="button" class="vaccine-toggle" aria-label="Toggle vaccines"><span class="material-symbols-rounded">expand_more</span></button>${item.child_name || ''}</td>
                     <td>${item.sex || ''}</td>
                     <td>${formatDate(item.date_of_birth) || ''}</td>
                     <td>${item.mother_name || ''}</td>
                     <td>${item.address || ''}</td>
-                    <td>${getVaccineCell(item.BCG)}</td>
-                    <td>${getVaccineCell(item['Hepatitis B'])}</td>
-                    <td>${getVaccineCell(item['Penta 1'])}</td>
-                    <td>${getVaccineCell(item['Penta 2'])}</td>
-                    <td>${getVaccineCell(item['Penta 3'])}</td>
-                    <td>${getVaccineCell(item['OPV 1'])}</td>
-                    <td>${getVaccineCell(item['OPV 2'])}</td>
-                    <td>${getVaccineCell(item['OPV 3'])}</td>
-                    <td>${getVaccineCell(item['PCV 1'])}</td>
-                    <td>${getVaccineCell(item['PCV 2'])}</td>
-                    <td>${getVaccineCell(item['PCV 3'])}</td>
-                    <td>${getVaccineCell(item['MCV1_AMV'])}</td>
-                    <td>${getVaccineCell(item['MCV2_MMR'])}</td>
                     <td>${item.weight || ''}</td>
                     <td>${item.height || ''}</td>
                     <td>${statusChip(item.status)}</td>
                     <td>${item.remarks || ''}</td>
-                </tr>
-            `;
+                </tr>`;
             });
             body.innerHTML = rows;
         }
@@ -413,6 +372,46 @@ if ($user_id) {
         document.getElementById('tclNextBtn').addEventListener('click', (e) => {
             console.log('TCL Next clicked', { currentPage: tclPage });
             loadTCLData(tclPage + 1, { keep: true });
+        });
+
+        // Build vaccine detail HTML
+        function buildVaccineDetails(vaccinesObj) {
+            const entries = Object.entries(vaccinesObj);
+            let inner = '<table class="vaccine-details-table"><thead><tr><th>Vaccine</th><th>Date</th></tr></thead><tbody>';
+            entries.forEach(([name, status]) => {
+                inner += `<tr><td>${name}</td><td>${getVaccineCell(status)}</td></tr>`;
+            });
+            inner += '</tbody></table>';
+            return inner;
+        }
+
+        // Delegated click for expanding/collapsing vaccine details
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('.vaccine-toggle');
+            if (!btn) return;
+            const row = btn.closest('tr.tcl-row');
+            if (!row) return;
+            const next = row.nextElementSibling;
+            const icon = btn.querySelector('.material-symbols-rounded');
+            const vaccinesEncoded = row.getAttribute('data-vaccines');
+            if (!vaccinesEncoded) return;
+            if (next && next.classList.contains('vaccines-row')) {
+                // collapse
+                next.remove();
+                if (icon) icon.textContent = 'expand_more';
+            } else {
+                let vaccinesObj = {};
+                try { vaccinesObj = JSON.parse(decodeURIComponent(vaccinesEncoded)); } catch(_) {}
+                const detailsHtml = buildVaccineDetails(vaccinesObj);
+                const detailsRow = document.createElement('tr');
+                detailsRow.className = 'vaccines-row';
+                const td = document.createElement('td');
+                td.colSpan = TCL_TOTAL_COLS;
+                td.innerHTML = detailsHtml;
+                detailsRow.appendChild(td);
+                row.parentNode.insertBefore(detailsRow, row.nextElementSibling);
+                if (icon) icon.textContent = 'expand_less';
+            }
         });
 
         function exportToCSV() {

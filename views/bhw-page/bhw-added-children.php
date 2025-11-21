@@ -26,6 +26,7 @@ if ($user_types != 'midwifes') {
     <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/skeleton-loading.css" />
     <link rel="stylesheet" href="../../css/bhw/pending-approval-style.css" />
+    <link rel="stylesheet" href="../../css/bhw/added-children-style.css" />
 </head>
 
 <body>
@@ -122,6 +123,12 @@ if ($user_types != 'midwifes') {
             </div>
 
             <div class="childinformation-container">
+                <div class="ac-top-actions">
+                    <button type="button" class="btn back-btn" onclick="backToList()">
+                        <span class="material-symbols-rounded">arrow_back</span>
+                        Back
+                    </button>
+                </div>
                 <div class="child-information childinfo-header">
                     <h1 class="section-heading">
                         <span class="material-symbols-rounded">
@@ -129,9 +136,6 @@ if ($user_types != 'midwifes') {
                         </span>
                         Child Information
                     </h1>
-                    <div class="childinfo-actions">
-                        <button class="btn back-btn" onclick="backToList()" id="closeButton">Back</button>
-                    </div>
                 </div>
 
                 <div class="childinfo-main">
@@ -262,10 +266,21 @@ if ($user_types != 'midwifes') {
         
     </main>
 
+    <div id="childImageOverlay" class="childimage-overlay" style="display:none;">
+        <img id="childImageLarge" alt="Baby Card Full View" src="" />
+    </div>
+
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
+        // Display date helper: Mon D, YYYY
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+        }
         // Column config for Added Children (9 visible columns)
         function getAddedChildrenColsConfig() {
             return [
@@ -385,33 +400,25 @@ if ($user_types != 'midwifes') {
                     const familyCode = item.user_id || '-';
                     rows += `<tr data-id="${item.id || ''}" data-user-id="${item.user_id || ''}" data-baby-id="${item.baby_id || ''}">
                             <td>
-                                <span class="child-name">${fullName || '-'}</span>
-                                <button type="button" class="icon-btn view-child-btn" aria-label="View details" title="View details" onclick="viewChildInformation('${item.baby_id}')">
-                                    <span class="material-symbols-rounded">visibility</span>
-                                </button>
+                                <div class="name-cell">
+                                    <span class="child-name">${fullName || '-'}</span>
+                                    <button type="button" class="icon-btn view-child-btn" aria-label="View details" title="View details" onclick="viewChildInformation('${item.baby_id}')">
+                                        <span class="material-symbols-rounded">visibility</span>
+                                    </button>
+                                </div>
                             </td>
                             <td>${item.child_gender || ''}</td>
-                            <td>${item.child_birth_date || ''}</td>
+                            <td>${formatDate(item.child_birth_date) || ''}</td>
                             <td>${item.place_of_birth || ''}</td>
                             <td>${item.mother_name || ''}</td>
                             <td>${item.father_name || ''}</td>
                             <td>${item.address || ''}</td>
                             <td>${item.status || ''}</td>
-                            <td style="font-weight: bold; color: #28a745;">${familyCode}</td>
+                            <td class="family-code">${familyCode}</td>
                         </tr>`;
                 });
                 body.innerHTML = rows;
-                // Minimal inline styles for new view icon button if global styles absent
-                (function ensureViewBtnStyles(){
-                    if (document.getElementById('viewChildBtnStyles')) return;
-                    const style = document.createElement('style');
-                    style.id = 'viewChildBtnStyles';
-                    style.textContent = `.icon-btn.view-child-btn{margin-left:6px;display:inline-flex;align-items:center;justify-content:center;padding:2px;background:transparent;border:none;color:var(--primary-color,#2a7ae4);cursor:pointer;vertical-align:middle}`+
-                        `.icon-btn.view-child-btn .material-symbols-rounded{font-size:20px;line-height:1}`+
-                        `.icon-btn.view-child-btn:hover{opacity:.85}`+
-                        `.child-name{font-weight:500}`;
-                    document.head.appendChild(style);
-                })();
+                
 
                 updatePaPager({ page: data.page || page, has_more: !!data.has_more || count === (data.limit || limit) });
                 updatePaInfo(data.page || page, data.limit || limit, count, data.total || 0);
@@ -517,9 +524,9 @@ if ($user_types != 'midwifes') {
                         <tr data-record-id="${record.id || ''}">
                             <td>${record.vaccine_name || ''}</td>
                             <td>${record.dose_number || ''}</td>
-                            <td>${record.schedule_date || ''}</td>
-                            <td>${record.catch_up_date || ''}</td>
-                            <td>${record.date_given || ''}</td>
+                            <td>${formatDate(record.schedule_date) || ''}</td>
+                            <td>${formatDate(record.catch_up_date) || ''}</td>
+                            <td>${formatDate(record.date_given) || ''}</td>
                             <td><span class="badge badge-${statusClass}">${statusText}</span></td>
                         </tr>`;
                 });
@@ -567,6 +574,12 @@ if ($user_types != 'midwifes') {
                 document.querySelector('#childDeliveryType').value = row.delivery_type || 'Normal';
                 document.querySelector('#childBirthOrder').value = row.birth_order || 'Single';
                 document.querySelector('#childImage').src = row.babys_card || '';
+                // Make baby card image clickable to open overlay
+                const thumb = document.getElementById('childImage');
+                if (thumb) {
+                    thumb.style.cursor = 'pointer';
+                    thumb.onclick = () => openChildImage(thumb.src);
+                }
 
                 document.querySelector('.childinformation-container').dataset.babyId = baby_id;
 
@@ -577,6 +590,24 @@ if ($user_types != 'midwifes') {
                 console.error('Error loading child info:', err);
                 alert('Error loading child information.');
             }
+        }
+
+        function openChildImage(src) {
+            if (!src) return;
+            const overlay = document.getElementById('childImageOverlay');
+            const large = document.getElementById('childImageLarge');
+            if (!overlay || !large) return;
+            large.src = src;
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeChildImage() {
+            const overlay = document.getElementById('childImageOverlay');
+            const large = document.getElementById('childImageLarge');
+            if (overlay) overlay.style.display = 'none';
+            if (large) large.src = '';
+            document.body.style.overflow = '';
         }
 
         async function saveChildInfo() {
@@ -727,6 +758,17 @@ if ($user_types != 'midwifes') {
             });
 
             loadAddedChildren(1, { keep: false });
+
+            // Overlay backdrop + ESC key handling
+            const overlay = document.getElementById('childImageOverlay');
+            if (overlay) {
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) closeChildImage();
+                });
+            }
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeChildImage();
+            });
         });
     </script>
 </body>

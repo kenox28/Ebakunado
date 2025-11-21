@@ -85,22 +85,52 @@ main {
 }
 
 /* Keep action buttons’ page-specific variants */
-.child-health-list-section .table tbody td .btn + .btn { margin-left: 8px; }
-.child-health-list-section .table .btn .material-symbols-rounded.btn-icon { font-size: 18px; line-height: 1; }
-.child-health-list-section .table .btn .material-symbols-rounded.btn-chevron { font-size: 18px; line-height: 1; transition: transform 0.2s ease; }
-.child-health-list-section .view-schedule-btn { background: transparent; color: var(--primary-color); border: 1px solid var(--primary-color); }
-.child-health-list-section .view-schedule-btn:hover { background: #f9fafb; border-color: #157347; }
-.child-health-list-section .view-schedule-btn:active { background: #f3f4f6; transform: scale(0.98); }
+.child-health-list-section .table tbody td .btn + .btn {
+  margin-left: 8px;
+}
+.child-health-list-section .table .btn .material-symbols-rounded.btn-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+.child-health-list-section .table .btn .material-symbols-rounded.btn-chevron {
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+.child-health-list-section .view-schedule-btn {
+  background: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+.child-health-list-section .view-schedule-btn:hover {
+  background: #f9fafb;
+  border-color: #157347;
+}
+.child-health-list-section .view-schedule-btn:active {
+  background: #f3f4f6;
+  transform: scale(0.98);
+}
 .child-health-list-section .view-schedule-btn:active .btn-chevron,
-.child-health-list-section .view-schedule-btn[aria-expanded="true"] .btn-chevron { transform: rotate(180deg); }
-.child-health-list-section .view-schedule-btn:focus,
-.child-health-list-section .view-schedule-btn:focus-visible { outline: 2px solid #00250e; outline-offset: 1px; }
+.child-health-list-section
+  .view-schedule-btn[aria-expanded="true"]
+  .btn-chevron {
+  transform: rotate(180deg);
+}
 
-.child-health-list-section .viewCHR-btn { background: var(--primary-color); color: #fff; border-color: var(--primary-color); text-decoration: none; }
-.child-health-list-section .viewCHR-btn:hover { background: #005d2d; border-color: #005d2d; }
-.child-health-list-section .viewCHR-btn:active { background: #005129; transform: scale(0.98); }
-.child-health-list-section .viewCHR-btn:focus,
-.child-health-list-section .viewCHR-btn:focus-visible { outline: 2px solid #00250e; outline-offset: 1px; }
+.child-health-list-section .viewCHR-btn {
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+  text-decoration: none;
+}
+.child-health-list-section .viewCHR-btn:hover {
+  background: #005d2d;
+  border-color: #005d2d;
+}
+.child-health-list-section .viewCHR-btn:active {
+  background: #005129;
+  transform: scale(0.98);
+}
 
 /* Filters (match Immunization styles) */
 .child-health-list-section .filters {
@@ -120,7 +150,10 @@ main {
   flex: 0 0 auto;
   min-width: 0;
 }
-.child-health-list-section .filters .select-with-icon .material-symbols-rounded {
+.child-health-list-section
+  .filters
+  .select-with-icon
+  .material-symbols-rounded {
   position: absolute;
   right: 12px;
   top: 50%;
@@ -143,7 +176,8 @@ main {
   font: inherit;
   font-size: 1.2rem;
   text-transform: capitalize;
-  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease,
+    box-shadow 0.2s ease;
   box-sizing: border-box;
   padding-right: 36px;
 }

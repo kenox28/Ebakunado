@@ -147,10 +147,11 @@ if ($user_types != 'midwifes') {
                     const data = await res.json();
 
                     if (!(data && data.status === 'success')) {
-                        renderTableMessage(tbody, 'Failed to load requests', {
-                            colspan: 5,
-                            kind: 'error'
-                        });
+                        if (typeof renderTableMessage === 'function') {
+                            renderTableMessage(tbody, 'Failed to load data. Please try again.', { colspan: 5, kind: 'error' });
+                        } else if (tbody) {
+                            tbody.innerHTML = '<tr class="message-row error"><td colspan="5">Failed to load data. Please try again.</td></tr>';
+                        }
                         if (pagerDiv) {
                             pagerDiv.hidden = false;
                             const pageInfo = document.getElementById('pageInfo');
@@ -168,9 +169,11 @@ if ($user_types != 'midwifes') {
                     }
 
                     if (rows.length === 0) {
-                        renderTableMessage(tbody, 'No pending Baby Card requests', {
-                            colspan: 5
-                        });
+                        if (typeof renderTableMessage === 'function') {
+                            renderTableMessage(tbody, 'No records found', { colspan: 5 });
+                        } else if (tbody) {
+                            tbody.innerHTML = '<tr class="message-row"><td colspan="5">No records found</td></tr>';
+                        }
                         updateBabycardPager(1, false, data.total || 0);
                         return;
                     }
@@ -202,10 +205,11 @@ if ($user_types != 'midwifes') {
 
                 } catch (e) {
                     console.error('Error loading Baby Card requests:', e);
-                    renderTableMessage(tbody, 'Network error', {
-                        colspan: 5,
-                        kind: 'error'
-                    });
+                    if (typeof renderTableMessage === 'function') {
+                        renderTableMessage(tbody, 'Failed to load data. Please try again.', { colspan: 5, kind: 'error' });
+                    } else if (tbody) {
+                        tbody.innerHTML = '<tr class="message-row error"><td colspan="5">Failed to load data. Please try again.</td></tr>';
+                    }
                     if (pagerDiv) pagerDiv.hidden = false; // leave pager visible even on error for consistency
                 }
             }

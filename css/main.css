@@ -134,11 +134,11 @@ a {
   background: #005129;
 }
 
-.btn:focus,
+/* .btn:focus,
 .btn:focus-visible {
   outline: 2px solid #00250e;
   outline-offset: 1px;
-}
+} */
 
 /* Variants */
 .btn-outline-primary {

@@ -29,6 +29,60 @@ main {
   font-size: 20px;
 }
 
+/* Vaccine details expansion */
+.vaccine-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  margin-right: 6px;
+  border-radius: 6px;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+.vaccine-toggle .material-symbols-rounded {
+  font-size: 20px;
+  line-height: 1;
+}
+.vaccine-toggle:hover {
+  background: #f3f4f6;
+}
+.vaccine-toggle:active {
+  transform: scale(0.92);
+}
+
+.vaccines-row td {
+  background: #fafafa;
+  padding: 0;
+  border-top: 1px solid #e5e7eb;
+}
+.vaccine-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.2rem;
+}
+.vaccine-details-table th,
+.vaccine-details-table td {
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+.vaccine-details-table th {
+  background: #f1f5f9;
+  font-weight: 600;
+  color: #1f2937;
+}
+.vaccine-details-table tr:last-child td {
+  border-bottom: none;
+}
+.vaccine-details-table td span.chip {
+  font-size: 1.1rem;
+}
+
 /* Filters (aligned with immunization) */
 .target-client-list-section .filters {
   display: flex;
