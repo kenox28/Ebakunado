@@ -32,7 +32,7 @@ if ($user_id) {
     
     <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/bhw/dashboard.css?v=1.0.1" />
+    <link rel="stylesheet" href="../../css/bhw/dashboard.css?v=1.0.4" />
     
 </head>
 
@@ -108,6 +108,41 @@ if ($user_id) {
                 </div>
             </div>
 
+            <!-- Monthly Vaccine Schedule Chart -->
+            <div class="monthly-vaccine-section">
+                <div class="monthly-vaccine-card">
+                    <div class="monthly-vaccine-header">
+                        <h3 class="monthly-vaccine-title">
+                            <span class="material-symbols-rounded">calendar_month</span>
+                            Monthly Vaccine Schedule
+                        </h3>
+                        <div class="month-nav-controls">
+                            <button class="month-nav-btn" id="prevMonthBtn" title="Previous Month">
+                                <span class="material-symbols-rounded">chevron_left</span>
+                            </button>
+                            <div class="month-display" id="monthDisplay">November 2025</div>
+                            <button class="month-nav-btn" id="nextMonthBtn" title="Next Month">
+                                <span class="material-symbols-rounded">chevron_right</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="monthly-vaccine-quick-switch">
+                        <button class="quick-switch-btn active" data-month="current" id="currentMonthBtn">Current Month</button>
+                        <button class="quick-switch-btn" data-month="next" id="nextMonthQuickBtn">Next Month</button>
+                    </div>
+                    <div class="charts-wrapper">
+                        <div class="chart-container chart-bar">
+                            <h4 class="chart-title">All Vaccines</h4>
+                            <canvas id="vaccineChart"></canvas>
+                        </div>
+                        <div class="chart-container chart-donut">
+                            <h4 class="chart-title">Top 5 Vaccines Distribution</h4>
+                            <canvas id="vaccineDonutChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- <div class="activity-task-container" >
                 <div class="activity-section">
                     <h2 class="dashboard-heading">Recent Activities</h2>
@@ -145,6 +180,7 @@ if ($user_id) {
         </section>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="../../js/header-handler/profile-menu.js" defer></script>
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="../../js/utils/skeleton-loading.js" defer></script>
@@ -166,6 +202,9 @@ if ($user_id) {
                     updateStats(data.data.stats);
                     updateActivity(data.data.recent_activities);
                     updateTasks(data.data.stats);
+                    if (data.data.monthly_vaccines) {
+                        initializeMonthlyChart(data.data.monthly_vaccines);
+                    }
                     console.log('Dashboard updated successfully');
                 } else {
                     console.error('Dashboard API error:', data);
@@ -227,6 +266,7 @@ if ($user_id) {
 
         function updateActivity(activities) {
             const activityList = document.getElementById('activityList');
+            if (!activityList) return; // Activity section is commented out, skip update
 
             if (!activities || activities.length === 0) {
                 activityList.innerHTML = '<div class="loading"><p>No recent activity</p></div>';
@@ -280,11 +320,328 @@ if ($user_id) {
 
         function showError(message) {
             const activityList = document.getElementById('activityList');
+            if (!activityList) {
+                console.error('Dashboard error:', message);
+                return; // Activity section is commented out, just log to console
+            }
             activityList.innerHTML = `
 			<div class="loading">
 				<p style="color: #dc3545;">${message}</p>
 			</div>
 		`;
+        }
+
+        // Monthly Vaccine Chart
+        let vaccineChart = null;
+        let vaccineDonutChart = null;
+        let monthlyData = null;
+        let currentViewMonth = 'current'; // 'current' or 'next'
+
+        function initializeMonthlyChart(data) {
+            if (!data || !data.current_month || !data.next_month) {
+                console.warn('Monthly vaccine data not available');
+                return;
+            }
+            monthlyData = data;
+            const chartCanvas = document.getElementById('vaccineChart');
+            const donutCanvas = document.getElementById('vaccineDonutChart');
+            if (!chartCanvas || !donutCanvas) {
+                console.warn('Chart canvas not found');
+                return;
+            }
+            renderCharts('current');
+            setupMonthNavigation();
+        }
+
+        function renderCharts(monthType) {
+            if (!monthlyData) return;
+            
+            const monthData = monthType === 'current' 
+                ? monthlyData.current_month 
+                : monthlyData.next_month;
+            
+            if (!monthData) return;
+
+            // Update UI
+            document.getElementById('monthDisplay').textContent = monthData.month_name;
+            
+            // Update quick switch buttons
+            document.querySelectorAll('.quick-switch-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(monthType === 'current' ? 'currentMonthBtn' : 'nextMonthQuickBtn').classList.add('active');
+            
+            currentViewMonth = monthType;
+
+            // Prepare chart data
+            const labels = monthData.vaccines.map(v => {
+                // Shorten long vaccine names for better display
+                let name = v.name;
+                if (name.includes('Pentavalent')) {
+                    name = name.replace('Pentavalent (DPT-HepB-Hib)', 'Pentavalent');
+                }
+                if (name.includes('MCV1')) name = 'MCV1 (AMV)';
+                if (name.includes('MCV2')) name = 'MCV2 (MMR)';
+                return name;
+            });
+            const counts = monthData.vaccines.map(v => v.count);
+
+            // Destroy existing charts if they exist
+            if (vaccineChart) {
+                vaccineChart.destroy();
+            }
+            if (vaccineDonutChart) {
+                vaccineDonutChart.destroy();
+            }
+
+            // Color palette for charts
+            const primaryColor = monthType === 'current' 
+                ? 'rgba(59, 130, 246, 0.8)' 
+                : 'rgba(20, 184, 166, 0.8)';
+            const primaryColorSolid = monthType === 'current' 
+                ? 'rgba(59, 130, 246, 1)' 
+                : 'rgba(20, 184, 166, 1)';
+            
+            const colorPalette = [
+                'rgba(59, 130, 246, 0.9)',   // Blue
+                'rgba(20, 184, 166, 0.9)',  // Teal
+                'rgba(139, 92, 246, 0.9)',  // Purple
+                'rgba(236, 72, 153, 0.9)',  // Pink
+                'rgba(251, 146, 60, 0.9)',  // Orange
+                'rgba(34, 197, 94, 0.9)',   // Green
+                'rgba(239, 68, 68, 0.9)',   // Red
+            ];
+
+            // Render Bar Chart (all 14 vaccines)
+            const barCtx = document.getElementById('vaccineChart').getContext('2d');
+            vaccineChart = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Vaccines Needed',
+                        data: counts,
+                        backgroundColor: counts.map((count, idx) => {
+                            if (count === 0) return 'rgba(229, 231, 235, 0.3)';
+                            // Create gradient effect based on count
+                            const intensity = Math.min(count / 20, 1);
+                            return monthType === 'current'
+                                ? `rgba(59, 130, 246, ${0.5 + intensity * 0.4})`
+                                : `rgba(20, 184, 166, ${0.5 + intensity * 0.4})`;
+                        }),
+                        borderColor: counts.map(count => 
+                            count === 0 
+                                ? 'rgba(229, 231, 235, 0.5)' 
+                                : primaryColorSolid
+                        ),
+                        borderWidth: 1.5,
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                            padding: 14,
+                            titleFont: {
+                                size: 13,
+                                weight: '600'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.x + ' vials needed';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                precision: 0,
+                                font: {
+                                    size: 10
+                                },
+                                color: '#6B7280'
+                            },
+                            grid: {
+                                color: 'rgba(229, 231, 235, 0.4)',
+                                drawBorder: false
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                font: {
+                                    size: 10
+                                },
+                                color: '#374151',
+                                maxRotation: 0,
+                                minRotation: 0
+                            },
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+
+            // Prepare data for donut chart (top 5 vaccines)
+            const vaccinesWithCounts = monthData.vaccines
+                .map((v, idx) => ({ name: labels[idx], count: v.count, originalName: v.name }))
+                .filter(v => v.count > 0)
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 5);
+
+            const donutLabels = vaccinesWithCounts.map(v => v.name);
+            const donutCounts = vaccinesWithCounts.map(v => v.count);
+            const totalDonut = donutCounts.reduce((sum, count) => sum + count, 0);
+
+            // Render Donut Chart (top 5)
+            const donutCtx = document.getElementById('vaccineDonutChart').getContext('2d');
+            
+            // Register center text plugin
+            const centerTextPlugin = {
+                id: 'centerText',
+                beforeDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    const centerX = chart.chartArea.left + (chart.chartArea.right - chart.chartArea.left) / 2;
+                    const centerY = chart.chartArea.top + (chart.chartArea.bottom - chart.chartArea.top) / 2;
+                    
+                    ctx.save();
+                    ctx.font = 'bold 28px Poppins, sans-serif';
+                    ctx.fillStyle = '#1F2937';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(totalDonut, centerX, centerY - 8);
+                    
+                    ctx.font = '11px Poppins, sans-serif';
+                    ctx.fillStyle = '#6B7280';
+                    ctx.fillText('total vial', centerX, centerY + 16);
+                    ctx.restore();
+                }
+            };
+            
+            vaccineDonutChart = new Chart(donutCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: donutLabels,
+                    datasets: [{
+                        data: donutCounts,
+                        backgroundColor: colorPalette.slice(0, donutCounts.length),
+                        borderColor: '#ffffff',
+                        borderWidth: 2.5,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                padding: 10,
+                                font: {
+                                    size: 11,
+                                    family: 'Poppins, sans-serif'
+                                },
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                generateLabels: function(chart) {
+                                    const data = chart.data;
+                                    if (data.labels.length && data.datasets.length) {
+                                        return data.labels.map((label, i) => {
+                                            const value = data.datasets[0].data[i];
+                                            const percentage = totalDonut > 0 ? ((value / totalDonut) * 100).toFixed(1) : 0;
+                                            return {
+                                                text: `${label}: ${value} (${percentage}%)`,
+                                                fillStyle: data.datasets[0].backgroundColor[i],
+                                                strokeStyle: data.datasets[0].borderColor,
+                                                lineWidth: data.datasets[0].borderWidth,
+                                                hidden: false,
+                                                index: i
+                                            };
+                                        });
+                                    }
+                                    return [];
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                            padding: 14,
+                            titleFont: {
+                                size: 13,
+                                weight: '600',
+                                family: 'Poppins, sans-serif'
+                            },
+                            bodyFont: {
+                                size: 12,
+                                family: 'Poppins, sans-serif'
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const percentage = totalDonut > 0 ? ((value / totalDonut) * 100).toFixed(1) : 0;
+                                    return `${label}: ${value} vials (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                },
+                plugins: [centerTextPlugin]
+            });
+        }
+
+        function setupMonthNavigation() {
+            // Previous/Next buttons
+            document.getElementById('prevMonthBtn').addEventListener('click', () => {
+                if (currentViewMonth === 'next') {
+                    renderCharts('current');
+                }
+            });
+
+            document.getElementById('nextMonthBtn').addEventListener('click', () => {
+                if (currentViewMonth === 'current') {
+                    renderCharts('next');
+                }
+            });
+
+            // Quick switch buttons
+            document.getElementById('currentMonthBtn').addEventListener('click', () => {
+                renderCharts('current');
+            });
+
+            document.getElementById('nextMonthQuickBtn').addEventListener('click', () => {
+                renderCharts('next');
+            });
         }
 
         // QR Scanner Functions

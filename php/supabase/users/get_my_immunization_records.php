@@ -13,7 +13,7 @@ if ($baby_id === '') { echo json_encode(['status'=>'error','message'=>'Missing b
 $own = supabaseSelect('child_health_records', 'id', ['baby_id' => $baby_id, 'user_id' => $_SESSION['user_id']], null, 1);
 if (!$own || count($own) === 0) { echo json_encode(['status'=>'error','message'=>'Not found']); exit(); }
 
-$columns = 'id,baby_id,vaccine_name,dose_number,status,schedule_date,date_given,catch_up_date,weight,height,temperature,created_at';
+$columns = 'id,baby_id,vaccine_name,dose_number,status,schedule_date,batch_schedule_date,date_given,catch_up_date,weight,height,temperature,created_at';
 $rows = supabaseSelect('immunization_records', $columns, ['baby_id' => $baby_id], 'schedule_date.asc');
 
 // Auto-mark missed for overdue records not completed
@@ -24,7 +24,7 @@ if ($rows && is_array($rows)) {
 	foreach ($rows as &$r) {
 		$status = strtolower($r['status'] ?? '');
 		$dateGiven = $r['date_given'] ?? null;
-		$sched = $r['schedule_date'] ?? ($r['catch_up_date'] ?? null);
+		$sched = $r['batch_schedule_date'] ?? $r['schedule_date'] ?? ($r['catch_up_date'] ?? null);
 		if (!empty($sched) && empty($dateGiven) && $status !== 'completed') {
 			if ($sched < $today) {
 				if ($status !== 'missed' || empty($r['catch_up_date'])) {

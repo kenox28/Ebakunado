@@ -44,24 +44,30 @@ try {
         );
         $pendingCount = $pendingRequests ? count($pendingRequests) : 0;
 
-        // Count children with schedules for today
+        // Count children with schedules for today (guideline or batch date)
         $today = date('Y-m-d');
-        $todaySchedules = supabaseSelect(
+        $todayScheduleCount = 0;
+        $todayBabies = [];
+
+        $scheduledRecords = supabaseSelect(
             'immunization_records',
-            'baby_id',
-            ['baby_id' => $baby_ids, 'schedule_date' => $today, 'status' => 'scheduled']
+            'baby_id,schedule_date,batch_schedule_date,status',
+            ['baby_id' => $baby_ids, 'status' => 'scheduled']
         );
-        
-        // Get unique baby_ids for today's schedules
-        $uniqueTodayBabies = [];
-        if ($todaySchedules) {
-            foreach ($todaySchedules as $schedule) {
-                if (!in_array($schedule['baby_id'], $uniqueTodayBabies)) {
-                    $uniqueTodayBabies[] = $schedule['baby_id'];
+
+        if ($scheduledRecords && is_array($scheduledRecords)) {
+            foreach ($scheduledRecords as $record) {
+                $targetDate = $record['batch_schedule_date'] ?? $record['schedule_date'] ?? null;
+                if ($targetDate === $today) {
+                    $bid = $record['baby_id'];
+                    if ($bid && !isset($todayBabies[$bid])) {
+                        $todayBabies[$bid] = true;
+                    }
                 }
             }
         }
-        $todayScheduleCount = count($uniqueTodayBabies);
+
+        $todayScheduleCount = count($todayBabies);
     }
 
     echo json_encode([

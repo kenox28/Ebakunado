@@ -62,6 +62,47 @@ function getDoseText($doseNumber) {
     return $doseMap[$doseNumber] ?? "Dose $doseNumber";
 }
 
+/**
+ * Fetch immunization records scheduled (guideline or batch) for a specific date.
+ */
+function fetchSchedulesForDate(string $target_date) {
+    $columns = 'id,baby_id,vaccine_name,dose_number,schedule_date,batch_schedule_date,catch_up_date';
+    $result = [];
+    $seen = [];
+
+    $bySchedule = supabaseSelect(
+        'immunization_records',
+        $columns,
+        [
+            'schedule_date' => $target_date,
+            'status' => 'scheduled'
+        ],
+        'schedule_date.asc'
+    );
+
+    $byBatch = supabaseSelect(
+        'immunization_records',
+        $columns,
+        [
+            'batch_schedule_date' => $target_date,
+            'status' => 'scheduled'
+        ],
+        'batch_schedule_date.asc'
+    );
+
+    foreach ([$bySchedule, $byBatch] as $group) {
+        if (!$group || !is_array($group)) { continue; }
+        foreach ($group as $row) {
+            $id = $row['id'] ?? null;
+            if ($id === null || isset($seen[$id])) { continue; }
+            $seen[$id] = true;
+            $result[] = $row;
+        }
+    }
+
+    return $result;
+}
+
 // SMS notification function
 function sendSMSNotification($parent, $child, $vaccines, $schedule_date, $message_prefix, $date_label) {
     $phone_number = $parent['phone_number'] ?? '';
@@ -234,15 +275,7 @@ try {
         $message_prefix = '🔔 REMINDER';
         
         // Get all immunization records scheduled for target date
-        $upcoming_schedules = supabaseSelect(
-            'immunization_records',
-            'id,baby_id,vaccine_name,dose_number,schedule_date,catch_up_date',
-            [
-                'schedule_date' => $target_date,
-                'status' => 'scheduled'
-            ],
-            'schedule_date.asc'
-        );
+        $upcoming_schedules = fetchSchedulesForDate($target_date);
         
         if (!$upcoming_schedules || count($upcoming_schedules) === 0) {
             echo json_encode([
@@ -380,15 +413,7 @@ try {
         }
         
         // Get all immunization records scheduled for target date
-        $upcoming_schedules = supabaseSelect(
-            'immunization_records',
-            'id,baby_id,vaccine_name,dose_number,schedule_date,catch_up_date',
-            [
-                'schedule_date' => $target_date,
-                'status' => 'scheduled'
-            ],
-            'schedule_date.asc'
-        );
+        $upcoming_schedules = fetchSchedulesForDate($target_date);
         
         if (!$upcoming_schedules || count($upcoming_schedules) === 0) {
             echo json_encode([

@@ -46,10 +46,18 @@ try {
 
     // Validate identifiers
     $record = null;
+    $previous_batch_schedule = null;
     if ($record_id !== '') {
-        $rec = supabaseSelect('immunization_records', 'id,baby_id,vaccine_name,dose_number,status,schedule_date,date_given,weight,height,temperature,administered_by', [ 'id' => $record_id ], null, 1);
+        $rec = supabaseSelect(
+            'immunization_records',
+            'id,baby_id,vaccine_name,dose_number,status,schedule_date,batch_schedule_date,date_given,weight,height,temperature,administered_by',
+            [ 'id' => $record_id ],
+            null,
+            1
+        );
         if ($rec && is_array($rec) && count($rec) > 0) { 
             $record = $rec[0];
+            $previous_batch_schedule = $record['batch_schedule_date'] ?? null;
         }
     } else if ($baby_id !== '' && $vaccine_name !== '' && ($schedule_date !== '' || $catch_up_date !== '')) {
         $lookup_conditions = ($catch_up_date !== ''
@@ -58,13 +66,14 @@ try {
         
         $rec = supabaseSelect(
             'immunization_records',
-            'id,baby_id,vaccine_name,dose_number,status,schedule_date,date_given,weight,height,temperature,administered_by',
+            'id,baby_id,vaccine_name,dose_number,status,schedule_date,batch_schedule_date,date_given,weight,height,temperature,administered_by',
             $lookup_conditions,
             null,
             1
         );
         if ($rec && is_array($rec) && count($rec) > 0) { 
             $record = $rec[0];
+            $previous_batch_schedule = $record['batch_schedule_date'] ?? null;
         }
     }
 
@@ -74,6 +83,15 @@ try {
     }
 
     $update = [];
+    $batch_schedule_date_input = $_POST['batch_schedule_date'] ?? null;
+    $batch_schedule_date_provided = array_key_exists('batch_schedule_date', $_POST);
+    $batch_schedule_changed = false;
+
+    if ($batch_schedule_date_provided) {
+        $normalized = trim((string)$batch_schedule_date_input) === '' ? null : $batch_schedule_date_input;
+        $update['batch_schedule_date'] = $normalized;
+        $batch_schedule_changed = $normalized !== $previous_batch_schedule;
+    }
 
     if ($temperature !== '') { $update['temperature'] = (float)$temperature; }
     if ($height_cm !== '') { $update['height'] = (float)$height_cm; }
@@ -133,36 +151,63 @@ try {
         // If we were updating status but it didn't change, that's OK - continue
     }
 
-    // Log activity: BHW/Midwife recorded immunization (when mark_completed=1)
+    // Activity logs
+    $actor_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+    $actor_type = isset($_SESSION['midwife_id']) ? 'midwife' : 'bhw';
+    $actor_name = trim(($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? ''));
+    $child_info = null;
+    $child_name = 'Unknown Child';
+    $mother_name = 'Unknown Mother';
+    $vaccine_name = $record['vaccine_name'] ?? 'Unknown Vaccine';
+    $dose_number = $record['dose_number'] ?? 1;
+
+    try {
+        $child_info = supabaseSelect('child_health_records', 'child_fname,child_lname,mother_name', ['baby_id' => $record['baby_id']], null, 1);
+        if ($child_info && count($child_info) > 0) {
+            $child_name = trim(($child_info[0]['child_fname'] ?? '') . ' ' . ($child_info[0]['child_lname'] ?? ''));
+            $mother_name = $child_info[0]['mother_name'] ?? 'Unknown Mother';
+        }
+    } catch (Exception $e) {
+        error_log('Failed to fetch child info for activity log: ' . $e->getMessage());
+    }
+
     if ($mark_completed) {
         try {
-            // Get approver info
-            $approver_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
-            $approver_type = isset($_SESSION['midwife_id']) ? 'midwife' : 'bhw';
-            $approver_name = trim(($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? ''));
-            
-            // Get child info for logging
-            $child_info = supabaseSelect('child_health_records', 'child_fname,child_lname,mother_name', ['baby_id' => $record['baby_id']], null, 1);
-            $child_name = 'Unknown Child';
-            $mother_name = 'Unknown Mother';
-            if ($child_info && count($child_info) > 0) {
-                $child_name = trim(($child_info[0]['child_fname'] ?? '') . ' ' . ($child_info[0]['child_lname'] ?? ''));
-                $mother_name = $child_info[0]['mother_name'] ?? 'Unknown Mother';
-            }
-            
-            $vaccine_name = $record['vaccine_name'] ?? 'Unknown Vaccine';
-            $dose_number = $record['dose_number'] ?? 1;
-            
             supabaseLogActivity(
-                $approver_id,
-                $approver_type,
+                $actor_id,
+                $actor_type,
                 'IMMUNIZATION_RECORDED',
-                $approver_name . ' recorded ' . $vaccine_name . ' (Dose ' . $dose_number . ') for ' . $child_name . ', child of ' . $mother_name . ' (Baby ID: ' . $record['baby_id'] . ', Record ID: ' . $record['id'] . ')',
+                $actor_name . ' recorded ' . $vaccine_name . ' (Dose ' . $dose_number . ') for ' . $child_name . ', child of ' . $mother_name . ' (Baby ID: ' . $record['baby_id'] . ', Record ID: ' . $record['id'] . ')',
                 $_SERVER['REMOTE_ADDR'] ?? null
             );
         } catch (Exception $e) {
             // Log error but don't fail the update
             error_log('Failed to log immunization recording activity: ' . $e->getMessage());
+        }
+    }
+
+    if ($batch_schedule_changed) {
+        try {
+            $before = $previous_batch_schedule ?: 'none';
+            $after = $update['batch_schedule_date'] ?? 'none';
+            supabaseLogActivity(
+                $actor_id,
+                $actor_type,
+                'BATCH_SCHEDULE_UPDATE',
+                sprintf(
+                    '%s set batch schedule for %s (Dose %s) from %s to %s (Baby ID: %s, Record ID: %s)',
+                    $actor_name ?: ucfirst($actor_type),
+                    $vaccine_name,
+                    $dose_number,
+                    $before,
+                    $after,
+                    $record['baby_id'],
+                    $record['id']
+                ),
+                $_SERVER['REMOTE_ADDR'] ?? null
+            );
+        } catch (Exception $e) {
+            error_log('Failed to log batch schedule update: ' . $e->getMessage());
         }
     }
 

@@ -389,6 +389,25 @@ main {
   color: #555;
   font-weight: 700;
 }
+.child-schedule--batch {
+  color: #2563eb;
+  font-weight: 600;
+}
+.child-schedule--guideline {
+  color: #6b7280;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+.batch-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-left: 4px;
+}
 .child-actions {
   display: flex;
   flex-direction: row;

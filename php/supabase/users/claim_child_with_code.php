@@ -87,6 +87,7 @@ function createImmunizationRecords($baby_id, $birth_date) {
         ['PCV - 2nd', '10 weeks'],
         ['Pentavalent (DPT-HepB-Hib) - 3rd', '14 weeks'],
         ['OPV - 3rd', '14 weeks'],
+        ['IPV', '14 weeks'],
         ['PCV - 3rd', '14 weeks'],
         ['MCV1 (AMV)', '9 months'],
         ['MCV2 (MMR)', '12 months']

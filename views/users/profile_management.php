@@ -327,13 +327,31 @@ async function uploadProfilePhoto() {
 		
 		if (data.status === 'success') {
 			document.getElementById('profileImage').src = data.imageUrl;
-			Swal.fire('Success!', 'Profile photo updated successfully', 'success');
+			if (window.UIFeedback) {
+				window.UIFeedback.showToast({
+					title: 'Profile photo updated',
+					message: 'Your profile photo was updated successfully.',
+					variant: 'success'
+				});
+			}
 		} else {
-			Swal.fire('Error!', data.message, 'error');
+			if (window.UIFeedback) {
+				window.UIFeedback.showToast({
+					title: 'Upload failed',
+					message: data.message || 'Unable to update profile photo.',
+					variant: 'error'
+				});
+			}
 		}
 	} catch (error) {
 		console.error('Error uploading photo:', error);
-		Swal.fire('Error!', 'Failed to upload photo', 'error');
+		if (window.UIFeedback) {
+			window.UIFeedback.showToast({
+				title: 'Upload failed',
+				message: 'Failed to upload photo. Please try again.',
+				variant: 'error'
+			});
+		}
 	}
 }
 
@@ -352,16 +370,34 @@ document.getElementById('profileForm').addEventListener('submit', async function
 		const data = await response.json();
 		
 		if (data.status === 'success') {
-			Swal.fire('Success!', 'Profile updated successfully', 'success');
+			if (window.UIFeedback) {
+				window.UIFeedback.showToast({
+					title: 'Profile updated',
+					message: 'Your profile information was saved.',
+					variant: 'success'
+				});
+			}
 			loadProfileData(); // Refresh the display
 		} else {
-			Swal.fire('Error!', data.message, 'error');
+			if (window.UIFeedback) {
+				window.UIFeedback.showToast({
+					title: 'Update failed',
+					message: data.message || 'Unable to update profile.',
+					variant: 'error'
+				});
+			}
 		}
 	} catch (error) {
 		console.error('Error updating profile:', error);
-		Swal.fire('Error!', 'Failed to update profile', 'error');
+		if (window.UIFeedback) {
+			window.UIFeedback.showToast({
+				title: 'Update failed',
+				message: 'Failed to update profile.',
+				variant: 'error'
+			});
+		}
 	}
 });
 </script>
-
+<script src="../../js/utils/ui-feedback.js"></script>
 <?php include 'Include/footer.php'; ?>

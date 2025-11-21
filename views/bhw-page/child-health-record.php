@@ -381,7 +381,7 @@ if ($user_id) {
 
                 let ledgerHtml = '';
                 allRows.forEach(row => {
-                    const rawDate = row.date_given || row.schedule_date || '';
+                    const rawDate = row.date_given || row.batch_schedule_date || row.schedule_date || '';
                     const date = formatDateLong(rawDate);
                     const catchUpDate = formatDateLong(row.catch_up_date || '');
                     const ht = row.height || row.height_cm || '';

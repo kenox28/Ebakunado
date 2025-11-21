@@ -288,7 +288,7 @@ async function renderBabyCardPdf(child, immunizations){
         if (n.includes('HEP')) return 'HEPATITIS B';
         if (n.includes('PENTA') || n.includes('HIB')) return 'PENTAVALENT';
         if (n.includes('OPV') || n.includes('ORAL POLIO')) return 'OPV';
-        // IPV removed from layout/schedule
+        if (n.includes('IPV') || n.includes('INACTIVATED')) return 'IPV';
         if (n.includes('PCV') || n.includes('PNEUMO')) return 'PCV';
         if (n.includes('MMR') || n.includes('MEASLES')) return 'MMR';
         return null;
@@ -304,7 +304,7 @@ async function renderBabyCardPdf(child, immunizations){
             } else {
                 xp = (v.cols_x_pct ? v.cols_x_pct.c1 : 60.2);
             }
-        } else if (key === 'BCG' || key === 'HEPATITIS B') {
+        } else if (key === 'BCG' || key === 'HEPATITIS B' || key === 'IPV') {
             // Single-dose rows always use the first column
             xp = (v.cols_x_pct ? v.cols_x_pct.c1 : 60.2);
         } else {

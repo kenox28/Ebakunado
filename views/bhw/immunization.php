@@ -1,6 +1,18 @@
 <?php include 'Include/header.php'; ?>
 <style>
-
+.schedule-block {
+    display: flex;
+    gap: 4px;
+    font-size: 12px;
+    line-height: 1.3;
+}
+.schedule-block .label {
+    font-weight: 600;
+    color: #495057;
+}
+.schedule-block.muted {
+    color: #868e96;
+}
 </style>
 
 
@@ -34,8 +46,11 @@
 				<th>Fullname</th>
 				<th>Address</th>
 				<th>Vaccine</th>
-				<th>Schedule Date</th>
-				<th>Status</th>
+				<th>
+                    <div>Guideline Date</div>
+                    <div style="font-size:12px;color:#6c757d;">Batch (if set)</div>
+                </th>
+                <th>Status</th>
 				<th>Action</th>
 			</tr>
 		</thead>
@@ -109,14 +124,15 @@
 				} catch (e) { body.innerHTML = '<tr><td colspan="6">Error loading records</td></tr>'; }
 			}
 
-	function openImmunizationForm(btn) {
-		const recordId = btn.getAttribute('data-record-id') || '';
-		const userId = btn.getAttribute('data-user-id') || '';
-		const babyId = btn.getAttribute('data-baby-id') || '';
-		const childName = btn.getAttribute('data-child-name') || '';
-		const vaccineName = btn.getAttribute('data-vaccine-name') || '';
-		const scheduleDate = btn.getAttribute('data-schedule-date') || '';
-		const catchUpDate = btn.getAttribute('data-catch-up-date') || '';
+    function openImmunizationForm(btn) {
+        const recordId = btn.getAttribute('data-record-id') || '';
+        const userId = btn.getAttribute('data-user-id') || '';
+        const babyId = btn.getAttribute('data-baby-id') || '';
+        const childName = btn.getAttribute('data-child-name') || '';
+        const vaccineName = btn.getAttribute('data-vaccine-name') || '';
+        const scheduleDate = btn.getAttribute('data-schedule-date') || '';
+        const batchScheduleDate = btn.getAttribute('data-batch-date') || '';
+        const catchUpDate = btn.getAttribute('data-catch-up-date') || '';
 
 		// Get feeding status data
 		const feedingData = {
@@ -244,9 +260,14 @@
 							<input type="text" id="im_vaccine_name" value="${vaccineName}" readonly style="width:100%; padding:6px 8px;" />
 						</div>
                         <div>
-							<label style="font-size:12px; color:#333;">Scheduled Date</label>
+							<label style="font-size:12px; color:#333;">Guideline Date</label>
 							<input type="date" id="im_schedule_date" value="${scheduleDate}" readonly style="width:100%; padding:6px 8px;" />
 						</div>
+                        <div>
+                            <label style="font-size:12px; color:#333;">Batch Date (view only)</label>
+                            <input type="date" value="${batchScheduleDate}" readonly style="width:100%; padding:6px 8px;" />
+                            <small style="font-size:11px; color:#6c757d;">Manage batch schedules from the Vaccination Planner.</small>
+                        </div>
                         ${catchUpDate ? `
                         <div>
                             <label style=\"font-size:12px; color:#333;\">Catch-up Date</label>
@@ -426,6 +447,26 @@
 		}
 	}
 
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        if (Number.isNaN(date.getTime())) return dateStr;
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    };
+
+    const buildScheduleCell = (guideline, batch) => {
+        const guidelineLabel = guideline ? formatDate(guideline) : 'Not set';
+        const batchLabel = batch ? formatDate(batch) : 'Follow guideline';
+        return `
+            <div class="schedule-block">
+                <span class="label">Guideline:</span> ${guidelineLabel}
+            </div>
+            <div class="schedule-block ${batch ? '' : 'muted'}">
+                <span class="label">Batch:</span> ${batchLabel}
+            </div>
+        `;
+    };
+
 	function renderTable(records) {
 		const body = document.querySelector('#childhealthrecordBody');
 		if (!records || records.length === 0) {
@@ -441,7 +482,7 @@
 						<td>${(item.child_fname || '') + ' ' + (item.child_lname || '')}</td>
 							<td>${item.address || ''}</td>
 						<td>${item.vaccine_name || ''}</td>
-						<td>${item.schedule_date || ''}</td>
+						<td>${buildScheduleCell(item.schedule_date, item.batch_schedule_date)}</td>
                         <td>${item.status === 'taken' && item.date_given ? ('taken (' + item.date_given + ')') : (item.status || '')}</td>
 							<td>
 								<button style="padding:4px 8px;" onclick="openImmunizationForm(this)"
@@ -451,6 +492,7 @@
 									data-child-name="${((item.child_fname || '') + ' ' + (item.child_lname || '')).replace(/"/g, '&quot;')}"
 									data-vaccine-name="${String(item.vaccine_name || '').replace(/"/g, '&quot;')}"
                                     data-schedule-date="${item.schedule_date || ''}"
+                                    data-batch-date="${item.batch_schedule_date || ''}"
                                     data-catch-up-date="${item.catch_up_date || ''}"
                                     data-eb-1mo="${item.exclusive_breastfeeding_1mo || false}"
                                     data-eb-2mo="${item.exclusive_breastfeeding_2mo || false}"

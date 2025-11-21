@@ -156,6 +156,8 @@ CREATE TABLE immunization_records (
     height DECIMAL(5,2),
     temperature DECIMAL(5,2),
     status VARCHAR(50),
+    schedule_date DATE,
+    batch_schedule_date DATE,
     date_given DATE,
     catch_up_date DATE,
     administered_by VARCHAR(255),
@@ -212,6 +214,15 @@ INSERT INTO super_admin (super_admin_id, fname, lname, email, pass) VALUES
 ```
 
 4. Click "Run" to execute the SQL
+
+> **Already live on Supabase?** Run this lightweight migration so existing projects get the new batching field without recreating the table:
+>
+> ```sql
+> ALTER TABLE immunization_records
+> ADD COLUMN IF NOT EXISTS batch_schedule_date DATE;
+> ```
+>
+> The column is nullable so legacy data keeps working until health workers start populating batch slots.
 
 ## Step 3: Update Your Application Files
 

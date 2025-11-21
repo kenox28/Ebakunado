@@ -370,7 +370,7 @@ async function renderBabyCardPdf(child, immunizations){
     if (ex.barangay){ draw((child.address||'').split(',').pop()?.trim()||'', ex.barangay.x_pct, ex.barangay.y_pct, f.details_pt||12, 'left', ex.barangay.max_width_pct||22); }
     if (ex.family_no){ draw(child.family_number||'', ex.family_no.x_pct, ex.family_no.y_pct, f.details_pt||12, 'left', ex.family_no.max_width_pct||22); }
     const v=(layout&&layout.vaccines)||{};
-    function vkey(name){ const n=(name||'').toUpperCase(); if(n.includes('BCG'))return'BCG'; if(n.includes('HEP'))return'HEPATITIS B'; if(n.includes('PENTA')||n.includes('HIB'))return'PENTAVALENT'; if(n.includes('OPV')||n.includes('ORAL POLIO'))return'OPV'; if(n.includes('PCV')||n.includes('PNEUMO'))return'PCV'; if(n.includes('MMR')||n.includes('MEASLES'))return'MMR'; return null; }
+    function vkey(name){ const n=(name||'').toUpperCase(); if(n.includes('BCG'))return'BCG'; if(n.includes('HEP'))return'HEPATITIS B'; if(n.includes('PENTA')||n.includes('HIB'))return'PENTAVALENT'; if(n.includes('OPV')||n.includes('ORAL POLIO'))return'OPV'; if(n.includes('IPV')||n.includes('INACTIVATED'))return'IPV'; if(n.includes('PCV')||n.includes('PNEUMO'))return'PCV'; if(n.includes('MMR')||n.includes('MEASLES'))return'MMR'; return null; }
     immunizations
         .filter((v) => v.date_given)
         .forEach((v) => {
@@ -381,7 +381,7 @@ async function renderBabyCardPdf(child, immunizations){
             if (key === 'MMR') {
                 // 2 doses → c1, c2
                 xp = (dose === 1) ? v.cols_x_pct.c1 : v.cols_x_pct.c2;
-            } else if (key === 'BCG' || key === 'HEPATITIS B') {
+            } else if (key === 'BCG' || key === 'HEPATITIS B' || key === 'IPV') {
                 // single slot
                 xp = v.cols_x_pct.c1;
             } else {

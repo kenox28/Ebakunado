@@ -22,7 +22,7 @@ if ($child_records && count($child_records) > 0) {
     // Get ALL immunization records for ALL children in ONE query
     $all_immunizations = [];
     if (!empty($baby_ids)) {
-        $immunization_columns = 'baby_id,vaccine_name,dose_number,status,schedule_date,date_given,catch_up_date';
+        $immunization_columns = 'baby_id,vaccine_name,dose_number,status,schedule_date,batch_schedule_date,date_given,catch_up_date';
         $all_immunizations = supabaseSelect('immunization_records', $immunization_columns, ['baby_id' => $baby_ids], 'schedule_date.desc');
     }
     
@@ -57,13 +57,20 @@ if ($child_records && count($child_records) > 0) {
         $has_schedule_today = false;
         $today_str = $current_date->format('Y-m-d');
         $upcoming_candidates = [];
+        $next_guideline_date = '';
+        $next_batch_date = '';
         
+        $guideline_dates = [];
+        $batch_dates = [];
+
         if ($immunization_records && count($immunization_records) > 0) {
             // First, count all statuses
             foreach ($immunization_records as $immunization) {
                 $status = strtolower($immunization['status'] ?? '');
                 $sched_date = $immunization['schedule_date'] ?? null;
+                $batch_date = $immunization['batch_schedule_date'] ?? null;
                 $catch_up_date = $immunization['catch_up_date'] ?? null;
+                $operational_date = $batch_date ?: $sched_date;
                 
                 if ($status === 'taken') {
                     $taken_count++;
@@ -74,17 +81,30 @@ if ($child_records && count($child_records) > 0) {
                 }
 
                 if ($status === 'scheduled' && $sched_date) {
-                    if ($sched_date === $today_str) {
+                    $guideline_dates[] = $sched_date;
+                }
+                if ($status === 'scheduled' && $batch_date) {
+                    $batch_dates[] = $batch_date;
+                }
+
+                if ($status === 'scheduled' && $operational_date) {
+                    if ($operational_date === $today_str) {
                         $has_schedule_today = true;
                     }
-                    if ($sched_date >= $today_str) {
+                    if ($operational_date >= $today_str) {
                         $upcoming_candidates[] = [
-                            'date' => $sched_date,
+                            'date' => $operational_date,
                             'type' => 'scheduled',
                             'vaccine' => $immunization['vaccine_name'] ?? '',
-                            'dose' => $immunization['dose_number'] ?? ''
+                            'dose' => $immunization['dose_number'] ?? '',
+                            'guideline' => $sched_date,
+                            'batch' => $batch_date
                         ];
                     }
+                }
+
+                if ($status === 'scheduled' && $operational_date && $operational_date < $today_str) {
+                    $missed_count++;
                 }
 
                 if ($status === 'missed' && $catch_up_date) {
@@ -96,12 +116,26 @@ if ($child_records && count($child_records) > 0) {
                             'date' => $catch_up_date,
                             'type' => 'catch_up',
                             'vaccine' => $immunization['vaccine_name'] ?? '',
-                            'dose' => $immunization['dose_number'] ?? ''
+                            'dose' => $immunization['dose_number'] ?? '',
+                            'guideline' => $sched_date,
+                            'batch' => null
                         ];
                     }
                 }
             }
             
+            $next_guideline_date = null;
+            $next_batch_date = null;
+
+            if (!empty($guideline_dates)) {
+                sort($guideline_dates, SORT_STRING);
+                $next_guideline_date = $guideline_dates[0];
+            }
+            if (!empty($batch_dates)) {
+                sort($batch_dates, SORT_STRING);
+                $next_batch_date = $batch_dates[0];
+            }
+
             if (!empty($upcoming_candidates)) {
                 usort($upcoming_candidates, function($a, $b) {
                     return strcmp($a['date'], $b['date']);
@@ -110,6 +144,8 @@ if ($child_records && count($child_records) > 0) {
                 $upcoming_schedule = $closest_upcoming['date'];
                 $upcoming_vaccine = $closest_upcoming['vaccine'];
                 $next_is_catch_up = ($closest_upcoming['type'] === 'catch_up');
+                $next_guideline_date = $closest_upcoming['guideline'] ?? $next_guideline_date;
+                $next_batch_date = $closest_upcoming['batch'] ?? $next_batch_date;
             }
             
             // Get the latest vaccine and dose information
@@ -129,6 +165,8 @@ if ($child_records && count($child_records) > 0) {
             'vaccine' => $upcoming_vaccine ?: $latest_vaccine, // Use upcoming vaccine if available, otherwise latest
             'dose' => $latest_dose,
             'schedule_date' => $upcoming_schedule,
+            'next_guideline_date' => $next_guideline_date,
+            'next_batch_date' => $next_batch_date,
             'status' => $child['status'],
             'qr_code' => $child['qr_code'] ?? null, // Add QR code
             // Vaccination counts

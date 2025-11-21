@@ -392,6 +392,7 @@ $table_definitions = [
         temperature DECIMAL(5,2),
         status VARCHAR(50),
         schedule_date DATE,
+        batch_schedule_date DATE,
         date_given DATE,
         catch_up_date DATE,
         administered_by VARCHAR(255),

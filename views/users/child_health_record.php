@@ -342,17 +342,23 @@
 			const takenRows = allRows.filter(r => r.status === 'taken' || r.status === 'completed');
 
 			// Determine next upcoming schedule per taken record (earliest future, not taken)
-			function nextScheduleAfter(dateStr) {
-				if (!dateStr) return '';
-				const future = allRows
-					.filter(r => (r.status !== 'taken' && r.status !== 'completed'))
-					.filter(r => {
-						const due = r.catch_up_date || r.schedule_date || '';
-						return due && String(due) > String(dateStr);
-					})
-					.sort((a, b) => String((a.catch_up_date || a.schedule_date) || '').localeCompare(String((b.catch_up_date || b.schedule_date) || '')));
-				return future.length ? (future[0].catch_up_date || future[0].schedule_date || '') : '';
-			}
+				function nextScheduleAfter(dateStr) {
+					if (!dateStr) return '';
+					const future = allRows
+						.filter(r => (r.status !== 'taken' && r.status !== 'completed'))
+						.filter(r => {
+							// Prioritize batch_schedule_date
+							const due = r.catch_up_date || r.batch_schedule_date || r.schedule_date || '';
+							return due && String(due) > String(dateStr);
+						})
+						.sort((a, b) => {
+							const aDate = a.catch_up_date || a.batch_schedule_date || a.schedule_date || '';
+							const bDate = b.catch_up_date || b.batch_schedule_date || b.schedule_date || '';
+							return String(aDate).localeCompare(String(bDate));
+						});
+					const next = future.length ? future[0] : null;
+					return next ? (next.catch_up_date || next.batch_schedule_date || next.schedule_date || '') : '';
+				}
 
 			// Canonical vaccine order to avoid duplicates and ensure clear display
 			const canonical = [

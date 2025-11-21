@@ -179,6 +179,7 @@ function createImmunizationRecords($baby_id, $birth_date, $vaccines_received) {
         ['PCV - 2nd', '10 weeks'],
         ['Pentavalent (DPT-HepB-Hib) - 3rd', '14 weeks'],
         ['OPV - 3rd', '14 weeks'],
+        ['IPV', '14 weeks'],
         ['PCV - 3rd', '14 weeks'],
         ['MCV1 (AMV)', '9 months'],
         ['MCV2 (MMR)', '12 months']
@@ -194,6 +195,7 @@ function createImmunizationRecords($baby_id, $birth_date, $vaccines_received) {
         if (strpos($n, 'MCV2') !== false || strpos($n, '(MMR)') !== false) return 2;
         if (strpos($n, 'BCG') !== false) return 1;
         if (strpos($n, 'HEP') !== false) return 1;
+        if (strpos($n, 'IPV') !== false) return 1;
         return 1;
     };
     

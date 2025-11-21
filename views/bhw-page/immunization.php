@@ -379,6 +379,7 @@ if ($user_id) {
             const childName = btn.getAttribute('data-child-name') || '';
             const vaccineName = btn.getAttribute('data-vaccine-name') || '';
             const scheduleDate = btn.getAttribute('data-schedule-date') || '';
+            const batchScheduleDate = btn.getAttribute('data-batch-date') || '';
             const catchUpDate = btn.getAttribute('data-catch-up-date') || '';
 
             // Get feeding status data
@@ -514,12 +515,28 @@ if ($user_id) {
                                     Vaccine:
                                     <input type="text" id="im_vaccine_name" value="${vaccineName}" readonly disabled />
                                 </label>
+                            </div>
+                            <div class="form-group row-2">
+                                <label>
+                                    Guideline Schedule:
+                                    <input type="date" value="${scheduleDate}" readonly disabled />
+                                </label>
+                                <label>
+                                    Batch Schedule (from Vaccination Planner):
+                                    <input type="date" value="${batchScheduleDate}" readonly disabled />
+                                    <small style="display:block;color:#6c757d;">Update batch dates via Vaccination Planner.</small>
+                                </label>
                                 ${catchUpDate ? `
                                 <label>
                                     Catch-up Date:
                                     <input type="date" id="im_catch_up_date" value="${catchUpDate}" readonly disabled />
                                 </label>` : ''}
+                                <input type="hidden" id="im_schedule_date" value="${scheduleDate}" />
                             </div>
+                            <div class="form-group row-3">
+                                <input type="hidden" id="im_date_taken" value="${dateToday}" />
+                            </div>
+                        </div>
 
                             <div class="form-group row-4">
                                 ${feedingStatus ? `
@@ -599,25 +616,14 @@ if ($user_id) {
                             </div>
                         </div>
 
-                            <!-- Dose and Lot fields removed: dose is auto-determined from record, lot/site not in schema -->
-                            <div class="form-group row-3">
-                                <h4 class="im-group-title">Administration &amp; Remarks</h4>
-                                <label>
-                                    Administered By:
-                                    <input type="text" id="im_administered_by" placeholder="Name of Midwife Administering" />
-                                </label>
-                                <label>
-                                    Remarks:
-                                    <textarea id="im_remarks" rows="3"></textarea>
-                                </label>
-                            </div>
-
-                            <div class="im-panel-row im-mark-completed-row">
-                                <label class="im-inline-checkbox" for="im_mark_completed">
-                                    <input type="checkbox" id="im_mark_completed" />
-                                    <span>Mark as Taken</span>
-                                </label>
-                            </div>
+                    <!-- Dose and Lot fields removed: dose is auto-determined from record, lot/site not in schema -->
+                        <div class="form-group row-7">
+                            <label>
+                                Remarks (Optional)
+                                <textarea id="im_remarks" rows="3" placeholder="Optional remarks"></textarea>
+                            </label>
+                        </div>
+                    </div>
 
                             <div class="form-actions">
                                 <button class="btn cancel-btn" onclick="closeImmunizationForm()">Cancel</button>
@@ -659,9 +665,9 @@ if ($user_id) {
             formData.append('temperature', document.getElementById('im_temperature').value || '');
             formData.append('height_cm', document.getElementById('im_height').value || '');
             formData.append('weight_kg', document.getElementById('im_weight').value || '');
-            formData.append('administered_by', document.getElementById('im_administered_by').value || '');
             formData.append('remarks', document.getElementById('im_remarks').value || '');
-            formData.append('mark_completed', document.getElementById('im_mark_completed').checked ? '1' : '0');
+            // Mark as completed automatically when saved
+            formData.append('mark_completed', '1');
             
             const catchUpDate = document.getElementById('im_catch_up_date')?.value || '';
             if (catchUpDate) formData.append('catch_up_date', catchUpDate);
@@ -727,6 +733,26 @@ if ($user_id) {
                 return;
             }
             let rows = '';
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                if (Number.isNaN(date.getTime())) return dateStr;
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            };
+
+            const buildScheduleCell = (scheduleDate, batchDate) => {
+                const guideline = scheduleDate ? formatDate(scheduleDate) : 'Not set';
+                const batch = batchDate ? formatDate(batchDate) : 'Not set';
+                return `
+                    <div class="schedule-block">
+                        <span class="label">Guideline:</span> ${guideline}
+                    </div>
+                    <div class="schedule-block ${batchDate ? '' : 'muted'}">
+                        <span class="label">Batch:</span> ${batchDate ? batch : 'Follow guideline'}
+                    </div>
+                `;
+            };
+
             records.forEach(item => {
                 rows += `<tr>
                             <td hidden>${item.id || ''}</td>
@@ -735,7 +761,7 @@ if ($user_id) {
                             <td>${(item.child_fname || '') + ' ' + (item.child_lname || '')}</td>
                             <td>${item.address || ''}</td>
                             <td>${item.vaccine_name || ''}</td>
-                            <td>${item.schedule_date || ''}</td>
+                            <td>${buildScheduleCell(item.schedule_date, item.batch_schedule_date)}</td>
                             <td>${statusChip(item.status, item.date_given)}</td>
                             <td>
                                 <button class="btn view-btn" onclick="openImmunizationForm(this)"
@@ -745,6 +771,7 @@ if ($user_id) {
                                     data-child-name="${((item.child_fname || '') + ' ' + (item.child_lname || '')).replace(/"/g, '&quot;')}"
                                     data-vaccine-name="${String(item.vaccine_name || '').replace(/"/g, '&quot;')}"
                                     data-schedule-date="${item.schedule_date || ''}"
+                                    data-batch-date="${item.batch_schedule_date || ''}"
                                     data-catch-up-date="${item.catch_up_date || ''}"
                                     data-eb-1mo="${item.exclusive_breastfeeding_1mo || false}"
                                     data-eb-2mo="${item.exclusive_breastfeeding_2mo || false}"
@@ -1119,7 +1146,7 @@ if ($user_id) {
                         nearestRecord.vaccine_name,
                         nearestRecord.schedule_date || '',
                         nearestRecord.catch_up_date || '',
-                        child
+                        nearestRecord.batch_schedule_date || ''
                     );
                 } else {
                     console.error('Child details fetch failed:', childData);
@@ -1136,7 +1163,7 @@ if ($user_id) {
         }
 
         // Modified function to handle QR scan auto-open
-        function openImmunizationFormForScan(recordId, userId, babyId, childName, vaccineName, scheduleDate, catchUpDate, childData) {
+        function openImmunizationFormForScan(recordId, userId, babyId, childName, vaccineName, scheduleDate, catchUpDate, childData, batchScheduleDate = '') {
             // Create a temporary button element with all the necessary data attributes
             const tempBtn = document.createElement('button');
             tempBtn.setAttribute('data-record-id', recordId);
@@ -1145,6 +1172,7 @@ if ($user_id) {
             tempBtn.setAttribute('data-child-name', childName);
             tempBtn.setAttribute('data-vaccine-name', vaccineName);
             tempBtn.setAttribute('data-schedule-date', scheduleDate);
+            tempBtn.setAttribute('data-batch-date', batchScheduleDate);
             tempBtn.setAttribute('data-catch-up-date', catchUpDate);
 
             // Add feeding data attributes
