@@ -96,9 +96,7 @@ if ($user_id) {
                 <div class="select-with-icon">
                     <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
                     <select id="filterStatus">
-                        <option value="" disabled selected>Status</option>
-                        <option value="all">All</option>
-                        <option value="upcoming">Upcoming</option>
+                        <option value="upcoming" selected>Upcoming</option>
                         <option value="missed">Missed</option>
                         <option value="completed">Completed</option>
                     </select>
@@ -128,7 +126,8 @@ if ($user_id) {
                             <th>Fullname</th>
                             <th>Address</th>
                             <th>Vaccine</th>
-                            <th>Schedule Date</th>
+                            <th id="scheduleDateHeader">Schedule Date</th>
+                            <th>Batch Schedule</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -285,7 +284,7 @@ if ($user_id) {
         let currentPage = 1;
         const pageSize = 10; // fixed to 10 per request
 
-        // Column config used by skeleton generator: 6 columns layout
+        // Column config used by skeleton generator: 7 columns layout
         function getImmunizationColsConfig() {
             return [{
                     type: 'text',
@@ -304,12 +303,16 @@ if ($user_id) {
                     widthClass: 'skeleton-col-4'
                 },
                 {
-                    type: 'pill',
+                    type: 'text',
                     widthClass: 'skeleton-col-5'
                 },
                 {
-                    type: 'btn',
+                    type: 'pill',
                     widthClass: 'skeleton-col-6'
+                },
+                {
+                    type: 'btn',
+                    widthClass: 'skeleton-col-7'
                 }
             ];
         }
@@ -348,13 +351,14 @@ if ($user_id) {
                 const purokQ = (document.getElementById('filterPurok').value || '').trim();
                 if (dateSel) params.set('date', dateSel);
                 if (statusSel) params.set('status', statusSel);
-                if (vaccineSel) params.set('vaccine', vaccineSel);
+                // Only send vaccine filter if a specific vaccine is selected (not empty)
+                if (vaccineSel && vaccineSel !== '') params.set('vaccine', vaccineSel);
                 if (purokQ) params.set('purok', purokQ);
 
                 const res = await fetch(`../../php/supabase/bhw/get_immunization_view.php?${params.toString()}`);
                 const data = await res.json();
                 if (data.status !== 'success') {
-                    body.innerHTML = '<tr class="message-row error"><td colspan="6">Failed to load data. Please try again.</td></tr>';
+                    body.innerHTML = '<tr class="message-row error"><td colspan="7">Failed to load data. Please try again.</td></tr>';
                     updatePagination(0, 0, pageSize);
                     return;
                 }
@@ -364,7 +368,7 @@ if ($user_id) {
                 updatePagination(data.total, data.page || 1, data.limit || pageSize, data.has_more === true);
                 currentPage = data.page || 1;
             } catch (e) {
-                body.innerHTML = '<tr class="message-row error"><td colspan="6">Failed to load data. Please try again.</td></tr>';
+                body.innerHTML = '<tr class="message-row error"><td colspan="7">Failed to load data. Please try again.</td></tr>';
                 updatePagination(0, 0, 0);
             } finally {
                 // Remove this line - updatePagination handles the button display
@@ -729,31 +733,36 @@ if ($user_id) {
         function renderTable(records) {
             const body = document.querySelector('#childhealthrecordBody');
             if (!records || records.length === 0) {
-                body.innerHTML = '<tr class="message-row"><td colspan="6">No records found</td></tr>';
+                body.innerHTML = '<tr class="message-row"><td colspan="7">No records found</td></tr>';
                 return;
             }
+            
+            // Get current filter status to determine header and display logic
+            const filterStatus = document.getElementById('filterStatus').value || '';
+            const isMissedFilter = filterStatus.toLowerCase() === 'missed';
+            
+            // Update header dynamically
+            const scheduleHeader = document.getElementById('scheduleDateHeader');
+            if (scheduleHeader) {
+                scheduleHeader.textContent = isMissedFilter ? 'Catch Up Date' : 'Schedule Date';
+            }
+            
             let rows = '';
             const formatDate = (dateStr) => {
-                if (!dateStr) return '';
+                if (!dateStr) return '-';
                 const date = new Date(dateStr);
                 if (Number.isNaN(date.getTime())) return dateStr;
                 return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             };
 
-            const buildScheduleCell = (scheduleDate, batchDate) => {
-                const guideline = scheduleDate ? formatDate(scheduleDate) : 'Not set';
-                const batch = batchDate ? formatDate(batchDate) : 'Not set';
-                return `
-                    <div class="schedule-block">
-                        <span class="label">Guideline:</span> ${guideline}
-                    </div>
-                    <div class="schedule-block ${batchDate ? '' : 'muted'}">
-                        <span class="label">Batch:</span> ${batchDate ? batch : 'Follow guideline'}
-                    </div>
-                `;
-            };
-
             records.forEach(item => {
+                // Determine which date to show in Schedule Date column based on filter
+                const scheduleDateToShow = isMissedFilter 
+                    ? (item.catch_up_date || '-')
+                    : (item.schedule_date || '-');
+                const formattedScheduleDate = scheduleDateToShow !== '-' ? formatDate(scheduleDateToShow) : '-';
+                const formattedBatchDate = item.batch_schedule_date ? formatDate(item.batch_schedule_date) : '-';
+                
                 rows += `<tr>
                             <td hidden>${item.id || ''}</td>
                             <td hidden>${item.user_id || ''}</td>
@@ -761,7 +770,8 @@ if ($user_id) {
                             <td>${(item.child_fname || '') + ' ' + (item.child_lname || '')}</td>
                             <td>${item.address || ''}</td>
                             <td>${item.vaccine_name || ''}</td>
-                            <td>${buildScheduleCell(item.schedule_date, item.batch_schedule_date)}</td>
+                            <td>${formattedScheduleDate}</td>
+                            <td>${formattedBatchDate}</td>
                             <td>${statusChip(item.status, item.date_given)}</td>
                             <td>
                                 <button class="btn view-btn" onclick="openImmunizationForm(this)"
@@ -856,19 +866,33 @@ if ($user_id) {
             if (!sel) return;
             const current = sel.value;
 
-            // Always start with the default prompt
-            const options = [
-                '<option value="" disabled selected>Vaccines</option>',
-                '<option value="all">All</option>'
+            // Fixed list of 8 vaccines
+            const fixedVaccines = [
+                'BCG',
+                'Hepatitis B',
+                'Pentavalent (DPT-HepB-Hib) - 1st',
+                'OPV - 1st',
+                'PCV - 1st',
+                'MCV1 (AMV)',
+                'MCV2 (MMR)',
+                'IPV'
             ];
 
-            // Get unique vaccines from the loaded data
-            const vaccines = [...new Set(chrRecords.map(item => item.vaccine_name).filter(v => v))].sort();
-            options.push(...vaccines.map(v => `<option value="${String(v)}">${String(v)}</option>`));
+            // Build options with default prompt
+            const options = [
+                '<option value="" disabled selected>Vaccines</option>'
+            ];
+
+            // Add fixed vaccine list
+            options.push(...fixedVaccines.map(v => `<option value="${String(v)}">${String(v)}</option>`));
 
             sel.innerHTML = options.join('');
-            // If the current value exists, set it; otherwise, keep the default
-            if (Array.from(sel.options).some(o => o.value === current)) sel.value = current;
+            // If the current value exists in the fixed list, set it; otherwise, keep the default
+            if (Array.from(sel.options).some(o => o.value === current)) {
+                sel.value = current;
+            } else {
+                sel.value = '';
+            }
         }
 
         function normalizeDateStr(d) {
@@ -883,7 +907,7 @@ if ($user_id) {
         function clearFilters() {
             document.getElementById('filterDate').value = '';
             document.getElementById('filterStatus').value = 'upcoming';
-            document.getElementById('filterVaccine').value = 'all';
+            document.getElementById('filterVaccine').value = '';
             document.getElementById('filterPurok').value = '';
             fetchChildHealthRecord(1); // <-- FIXED
         }

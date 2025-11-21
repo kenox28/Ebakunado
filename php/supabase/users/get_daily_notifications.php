@@ -88,16 +88,91 @@ try {
         );
     }
 
+    /**
+     * Fetch schedules for a specific date considering both guideline and batch dates.
+     */
+    function fetchSchedulesForDate($targetDate) {
+        $columns = 'id,baby_id,vaccine_name,dose_number,schedule_date,batch_schedule_date';
+        $merged = [];
+        $seen = [];
+
+        $bySchedule = supabaseSelect(
+            'immunization_records',
+            $columns,
+            [
+                'schedule_date' => $targetDate,
+                'status' => 'scheduled'
+            ],
+            'schedule_date.asc'
+        ) ?: [];
+
+        $byBatch = supabaseSelect(
+            'immunization_records',
+            $columns,
+            [
+                'batch_schedule_date' => $targetDate,
+                'status' => 'scheduled'
+            ],
+            'batch_schedule_date.asc'
+        ) ?: [];
+
+        foreach (array_merge($bySchedule, $byBatch) as $row) {
+            if (isset($seen[$row['id']])) {
+                continue;
+            }
+            $seen[$row['id']] = true;
+            $merged[] = $row;
+        }
+
+        return $merged;
+    }
+
+    /**
+     * Build the notification payload with batch-aware context.
+     */
+    function buildNotificationPayload($schedule, $childName, $type, $targetDate, $whenLabel) {
+        $guidelineDate = $schedule['schedule_date'] ?? null;
+        $batchDate = $schedule['batch_schedule_date'] ?? null;
+        $isBatch = !empty($batchDate);
+        $dateLabel = $isBatch ? 'batch' : 'guideline';
+
+        switch ($type) {
+            case 'today':
+                $message = $isBatch
+                    ? "$childName has a batch schedule for {$schedule['vaccine_name']} $whenLabel"
+                    : "$childName has {$schedule['vaccine_name']} scheduled $whenLabel";
+                break;
+            case 'tomorrow':
+                $message = $isBatch
+                    ? "$childName has a batch schedule for {$schedule['vaccine_name']} $whenLabel"
+                    : "$childName has {$schedule['vaccine_name']} scheduled $whenLabel";
+                break;
+            case 'missed':
+                $prettyDate = $targetDate ?? ($batchDate ?? $guidelineDate ?? 'the previous date');
+                $message = $isBatch
+                    ? "$childName missed the batch schedule for {$schedule['vaccine_name']} on $prettyDate"
+                    : "$childName missed {$schedule['vaccine_name']} scheduled on $prettyDate";
+                break;
+            default:
+                $message = "$childName has {$schedule['vaccine_name']} updates";
+        }
+
+        return [
+            'baby_id' => $schedule['baby_id'],
+            'child_name' => $childName,
+            'vaccine_name' => $schedule['vaccine_name'],
+            'dose_number' => $schedule['dose_number'],
+            'guideline_date' => $guidelineDate,
+            'batch_schedule_date' => $batchDate,
+            'target_date' => $targetDate,
+            'date_source' => $dateLabel,
+            'message' => $message,
+            'type' => $type
+        ];
+    }
+
     // Check for TODAY's immunizations
-    $todaySchedules = supabaseSelect(
-        'immunization_records',
-        'id,baby_id,vaccine_name,dose_number,schedule_date',
-        [
-            'schedule_date' => $today,
-            'status' => 'scheduled'
-        ],
-        'schedule_date.asc'
-    );
+    $todaySchedules = fetchSchedulesForDate($today);
 
     foreach ($todaySchedules as $schedule) {
         $childInfo = getChildInfo($schedule['baby_id']);
@@ -105,30 +180,21 @@ try {
             $child = $childInfo[0];
             $childName = $child['child_fname'] . ' ' . $child['child_lname'];
 
-            if (!isNotificationAlreadySent($schedule['baby_id'], 'schedule_same_day', $today)) {
-                $notifications['today'][] = [
-                    'baby_id' => $schedule['baby_id'],
-                    'child_name' => $childName,
-                    'vaccine_name' => $schedule['vaccine_name'],
-                    'dose_number' => $schedule['dose_number'],
-                    'schedule_date' => $schedule['schedule_date'],
-                    'message' => "$childName has {$schedule['vaccine_name']} scheduled today",
-                    'type' => 'today'
-                ];
+            $targetDate = $schedule['batch_schedule_date'] ?? $schedule['schedule_date'];
+            if (!isNotificationAlreadySent($schedule['baby_id'], 'schedule_same_day', $targetDate ?? $today)) {
+                $notifications['today'][] = buildNotificationPayload(
+                    $schedule,
+                    $childName,
+                    'today',
+                    $targetDate ?? $today,
+                    'today'
+                );
             }
         }
     }
 
     // Check for TOMORROW's immunizations
-    $tomorrowSchedules = supabaseSelect(
-        'immunization_records',
-        'id,baby_id,vaccine_name,dose_number,schedule_date',
-        [
-            'schedule_date' => $tomorrow,
-            'status' => 'scheduled'
-        ],
-        'schedule_date.asc'
-    );
+    $tomorrowSchedules = fetchSchedulesForDate($tomorrow);
 
     foreach ($tomorrowSchedules as $schedule) {
         $childInfo = getChildInfo($schedule['baby_id']);
@@ -136,16 +202,15 @@ try {
             $child = $childInfo[0];
             $childName = $child['child_fname'] . ' ' . $child['child_lname'];
 
-            if (!isNotificationAlreadySent($schedule['baby_id'], 'schedule_reminder', $today)) {
-                $notifications['tomorrow'][] = [
-                    'baby_id' => $schedule['baby_id'],
-                    'child_name' => $childName,
-                    'vaccine_name' => $schedule['vaccine_name'],
-                    'dose_number' => $schedule['dose_number'],
-                    'schedule_date' => $schedule['schedule_date'],
-                    'message' => "$childName has {$schedule['vaccine_name']} scheduled tomorrow",
-                    'type' => 'tomorrow'
-                ];
+            $targetDate = $schedule['batch_schedule_date'] ?? $schedule['schedule_date'];
+            if (!isNotificationAlreadySent($schedule['baby_id'], 'schedule_reminder', $targetDate ?? $tomorrow)) {
+                $notifications['tomorrow'][] = buildNotificationPayload(
+                    $schedule,
+                    $childName,
+                    'tomorrow',
+                    $targetDate ?? $tomorrow,
+                    'tomorrow'
+                );
             }
         }
     }
@@ -153,33 +218,31 @@ try {
     // Check for MISSED immunizations
     $missedSchedules = supabaseSelect(
         'immunization_records',
-        'id,baby_id,vaccine_name,dose_number,schedule_date',
+        'id,baby_id,vaccine_name,dose_number,schedule_date,batch_schedule_date',
         [
             'status' => 'scheduled'
         ],
         'schedule_date.asc'
-    );
+    ) ?: [];
 
     foreach ($missedSchedules as $schedule) {
-        $scheduleDate = $schedule['schedule_date'];
+        $targetDate = $schedule['batch_schedule_date'] ?? $schedule['schedule_date'];
 
         // Only include if schedule date is before today
-        if ($scheduleDate < $today) {
+        if ($targetDate && $targetDate < $today) {
             $childInfo = getChildInfo($schedule['baby_id']);
             if (count($childInfo) > 0) {
                 $child = $childInfo[0];
                 $childName = $child['child_fname'] . ' ' . $child['child_lname'];
 
-                if (!isNotificationAlreadySent($schedule['baby_id'], 'missed_schedule', $today)) {
-                    $notifications['missed'][] = [
-                        'baby_id' => $schedule['baby_id'],
-                        'child_name' => $childName,
-                        'vaccine_name' => $schedule['vaccine_name'],
-                        'dose_number' => $schedule['dose_number'],
-                        'schedule_date' => $schedule['schedule_date'],
-                        'message' => "$childName missed {$schedule['vaccine_name']} scheduled on $scheduleDate",
-                        'type' => 'missed'
-                    ];
+                if (!isNotificationAlreadySent($schedule['baby_id'], 'missed_schedule', $targetDate)) {
+                    $notifications['missed'][] = buildNotificationPayload(
+                        $schedule,
+                        $childName,
+                        'missed',
+                        $targetDate,
+                        $targetDate
+                    );
                 }
             }
         }

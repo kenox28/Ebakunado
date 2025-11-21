@@ -35,7 +35,6 @@ $user_fname = $_SESSION['fname'] ?? '';
     <link rel="stylesheet" href="../../css/skeleton-loading.css" />
     <link rel="stylesheet" href="../../css/user/dashboard.css" />
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .child-schedule--guideline {
             font-size: 0.9rem;

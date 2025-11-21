@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="../../css/modals.css" />
 <header class="header">
     <div class="header-left">
         <button
@@ -329,4 +330,5 @@
             }
         <?php endif; ?>
     </script>
+    <script src="../../js/utils/ui-feedback.js"></script>
 </header>

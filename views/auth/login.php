@@ -153,7 +153,7 @@ session_start();
 
 		<script src="../../js/auth-handler/password-toggle.js"></script>
 		<script src="../../js/utils/ui-feedback.js"></script>
-		<script src="../../js/supabase_js/login.js?v=1.0.24"></script>
+		<script src="../../js/supabase_js/login.js?v=1.0.25"></script>
 		
 	</body>
 </html>

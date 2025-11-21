@@ -139,7 +139,7 @@ async function loginFun(e) {
 			} else {
 				console.log("User login successful, showing SweetAlert");
 				console.log("Redirecting to users home");
-				window.location.href = "../../views/users/home.php";
+				window.location.href = "../../views/user-page/dashboard.php";
 			}
 		} else if (data.status === "already_logged_in") {
 			console.log("Already logged in - user_type:", data.user_type);
@@ -157,7 +157,7 @@ async function loginFun(e) {
 				window.location.href = "../../views/bhw-page/dashboard.php";
 			} else {
 				console.log("Redirecting already logged in user");
-				window.location.href = "../../views/users/home.php";
+				window.location.href = "../../views/user-page/dashboard.php";
 			}
 		} else {
 			Feedback.toast({
