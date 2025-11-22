@@ -11,6 +11,11 @@ $supabase_url = "https://wdwjddwrkxvipzabroed.supabase.co"; // Replace with your
 $supabase_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indkd2pkZHdya3h2aXB6YWJyb2VkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODA4MjkwNSwiZXhwIjoyMDczNjU4OTA1fQ.w3PdR-eP8WVK-H6l2sc9wjdo4ORx_J12Nd7DvMOV9_E"; // Replace with your Supabase anon key
 $supabase_service_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indkd2pkZHdya3h2aXB6YWJyb2VkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODA4MjkwNSwiZXhwIjoyMDczNjU4OTA1fQ.w3PdR-eP8WVK-H6l2sc9wjdo4ORx_J12Nd7DvMOV9_E"; // Replace with your service key for admin operations
 
+// JWT Configuration
+// IMPORTANT: Change this secret key in production for security!
+// You can also set it as environment variable: JWT_SECRET_KEY
+$jwt_secret_key = getenv('JWT_SECRET_KEY') ?: 'ebakunado_jwt_secret_key_change_in_production_2025';
+
 // Disable error reporting for the client
 error_reporting(0);
 ini_set('display_errors', 0);

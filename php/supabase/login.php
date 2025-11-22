@@ -4,10 +4,11 @@ date_default_timezone_set('Asia/Manila');
 ini_set('date.timezone', 'Asia/Manila');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Auth-Token');
 session_start();
 include "../../database/SupabaseConfig.php";
 include "../../database/DatabaseHelper.php";
+require_once __DIR__ . '/JWT.php';
 
 // Robust function to detect Flutter/mobile app requests
 function isFlutterRequest() {
@@ -497,6 +498,9 @@ try {
     $actor_id = $_SESSION['super_admin_id'] ?? $_SESSION['admin_id'] ?? $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? $_SESSION['user_id'] ?? null;
     supabaseLogActivity($actor_id, $user_type, 'login_success', ucfirst($user_type) . ' logged in successfully', $ip);
 
+    // Generate JWT token for API authentication
+    $jwt_token = JWT::generateToken($user_data, $user_type);
+
     // Set redirect URLs based on user type
     $redirect_url = '';
     switch ($user_type) {
@@ -519,7 +523,8 @@ try {
             $redirect_url = '../../views/auth/login.php';
     }
 
-    echo json_encode([
+    // Build response with JWT token (backward compatible - token is optional)
+    $response = [
         "status" => "success",
         "message" => "Login successful",
         "user_type" => $user_type,
@@ -529,7 +534,15 @@ try {
             "lname" => $_SESSION['lname'],
             "email" => $_SESSION['email']
         ]
-    ]);
+    ];
+    
+    // Add JWT token to response if generated successfully
+    if ($jwt_token) {
+        $response["token"] = $jwt_token;
+        $response["token_expires_in"] = 86400; // 24 hours in seconds
+    }
+
+    echo json_encode($response);
 
 } catch (Exception $e) {
     echo json_encode([

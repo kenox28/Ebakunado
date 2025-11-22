@@ -26,6 +26,10 @@ async function logoutSuperAdmin() {
 		const data = await response.json();
 
 		if (data.status === "success") {
+			// Clear JWT token from localStorage
+			localStorage.removeItem("jwt_token");
+			sessionStorage.clear();
+
 			Swal.fire({
 				icon: "success",
 				title: "Logged Out",

@@ -78,6 +78,10 @@ async function logoutBhw() {
 	});
 	const data = await response.json();
 	if (data.status === "success") {
+		// Clear JWT token from localStorage
+		localStorage.removeItem("jwt_token");
+		// Also clear any other auth data if needed
+		sessionStorage.clear();
 		window.location.href = "../../views/auth/login.php";
 	}
 }

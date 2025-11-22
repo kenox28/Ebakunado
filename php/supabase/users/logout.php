@@ -2,46 +2,35 @@
 // Start output buffering to prevent any output before JSON
 ob_start();
 
-
 // Set JSON header first
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 
 session_start();
 
-// Try to include database - but don't fail if it doesn't work
+// Include database helper
+include "../../../database/DatabaseHelper.php";
 
-include "../../../database/Database.php";
+// Get user info before clearing session
+$user_id = $_SESSION['user_id'] ?? null;
+$ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
-
-// Log the logout activity if user is logged in and DB is connected
+// Log the logout activity
 try {
-    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-    $user_id = $_SESSION['user_id'] ?? null;
-    
-    // Check if connection is valid
-    if ($connect && !$connect->connect_error) {
-        $log_sql = "INSERT INTO activity_logs (user_id, user_type, action_type, description, ip_address, created_at) VALUES (?, ?, 'logout', ?, ?, NOW())";
-        $log_stmt = $connect->prepare($log_sql);
-        
-        // Check if prepare was successful
-        if ($log_stmt) {
-            $description = "User logged out successfully";
-            $log_stmt->bind_param("ssss", $user_id, 'user', $description, $ip);
-            $log_stmt->execute();
-            $log_stmt->close();
-            error_log("User logout logged successfully for ID: " . $user_id);
-        } else {
-            error_log("Failed to prepare logout log statement: " . $connect->error);
-        }
-    } else {
-        error_log("Database connection error during logout logging");
+    if ($user_id) {
+        supabaseLogActivity($user_id, 'user', 'logout', 'User logged out successfully', $ip);
     }
 } catch (Exception $log_error) {
     error_log("Logout logging error: " . $log_error->getMessage());
     // Continue with logout even if logging fails
-} catch (Error $log_fatal) {
-    error_log("Logout logging fatal error: " . $log_fatal->getMessage());
-    // Continue with logout even if logging fails
+}
+
+// Clear JWT token cookie
+if (isset($_COOKIE['jwt_token'])) {
+    setcookie('jwt_token', '', time() - 3600, '/');
+    setcookie('jwt_token', '', time() - 3600, '/', '', false, true); // Also clear with secure flag
 }
 
 // Clear and destroy the session
@@ -53,10 +42,6 @@ ob_clean();
 echo json_encode([
     "status" => "success",
     "message" => "User logged out successfully",
-    "debug" => [
-        "db_connected" => $db_connected,
-        "had_session" => ($user_id !== null)
-    ]
+    "clear_token" => true // Signal to frontend to clear localStorage
 ]);
-
 ?>

@@ -2,60 +2,38 @@
 // Start output buffering to prevent any output before JSON
 ob_start();
 
-
 // Set JSON header first
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 
 session_start();
 
-// Try to include database - but don't fail if it doesn't work
+// Include database helper
+include "../../../database/DatabaseHelper.php";
 
-include "../../../database/Database.php";
 
+// Get user info before clearing session
+$user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+$user_type = $_SESSION['user_type'] ?? 'bhw';
+$ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
-// Log the logout activity if user is logged in and DB is connected
+// Log the logout activity
 try {
-    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-    
-    // Determine user ID and type (check both BHW and Midwife sessions)
-    $user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
-    $user_type = $_SESSION['user_type'] ?? null;
-    
-    // Determine user type string for description
-    $description = "";
-    $user_type_for_log = "";
-    
-    if (isset($_SESSION['midwife_id']) && $_SESSION['user_type'] === 'midwifes' || $_SESSION['user_type'] === 'midwife') {
-        $description = "Midwife logged out successfully";
-        $user_type_for_log = 'midwifes';
-    } else {
-        $description = "BHW logged out successfully";
-        $user_type_for_log = 'bhw';
-    }
-    
-    // Check if connection is valid
-    if ($connect && !$connect->connect_error && $user_id) {
-        $log_sql = "INSERT INTO activity_logs (user_id, user_type, action_type, description, ip_address, created_at) VALUES (?, ?, 'logout', ?, ?, NOW())";
-        $log_stmt = $connect->prepare($log_sql);
-        
-        // Check if prepare was successful
-        if ($log_stmt) {
-            $log_stmt->bind_param("ssss", $user_id, $user_type_for_log, $description, $ip);
-            $log_stmt->execute();
-            $log_stmt->close();
-            error_log($description . " for ID: " . $user_id);
-        } else {
-            error_log("Failed to prepare logout log statement: " . $connect->error);
-        }
-    } else {
-        error_log("Database connection error during logout logging or no user ID found");
+    if ($user_id) {
+        $description = ucfirst($user_type) . ' logged out successfully';
+        supabaseLogActivity($user_id, $user_type, 'logout', $description, $ip);
     }
 } catch (Exception $log_error) {
     error_log("Logout logging error: " . $log_error->getMessage());
     // Continue with logout even if logging fails
-} catch (Error $log_fatal) {
-    error_log("Logout logging fatal error: " . $log_fatal->getMessage());
-    // Continue with logout even if logging fails
+}
+
+// Clear JWT token cookie
+if (isset($_COOKIE['jwt_token'])) {
+    setcookie('jwt_token', '', time() - 3600, '/');
+    setcookie('jwt_token', '', time() - 3600, '/', '', false, true); // Also clear with secure flag
 }
 
 // Clear and destroy the session
@@ -66,22 +44,12 @@ session_destroy();
 ob_clean();
 
 // Determine the logout message based on user type
-$logout_message = "User logged out successfully";
-if (isset($_SESSION['midwife_id']) && $_SESSION['user_type'] === 'midwifes' || $_SESSION['user_type'] === 'midwife') {
-    $logout_message = "Midwife logged out successfully";
-} elseif (isset($_SESSION['bhw_id'])) {
-    $logout_message = "BHW logged out successfully";
-}
-
-$user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+$logout_message = ucfirst($user_type) . " logged out successfully";
 
 echo json_encode([
     "status" => "success",
     "message" => $logout_message,
-    "debug" => [
-        "db_connected" => $db_connected,
-        "had_session" => ($user_id !== null)
-    ]
+    "clear_token" => true // Signal to frontend to clear localStorage
 ]);
 
 

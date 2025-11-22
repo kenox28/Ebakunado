@@ -1,5 +1,77 @@
 <?php
 session_start();
+
+// Load JWT class if needed
+require_once __DIR__ . '/../../php/supabase/JWT.php';
+
+$redirect_url = null;
+
+// Helper: get user type from JWT
+function get_user_type_from_jwt($token) {
+    try {
+        $payload = JWT::verifyToken($token);
+        if ($payload && isset($payload['user_type'])) {
+            return $payload['user_type'];
+        }
+    } catch (Exception $e) {
+        // Invalid token - clear cookie
+        if (isset($_COOKIE['jwt_token'])) {
+            setcookie('jwt_token', '', time() - 3600, '/');
+        }
+    }
+    return null;
+}
+
+// Check session first
+if (isset($_SESSION['user_type'])) {
+    $user_type = $_SESSION['user_type'];
+} else if (isset($_COOKIE['jwt_token'])) {
+    $user_type = get_user_type_from_jwt($_COOKIE['jwt_token']);
+    // If token is valid, set session for this tab
+    if ($user_type) {
+        $_SESSION['user_type'] = $user_type;
+        // Get user ID based on type
+        $payload = JWT::verifyToken($_COOKIE['jwt_token']);
+        if ($payload) {
+            switch ($user_type) {
+                case 'super_admin':
+                    $_SESSION['super_admin_id'] = $payload['user_id'];
+                    break;
+                case 'admin':
+                    $_SESSION['admin_id'] = $payload['user_id'];
+                    break;
+                case 'bhw':
+                    $_SESSION['bhw_id'] = $payload['user_id'];
+                    break;
+                case 'midwife':
+                    $_SESSION['midwife_id'] = $payload['user_id'];
+                    break;
+                case 'user':
+                    $_SESSION['user_id'] = $payload['user_id'];
+                    break;
+            }
+            $_SESSION['email'] = $payload['email'] ?? null;
+            $_SESSION['fname'] = $payload['fname'] ?? null;
+            $_SESSION['lname'] = $payload['lname'] ?? null;
+            $_SESSION['logged_in'] = true;
+        }
+    }
+} else {
+    $user_type = null;
+}
+
+if ($user_type === 'bhw' || $user_type === 'midwife') {
+    $redirect_url = "../../views/bhw-page/dashboard.php";
+} else if ($user_type === 'admin') {
+    $redirect_url = "../../views/admin/home.php";
+} else if ($user_type === 'super_admin') {
+    $redirect_url = "../../views/superadmin/dashboard.php";
+}
+
+if ($redirect_url) {
+    header("Location: $redirect_url");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +83,7 @@ session_start();
 	<link rel="stylesheet" href="../../css/fonts.css" />
 	<link rel="stylesheet" href="../../css/modals.css" />
 	<link rel="stylesheet" href="../../css/variables.css" />
-	<link rel="stylesheet" href="../../css/login-style.css?v=1.0.1" />
+	<link rel="stylesheet" href="../../css/login-style.css?v=1.0.2" />
 	<link rel="stylesheet" href="../../css/queries.css?v=1.0.1" />
 	<style>
 		/* Forgot Password Form Styling */
@@ -153,7 +225,54 @@ session_start();
 
 		<script src="../../js/auth-handler/password-toggle.js"></script>
 		<script src="../../js/utils/ui-feedback.js"></script>
-		<script src="../../js/supabase_js/login.js?v=1.0.25"></script>
+		
+		<script>
+		// Check if user is already logged in (via JWT token in localStorage or cookie)
+		(function() {
+			// Check localStorage first (faster)
+			const token = localStorage.getItem('jwt_token');
+			
+			// If no token in localStorage, check cookie
+			const cookieToken = document.cookie.split('; ').find(row => row.startsWith('jwt_token='));
+			const jwtToken = token || (cookieToken ? cookieToken.split('=')[1] : null);
+			
+			if (jwtToken) {
+				// Verify token and get user type
+				fetch('../../php/supabase/test_jwt.php?action=verify&token=' + encodeURIComponent(jwtToken))
+					.then(res => res.json())
+					.then(data => {
+						if (data.status === 'success' && data.payload) {
+							const userType = data.payload.user_type;
+							let redirectUrl = null;
+							
+							// Determine redirect URL based on user type
+							if (userType === 'bhw' || userType === 'midwife') {
+								redirectUrl = '../../views/bhw-page/dashboard.php';
+							} else if (userType === 'admin') {
+								redirectUrl = '../../views/admin/home.php';
+							} else if (userType === 'super_admin') {
+								redirectUrl = '../../views/superadmin/dashboard.php';
+							} else if (userType === 'user') {
+								redirectUrl = '../../views/user-page/dashboard.php';
+							}
+							
+							if (redirectUrl) {
+								window.location.href = redirectUrl;
+							}
+						}
+					})
+					.catch(error => {
+						// If token verification fails, remove invalid token
+						console.error('Token verification failed:', error);
+						localStorage.removeItem('jwt_token');
+						// Clear cookie
+						document.cookie = 'jwt_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+					});
+			}
+		})();
+		</script>
+		
+		<script src="../../js/supabase_js/login.js?v=1.0.28"></script>
 		
 	</body>
 </html>

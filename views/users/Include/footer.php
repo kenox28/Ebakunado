@@ -44,6 +44,10 @@
 					closeLoader();
 
 					if (data.status === "success") {
+						// Clear JWT token from localStorage
+						localStorage.removeItem('jwt_token');
+						sessionStorage.clear();
+						
 						UIFeedback.showToast({
 							title: "Logged out",
 							message: "You have been successfully logged out.",

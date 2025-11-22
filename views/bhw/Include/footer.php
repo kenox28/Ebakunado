@@ -13,8 +13,14 @@
 				// const response = await fetch('/ebakunado/php/bhw/logout.php', { method: 'POST' });
 				const response = await fetch('/ebakunado/php/supabase/bhw/logout.php', { method: 'POST' });
 				const data = await response.json();
-				if (data.status === 'success') { window.location.href = '../../views/auth/login.php'; }
-				else { alert('Logout failed: ' + data.message); }
+				if (data.status === 'success') {
+					// Clear JWT token from localStorage
+					localStorage.removeItem('jwt_token');
+					sessionStorage.clear();
+					window.location.href = '../../views/auth/login.php';
+				} else {
+					alert('Logout failed: ' + data.message);
+				}
 			}
 
 		</script>

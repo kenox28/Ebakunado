@@ -1,0 +1,344 @@
+================================================================================
+CHAPTER 4: SYSTEM DESIGN AND DEVELOPMENT
+SECTIONS 4.4, 4.5, AND 4.6
+================================================================================
+
+4.4 SYSTEM FEATURES
+
+The eBakunado system incorporates several innovative features designed to automate 
+immunization management processes and enhance data tracking capabilities at Linao 
+Health Center. These features eliminate manual monitoring tasks, reduce human error, 
+and improve overall system efficiency. The system addresses specific requirements 
+identified by BHW and midwives, replacing manual processes with automated solutions 
+that enhance efficiency and accuracy.
+
+4.4.1 Automated Notification System
+
+The system features a comprehensive automated notification system that alerts parents 
+through three delivery channels: SMS, email, and mobile app notifications. This 
+multi-channel approach eliminates the need for manual monitoring and significantly 
+reduces the risk of missed vaccinations by providing parents with timely reminders 
+through their preferred communication channels.
+
+The web platform implements automated SMS and email notifications through a daily 
+cron job that runs at 2:40 AM Philippines time (Asia/Manila timezone). The system 
+sends two types of notifications: reminder notifications one day before the scheduled 
+vaccination, and same-day notifications on the day of the appointment. SMS 
+notifications are delivered via the TextBee API, while email notifications are sent 
+through PHPMailer using Gmail SMTP. The system checks multiple date fields, including 
+schedule dates, batch schedule dates, and catch-up dates, ensuring comprehensive 
+coverage of all scheduled vaccinations. Notification deduplication is implemented 
+through a notification_logs table, preventing duplicate alerts from being sent to 
+the same recipient for the same vaccination event.
+
+The mobile application complements the web notifications by automatically fetching 
+immunization data and sending push notifications at two fixed times: 8:00 AM for 
+morning reminders and 11:59 PM for evening reminders. Additionally, users can 
+configure custom alarm times according to their preferences. The mobile app uses the 
+same data sources as the web platform, checking batch schedule dates, guideline 
+schedule dates, and catch-up dates to ensure consistency across all notification 
+channels. This automated notification system eliminates the need for health workers 
+to manually track and contact parents, reducing workload and ensuring that no 
+vaccination appointment is missed.
+
+4.4.2 Automated Missed Immunization Tracking
+
+The system incorporates an automated missed immunization tracker that identifies 
+overdue vaccinations and automatically assigns catch-up dates based on the standard 
+practice of BHW and midwives at Linao Health Center. When a child misses a scheduled 
+or batch-scheduled immunization, the system automatically marks the record as 'missed' 
+and calculates a catch-up date set for the following week, which aligns with the 
+health center's practice of having children return the next week for catch-up 
+vaccinations.
+
+This automated process runs daily at 1:00 AM, checking all immunization records and 
+updating their status accordingly. The system processes records in batches of 1000 for 
+efficiency and checks multiple date fields, including schedule_date, batch_schedule_date, 
+and catch_up_date. The catch-up date mechanism ensures that parents are notified of 
+missed vaccinations and provided with a new appointment date. The system sends SMS 
+and email notifications for missed immunizations, alerting parents to bring their 
+children for catch-up vaccinations. This automated tracking eliminates the need for 
+manual monitoring and ensures that no missed vaccination goes unnoticed, improving 
+overall immunization coverage rates.
+
+4.4.3 Automated Vaccine Tracking for Current and Next Month
+
+The system implements automated tracking of vaccines needed for the current and next 
+month, addressing a critical requirement identified by midwives. Previously, midwives 
+manually tracked and calculated the number of vaccines needed for upcoming months, 
+which was time-consuming and prone to errors. The automated system analyzes all 
+scheduled immunizations and calculates the exact number of each vaccine type required 
+for the current and next month.
+
+This feature is particularly important for vaccines that require a minimum number of 
+children to justify opening a vial. For example, the MMR (Measles, Mumps, Rubella) 
+vaccine requires at least 10 children to be scheduled before a vial can be opened. 
+If only one child needs the MMR vaccine, the system indicates that the vaccine should 
+not be opened, helping midwives make informed decisions about vaccine usage and 
+procurement. The system provides vaccine count statistics for all scheduled 
+immunizations, enabling midwives to plan vaccination sessions and resource allocation 
+effectively. This automated tracking eliminates manual calculation errors and enables 
+better planning of vaccination sessions and resource allocation.
+
+4.4.4 Growth Assessment System
+
+The system incorporates a growth assessment feature that evaluates child growth status 
+using standards from the World Health Organization (WHO) and data provided by BHW. This 
+feature was implemented based on a request from BHW personnel who needed a systematic 
+way to identify whether children have normal growth patterns or require additional 
+attention.
+
+The growth assessment system calculates three key indicators: Weight-for-Age, 
+Length-for-Age (for children 0-11 months), and Weight-for-Length. These calculations 
+are performed using WHO growth standards, which provide internationally recognized 
+benchmarks for child growth. The system considers the child's age, calculated from 
+their birth date, and gender to apply the appropriate growth standards. BHW data serves 
+as a reference guide to ensure local context is considered alongside international 
+standards.
+
+During immunization recording, health workers can input the child's current weight and 
+height, and the system automatically performs the growth assessment, displaying whether 
+the child's growth is normal, underweight, overweight, or requires attention. This 
+automated assessment eliminates manual calculation and interpretation, providing health 
+workers with immediate, standardized growth status information that helps identify 
+children who may need additional nutritional or health interventions.
+
+4.4.5 Data Tracking for CHR and Target Client List
+
+The system provides comprehensive data tracking capabilities for Child Health Records 
+(CHR) and Target Client Lists, addressing the need to replace manual paper-based 
+recording systems. BHW and midwives previously maintained these records manually, 
+which was time-consuming and prone to errors. The system automates the generation of 
+paper-based CHR documents and target client lists, maintaining the same format and 
+structure required by health center protocols.
+
+The system tracks all immunization records, child health information, and generates 
+official CHR documents in PDF format that can be printed and maintained as physical 
+records. Additionally, the system generates target client lists that help health 
+workers identify children who need attention, upcoming vaccinations, or follow-up 
+care. Each child record is assigned a QR code, enabling quick retrieval of information 
+when the physical document is scanned. This digital tracking system eliminates manual 
+data entry errors, ensures consistency across records, and provides health workers 
+with immediate access to comprehensive child health information while maintaining the 
+paper-based documentation required by health center procedures.
+
+These automated features collectively improve the system's performance by reducing 
+manual workload, ensuring timely notifications, and maintaining accurate immunization 
+records. The system addresses specific requirements identified by BHW and midwives, 
+replacing manual processes with automated solutions that enhance efficiency and 
+accuracy at Linao Health Center.
+
+================================================================================
+
+4.5 SECURITY FEATURES
+
+The eBakunado system implements multiple security mechanisms to ensure system 
+confidentiality, data integrity, and authorized access. These security features 
+protect sensitive health information and prevent unauthorized system access, 
+ensuring compliance with healthcare data protection requirements.
+
+4.5.1 Authentication Methods
+
+The system incorporates bcrypt password hashing with salt for user authentication, 
+ensuring that passwords are securely stored and protected against common attack 
+vectors. When a user creates an account, the system generates a random 64-character 
+salt value and combines it with the user's password before applying the bcrypt 
+hashing algorithm with a cost factor of 12. This approach ensures that even if two 
+users have the same password, their stored hashes will be different due to unique 
+salt values.
+
+The system implements CSRF (Cross-Site Request Forgery) token protection during both 
+account creation and login processes to prevent unauthorized form submissions. This 
+security measure ensures that form submissions can only originate from legitimate 
+sources, protecting users from malicious attacks. Users can authenticate using either 
+their email address or phone number, providing flexibility while maintaining security. 
+The system is deployed on Hostinger, a hosting platform that provides additional 
+security layers and infrastructure support. Session-based authentication is 
+implemented using PHP native sessions, ensuring that user authentication state is 
+maintained securely throughout their session.
+
+4.5.2 Authorization Levels
+
+The system enforces user roles to restrict access to administrative functions, with 
+four distinct authorization levels that determine the features and data each user can 
+access. The roles include Admin, BHW (Barangay Health Worker), Midwife, and User, 
+each with specific permissions defined in a permission matrix. The system validates 
+user roles through session-based authorization checks on all protected pages, 
+ensuring that users can only access features and data appropriate to their role.
+
+This role-based access control mechanism prevents unauthorized access to sensitive 
+administrative functions and patient data. For example, regular users can only view 
+their own children's records, while BHW and midwives have access to child health 
+records and immunization management functions. Administrators have full system access 
+for user management and system configuration. This layered access control ensures 
+that sensitive health information is only accessible to authorized personnel, 
+maintaining confidentiality and compliance with healthcare data protection 
+requirements.
+
+4.5.3 Data Validation
+
+The system implements comprehensive data validation mechanisms, including input 
+sanitization and output encoding, to prevent cross-site scripting (XSS) attacks and 
+ensure data integrity. All email inputs are validated and sanitized using PHP's 
+filter_var function with FILTER_SANITIZE_EMAIL, ensuring that only valid email 
+formats are accepted. When displaying user-generated content, the system applies 
+htmlspecialchars encoding to prevent malicious scripts from being executed.
+
+Additionally, the system enforces password strength requirements, including minimum 
+length of 8 characters, at least one uppercase letter, one lowercase letter, one 
+number, and one special character. Phone numbers are validated to ensure they conform 
+to the expected format. These validation mechanisms ensure that all data entering 
+the system meets quality and security standards, preventing both accidental errors 
+and malicious input that could compromise system security or data integrity.
+
+4.5.4 SQL Injection Prevention
+
+The system prevents SQL injection attacks by utilizing Supabase's REST API with 
+parameterized queries, eliminating the possibility of raw SQL execution and ensuring 
+all database interactions are properly sanitized. Instead of constructing SQL queries 
+directly, the system uses Supabase's PostgREST API, which automatically handles 
+parameter encoding and prevents malicious SQL code from being injected.
+
+All database operations, including SELECT, INSERT, UPDATE, and DELETE, are performed 
+through this API layer, which validates and sanitizes all parameters before executing 
+database commands. This approach ensures that user input cannot be interpreted as SQL 
+code, effectively preventing SQL injection vulnerabilities. The API layer provides an 
+additional security barrier between user input and database operations, ensuring that 
+sensitive health data stored in the database remains protected from injection attacks.
+
+4.5.5 Rate Limiting and Additional Security Measures
+
+The system implements rate limiting mechanisms to prevent brute-force attacks and 
+tracks all authentication attempts through comprehensive activity logging. The 
+system limits login attempts to 10 per IP address, preventing automated brute-force 
+attacks while allowing legitimate users sufficient attempts to access their accounts. 
+All authentication attempts, whether successful or failed, are logged with the user's 
+IP address and timestamp, enabling administrators to identify and respond to 
+suspicious activities.
+
+This combination of rate limiting and activity logging provides multiple layers of 
+protection against unauthorized access attempts. The system also implements CSRF token 
+protection in both login and account creation processes, ensuring that form 
+submissions are legitimate and not initiated by malicious third-party sites. These 
+security measures collectively protect the system from common authentication-based 
+attacks while maintaining usability for legitimate users.
+
+These security measures collectively ensure that the system maintains confidentiality 
+of health records, integrity of data, and restricts access to authorized personnel 
+only. The multi-layered security approach provides comprehensive protection against 
+common web application vulnerabilities while maintaining usability for legitimate users, 
+ensuring that sensitive health information is protected in accordance with healthcare 
+data protection requirements.
+
+================================================================================
+
+4.6 SYSTEM DEPLOYMENT
+
+The eBakunado system was deployed on Hostinger, a web hosting platform that provides 
+reliable infrastructure for web applications. The system utilizes a cloud-based 
+database architecture with Supabase, ensuring scalability and data availability. The 
+deployment encompasses both web and mobile platforms, providing users with multiple 
+access points to the immunization management system.
+
+4.6.1 Platform and Hosting
+
+The system is hosted on Hostinger, a web hosting platform that provides the necessary 
+infrastructure for PHP-based web applications. The web application is accessible through 
+a dedicated domain, allowing users to access the system from any device with internet 
+connectivity. Hostinger provides the server environment, including PHP runtime, Apache 
+web server, and necessary system resources to support the application's operations.
+
+The hosting platform ensures that the system is available 24/7, with minimal downtime 
+and reliable performance. The platform's infrastructure supports the system's 
+requirements for handling multiple concurrent users, processing immunization records, 
+and managing automated notification services. This cloud-based hosting approach 
+eliminates the need for local server maintenance and provides scalability for future 
+system growth.
+
+4.6.2 Database Architecture
+
+The system utilizes Supabase, a cloud-based PostgreSQL database platform, for all data 
+storage and management operations. Supabase provides a RESTful API interface that 
+enables secure database operations without direct SQL queries, enhancing security and 
+simplifying database interactions. The cloud-based database architecture ensures that 
+data is stored securely and is accessible from both the web application and mobile 
+application.
+
+Database migration from the initial development environment to Supabase was performed 
+to ensure data consistency and availability. The Supabase platform provides automatic 
+backups, data replication, and security features that protect sensitive health 
+information. The RESTful API approach eliminates the need for direct database 
+connections, reducing security vulnerabilities and simplifying the application 
+architecture.
+
+4.6.3 Automated Services Configuration
+
+Automated notification services are configured through cron-job.org, an online cron 
+job scheduling service. The daily notification service is scheduled to run at 2:40 AM 
+Philippines time (Asia/Manila timezone), checking for upcoming immunizations and 
+sending SMS and email notifications to parents. The missed immunization tracking 
+service runs daily at 1:00 AM, automatically updating immunization statuses and 
+calculating catch-up dates.
+
+SMS notifications are delivered through TextBee.dev, an SMS gateway service that 
+provides reliable message delivery to Philippine mobile networks. Email notifications 
+are sent through PHPMailer using SMTP (Simple Mail Transfer Protocol), configured to 
+use Gmail's SMTP servers for email delivery. These external services are integrated 
+through API connections, ensuring reliable delivery of notifications to parents and 
+health workers.
+
+4.6.4 Mobile Application Deployment
+
+The mobile application is developed using Flutter and Dart, providing cross-platform 
+compatibility for both Android and iOS devices. The application is built using Flutter 
+SDK version 3.8.0 and utilizes various packages for functionality including HTTP 
+client (Dio), local storage (SharedPreferences), state management (Provider), and 
+notification services (flutter_local_notifications). The application integrates with 
+the same Supabase database used by the web platform, ensuring data consistency across 
+all platforms.
+
+The mobile application is distributed through standard mobile app distribution 
+channels, allowing users to download and install the application on their devices. 
+The application fetches immunization data from the same database and API endpoints as 
+the web platform, ensuring that users receive consistent information regardless of 
+their access method. Push notifications are implemented using Flutter's local 
+notification system, providing timely reminders for scheduled immunizations.
+
+4.6.5 Development and Collaboration Tools
+
+The system development utilized several tools for design, testing, and version control. 
+Figma was used for user interface design and prototyping, enabling the design team to 
+create and iterate on interface designs before implementation. Postman was utilized for 
+API testing and documentation, ensuring that all API endpoints function correctly and 
+are properly documented.
+
+GitHub was used for version control and code collaboration, allowing multiple 
+developers to work on the system simultaneously while maintaining code integrity and 
+change history. The repository structure enables organized code management, with 
+separate branches for development, testing, and production deployments. This version 
+control approach ensures that system updates can be tracked, reviewed, and rolled 
+back if necessary.
+
+4.6.6 Deployment Procedure
+
+The deployment procedure involved several steps to ensure system availability and 
+functionality. The web application code was uploaded to the Hostinger hosting platform 
+through File Transfer Protocol (FTP) or hosting control panel file manager. Database 
+migration was performed to transfer data from the development environment to the 
+Supabase cloud database, ensuring that all existing data was preserved and accessible.
+
+Cron job configurations were set up through cron-job.org, with URLs pointing to the 
+notification and tracking scripts hosted on the Hostinger platform. API integrations 
+with TextBee.dev and email SMTP services were configured with appropriate credentials 
+stored securely in the system configuration. The mobile application was compiled and 
+prepared for distribution through app stores, with API endpoints configured to point 
+to the deployed web application.
+
+The system is currently deployed and operational, providing immunization management 
+services to Linao Health Center. The deployment architecture ensures high availability, 
+data security, and scalability for future system enhancements and increased user load.
+
+================================================================================
+END OF SECTIONS 4.4, 4.5, AND 4.6
+================================================================================
+

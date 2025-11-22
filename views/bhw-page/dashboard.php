@@ -791,6 +791,9 @@ if ($user_id) {
             });
             const data = await response.json();
             if (data.status === 'success') {
+                // Clear JWT token from localStorage
+                localStorage.removeItem('jwt_token');
+                sessionStorage.clear();
                 window.location.href = '../../views/auth/login.php';
             } else {
                 alert('Logout failed: ' + data.message);

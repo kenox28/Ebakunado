@@ -71,6 +71,10 @@ async function loginFun(e) {
 	const emailOrPhone = document.getElementById("Email_number").value;
 	const password = document.getElementById("password").value;
 
+	// Get login button
+	const loginBtn = document.querySelector(".login-btn");
+	const originalBtnText = loginBtn ? loginBtn.innerHTML : "Login";
+
 	// Client-side validation
 	if (!emailOrPhone || !password) {
 		Feedback.toast({
@@ -79,6 +83,13 @@ async function loginFun(e) {
 			variant: "error",
 		});
 		return;
+	}
+
+	// Set loading state
+	if (loginBtn) {
+		loginBtn.disabled = true;
+		loginBtn.innerHTML = '<span class="login-btn-loader"></span> Logging in...';
+		loginBtn.classList.add("loading");
 	}
 
 	const formdata = new FormData(loginForm);
@@ -104,6 +115,12 @@ async function loginFun(e) {
 			data = JSON.parse(text);
 			if (data.status === "failed") {
 				console.log(data);
+				// Reset button state
+				if (loginBtn) {
+					loginBtn.disabled = false;
+					loginBtn.innerHTML = originalBtnText;
+					loginBtn.classList.remove("loading");
+				}
 				Feedback.toast({
 					title: "Login failed",
 					message: data.message,
@@ -112,6 +129,13 @@ async function loginFun(e) {
 				return;
 			}
 		} catch (e) {
+			// Reset button state
+			if (loginBtn) {
+				loginBtn.disabled = false;
+				loginBtn.innerHTML = originalBtnText;
+				loginBtn.style.opacity = "1";
+				loginBtn.style.cursor = "pointer";
+			}
 			Feedback.toast({
 				title: "Server error",
 				message: text,
@@ -122,6 +146,32 @@ async function loginFun(e) {
 
 		if (data.status === "success") {
 			console.log("Login success - user_type:", data.user_type);
+
+			// Check if JWT token is included in response
+			if (data.token) {
+				console.log("✅ JWT Token received successfully!");
+				console.log("Token:", data.token);
+				console.log("Token expires in:", data.token_expires_in, "seconds");
+
+				// Store token in localStorage (for Flutter/apps)
+				localStorage.setItem("jwt_token", data.token);
+				console.log("Token saved to localStorage");
+
+				// Also set as cookie so PHP can access it (for web sessions)
+				// Cookie expires in 24 hours (86400 seconds)
+				const expires = new Date();
+				expires.setTime(expires.getTime() + 86400 * 1000); // 24 hours
+				document.cookie = `jwt_token=${
+					data.token
+				}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+				console.log("Token saved to cookie");
+			} else {
+				console.log("⚠️ JWT Token not found in response");
+				console.log(
+					"This may mean JWT library is not installed or there was an error generating the token"
+				);
+			}
+
 			if (data.user_type === "super_admin") {
 				console.log("Redirecting to superadmin dashboard");
 				window.location.href = "../../views/superadmin/dashboard.php";
@@ -160,6 +210,13 @@ async function loginFun(e) {
 				window.location.href = "../../views/user-page/dashboard.php";
 			}
 		} else {
+			// Reset button state on failure
+			if (loginBtn) {
+				loginBtn.disabled = false;
+				loginBtn.innerHTML = originalBtnText;
+				loginBtn.style.opacity = "1";
+				loginBtn.style.cursor = "pointer";
+			}
 			Feedback.toast({
 				title: "Login failed",
 				message: data.message,
@@ -168,6 +225,13 @@ async function loginFun(e) {
 		}
 	} catch (error) {
 		console.error("Network error:", error);
+		// Reset button state on error
+		if (loginBtn) {
+			loginBtn.disabled = false;
+			loginBtn.innerHTML = originalBtnText;
+			loginBtn.style.opacity = "1";
+			loginBtn.style.cursor = "pointer";
+		}
 		Feedback.toast({
 			title: "Network error",
 			message: "Please check your internet connection and try again.",
@@ -231,13 +295,10 @@ async function handleForgotPassword(e) {
 		formData.append("email_phone", emailPhone);
 
 		// Supabase: const response = await fetch("/php/supabase/forgot_password.php", {
-		const response = await fetch(
-			"/ebakunado/php/supabase/forgot_password.php",
-			{
-				method: "POST",
-				body: formData,
-			}
-		);
+		const response = await fetch("../../php/supabase/forgot_password.php", {
+			method: "POST",
+			body: formData,
+		});
 
 		const data = await response.json();
 
@@ -346,13 +407,10 @@ async function verifyResetOTP(otp, contactType) {
 		formData.append("otp", otp);
 
 		// Supabase: const response = await fetch("/php/supabase/verify_reset_otp.php", {
-		const response = await fetch(
-			"/ebakunado/php/supabase/verify_reset_otp.php",
-			{
-				method: "POST",
-				body: formData,
-			}
-		);
+		const response = await fetch("../../php/supabase/verify_reset_otp.php", {
+			method: "POST",
+			body: formData,
+		});
 
 		const data = await response.json();
 
@@ -466,7 +524,7 @@ async function resetPassword(newPassword, confirmPassword) {
 		formData.append("confirm_password", confirmPassword);
 
 		// Supabase: const response = await fetch("/php/supabase/reset_password.php", {
-		const response = await fetch("/ebakunado/php/supabase/reset_password.php", {
+		const response = await fetch("../../php/supabase/reset_password.php", {
 			method: "POST",
 			body: formData,
 		});
