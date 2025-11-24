@@ -464,6 +464,19 @@ $table_definitions = [
         description TEXT NOT NULL,
         ip_address VARCHAR(45),
         created_at TIMESTAMP DEFAULT NOW()
+    )",
+
+    'user_privacy_consents' => "CREATE TABLE IF NOT EXISTS public.user_privacy_consents (
+        id BIGSERIAL PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        full_name TEXT,
+        email TEXT NOT NULL,
+        phone_number TEXT NOT NULL,
+        agreed_privacy BOOLEAN NOT NULL DEFAULT FALSE,
+        agreed_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        ip_address TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )"
 ];
 

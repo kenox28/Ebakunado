@@ -92,6 +92,7 @@ $province = isset($_POST['province']) ? $_POST['province'] : '';
 $city_municipality = isset($_POST['city_municipality']) ? $_POST['city_municipality'] : '';
 $barangay = isset($_POST['barangay']) ? $_POST['barangay'] : '';
 $purok = isset($_POST['purok']) ? $_POST['purok'] : '';
+$agree_terms = isset($_POST['agree_terms']) ? $_POST['agree_terms'] : null;
 
 $profileimg = isset($_POST['profileimg']) ? $_POST['profileimg'] : 'https://res.cloudinary.com/dvecrmrst/image/upload/v1758548365/noprofile_pjqduv.png';
 
@@ -112,6 +113,7 @@ if (empty($password)) $errors[] = "Password is required.";
 if (empty($confirm_password)) $errors[] = "Confirm password is required.";
 if (empty($gender)) $errors[] = "Gender is required.";
 if (empty($place)) $errors[] = "Place is required.";
+if ($agree_terms !== 'yes') $errors[] = "You must agree to the Privacy Policy and Terms of Service.";
 
 if (!empty($errors)) {
     echo json_encode([
@@ -284,6 +286,30 @@ try {
     $result = supabaseInsert('users', $user_data);
 
     if ($result !== false) {
+        $full_name = trim($fname . ' ' . $lname);
+        $consent_data = [
+            'user_id' => $user_id,
+            'full_name' => $full_name !== '' ? $full_name : null,
+            'email' => $email,
+            'phone_number' => $number,
+            'agreed_privacy' => true,
+            'agreed_date' => $philippines_time,
+            'ip_address' => $ip,
+            'created_at' => $philippines_time,
+            'updated_at' => $philippines_time
+        ];
+
+        $consent_result = supabaseInsert('user_privacy_consents', $consent_data);
+
+        if ($consent_result === false) {
+            error_log("Failed to record privacy consent for user {$user_id}: " . json_encode($supabase->getLastError()));
+            echo json_encode([
+                "status" => "failed",
+                "message" => "Account was created but failed to record privacy consent. Please contact support."
+            ]);
+            exit();
+        }
+
         // Update rate limiting window to track successful create
         $_SESSION[$rate_limit_key] = [
             'count' => isset($_SESSION[$rate_limit_key]) ? $_SESSION[$rate_limit_key]['count'] + 1 : 1,

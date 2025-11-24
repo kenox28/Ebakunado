@@ -51,25 +51,6 @@ $user_fullname = ($_SESSION['fname'] ?? '') . " " . ($_SESSION['lname'] ?? '');
                     </div>
                 </div>
 
-                <div class="settings-section">
-                    <h3>🔔 System Configuration</h3>
-                    <div class="form-group">
-                        <label for="notification_time">Daily Vaccination Reminder Time:</label>
-                        <input type="time" id="notification_time" name="notification_time" value="02:40" required>
-                        <small class="help-text">Time when automatic vaccination reminders are sent (Philippines time)</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="system_name">System Name:</label>
-                        <input type="text" id="system_name" name="system_name" value="eBakunado" placeholder="System name for communications">
-                        <small class="help-text">Name used in SMS and email communications</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="health_center_name">Health Center Name:</label>
-                        <input type="text" id="health_center_name" name="health_center_name" value="City Health Department, Ormoc City" placeholder="Health center name">
-                        <small class="help-text">Official name used in communications</small>
-                    </div>
-                </div>
-
                 <div class="form-actions">
                     <button type="submit" class="save-btn">💾 Save Settings</button>
                     <button type="button" onclick="resetToDefaults()" class="reset-btn">🔄 Reset to Defaults</button>
@@ -215,9 +196,6 @@ async function loadCurrentSettings() {
             document.getElementById('email_password').value = data.settings.email_password || '';
             document.getElementById('sms_api_key').value = data.settings.sms_api_key || '';
             document.getElementById('sms_device_id').value = data.settings.sms_device_id || '';
-            document.getElementById('notification_time').value = data.settings.notification_time || '02:40';
-            document.getElementById('system_name').value = data.settings.system_name || 'eBakunado';
-            document.getElementById('health_center_name').value = data.settings.health_center_name || 'City Health Department, Ormoc City';
             displayCurrentSettings(data.settings);
         } else {
             showError('Failed to load current settings: ' + data.message);
@@ -273,9 +251,6 @@ function resetToDefaults() {
         document.getElementById('email_password').value = 'lews hdga hdvb glym';
         document.getElementById('sms_api_key').value = '859e05f9-b29e-4071-b29f-0bd14a273bc2';
         document.getElementById('sms_device_id').value = '687e5760c87689a0c22492b3';
-        document.getElementById('notification_time').value = '02:40';
-        document.getElementById('system_name').value = 'eBakunado';
-        document.getElementById('health_center_name').value = 'City Health Department, Ormoc City';
     }
 }
 

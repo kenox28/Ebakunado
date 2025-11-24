@@ -59,6 +59,13 @@
                     </li>
                     
                     <li class="nav-item">
+                        <a href="privacy-consents.php" class="nav-link <?php echo ($current_page == 'privacy-consents') ? 'active' : ''; ?>">
+                            <span class="nav-icon">🛡️</span>
+                            <span class="nav-text">Privacy Consents</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
                         <a href="system-settings.php" class="nav-link <?php echo ($current_page == 'system-settings') ? 'active' : ''; ?>">
                             <span class="nav-icon">⚙️</span>
                             <span class="nav-text">System Settings</span>

@@ -15,6 +15,39 @@ session_start();
   <link rel="stylesheet" href="../css/create-account-style.css?v=1.0.3" />
   <link rel="stylesheet" href="/css/queries.css" />
   <link rel="stylesheet" href="../css/modals.css?v=1.0.1" />
+  <style>
+    .policy-card {
+      margin-top: 0.75rem;
+    }
+    .policy-card-title {
+      font-weight: 600;
+      color: var(--primary-color, #2f80ed);
+      margin-bottom: 0.5rem;
+    }
+    .policy-content {
+      padding: 1rem 1.25rem;
+      border-radius: 0.5rem;
+      background-color: rgba(47, 128, 237, 0.08);
+      border: 1px solid rgba(47, 128, 237, 0.2);
+      max-height: 260px;
+      overflow-y: auto;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .policy-list {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+    .policy-list li {
+      margin-bottom: 0.65rem;
+    }
+    .policy-sublist {
+      margin-top: 0.35rem;
+    }
+    .policy-sublist li {
+      margin-bottom: 0.25rem;
+    }
+  </style>
 </head>
 
 <body class="page-create-account">
@@ -254,9 +287,30 @@ session_start();
             </div>
 
             <div class="input-group terms-agree">
+              <div class="policy-card">
+                <div class="policy-card-title">Privacy Policy & Terms of Service</div>
+                <div class="policy-content">
+                  <ul class="policy-list">
+                    <li>I am the parent or legal guardian of the child whose information will be entered in this system managed by Linao Health Center Ormoc City.</li>
+                    <li>I voluntarily give consent for the collection, storage, and processing of my child's personal and health information, including immunization records, following the Data Privacy Act of 2012 (RA 10173).</li>
+                    <li>I understand that my child’s data will be used only for immunization services, such as scheduling, tracking, and verifying vaccination status.</li>
+                    <li>I consent that the data may be shared only with authorized health workers of Linao Health Center Ormoc City, the Local Government Unit (LGU), or the Department of Health (DOH) for legitimate health service purposes.</li>
+                    <li>I understand that my child’s data will NOT be shared with unauthorized persons, agencies, or for any purpose not related to healthcare.</li>
+                    <li>
+                      I have the right to:
+                      <ul class="policy-sublist">
+                        <li>Access my child’s records</li>
+                        <li>Correct inaccurate information</li>
+                        <li>Withdraw consent at any time</li>
+                      </ul>
+                    </li>
+                    <li>I understand that withdrawing my consent may limit the ability of Linao Health Center Ormoc City to provide full immunization services.</li>
+                  </ul>
+                </div>
+              </div>
               <label class="checkbox">
-                <input type="checkbox" id="agree_terms" required />
-                <span>I agree to the <a href="#">Privacy Policy</a> and <a href="#">Terms of Service</a>.</span>
+                <input type="checkbox" id="agree_terms" name="agree_terms" value="yes" required />
+                <span>I agree to the Privacy Policy and Terms of Service of Linao Health Center</span>
               </label>
             </div>
 
