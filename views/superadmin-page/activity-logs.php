@@ -85,7 +85,7 @@ if (!isset($_SESSION['super_admin_id'])) {
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script src="../../js/supabase_js/superadmin/common.js?v=1.0.4"></script>
-    <script src="../../js/supabase_js/superadmin/activity-logs.js?v=1.0.4"></script>
+    <script src="../../js/supabase_js/superadmin/activity-logs.js?v=1.0.3"></script>
     <script>
         // Search clear toggle for Activity Logs
         (function() {

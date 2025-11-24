@@ -33,7 +33,7 @@ async function getActivityLogs() {
 	                <td>${log.ip_address}</td>
 	                <td>${log.created_at}</td>
 	                <td class="actions-cell">
-	                    <button onclick="deleteActivityLog('${log.log_id}')" class="btn btn-danger">Delete</button>
+	                    <button onclick="deleteActivityLog('${log.log_id}')" class="action-icon-btn" aria-label="Delete user logs ${log.log_id}" title="Delete logs"><span class="material-symbols-rounded">delete</span></button>
 	                </td>
 	            </tr>`;
 			}

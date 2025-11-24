@@ -60,7 +60,7 @@ $user_fullname = trim((($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ??
                 <div class="menu-group" aria-label="Account">
                     <a class="menu-item" href="./profile-management.php" role="menuitem"><span class="material-symbols-rounded">person</span>My Account</a>
                     <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">badge</span>View Profile</a>
-                    <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">settings</span>Settings</a>
+                    <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">settings</span>System Settings</a>
                 </div>
                 <div class="menu-group" aria-label="Context">
                     <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">lock</span>Privacy & Security</a>
