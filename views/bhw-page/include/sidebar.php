@@ -101,13 +101,13 @@ if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available
                 </li>
 
                 <?php if (isset($_SESSION['midwife_id'])): ?>
-                <!-- CHR Doc Requests (Midwife only) -->
-                <li class="sidebar-menu-item<?php echo $currentPage === 'chr-doc-requests.php' ? ' active' : ''; ?>">
+                <!-- CHR Doc Requests (Midwife only) - HIDDEN -->
+                <!-- <li class="sidebar-menu-item<?php echo $currentPage === 'chr-doc-requests.php' ? ' active' : ''; ?>">
                     <a href="../../views/bhw-page/chr-doc-requests.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">description</span>
                         <span class="menu-label">CHR Doc Requests</span>
                     </a>
-                </li>
+                </li> -->
 
                 <!-- Baby Card Requests (Midwife only) -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'babycard-doc-requests.php' ? ' active' : ''; ?>">

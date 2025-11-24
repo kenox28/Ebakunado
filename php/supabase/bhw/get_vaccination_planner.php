@@ -14,6 +14,8 @@ $startDate = $_GET['start_date'] ?? '';
 $endDate = $_GET['end_date'] ?? '';
 $vaccine = $_GET['vaccine'] ?? 'all';
 $statusFilter = $_GET['status'] ?? 'scheduled';
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$limit = isset($_GET['limit']) ? max(1, (int)$_GET['limit']) : 10;
 
 try {
     // Fetch all immunization records first (like get_immunization_view.php does)
@@ -43,7 +45,7 @@ try {
     
     // Determine if we need exact date match or date range
     $dateSel = '';
-    if ($startDate && !$endDate && !$month) {
+    if ($startDate && !$endDate) {
         // Single date provided - use exact match like get_immunization_view.php
         $dateSel = $startDate;
     }
@@ -182,20 +184,30 @@ try {
         return strcmp($a['operational_date'], $b['operational_date']);
     });
 
-    // Update debug with final counts
-    $debug['items_final'] = count($items);
-    $debug['filter_stats']['after_children_join'] = count($items);
+    // Update debug with final counts (before pagination)
+    $totalItems = count($items);
+    $debug['items_final'] = $totalItems;
+    $debug['filter_stats']['after_children_join'] = $totalItems;
+
+    // Apply pagination
+    $skip = ($page - 1) * $limit;
+    $has_more = $totalItems > ($skip + $limit);
+    $pagedItems = array_slice($items, $skip, $limit);
 
     echo json_encode([
         'status' => 'success',
         'data' => [
-            'items' => $items,
+            'items' => $pagedItems,
             'stats' => [
-                'total' => count($items),
+                'total' => $totalItems,
                 'by_vaccine' => $byVaccine,
                 'by_month' => $byMonth
             ],
-            'debug' => $debug
+            'debug' => $debug,
+            'total' => $totalItems,
+            'page' => $page,
+            'limit' => $limit,
+            'has_more' => $has_more
         ]
     ]);
 } catch (Throwable $e) {

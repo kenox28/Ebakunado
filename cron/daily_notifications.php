@@ -64,22 +64,14 @@ function getDoseText($doseNumber) {
 
 /**
  * Fetch immunization records scheduled (guideline or batch) for a specific date.
+ * Checks batch_schedule_date first, then schedule_date, then catch_up_date.
  */
 function fetchSchedulesForDate(string $target_date) {
     $columns = 'id,baby_id,vaccine_name,dose_number,schedule_date,batch_schedule_date,catch_up_date';
     $result = [];
     $seen = [];
 
-    $bySchedule = supabaseSelect(
-        'immunization_records',
-        $columns,
-        [
-            'schedule_date' => $target_date,
-            'status' => 'scheduled'
-        ],
-        'schedule_date.asc'
-    );
-
+    // Fetch by batch_schedule_date (priority 1)
     $byBatch = supabaseSelect(
         'immunization_records',
         $columns,
@@ -90,7 +82,30 @@ function fetchSchedulesForDate(string $target_date) {
         'batch_schedule_date.asc'
     );
 
-    foreach ([$bySchedule, $byBatch] as $group) {
+    // Fetch by schedule_date (priority 2)
+    $bySchedule = supabaseSelect(
+        'immunization_records',
+        $columns,
+        [
+            'schedule_date' => $target_date,
+            'status' => 'scheduled'
+        ],
+        'schedule_date.asc'
+    );
+
+    // Fetch by catch_up_date (priority 3)
+    $byCatchUp = supabaseSelect(
+        'immunization_records',
+        $columns,
+        [
+            'catch_up_date' => $target_date,
+            'status' => 'scheduled'
+        ],
+        'catch_up_date.asc'
+    );
+
+    // Merge results, prioritizing batch > schedule > catch_up
+    foreach ([$byBatch, $bySchedule, $byCatchUp] as $group) {
         if (!$group || !is_array($group)) { continue; }
         foreach ($group as $row) {
             $id = $row['id'] ?? null;
@@ -103,8 +118,35 @@ function fetchSchedulesForDate(string $target_date) {
     return $result;
 }
 
+/**
+ * Get the actual date to use for notification (prioritize batch > schedule > catch_up)
+ * Returns array with 'date' and 'date_source' (batch/guideline/catch_up)
+ */
+function getNotificationDate($schedule) {
+    if (!empty($schedule['batch_schedule_date'])) {
+        return [
+            'date' => $schedule['batch_schedule_date'],
+            'source' => 'batch',
+            'label' => 'Batch Date'
+        ];
+    } elseif (!empty($schedule['schedule_date'])) {
+        return [
+            'date' => $schedule['schedule_date'],
+            'source' => 'guideline',
+            'label' => 'Guideline Date'
+        ];
+    } elseif (!empty($schedule['catch_up_date'])) {
+        return [
+            'date' => $schedule['catch_up_date'],
+            'source' => 'catch_up',
+            'label' => 'Catch Up Date'
+        ];
+    }
+    return null;
+}
+
 // SMS notification function
-function sendSMSNotification($parent, $child, $vaccines, $schedule_date, $message_prefix, $date_label) {
+function sendSMSNotification($parent, $child, $vaccines, $schedule_date, $message_prefix, $date_label, $date_source_label = '') {
     $phone_number = $parent['phone_number'] ?? '';
     
     if (empty($phone_number)) {
@@ -125,8 +167,12 @@ function sendSMSNotification($parent, $child, $vaccines, $schedule_date, $messag
         }
     }
     
-    // SMS message
-    $message = "Hi " . $parent['fname'] . ", $message_prefix: " . $child['child_fname'] . " " . $child['child_lname'] . " has " . $vaccines . " scheduled $date_label (" . date('M d, Y', strtotime($schedule_date)) . "). Please bring your child to the health center. - City Health Department, Ormoc City";
+    // SMS message - include date source if provided
+    $dateInfo = date('M d, Y', strtotime($schedule_date));
+    if (!empty($date_source_label) && $date_source_label !== 'Guideline Date') {
+        $dateInfo .= " ({$date_source_label})";
+    }
+    $message = "Hi " . $parent['fname'] . ", $message_prefix: " . $child['child_fname'] . " " . $child['child_lname'] . " has " . $vaccines . " scheduled $date_label (" . $dateInfo . "). Please bring your child to the health center. - City Health Department, Ormoc City";
     
     // Get TextBee credentials from database (Midwife's settings for notifications)
     $credentials = getNotificationCredentials();
@@ -178,7 +224,7 @@ function sendSMSNotification($parent, $child, $vaccines, $schedule_date, $messag
 }
 
 // Email notification function
-function sendEmailNotification($parent, $child, $vaccines, $schedule_date, $notification_type, $date_label) {
+function sendEmailNotification($parent, $child, $vaccines, $schedule_date, $notification_type, $date_label, $date_source_label = '') {
     $email = $parent['email'] ?? '';
     
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -230,7 +276,7 @@ function sendEmailNotification($parent, $child, $vaccines, $schedule_date, $noti
                 <div class="highlight">
                     <h3>📅 Vaccination Details</h3>
                     <p><strong>Child:</strong> ' . $child['child_fname'] . ' ' . $child['child_lname'] . '</p>
-                    <p><strong>Scheduled Date:</strong> ' . date('M d, Y', strtotime($schedule_date)) . ' (' . ucfirst($date_label) . ')</p>
+                    <p><strong>Scheduled Date:</strong> ' . date('M d, Y', strtotime($schedule_date)) . ' (' . ucfirst($date_label) . ')' . (!empty($date_source_label) && $date_source_label !== 'Guideline Date' ? ' - ' . $date_source_label : '') . '</p>
                     <p><strong>Vaccines:</strong> ' . $vaccines . '</p>
                 </div>
                 
@@ -348,6 +394,17 @@ try {
                     continue;
                 }
                 
+                // Determine the actual date to use (prioritize batch > schedule > catch_up)
+                $firstSchedule = $schedules[0];
+                $dateInfo = getNotificationDate($firstSchedule);
+                if (!$dateInfo) {
+                    $errors[] = "No valid date found for baby_id: $baby_id";
+                    continue;
+                }
+                $actualDate = $dateInfo['date'];
+                $dateSource = $dateInfo['source'];
+                $dateLabel = $dateInfo['label'];
+                
                 $vaccine_list = [];
                 foreach ($schedules as $schedule) {
                     $dose_text = getDoseText($schedule['dose_number']);
@@ -355,8 +412,14 @@ try {
                 }
                 $vaccines_text = implode(', ', $vaccine_list);
                 
-                $sms_sent = sendSMSNotification($parent, $child, $vaccines_text, $target_date, $message_prefix, $date_label);
-                $email_sent = sendEmailNotification($parent, $child, $vaccines_text, $target_date, $notification_type, $date_label);
+                // Add date source indicator to date_label if batch
+                $enhancedDateLabel = $date_label;
+                if ($dateSource === 'batch') {
+                    $enhancedDateLabel = $date_label . ' (Batch)';
+                }
+                
+                $sms_sent = sendSMSNotification($parent, $child, $vaccines_text, $actualDate, $message_prefix, $enhancedDateLabel, $dateLabel);
+                $email_sent = sendEmailNotification($parent, $child, $vaccines_text, $actualDate, $notification_type, $enhancedDateLabel, $dateLabel);
                 
                 if ($sms_sent || $email_sent) {
                     supabaseInsert('notification_logs', [
@@ -364,7 +427,7 @@ try {
                         'user_id' => $parent['user_id'],
                         'type' => $notification_type_key,
                         'message' => "Vaccination reminder for " . $child['child_fname'] . ' ' . $child['child_lname'],
-                        'notification_date' => $target_date,
+                        'notification_date' => $actualDate,
                         'sms_sent' => $sms_sent,
                         'email_sent' => $email_sent,
                         'created_at' => date('Y-m-d H:i:s')
@@ -492,6 +555,17 @@ try {
                     continue; // Already sent today
                 }
                 
+                // Determine the actual date to use (prioritize batch > schedule > catch_up)
+                $firstSchedule = $schedules[0];
+                $dateInfo = getNotificationDate($firstSchedule);
+                if (!$dateInfo) {
+                    $errors[] = "No valid date found for baby_id: $baby_id";
+                    continue;
+                }
+                $actualDate = $dateInfo['date'];
+                $dateSource = $dateInfo['source'];
+                $dateLabel = $dateInfo['label'];
+                
                 // Prepare vaccine list for notification
                 $vaccine_list = [];
                 foreach ($schedules as $schedule) {
@@ -500,11 +574,17 @@ try {
                 }
                 $vaccines_text = implode(', ', $vaccine_list);
                 
+                // Add date source indicator to date_label if batch
+                $enhancedDateLabel = $date_label;
+                if ($dateSource === 'batch') {
+                    $enhancedDateLabel = $date_label . ' (Batch)';
+                }
+                
                 // Send SMS notification
-                $sms_sent = sendSMSNotification($parent, $child, $vaccines_text, $target_date, $message_prefix, $date_label);
+                $sms_sent = sendSMSNotification($parent, $child, $vaccines_text, $actualDate, $message_prefix, $enhancedDateLabel, $dateLabel);
                 
                 // Send Email notification
-                $email_sent = sendEmailNotification($parent, $child, $vaccines_text, $target_date, $notification_type, $date_label);
+                $email_sent = sendEmailNotification($parent, $child, $vaccines_text, $actualDate, $notification_type, $enhancedDateLabel, $dateLabel);
                 
                 // Log the notification
                 if ($sms_sent || $email_sent) {
@@ -513,7 +593,7 @@ try {
                         'user_id' => $parent['user_id'],
                         'type' => $notification_type_key,
                         'message' => "Vaccination " . ($notification_type === 'same_day' ? 'same-day notification' : 'reminder') . " for " . $child['child_fname'] . ' ' . $child['child_lname'],
-                        'notification_date' => $target_date,
+                        'notification_date' => $actualDate,
                         'sms_sent' => $sms_sent,
                         'email_sent' => $email_sent,
                         'created_at' => date('Y-m-d H:i:s')

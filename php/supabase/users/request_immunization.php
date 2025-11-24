@@ -1,4 +1,9 @@
 <?php
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 session_start();
 
 // Set JSON header early
@@ -7,9 +12,22 @@ header('Content-Type: application/json');
 // Start output buffering to catch any unwanted output
 ob_start();
 
-include '../../../database/SupabaseConfig.php';
-include '../../../database/DatabaseHelper.php';
-require_once '../../../vendor/autoload.php';
+try {
+    include '../../../database/SupabaseConfig.php';
+    include '../../../database/DatabaseHelper.php';
+    require_once '../../../vendor/autoload.php';
+} catch (Throwable $e) {
+    error_log('Error loading includes: ' . $e->getMessage());
+    error_log('Stack trace: ' . $e->getTraceAsString());
+    http_response_code(500);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Failed to load required files: ' . $e->getMessage(),
+        'file' => basename($e->getFile()),
+        'line' => $e->getLine()
+    ]);
+    exit();
+}
 
 use Cloudinary\Configuration\Configuration;
 use Cloudinary\Api\Upload\UploadApi;
@@ -60,6 +78,8 @@ try {
     $allergies = $_POST['allergies'] ?? '';
     $lpm = $_POST['lpm'] ?? null;
     $family_planning = $_POST['family_planning'] ?? '';
+    $date_newbornScreening = $_POST['date_newbornScreening'] ?? null;
+    $placeNewbornScreening = $_POST['placeNewbornScreening'] ?? '';
 
     // Child History fields
     $delivery_type = $_POST['delivery_type'] ?? '';
@@ -104,8 +124,8 @@ try {
         }
     }
 
-    // Insert into child_health_records via Supabase
-    $insert = supabaseInsert('child_health_records', [
+    // Prepare insert data
+    $insertData = [
         'user_id' => $user_id,
         'baby_id' => $baby_id,
         'child_fname' => $child_fname,
@@ -118,7 +138,7 @@ try {
         'address' => $child_address,
         'birth_weight' => $birth_weight,
         'birth_height' => $birth_height,
-        'birth_attendant' => $subscript_attendant,
+        'birth_attendant' => $birth_attendant,
         'babys_card' => $babys_card,
         'delivery_type' => $delivery_type,
         'birth_order' => $birth_order,
@@ -126,16 +146,41 @@ try {
         'allergies' => $allergies !== '' ? $allergies : null,
         'lpm' => $lpm ?: null,
         'family_planning' => $family_planning !== '' ? $family_planning : null,
+        'date_newbornscreening' => $date_newbornScreening !== '' && $date_newbornScreening !== null ? $date_newbornScreening : null,
+        'placenewbornscreening' => trim($placeNewbornScreening) !== '' ? trim($placeNewbornScreening) : null,
         'status' => 'pending',
         'date_created' => date('Y-m-d H:i:s')
-    ]);
+    ];
+
+    // Log insert data for debugging
+    error_log('Insert data: ' . json_encode($insertData, JSON_PRETTY_PRINT));
+
+    // Insert into child_health_records via Supabase
+    $insert = supabaseInsert('child_health_records', $insertData);
 
     if ($insert === false) {
-        $err = isset($supabase) && method_exists($supabase, 'getLastError') ? $supabase->getLastError() : null;
+        $err = null;
+        try {
+            $supabase = getSupabase();
+            if ($supabase && method_exists($supabase, 'getLastError')) {
+                $err = $supabase->getLastError();
+            }
+        } catch (Exception $e) {
+            error_log('Error getting Supabase error: ' . $e->getMessage());
+        }
+        
+        error_log('Insert failed. Error: ' . ($err ? json_encode($err) : 'Unknown error'));
+        error_log('Insert data was: ' . json_encode($insertData, JSON_PRETTY_PRINT));
+        
         sendJsonResponse([
             'status' => 'error', 
-            'message' => 'Insert failed', 
-            'debug' => $err
+            'message' => 'Insert failed: ' . ($err ? json_encode($err) : 'Unknown database error'),
+            'debug' => [
+                'error' => $err,
+                'insert_data' => $insertData,
+                'baby_id' => $baby_id,
+                'user_id' => $user_id
+            ]
         ], 500);
     }
 
@@ -263,14 +308,27 @@ try {
         'total_records_created' => $immunization_records_created
     ]);
 
-} catch (Exception $e) {
+} catch (Throwable $e) {
     // Catch any unexpected errors and return JSON error response
-    error_log('Child registration error: ' . $e->getMessage());
-    error_log('Stack trace: ' . $e->getTraceAsString());
+    $errorMsg = $e->getMessage();
+    $errorFile = basename($e->getFile());
+    $errorLine = $e->getLine();
+    $errorTrace = $e->getTraceAsString();
+    
+    error_log('Child registration error: ' . $errorMsg);
+    error_log('Error file: ' . $e->getFile() . ':' . $errorLine);
+    error_log('Stack trace: ' . $errorTrace);
     
     sendJsonResponse([
         'status' => 'error',
-        'message' => 'An error occurred while processing your request: ' . $e->getMessage()
+        'message' => 'An error occurred while processing your request: ' . $errorMsg,
+        'debug' => [
+            'error_message' => $errorMsg,
+            'error_file' => $errorFile,
+            'error_line' => $errorLine,
+            'error_type' => get_class($e),
+            'stack_trace' => explode("\n", $errorTrace)
+        ]
     ], 500);
 }
 ?>

@@ -73,12 +73,13 @@ $user_type_label = isset($user_type_label) ? $user_type_label : ((($_SESSION['us
                 </li>
 
                 <?php if (isset($_SESSION['midwife_id'])): ?>
-                <li class="sidebar-menu-item<?php echo $currentPage === 'chr-doc-requests.php' ? ' active' : ''; ?>">
+                <!-- CHR Doc Requests (Midwife only) - HIDDEN -->
+                <!-- <li class="sidebar-menu-item<?php echo $currentPage === 'chr-doc-requests.php' ? ' active' : ''; ?>">
                     <a href="./chr-doc-requests.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">description</span>
                         <span class="menu-label">CHR Doc Requests</span>
                     </a>
-                </li>
+                </li> -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'babycard-doc-requests.php' ? ' active' : ''; ?>">
                     <a href="./babycard-doc-requests.php" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">credit_card</span>

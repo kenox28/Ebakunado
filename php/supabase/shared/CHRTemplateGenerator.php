@@ -112,7 +112,7 @@ class CHRTemplateGenerator {
             <tr>
                 <td style="width: 50%; vertical-align: top; padding-right: 4px;">
                     <table style="width: 100%;">
-                        <tr><td style="font-size: 10pt; padding: 0px;">Date of Newbornscreening: ' . htmlspecialchars($this->formatDate($child['nbs_date'] ?? '')) . '</td></tr>
+                        <tr><td style="font-size: 10pt; padding: 0px;">Date of Newbornscreening: ' . htmlspecialchars($this->formatDate($child['date_newbornscreening'] ?? $child['nbs_date'] ?? '')) . '</td></tr>
                         <tr><td style="font-size: 10pt; padding: 0px;">Type of Delivery: ' . $this->getDeliveryTypeCheckbox($child['delivery_type'] ?? '') . '</td></tr>
                         <tr><td style="font-size: 10pt; padding: 0px;">Birth Order: ' . $this->getBirthOrderCheckbox($child['birth_order'] ?? '') . '</td></tr>
                         <tr><td style="font-size: 10pt; padding: 0px;">Attended by: ' . $this->getAttendedByCheckboxes($child['birth_attendant'] ?? '') . '</td></tr>
@@ -120,7 +120,7 @@ class CHRTemplateGenerator {
                 </td>
                 <td style="width: 50%; vertical-align: top; padding-left: 4px;">
                     <table style="width: 100%;">
-                        <tr><td style="font-size: 10pt; padding: 0px;">Place of Newbornscreening: ' . htmlspecialchars($child['nbs_place'] ?? '__________') . '</td></tr>
+                        <tr><td style="font-size: 10pt; padding: 0px;">Place of Newbornscreening: ' . htmlspecialchars($child['placenewbornscreening'] ?? $child['nbs_place'] ?? '__________') . '</td></tr>
                         <tr><td style="font-size: 10pt; padding: 0px;">( ) Caesarean Section</td></tr>
                         <tr><td style="font-size: 10pt; padding: 0px;">( ) Twin</td></tr>
                         <tr><td style="font-size: 10pt; padding: 0px;">( ) Others: ' . htmlspecialchars($child['birth_attendant_other'] ?? '__________') . '</td></tr>

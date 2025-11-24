@@ -299,7 +299,8 @@ $table_definitions = [
         updated TIMESTAMP DEFAULT NOW(),
         role VARCHAR(255) DEFAULT 'user',
         philhealth_no VARCHAR(255),
-        nhts VARCHAR(255)
+        nhts VARCHAR(255),
+        family_number VARCHAR(255)
     )",
     
     'midwives' => "CREATE TABLE midwives (
@@ -384,7 +385,10 @@ $table_definitions = [
         lpm DATE,
         allergies VARCHAR(255),
         blood_type VARCHAR(10),
-        family_planning VARCHAR(255)
+        family_planning VARCHAR(255),
+        date_newbornscreening DATE,
+        placenewbornscreening TEXT
+
     )",
     
     'immunization_records' => "CREATE TABLE immunization_records (

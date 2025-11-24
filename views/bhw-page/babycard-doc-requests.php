@@ -237,12 +237,14 @@ if ($user_types != 'midwifes') {
                     };
                 }
 
-                if (pageInfo && total > 0) {
-                    const start = (page - 1) * pageSize + 1;
-                    const end = Math.min(start + pageSize - 1, total);
-                    pageInfo.textContent = `Showing ${start}-${end} of ${total} entries`;
-                } else if (pageInfo) {
-                    pageInfo.textContent = '';
+                if (pageInfo) {
+                    if (total > 0) {
+                        const start = (page - 1) * pageSize + 1;
+                        const end = Math.min(start + pageSize - 1, total);
+                        pageInfo.textContent = `Showing ${start}-${end} of ${total} entries`;
+                    } else {
+                        pageInfo.textContent = 'Showing 0-0 of 0 entries';
+                    }
                 }
             }
 

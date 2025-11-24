@@ -164,6 +164,17 @@ if ($user_types != 'midwifes') {
 
                     <div class="form-grid">
                         <div class="form-group">
+                            <label for="date_newbornScreening">Date of Newborn Screening</label>
+                            <input type="date" id="date_newbornScreening" name="date_newbornScreening">
+                        </div>
+                        <div class="form-group">
+                            <label for="placeNewbornScreening">Place of Newborn Screening</label>
+                            <input type="text" id="placeNewbornScreening" name="placeNewbornScreening" placeholder="Enter place of newborn screening">
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
                             <label for="lpm">LMP (Last Menstrual Period)</label>
                             <input type="date" id="lpm" name="lpm">
                         </div>

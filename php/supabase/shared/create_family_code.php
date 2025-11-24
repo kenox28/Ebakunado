@@ -35,6 +35,8 @@ $blood_type = $_POST['blood_type'] ?? '';
 $allergies = $_POST['allergies'] ?? '';
 $lpm = $_POST['lpm'] ?? null;
 $family_planning = $_POST['family_planning'] ?? '';
+$date_newbornScreening = $_POST['date_newbornScreening'] ?? null;
+$placeNewbornScreening = $_POST['placeNewbornScreening'] ?? '';
 
 // Get address dropdown values
 $province = $_POST['province'] ?? '';
@@ -86,6 +88,8 @@ $insert = supabaseInsert('child_health_records', [
     'allergies' => $allergies !== '' ? $allergies : null,
     'lpm' => $lpm ?: null,
     'family_planning' => $family_planning !== '' ? $family_planning : null,
+    'date_newbornscreening' => $date_newbornScreening !== '' && $date_newbornScreening !== null ? $date_newbornScreening : null,
+    'placenewbornscreening' => trim($placeNewbornScreening) !== '' ? trim($placeNewbornScreening) : null,
     'status' => 'pending',
     'date_created' => date('Y-m-d H:i:s')
 ]);

@@ -102,14 +102,20 @@ if ($user_id) {
 
                 <div class="chr-grid">
                     <div class="childinfo-column">
-                        <label><span>Date of Newborn Screening</span><span id="f_nbs_date">-</span></label>
+                        <label><span>Date of Newborn Screening</span><input type="date" id="nbs_date"></label>
                         <label><span>Type of Delivery</span><span id="f_delivery_type">-</span></label>
                         <label><span>Birth Order</span><span id="f_birth_order">-</span></label>
                     </div>
                     <div class="childinfo-column">
-                        <label><span>Place of Newborn Screening</span><span id="f_nbs_place">-</span></label>
+                        <label><span>Place of Newborn Screening</span><input type="text" id="nbs_place" placeholder="Enter place"></label>
                         <label><span>Attended by</span><span id="f_attended_by">-</span></label>
                     </div>
+                </div>
+                <div class="section-btn">
+                    <button class="btn edit-btn" onclick="updateNewbornScreening()">
+                        <span class="material-symbols-rounded">edit</span>
+                        Update Newborn Screening
+                    </button>
                 </div>
             </div>
 
@@ -259,7 +265,7 @@ if ($user_id) {
                     [
                         'f_name','f_gender','f_birth_date','f_birth_place','f_birth_weight','f_birth_height','f_address','f_allergies','f_blood_type',
                         'f_family_no','f_philhealth','f_nhts','f_non_nhts','f_father','f_mother','f_nb_screen','f_fp',
-                        'f_nbs_date','f_delivery_type','f_birth_order','f_nbs_place','f_attended_by'
+                        'f_delivery_type','f_birth_order','f_attended_by'
                     ].forEach(id => applyFieldSkeleton(id,'skeleton-field-m'));
                 }
             })();
@@ -321,10 +327,8 @@ if ($user_id) {
                     f_mother: getValue(child.mother_name),
                     f_nb_screen: getValue(''),
                     f_fp: getValue(''),
-                    f_nbs_date: getValue(''),
                     f_delivery_type: getValue(child.delivery_type),
                     f_birth_order: getValue(child.birth_order),
-                    f_nbs_place: getValue(''),
                     f_attended_by: getValue(child.birth_attendant)
                 };
 
@@ -355,6 +359,10 @@ if ($user_id) {
                 document.getElementById('td_dose3').value = child.mother_td_dose3_date || '';
                 document.getElementById('td_dose4').value = child.mother_td_dose4_date || '';
                 document.getElementById('td_dose5').value = child.mother_td_dose5_date || '';
+
+                // Fill editable Newborn Screening data
+                document.getElementById('nbs_date').value = child.date_newbornscreening || '';
+                document.getElementById('nbs_place').value = child.placenewbornscreening || '';
 
                 // Fetch immunization schedule for child
 
@@ -457,6 +465,25 @@ if ($user_id) {
                 alert(data.status === 'success' ? 'TD status updated successfully!' : 'Update failed: ' + data.message);
             } catch (e) {
                 alert('Error updating TD status: ' + e.message);
+            }
+        }
+
+        async function updateNewbornScreening() {
+            const babyId = new URLSearchParams(window.location.search).get('baby_id') || '';
+            try {
+                const formData = new FormData();
+                formData.append('baby_id', babyId);
+                formData.append('date_newbornScreening', document.getElementById('nbs_date').value);
+                formData.append('placeNewbornScreening', document.getElementById('nbs_place').value);
+
+                const res = await fetch('../../php/supabase/bhw/update_newborn_screening.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                alert(data.status === 'success' ? 'Newborn Screening updated successfully!' : 'Update failed: ' + data.message);
+            } catch (e) {
+                alert('Error updating Newborn Screening: ' + e.message);
             }
         }
     </script>

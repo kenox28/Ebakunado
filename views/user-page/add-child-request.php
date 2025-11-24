@@ -217,6 +217,17 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                             </div>
                         </div>
 
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="date_newbornScreening">Date of Newborn Screening</label>
+                                <input type="date" id="date_newbornScreening" name="date_newbornScreening">
+                            </div>
+                            <div class="form-group">
+                                <label for="placeNewbornScreening">Place of Newborn Screening</label>
+                                <input type="text" id="placeNewbornScreening" name="placeNewbornScreening" placeholder="Enter place of newborn screening">
+                            </div>
+                        </div>
+
                         <!-- File Upload -->
                         <div class="form-group" id="fileUploadGroup">
                             <label>Upload Baby's Card *</label>
@@ -531,13 +542,37 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                     xhr.onload = function() {
                         try {
                             const json = JSON.parse(xhr.responseText || '{}');
+                            
+                            // Log full response for debugging
+                            if (json.status === 'error') {
+                                console.error('=== ERROR RESPONSE ===');
+                                console.error('Status:', json.status);
+                                console.error('Message:', json.message);
+                                if (json.debug) {
+                                    console.error('Debug Info:', JSON.stringify(json.debug, null, 2));
+                                }
+                                console.error('Full Response:', JSON.stringify(json, null, 2));
+                                console.error('Response Text:', xhr.responseText);
+                                console.error('Status Code:', xhr.status);
+                                console.error('===================');
+                            }
+                            
                             resolve(json);
                         } catch (err) {
-                            reject(new Error('Invalid server response'));
+                            console.error('=== PARSE ERROR ===');
+                            console.error('Error:', err);
+                            console.error('Response Text:', xhr.responseText);
+                            console.error('Status Code:', xhr.status);
+                            console.error('===================');
+                            reject(new Error('Invalid server response: ' + err.message));
                         }
                     };
 
                     xhr.onerror = function() {
+                        console.error('=== NETWORK ERROR ===');
+                        console.error('Status Code:', xhr.status);
+                        console.error('Response Text:', xhr.responseText);
+                        console.error('===================');
                         reject(new Error('Network error'));
                     };
 
@@ -579,10 +614,20 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                         if (previewSize) previewSize.textContent = '';
                     })();
                 } else {
-                    alert('Error: ' + data.message);
+                    // Show detailed error message
+                    let errorMsg = 'Error: ' + data.message;
+                    if (data.debug) {
+                        errorMsg += '\n\nDebug Info:\n' + JSON.stringify(data.debug, null, 2);
+                        console.error('Error Debug:', data.debug);
+                    }
+                    alert(errorMsg);
                 }
             } catch (error) {
-                alert('Upload failed: ' + error.message);
+                console.error('=== EXCEPTION ===');
+                console.error('Error:', error);
+                console.error('Stack:', error.stack);
+                console.error('===================');
+                alert('Upload failed: ' + error.message + '\n\nCheck console for details.');
             } finally {
                 // End loading
                 fileGroup.classList.remove('file-upload-loading');

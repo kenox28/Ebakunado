@@ -70,12 +70,10 @@ if ($user_id) {
                     <thead>
                         <tr>
                             <th>Fullname</th>
-                            <th>Gender</th>
                             <th>Birth Date</th>
                             <th>Place of Birth</th>
                             <th>Mother</th>
                             <th>Address</th>
-                            <th>Status</th>
                             <th>Schedule</th>
                             <th>Action</th>
                         </tr>
@@ -83,12 +81,10 @@ if ($user_id) {
                     <tbody id="childhealthrecordBody">
                         <tr class="skeleton-row">
                             <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
                             <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
                             <td>
                                 <div class="skeleton-actions-pair">
@@ -99,12 +95,10 @@ if ($user_id) {
                         </tr>
                         <tr class="skeleton-row">
                             <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
                             <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
                             <td>
                                 <div class="skeleton-actions-pair">
@@ -115,12 +109,10 @@ if ($user_id) {
                         </tr>
                         <tr class="skeleton-row">
                             <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-pill skeleton-col-5"></div></td>
                             <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
                             <td>
                                 <div class="skeleton-actions-pair">
@@ -153,16 +145,14 @@ if ($user_id) {
     <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="../../js/utils/skeleton-loading.js" defer></script>
     <script>
-        // Column config for skeleton (9 visible columns)
+        // Column config for skeleton (7 visible columns)
         function getChildHealthListColsConfig() {
             return [
                 { type: 'text', widthClass: 'skeleton-col-1' }, // Fullname
-                { type: 'text', widthClass: 'skeleton-col-2' }, // Gender
                 { type: 'text', widthClass: 'skeleton-col-3' }, // Birth Date
                 { type: 'text', widthClass: 'skeleton-col-4' }, // Place of Birth
                 { type: 'text', widthClass: 'skeleton-col-5' }, // Mother
                 { type: 'text', widthClass: 'skeleton-col-3' }, // Address
-                { type: 'pill', widthClass: 'skeleton-col-5' }, // Status
                 { type: 'btn',  widthClass: 'skeleton-col-6' }, // Schedule
                 { type: 'btn',  widthClass: 'skeleton-col-6' }  // Action (paired buttons via post-adjust)
             ];
@@ -286,9 +276,9 @@ if ($user_id) {
                 const data = await res.json();
                 if (data.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 9, kind: 'error' });
+                        renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 7, kind: 'error' });
                     } else {
-                        body.innerHTML = '<tr class="message-row error"><td colspan="9">Failed to load data. Please try again.</td></tr>';
+                        body.innerHTML = '<tr class="message-row error"><td colspan="7">Failed to load data. Please try again.</td></tr>';
                     }
                     updateChlPagination(0, page, chlLimit, false);
                     return;
@@ -296,9 +286,9 @@ if ($user_id) {
                 const rowsData = Array.isArray(data.data) ? data.data : [];
                 if (rowsData.length === 0) {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(body, 'No records found', { colspan: 9 });
+                        renderTableMessage(body, 'No records found', { colspan: 7 });
                     } else {
-                        body.innerHTML = '<tr class="message-row"><td colspan="9">No records found</td></tr>';
+                        body.innerHTML = '<tr class="message-row"><td colspan="7">No records found</td></tr>';
                     }
                     updateChlPagination(data.total || 0, data.page || page, data.limit || chlLimit, false);
                     return;
@@ -309,12 +299,10 @@ if ($user_id) {
                     const birthDate = formatDate(item.child_birth_date);
                     rows += `<tr>
 							<td>${item.child_fname || ''} ${item.child_lname || ''}</td>
-							<td>${item.child_gender || ''}</td>
 							<td>${birthDate}</td>
 							<td>${item.place_of_birth || ''}</td>
 							<td>${item.mother_name || ''}</td>
 							<td>${item.address || ''}</td>
-						<td>${renderStatusChip(item.status)}</td>
                             <td>
                                 <button class="btn view-schedule-btn"
                                         onclick="viewSchedule('${item.baby_id}', this)"
@@ -343,9 +331,9 @@ if ($user_id) {
                 updateChlPagination(data.total || 0, chlPage, data.limit || chlLimit, canNext);
             } catch (e) {
                 if (typeof renderTableMessage === 'function') {
-                    renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 9, kind: 'error' });
+                        renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 7, kind: 'error' });
                 } else {
-                    body.innerHTML = '<tr class="message-row error"><td colspan="9">Failed to load data. Please try again.</td></tr>';
+                        body.innerHTML = '<tr class="message-row error"><td colspan="7">Failed to load data. Please try again.</td></tr>';
                 }
                 updateChlPagination(0, page, chlLimit, false);
             }
@@ -455,7 +443,7 @@ if ($user_id) {
             const detailsRow = document.createElement('tr');
             detailsRow.className = 'sched-row';
             const td = document.createElement('td');
-            td.colSpan = tr.cells.length || 9;
+            td.colSpan = tr.cells.length || 7;
             td.innerHTML = buildScheduleSkeletonTableHTML();
             detailsRow.appendChild(td);
             tr.parentNode.insertBefore(detailsRow, tr.nextElementSibling);
@@ -464,7 +452,7 @@ if ($user_id) {
                 const res = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
                 const data = await res.json();
 
-                const tbody = detailsRow.querySelector('.sched-body');
+                    const tbody = detailsRow.querySelector('.sched-body');
                 if (!data || data.status !== 'success') {
                     if (tbody) tbody.innerHTML = '<tr class="message-row error"><td colspan="6">Failed to load data. Please try again.</td></tr>';
                     return;
@@ -667,7 +655,7 @@ if ($user_id) {
                     curNext.remove();
                 }
 
-                const colspan = tr.cells.length || 21;
+                const colspan = tr.cells.length || 7;
                 let html = `<tr class="sched-row"><td colspan="${colspan}">`;
 
                 if (data.status !== 'success' || !data.data || data.data.length === 0) {

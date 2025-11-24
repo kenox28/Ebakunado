@@ -200,7 +200,7 @@ try {
         while (true) {
             $batch = supabaseSelect(
                 'immunization_records',
-                'id,baby_id,vaccine_name,schedule_date,status',
+                'id,baby_id,vaccine_name,schedule_date,catch_up_date,status',
                 ['baby_id' => $babyIds],
                 'schedule_date.asc',
                 $batchSize,
@@ -213,10 +213,34 @@ try {
         }
         
         // Filter by month and status
+        // Use catch_up_date if missed, otherwise use schedule_date (for procurement analysis)
+        // Include both 'scheduled' and 'missed' statuses (both need vaccines)
+        // Exclude 'taken' and 'completed' (already given)
         $monthRecords = array_filter($immunizations, function($r) use ($firstDay, $lastDay) {
-            $scheduleDate = $r['schedule_date'] ?? '';
             $status = strtolower($r['status'] ?? '');
-            return $scheduleDate >= $firstDay && $scheduleDate <= $lastDay && $status === 'scheduled';
+            
+            // Exclude already completed/taken vaccines
+            if ($status === 'taken' || $status === 'completed') {
+                return false;
+            }
+            
+            // Only include scheduled or missed vaccines (both need to be given)
+            if ($status !== 'scheduled' && $status !== 'missed') {
+                return false;
+            }
+            
+            // Determine which date to use for month calculation
+            // If missed and has catch_up_date, use catch_up_date
+            // Otherwise, use schedule_date (original guideline date)
+            $targetDate = '';
+            if ($status === 'missed' && !empty($r['catch_up_date'])) {
+                $targetDate = $r['catch_up_date'] ?? '';
+            } else {
+                $targetDate = $r['schedule_date'] ?? '';
+            }
+            
+            // Check if target date falls within the target month
+            return $targetDate >= $firstDay && $targetDate <= $lastDay;
         });
         
         // Count by vaccine

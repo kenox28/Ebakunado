@@ -220,7 +220,7 @@ if ($user_types != 'midwifes') {
             </select>
         </label>
         <div style="display:flex; align-items:flex-end; gap:8px;">
-            <button class="toolbar-button btn-primary" onclick="loadPlanner()">Apply</button>
+            <button class="toolbar-button btn-primary" onclick="loadPlanner(1)">Apply</button>
             <button class="toolbar-button btn-secondary" onclick="resetFilters()">Clear</button>
         </div>
     </div>
@@ -262,6 +262,22 @@ if ($user_types != 'midwifes') {
             </tbody>
         </table>
     </div>
+    
+    <!-- Pagination -->
+    <div class="pager" id="pager">
+        <div id="pageInfo" class="page-info">&nbsp;</div>
+        <div class="pager-controls">
+            <button id="prevBtn" type="button" class="pager-btn">
+                <span class="material-symbols-rounded">chevron_backward</span>
+                Prev
+            </button>
+            <span id="pageButtons" class="page-buttons"></span>
+            <button id="nextBtn" type="button" class="pager-btn">
+                Next
+                <span class="material-symbols-rounded">chevron_forward</span>
+            </button>
+        </div>
+    </div>
 </main>
 
 <!-- Date Picker Modal -->
@@ -278,7 +294,14 @@ if ($user_types != 'midwifes') {
 </div>
 
 <script>
+    // spinner CSS (scoped)
+    const style = document.createElement('style');
+    style.textContent = `.pager-spinner{width:16px;height:16px;border:2px solid #e3e3e3;border-top-color:var(--primary-color);border-radius:50%;display:inline-block;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}`;
+    document.head.appendChild(style);
+    
     let plannerData = [];
+    let currentPage = 1;
+    const pageSize = 10;
 
     function getFilters() {
         return {
@@ -289,12 +312,30 @@ if ($user_types != 'midwifes') {
         };
     }
 
-    async function loadPlanner() {
+    async function loadPlanner(page = 1, opts = {}) {
         const currentFilters = getFilters();
-        console.log('[Planner] Applying filters:', currentFilters);
+        console.log('[Planner] Applying filters:', currentFilters, 'Page:', page);
         const params = new URLSearchParams(currentFilters);
+        params.set('page', page);
+        params.set('limit', pageSize);
+        
         const tbody = document.getElementById('plannerTable');
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Loading…</td></tr>';
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const btnWrap = document.getElementById('pageButtons');
+        const pageInfoEl = document.getElementById('pageInfo');
+        
+        // Show loading state in pagination
+        if (btnWrap) btnWrap.innerHTML = `<span class="pager-spinner" aria-label="Loading" role="status"></span>`;
+        if (prevBtn) prevBtn.disabled = true;
+        if (nextBtn) nextBtn.disabled = true;
+        if (pageInfoEl && (!pageInfoEl.textContent || pageInfoEl.textContent === '\u00A0')) {
+            pageInfoEl.textContent = 'Showing 0-0 of 0 entries';
+        }
+        
+        if (!opts.keep) {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Loading…</td></tr>';
+        }
 
         try {
             const res = await fetch(`../../php/supabase/bhw/get_vaccination_planner.php?${params.toString()}`);
@@ -325,9 +366,14 @@ if ($user_types != 'midwifes') {
             renderStats(json.data.stats || {});
             populateVaccineDropdown();
             renderTable(json.data.debug);
+            
+            // Update pagination
+            updatePagination(json.data.total || 0, json.data.page || 1, json.data.limit || pageSize, json.data.has_more === true);
+            currentPage = json.data.page || 1;
         } catch (err) {
             console.error('[Planner] Error loading data:', err);
             tbody.innerHTML = `<tr><td colspan="6" class="empty-state">Error: ${err.message}</td></tr>`;
+            updatePagination(0, 0, pageSize);
         }
     }
 
@@ -516,7 +562,7 @@ if ($user_types != 'midwifes') {
                 throw new Error(json.message || 'Update failed');
             }
             alert(`Updated ${json.data.updated || 0} record(s).`);
-            loadPlanner();
+            loadPlanner(currentPage);
         } catch (err) {
             console.error('[Batch Update] Error:', err);
             alert('Error updating batch schedule: ' + err.message);
@@ -535,7 +581,38 @@ if ($user_types != 'midwifes') {
         document.getElementById('filterVaccine').value = 'all';
         document.getElementById('filterStatus').value = 'scheduled';
         plannerData = [];
+        currentPage = 1;
         document.getElementById('plannerTable').innerHTML = '<tr><td colspan="6" class="empty-state">Use the filters above to load data…</td></tr>';
+        updatePagination(0, 0, pageSize);
+    }
+    
+    function updatePagination(total, page, limit, hasMore = null) {
+        const info = document.getElementById('pageInfo');
+        const btnWrap = document.getElementById('pageButtons');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        if (!info || !btnWrap || !prevBtn || !nextBtn) return;
+        
+        const count = plannerData ? plannerData.length : 0;
+        // Always show a page-info string, even when zero
+        if (!total || total === 0 || count === 0) {
+            info.textContent = 'Showing 0-0 of 0 entries';
+        } else {
+            const start = (page - 1) * limit + 1;
+            const end = start + count - 1;
+            const endClamped = Math.min(end, total);
+            info.textContent = `Showing ${start}-${endClamped} of ${total} entries`;
+        }
+        btnWrap.innerHTML = `<button type="button" data-page="${page}" disabled>${page}</button>`;
+        prevBtn.disabled = page <= 1;
+        const canNext = hasMore === true || (plannerData && plannerData.length === limit);
+        nextBtn.disabled = !canNext;
+        prevBtn.onclick = () => {
+            if (page > 1) loadPlanner(page - 1, { keep: true });
+        };
+        nextBtn.onclick = () => {
+            if (canNext) loadPlanner(page + 1, { keep: true });
+        };
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -545,7 +622,7 @@ if ($user_types != 'midwifes') {
         const lastDayOfNextMonth = new Date(today.getFullYear(), today.getMonth() + 2, 0);
         document.getElementById('filterStart').value = nextMonth.toISOString().slice(0, 10);
         document.getElementById('filterEnd').value = lastDayOfNextMonth.toISOString().slice(0, 10);
-        loadPlanner();
+        loadPlanner(1);
     });
 </script>
 <script src="../../js/header-handler/profile-menu.js" defer></script>
