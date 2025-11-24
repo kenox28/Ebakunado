@@ -30,12 +30,8 @@ async function getBhw() {
                 <td>${bhw.permissions}</td>
                 <td>${bhw.created_at}</td>
                 <td class="actions-cell">
-                    <button onclick="editBhw('${
-											bhw.bhw_id
-										}')" class="btn btn-primary">Edit</button>
-                    <button onclick="deleteBhw('${
-											bhw.bhw_id
-										}')" class="btn btn-danger">Delete</button>
+                    <button onclick="editBhw('${bhw.bhw_id}')" class="action-icon-btn" aria-label="Edit user ${bhw.bhw_id}"><span class="material-symbols-rounded">edit</span></button>
+                    <button onclick="deleteBhw('${bhw.bhw_id}')" class="action-icon-btn" aria-label="Delete user ${bhw.bhw_id}"><span class="material-symbols-rounded">delete</span></button>
                 </td>
             </tr>`;
 		}
@@ -65,9 +61,7 @@ async function editBhw(bhw_id) {
 		if (data.status === "success") {
 			const bhw = data.data;
 			const form = document.getElementById("editBhwForm");
-
 			form.innerHTML = `
-                <h3>Edit BHW</h3>
                 <input type="hidden" id="edit_bhw_id" value="${bhw.bhw_id}">
                 <div class="form-row">
                     <div class="form-group">
@@ -163,15 +157,10 @@ async function editBhw(bhw_id) {
                         </select>
                     </div>
                 </div>
-                <div class="action-buttons">
-                    <button type="button" onclick="updateBhw()" class="btn btn-primary">Update BHW</button>
-                    <button type="button" onclick="cancelEditBhw()" class="btn btn-secondary">Cancel</button>
-                </div>
             `;
 
-			form.style.display = "block";
-			form.scrollIntoView({ behavior: "smooth" });
 			await loadEditBhwProvinces(bhw.place || "");
+			openModal('editBhwModal');
 		} else {
 			Swal.fire("Error!", "Failed to load BHW data", "error");
 		}
@@ -232,8 +221,8 @@ async function updateBhw() {
 // Cancel edit BHW
 function cancelEditBhw() {
 	const form = document.getElementById("editBhwForm");
-	form.style.display = "none";
 	form.innerHTML = "";
+	closeModal('editBhwModal');
 }
 
 // Delete BHW

@@ -418,7 +418,7 @@ if ($user_types != 'midwifes') {
                 </td>
                 <td>${item.vaccine_name} (Dose ${item.dose_number || 1})</td>
                 <td>${formatDate(item.guideline_date)}</td>
-                <td>${formatDate(item.batch_schedule_date) || '<span style="color:#868e96;">Not set</span>'}</td>
+                <td>${formatDate(item.batch_schedule_date) || '<span class="chip chip--default">Not set</span>'}</td>
                 <td><span class="chip chip--${item.status || 'scheduled'}">${item.status || 'scheduled'}</span></td>
             </tr>
         `;

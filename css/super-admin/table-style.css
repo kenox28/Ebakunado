@@ -1,0 +1,293 @@
+/* -------------------------------------------------- */
+/* Global Data Table System (reusable across pages)   */
+/* -------------------------------------------------- */
+:root {
+  --dt-border: #e5e7eb;
+  --dt-bg: #ffffff;
+  --dt-text: #1f2937;
+  --dt-muted: #6b7280;
+  --dt-header-bg: #f5f5f5;
+}
+
+.data-table-card {
+  background: var(--dt-bg);
+  /* border: 1px solid var(--dt-border); */
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+}
+
+.data-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  /* padding: 1.4rem 1.4rem 2rem 1.8rem; */
+  padding: 1.4rem 1.8rem;
+  border-bottom: 1px solid var(--dt-border);
+  background: var(--dt-bg);
+}
+.data-count-label {
+  margin: 0;
+  color: var(--dt-muted);
+  font-size: 1.2rem;
+}
+.data-table-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--dt-text);
+}
+
+.data-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--dt-bg);
+}
+.data-table th,
+.data-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--dt-border);
+  text-align: left;
+  font-size: 1.3rem;
+  color: var(--dt-text);
+}
+.data-table thead th {
+  background: var(--dt-header-bg);
+  font-weight: 600;
+  font-size: 1.25rem;
+  letter-spacing: 0.3px;
+  color: #111827;
+  text-transform: uppercase;
+}
+.data-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.data-table tbody td {
+  text-transform: capitalize;
+}
+
+/* Prevent capitalization for specific semantic columns */
+.data-table tbody td.no-capitalize {
+  text-transform: none;
+}
+
+/* Toolbar stacking variant */
+.data-table-toolbar--stack {
+  flex-wrap: wrap;
+  gap: 1.2rem;
+}
+.data-table-toolbar__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 220px;
+}
+.data-table-subtitle {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #4b5563;
+  font-weight: 400;
+}
+
+/* Actions area */
+.data-table-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Search component */
+.data-table-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f3f4f6;
+  border: 1px solid var(--dt-border);
+  border-radius: 8px;
+  padding: 0 6px 0 34px;
+  padding: 0 40px 0 34px;
+  width: 300px;
+}
+.data-table-search:focus-within {
+  border-color: #006c35;
+  box-shadow: 0 0 0 1px #006c3533;
+}
+.data-table-search__icon {
+  position: absolute;
+  left: 10px;
+  font-size: 20px;
+  color: #6b7280;
+}
+.data-table-search__input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1.3rem;
+  padding: 6px 6px;
+  font-family: inherit;
+  color: var(--dt-text);
+}
+.data-table-search__input::placeholder {
+  color: #9ca3af;
+}
+.data-table-search__clear {
+  position: absolute;
+  right: 8px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #6b7280;
+}
+.data-table-search__clear:hover {
+  /* background: #e5e7eb; */
+  color: #374151;
+}
+.data-table-search--has-value .data-table-search__clear {
+  display: flex;
+}
+
+/* Button icon variant */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-ghost {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+.btn-ghost:hover {
+  background: #f3f4f6;
+}
+
+/* Compact adjustments for buttons inside toolbar */
+.data-table-actions .btn {
+  display: inline-flex;
+  align-items: center;
+}
+.data-table-actions .material-symbols-rounded {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.data-table__message-row td {
+  text-align: center;
+  color: var(--dt-muted);
+  padding: 26px 14px;
+  font-size: 1.2rem;
+}
+.data-table__message-row.error td {
+  color: #b91c1c;
+}
+.data-table__message-row.loading td {
+  color: var(--dt-muted);
+}
+
+/* Utility button styles (optional global reuse) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px; 
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111827;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.2rem; 
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+}
+.btn:hover {
+  background: #f9fafb;
+}
+.btn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+.btn-secondary {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #111827;
+}
+.btn-secondary:hover {
+  background: #e5e7eb;
+}
+.btn-primary {
+  background: #006c35;
+  color: #fff;
+  border-color: #006c35;
+}
+.btn-primary:hover {
+  background: #005529;
+}
+.btn-danger {
+  background: #dc2626;
+  color: #fff;
+  border-color: #dc2626;
+}
+.btn-danger:hover {
+  background: #b91c1c;
+}
+
+/* Unified button sizing (former btn-sm merged) */
+
+/* Icon-only action buttons inside table rows */
+.action-icon-btn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #374151;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  line-height: 1;
+}
+.action-icon-btn .material-symbols-rounded {
+  font-size: 22px;
+}
+.action-icon-btn:hover {
+  color: #111827;
+  background: rgba(0,0,0,0.04);
+}
+.action-icon-btn:focus-visible {
+  outline: 2px solid #006c35;
+  outline-offset: 2px;
+}
+.actions-cell .action-icon-btn { margin-right: 4px; }
+.actions-cell .action-icon-btn:last-child { margin-right: 0; }
+
+/* Responsive adjustments specific to data tables */
+@media (max-width: 640px) {
+  .data-table th,
+  .data-table td {
+    padding: 10px 12px;
+    font-size: 1.3rem;
+  }
+  .data-table-title {
+    font-size: 1.5rem;
+  }
+  .data-table-toolbar {
+    padding: 12px 14px;
+  }
+}

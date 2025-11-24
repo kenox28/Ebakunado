@@ -24,7 +24,7 @@ async function getLocations() {
                 <td>${location.purok}</td>
                 <td>${location.created_at}</td>
                 <td class="actions-cell">
-                    <button onclick="deleteLocation('${location.id}')" class="btn btn-danger">Delete</button>
+                    <button onclick="deleteLocation('${location.id}')" class="action-icon-btn" aria-label="Delete location ${location.id}"><span class="material-symbols-rounded">delete</span></button>
                 </td>
             </tr>`;
 		}
@@ -44,21 +44,23 @@ function toggleAllLocations() {
 
 // Show add location form
 function showAddLocationForm() {
-	const form = document.getElementById("addLocationForm");
-	form.style.display = "block";
-	form.scrollIntoView({ behavior: "smooth" });
+	openModal('addLocationModal');
 }
 
 // Cancel add location
 function cancelAddLocation() {
-	const form = document.getElementById("addLocationForm");
-	form.style.display = "none";
-
 	// Clear form fields
-	document.getElementById("add_province").value = "";
-	document.getElementById("add_city_municipality").value = "";
-	document.getElementById("add_barangay").value = "";
-	document.getElementById("add_purok").value = "";
+	const fields = [
+		"add_province",
+		"add_city_municipality",
+		"add_barangay",
+		"add_purok"
+	];
+	fields.forEach(id => {
+		const el = document.getElementById(id);
+		if (el) el.value = "";
+	});
+	closeModal('addLocationModal');
 }
 
 // Save location

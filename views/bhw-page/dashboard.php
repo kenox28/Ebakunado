@@ -29,11 +29,11 @@ if ($user_id) {
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/sidebar.css" />
-    
+
     <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/skeleton-loading.css" />
     <link rel="stylesheet" href="../../css/bhw/dashboard.css?v=1.0.4" />
-    
+
 </head>
 
 <body>
@@ -222,7 +222,7 @@ if ($user_id) {
                         totalCount: 0
                     });
                 } else {
-                    const ids = ['pendingCount','todayCount','missedCount','totalCount'];
+                    const ids = ['pendingCount', 'todayCount', 'missedCount', 'totalCount'];
                     ids.forEach(id => {
                         const el = document.getElementById(id);
                         if (el) el.textContent = '0';
@@ -355,22 +355,22 @@ if ($user_id) {
 
         function renderCharts(monthType) {
             if (!monthlyData) return;
-            
-            const monthData = monthType === 'current' 
-                ? monthlyData.current_month 
-                : monthlyData.next_month;
-            
+
+            const monthData = monthType === 'current' ?
+                monthlyData.current_month :
+                monthlyData.next_month;
+
             if (!monthData) return;
 
             // Update UI
             document.getElementById('monthDisplay').textContent = monthData.month_name;
-            
+
             // Update quick switch buttons
             document.querySelectorAll('.quick-switch-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             document.getElementById(monthType === 'current' ? 'currentMonthBtn' : 'nextMonthQuickBtn').classList.add('active');
-            
+
             currentViewMonth = monthType;
 
             // Prepare chart data
@@ -395,21 +395,21 @@ if ($user_id) {
             }
 
             // Color palette for charts
-            const primaryColor = monthType === 'current' 
-                ? 'rgba(59, 130, 246, 0.8)' 
-                : 'rgba(20, 184, 166, 0.8)';
-            const primaryColorSolid = monthType === 'current' 
-                ? 'rgba(59, 130, 246, 1)' 
-                : 'rgba(20, 184, 166, 1)';
-            
+            const primaryColor = monthType === 'current' ?
+                'rgba(59, 130, 246, 0.8)' :
+                'rgba(20, 184, 166, 0.8)';
+            const primaryColorSolid = monthType === 'current' ?
+                'rgba(59, 130, 246, 1)' :
+                'rgba(20, 184, 166, 1)';
+
             const colorPalette = [
-                'rgba(59, 130, 246, 0.9)',   // Blue
-                'rgba(20, 184, 166, 0.9)',  // Teal
-                'rgba(139, 92, 246, 0.9)',  // Purple
-                'rgba(236, 72, 153, 0.9)',  // Pink
-                'rgba(251, 146, 60, 0.9)',  // Orange
-                'rgba(34, 197, 94, 0.9)',   // Green
-                'rgba(239, 68, 68, 0.9)',   // Red
+                'rgba(59, 130, 246, 0.9)', // Blue
+                'rgba(20, 184, 166, 0.9)', // Teal
+                'rgba(139, 92, 246, 0.9)', // Purple
+                'rgba(236, 72, 153, 0.9)', // Pink
+                'rgba(251, 146, 60, 0.9)', // Orange
+                'rgba(34, 197, 94, 0.9)', // Green
+                'rgba(239, 68, 68, 0.9)', // Red
             ];
 
             // Render Bar Chart (all 14 vaccines)
@@ -425,14 +425,14 @@ if ($user_id) {
                             if (count === 0) return 'rgba(229, 231, 235, 0.3)';
                             // Create gradient effect based on count
                             const intensity = Math.min(count / 20, 1);
-                            return monthType === 'current'
-                                ? `rgba(59, 130, 246, ${0.5 + intensity * 0.4})`
-                                : `rgba(20, 184, 166, ${0.5 + intensity * 0.4})`;
+                            return monthType === 'current' ?
+                                `rgba(59, 130, 246, ${0.5 + intensity * 0.4})` :
+                                `rgba(20, 184, 166, ${0.5 + intensity * 0.4})`;
                         }),
-                        borderColor: counts.map(count => 
-                            count === 0 
-                                ? 'rgba(229, 231, 235, 0.5)' 
-                                : primaryColorSolid
+                        borderColor: counts.map(count =>
+                            count === 0 ?
+                            'rgba(229, 231, 235, 0.5)' :
+                            primaryColorSolid
                         ),
                         borderWidth: 1.5,
                         borderRadius: 6,
@@ -505,7 +505,11 @@ if ($user_id) {
 
             // Prepare data for donut chart (top 5 vaccines)
             const vaccinesWithCounts = monthData.vaccines
-                .map((v, idx) => ({ name: labels[idx], count: v.count, originalName: v.name }))
+                .map((v, idx) => ({
+                    name: labels[idx],
+                    count: v.count,
+                    originalName: v.name
+                }))
                 .filter(v => v.count > 0)
                 .sort((a, b) => b.count - a.count)
                 .slice(0, 5);
@@ -516,7 +520,7 @@ if ($user_id) {
 
             // Render Donut Chart (top 5)
             const donutCtx = document.getElementById('vaccineDonutChart').getContext('2d');
-            
+
             // Register center text plugin
             const centerTextPlugin = {
                 id: 'centerText',
@@ -524,21 +528,21 @@ if ($user_id) {
                     const ctx = chart.ctx;
                     const centerX = chart.chartArea.left + (chart.chartArea.right - chart.chartArea.left) / 2;
                     const centerY = chart.chartArea.top + (chart.chartArea.bottom - chart.chartArea.top) / 2;
-                    
+
                     ctx.save();
                     ctx.font = 'bold 28px Poppins, sans-serif';
                     ctx.fillStyle = '#1F2937';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(totalDonut, centerX, centerY - 8);
-                    
+
                     ctx.font = '11px Poppins, sans-serif';
                     ctx.fillStyle = '#6B7280';
                     ctx.fillText('total vial', centerX, centerY + 16);
                     ctx.restore();
                 }
             };
-            
+
             vaccineDonutChart = new Chart(donutCtx, {
                 type: 'doughnut',
                 data: {
