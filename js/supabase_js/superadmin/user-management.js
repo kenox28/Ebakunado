@@ -17,32 +17,39 @@ async function getUsers() {
 		tbody.innerHTML = "";
 
 		for (const user of data) {
+			const formattedDate = formatDateShort(user.created_at);
 			tbody.innerHTML += `<tr>
-                <td class="checkbox-cell"><input type="checkbox" class="user-checkbox" value="${
-									user.user_id
-								}"></td>
-                <td>${user.user_id}</td>
-                <td>${user.fname}</td>
-                <td>${user.lname}</td>
-                <td>${user.email}</td>
-                <td>${user.phone_number}</td>
-                <td>${user.gender || ""}</td>
-                <td>${user.place || ""}</td>
-                <td>${user.role}</td>
-                <td>${user.created_at}</td>
-                <td class="actions-cell">
-                    <button onclick="editUser('${
-											user.user_id
-										}')" class="btn btn-primary">Edit</button>
-                    <button onclick="deleteUser('${
-											user.user_id
-										}')" class="btn btn-danger">Delete</button>
-                </td>
-            </tr>`;
+				<td class="checkbox-cell"><input type="checkbox" class="user-checkbox" value="${user.user_id}"></td>
+				<td>${user.user_id}</td>
+				<td>${user.fname}</td>
+				<td>${user.lname}</td>
+				<td>${user.email}</td>
+				<td>${user.phone_number || ''}</td>
+				<td>${user.gender || ''}</td>
+				<td>${user.place || ''}</td>
+				<td>${user.role}</td>
+				<td>${formattedDate}</td>
+				<td class="actions-cell">
+					<button onclick="editUser('${user.user_id}')" class="action-icon-btn" aria-label="Edit user ${user.user_id}"><span class="material-symbols-rounded">edit</span></button>
+					<button onclick="deleteUser('${user.user_id}')" class="action-icon-btn" aria-label="Delete user ${user.user_id}"><span class="material-symbols-rounded">delete</span></button>
+				</td>
+			</tr>`;
 		}
 	} catch (error) {
 		console.error("Error fetching users:", error);
 	}
+}
+
+// Format date to short month name, numeric day, full year (e.g., Nov 23, 2025)
+function formatDateShort(dateStr) {
+	if (!dateStr) return '';
+	const date = new Date(dateStr);
+	if (isNaN(date.getTime())) return dateStr; // fallback if invalid
+	const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; 
+	const month = monthNames[date.getMonth()];
+	const day = date.getDate();
+	const year = date.getFullYear();
+	return `${month} ${day}, ${year}`;
 }
 
 // Toggle all user checkboxes
@@ -56,33 +63,23 @@ function toggleAllUsers() {
 
 // Show add user form
 function showAddUserForm() {
-	const form = document.getElementById("addUserForm");
-	form.style.display = "block";
-	form.scrollIntoView({ behavior: "smooth" });
+    openModal('addUserModal');
 }
 
 // Cancel add user
 function cancelAddUser() {
-	const form = document.getElementById("addUserForm");
-	form.style.display = "none";
-
-	// Clear form fields
-	document.getElementById("add_user_fname").value = "";
-	document.getElementById("add_user_lname").value = "";
-	document.getElementById("add_user_email").value = "";
-	document.getElementById("add_user_phone").value = "";
-	document.getElementById("add_user_gender").value = "";
-	document.getElementById("add_user_password").value = "";
-	document.getElementById("add_user_confirm_password").value = "";
-	document.getElementById("add_user_province").value = "";
-	document.getElementById("add_user_city_municipality").value = "";
-	document.getElementById("add_user_barangay").value = "";
-	document.getElementById("add_user_purok").value = "";
-	
-	// Reset place dropdowns
-	document.getElementById("add_user_city_municipality").innerHTML = '<option value="">Select City/Municipality</option>';
-	document.getElementById("add_user_barangay").innerHTML = '<option value="">Select Barangay</option>';
-	document.getElementById("add_user_purok").innerHTML = '<option value="">Select Purok</option>';
+    // Clear fields
+    const fields = [
+        'add_user_fname','add_user_lname','add_user_email','add_user_phone',
+        'add_user_gender','add_user_password','add_user_confirm_password',
+        'add_user_province','add_user_city_municipality','add_user_barangay','add_user_purok'
+    ];
+    fields.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    // Reset dependent selects
+    document.getElementById('add_user_city_municipality').innerHTML = '<option value="">Select City/Municipality</option>';
+    document.getElementById('add_user_barangay').innerHTML = '<option value="">Select Barangay</option>';
+    document.getElementById('add_user_purok').innerHTML = '<option value="">Select Purok</option>';
+    closeModal('addUserModal');
 }
 
 // Save user (create new) - No OTP verification
@@ -188,8 +185,7 @@ async function editUser(user_id) {
 			const form = document.getElementById("editUserForm");
 
 			form.innerHTML = `
-                <h3>Edit User</h3>
-                <input type="hidden" id="edit_user_id" value="${user.user_id}">
+				<input type="hidden" id="edit_user_id" value="${user.user_id}">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="edit_user_fname">First Name</label>
@@ -270,15 +266,10 @@ async function editUser(user_id) {
                         </select>
                     </div>
                 </div>
-                <div class="action-buttons">
-                    <button type="button" onclick="updateUser()" class="btn btn-primary">Update User</button>
-                    <button type="button" onclick="cancelEditUser()" class="btn btn-secondary">Cancel</button>
-                </div>
             `;
 
-			form.style.display = "block";
-			form.scrollIntoView({ behavior: "smooth" });
 			await loadEditUserProvinces(user.place || "");
+			openModal('editUserModal');
 		} else {
 			Swal.fire("Error!", "Failed to load user data", "error");
 		}
@@ -341,9 +332,9 @@ async function updateUser() {
 
 // Cancel edit user
 function cancelEditUser() {
-	const form = document.getElementById("editUserForm");
-	form.style.display = "none";
-	form.innerHTML = "";
+    const form = document.getElementById('editUserForm');
+    form.innerHTML = '';
+    closeModal('editUserModal');
 }
 
 // Delete user

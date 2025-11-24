@@ -16,78 +16,72 @@ async function loadDashboardStats() {
 		const data = await response.json();
 
 		if (data.status === "success") {
-			// Update stat cards
-			document.getElementById("totalUsers").textContent = data.stats.users || 0;
-			document.getElementById("totalAdmins").textContent =
-				data.stats.admins || 0;
-			document.getElementById("totalBhw").textContent = data.stats.bhw || 0;
-			document.getElementById("totalMidwives").textContent =
-				data.stats.midwives || 0;
-			document.getElementById("totalLocations").textContent =
-				data.stats.locations || 0;
-			document.getElementById("totalLogs").textContent = data.stats.logs || 0;
+			const s = data.stats || {};
+			const setText = (id, value) => {
+				const el = document.getElementById(id);
+				if (el) el.textContent = value;
+			};
+			setText("totalUsers", s.users || 0);
+			setText("totalAdmins", s.admins || 0);
+			setText("totalBhw", s.bhw || 0);
+			setText("totalMidwives", s.midwives || 0);
+			setText("totalLocations", s.locations || 0);
+			setText("totalLogs", s.logs || 0);
 
-			// Update trends (you can implement trend calculation based on your needs)
-			document.getElementById("usersTrend").textContent = "Active";
-			document.getElementById("adminsTrend").textContent = "Active";
-			document.getElementById("bhwTrend").textContent = "Active";
-			document.getElementById("midwivesTrend").textContent = "Active";
-			document.getElementById("locationsTrend").textContent = "Updated";
-			document.getElementById("logsTrend").textContent = "Recent";
+			setText("usersTrend", "Active");
+			setText("adminsTrend", "Active");
+			setText("bhwTrend", "Active");
+			setText("midwivesTrend", "Active");
+			setText("locationsTrend", "Updated");
+			setText("logsTrend", "Recent");
 		} else {
 			console.error("Dashboard stats error:", data.message);
-			// Set error message
-			document.getElementById("totalUsers").textContent = "Error";
-			document.getElementById("totalAdmins").textContent = "Error";
-			document.getElementById("totalBhw").textContent = "Error";
-			document.getElementById("totalMidwives").textContent = "Error";
-			document.getElementById("totalLocations").textContent = "Error";
-			document.getElementById("totalLogs").textContent = "Error";
+			["totalUsers","totalAdmins","totalBhw","totalMidwives","totalLocations","totalLogs"].forEach(id => {
+				const el = document.getElementById(id);
+				if (el) el.textContent = "Error";
+			});
 		}
 	} catch (error) {
 		console.error("Error loading dashboard stats:", error);
-		// Set default values on error
-		document.getElementById("totalUsers").textContent = "0";
-		document.getElementById("totalAdmins").textContent = "0";
-		document.getElementById("totalBhw").textContent = "0";
-		document.getElementById("totalMidwives").textContent = "0";
-		document.getElementById("totalLocations").textContent = "0";
-		document.getElementById("totalLogs").textContent = "0";
+		["totalUsers","totalAdmins","totalBhw","totalMidwives","totalLocations","totalLogs"].forEach(id => {
+			const el = document.getElementById(id);
+			if (el) el.textContent = "0";
+		});
 	}
 }
 
 // Load recent activity
 async function loadRecentActivity() {
 	try {
+		const limit = 10;
 		const response = await fetch(
-			"../../php/supabase/admin/show_activitylog.php?limit=10"
-			// "../../php/mysql/admin/show_activitylog.php?limit=10"
+			`../../php/supabase/admin/show_activitylog.php?limit=${limit}`
+			// `../../php/mysql/admin/show_activitylog.php?limit=${limit}`
 		);
 		const data = await response.json();
 
-		const tableBody = document.getElementById("recentActivityTable");
-		tableBody.innerHTML = "";
+			const tableBody = document.getElementById("recentActivityTable");
+		if (tableBody) tableBody.innerHTML = "";
 
 		if (Array.isArray(data) && data.length > 0) {
-			for (const log of data) {
+			const slice = data.slice(0, limit);
+			for (const log of slice) {
 				const row = `
-                    <tr>
-                        <td>${log.user_id} (${log.user_type})</td>
-                        <td>${log.action_type}</td>
-                        <td>${log.description}</td>
-                        <td>${formatDateTime(log.created_at)}</td>
-                    </tr>
-                `;
-				tableBody.innerHTML += row;
+				<tr>
+					<td>${log.user_id} (${log.user_type})</td>
+					<td>${log.action_type}</td>
+					<td>${log.description}</td>
+					<td>${formatDateTime(log.created_at)}</td>
+				</tr>`;
+				if (tableBody) tableBody.innerHTML += row;
 			}
 		} else {
-			tableBody.innerHTML =
-				'<tr><td colspan="4" class="empty-state">No recent activity found</td></tr>';
+			if (tableBody) tableBody.innerHTML = '<tr><td colspan="4" class="empty-state">No recent activity found</td></tr>';
 		}
 	} catch (error) {
 		console.error("Error loading recent activity:", error);
-		document.getElementById("recentActivityTable").innerHTML =
-			'<tr><td colspan="4" class="empty-state">Failed to load recent activity</td></tr>';
+		const tableBody = document.getElementById("recentActivityTable");
+		if (tableBody) tableBody.innerHTML = '<tr><td colspan="4" class="empty-state">Failed to load recent activity</td></tr>';
 	}
 }
 
@@ -95,7 +89,15 @@ async function loadRecentActivity() {
 function formatDateTime(dateString) {
 	try {
 		const date = new Date(dateString);
-		return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+		if (isNaN(date)) return dateString;
+		const datePart = date.toLocaleDateString(undefined, {
+			month: 'short',
+			day: 'numeric',
+			year: 'numeric'
+		});
+		// Keep time concise (HH:MM) for readability
+		const timePart = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+		return `${datePart} ${timePart}`;
 	} catch (error) {
 		return dateString;
 	}
