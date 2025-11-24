@@ -1,35 +1,35 @@
 <?php include 'Include/header.php'; ?>
-                <header class="childHeader">
-                    <nav>
-                        <h3>Child Name: <span id="childName"></span></h3>
-                        <h3>Child Age: <span id="childAge"></span></h3>
-                        <h3>Child Gender: <span id="childGender"></span></h3>
-                        <button id="upcomingTab">Upcoming</button>
-                        <button id="takenTab">Taken</button>
-                    </nav>
-                    <nav>
-                        <button id="childQrCodeButton"><img id="childQrCode" src="" alt="QR Code" style="width: 100px; height: 100px;"></button>
-                        <div id="childQrCodeContainer" style="display: none;"><button id="closeQrCodeButton">Close</button> <img id="childQrCodeImage" src="" alt="QR Code" style="width: 500px; height: 500px;"></div>
-                        <a href="home.php">Switch Account</a>
-                </nav>
-                </header>
-				<table border="1" style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr>
-							<th>Vaccine</th>
-							<th>Dose</th>
-							<th>Guideline Date</th>
-                            <th>Batch Date</th>
-							<th>Catch Up Date</th>
-							<th>Status</th>
-                            </tr>
-                        </thead>
-					<tbody id="scheduleBody">
-                        </tbody>
-                    </table>
+<header class="childHeader">
+    <nav>
+        <h3>Child Name: <span id="childName"></span></h3>
+        <h3>Child Age: <span id="childAge"></span></h3>
+        <h3>Child Gender: <span id="childGender"></span></h3>
+        <button id="upcomingTab">Upcoming</button>
+        <button id="takenTab">Taken</button>
+    </nav>
+    <nav>
+        <button id="childQrCodeButton"><img id="childQrCode" src="" alt="QR Code" style="width: 100px; height: 100px;"></button>
+        <div id="childQrCodeContainer" style="display: none;"><button id="closeQrCodeButton">Close</button> <img id="childQrCodeImage" src="" alt="QR Code" style="width: 500px; height: 500px;"></div>
+        <a href="home.php">Switch Account</a>
+    </nav>
+</header>
+<table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>Vaccine</th>
+            <th>Dose</th>
+            <th>Guideline Date</th>
+            <th>Batch Date</th>
+            <th>Catch Up Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody id="scheduleBody">
+    </tbody>
+</table>
 
 
-	<script>
+<script>
     let scheduleData = [];
     let currentTab = 'upcoming';
     let currentChild = null;
@@ -40,9 +40,9 @@
         try {
             const endpoint = '/ebakunado/php/supabase/users/get_immunization_schedule.php' + (selectedBabyId ? ('?baby_id=' + encodeURIComponent(selectedBabyId)) : '');
             const response = await fetch(endpoint);
-                    const data = await response.json();
-                    
-                    if (data.status === 'success') {
+            const data = await response.json();
+
+            if (data.status === 'success') {
                 scheduleData = Array.isArray(data.data) ? data.data : [];
                 // If API returns all, filter by selectedBabyId
                 if (selectedBabyId) {
@@ -50,8 +50,8 @@
                 }
                 loadChildData();
                 renderVaccineCards();
-                    }
-                } catch (error) {
+            }
+        } catch (error) {
             console.error('Error loading immunization schedule:', error);
             document.getElementById('scheduleBody').innerHTML = `
                 <tr><td colspan="5" style="text-align: center; padding: 20px; color: #dc3545;">Error loading schedule</td></tr>
@@ -80,11 +80,11 @@
             const formData = new FormData();
             formData.append('baby_id', baby_id);
             const response = await fetch('/ebakunado/php/supabase/users/get_child_details.php', {
-				method: 'POST',
+                method: 'POST',
                 body: formData
             });
             const data = await response.json();
-            
+
             if (data.status === 'success' && data.data.length > 0) {
                 const child = data.data[0];
                 const ageText = child.age == 0 ? child.weeks_old + ' weeks old' : child.age + ' years old';
@@ -99,13 +99,13 @@
                     else prettyGender = rawGender; // keep whatever custom value
                 }
                 document.getElementById('childGender').textContent = prettyGender;
-                
+
                 // Set QR code image
                 if (child.qr_code) {
                     document.getElementById('childQrCode').src = child.qr_code;
                 }
             }
-                } catch (error) {
+        } catch (error) {
             console.error('Error fetching child age:', error);
             document.getElementById('childAge').textContent = 'Unknown age';
             document.getElementById('childGender').textContent = 'Unknown';
@@ -114,7 +114,7 @@
 
     function renderVaccineCards() {
         const tbody = document.getElementById('scheduleBody');
-        
+
         if (scheduleData.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No immunization records found</td></tr>';
             return;
@@ -123,19 +123,19 @@
         // Filter data based on current tab
         let filteredData = scheduleData;
         if (currentTab === 'upcoming') {
-            filteredData = scheduleData.filter(record => 
+            filteredData = scheduleData.filter(record =>
                 record.status === 'scheduled' || record.status === 'pending' || record.status === 'missed'
             );
         } else if (currentTab === 'taken') {
-            filteredData = scheduleData.filter(record => 
+            filteredData = scheduleData.filter(record =>
                 record.status === 'completed' || record.status === 'taken'
             );
         }
 
         if (filteredData.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px;">No ${currentTab} vaccines found</td></tr>`;
-                    return;
-                }
+            return;
+        }
 
         // Group by vaccine name and dose
         const groupedVaccines = {};
@@ -150,12 +150,12 @@
         Object.values(groupedVaccines).forEach(record => {
             const status = getVaccineStatus(record);
             const statusText = getStatusText(record, status);
-            
+
             // Format dates - prioritize batch date
             const guidelineDate = record.schedule_date ? formatDate(record.schedule_date) : 'Not scheduled';
             const batchDate = record.batch_schedule_date ? formatDate(record.batch_schedule_date) : '-';
             const catchUpDate = record.catch_up_date ? formatDate(record.catch_up_date) : '-';
-            
+
             rowsHTML += `
                 <tr>
                     <td>${record.vaccine_name}</td>
@@ -166,8 +166,8 @@
                     <td style="color: ${getStatusColor(status)}">${statusText}</td>
                 </tr>
                     `;
-                });
-                
+        });
+
         tbody.innerHTML = rowsHTML;
     }
 
@@ -175,7 +175,7 @@
         const today = new Date().toISOString().split('T')[0];
         // Prioritize batch_schedule_date over schedule_date
         const targetDate = record.batch_schedule_date || record.schedule_date || record.catch_up_date || '';
-        
+
         if (record.status === 'completed' || record.status === 'taken') {
             return 'completed';
         } else if (record.status === 'missed' || (targetDate && targetDate < today)) {
@@ -188,29 +188,41 @@
     }
 
     function getStatusClass(status) {
-        switch(status) {
-            case 'completed': return 'completed';
-            case 'overdue': return 'overdue';
-            case 'upcoming': return 'upcoming';
-            default: return 'missing';
+        switch (status) {
+            case 'completed':
+                return 'completed';
+            case 'overdue':
+                return 'overdue';
+            case 'upcoming':
+                return 'upcoming';
+            default:
+                return 'missing';
         }
     }
 
     function getStatusColor(status) {
-        switch(status) {
-            case 'completed': return '#28a745';
-            case 'overdue': return '#dc3545';
-            case 'upcoming': return '#ffc107';
-                    default: return '#6c757d';
-                }
-            }
+        switch (status) {
+            case 'completed':
+                return '#28a745';
+            case 'overdue':
+                return '#dc3545';
+            case 'upcoming':
+                return '#ffc107';
+            default:
+                return '#6c757d';
+        }
+    }
 
     function getStatusIcon(status) {
-        switch(status) {
-            case 'completed': return '✓';
-            case 'overdue': return '!';
-            case 'upcoming': return '↑';
-            default: return '?';
+        switch (status) {
+            case 'completed':
+                return '✓';
+            case 'overdue':
+                return '!';
+            case 'upcoming':
+                return '↑';
+            default:
+                return '?';
         }
     }
 
@@ -219,7 +231,7 @@
         const batchDate = record.batch_schedule_date ? formatDate(record.batch_schedule_date) : null;
         // Prioritize batch date for display
         const targetDisplay = batchDate || guidelineDate || '';
-        switch(status) {
+        switch (status) {
             case 'completed':
                 return record.date_given ? `Completed ${formatDate(record.date_given)}` : 'Completed';
             case 'overdue':
@@ -233,10 +245,10 @@
 
     function getDoseText(doseNumber) {
         const doseMap = {
-            1: 'First Dose',
-            2: 'Second Dose', 
-            3: 'Third Dose',
-            4: 'Fourth Dose'
+            1: '1st Dose',
+            2: '2nd Dose',
+            3: '3rd Dose',
+            4: '4th Dose'
         };
         return doseMap[doseNumber] || `Dose ${doseNumber}`;
     }
@@ -244,20 +256,20 @@
     function formatDate(dateString) {
         if (!dateString) return '';
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { 
-            month: '2-digit', 
-            day: '2-digit', 
-            year: 'numeric' 
+        return date.toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric'
         });
     }
 
     function switchTab(tab) {
         currentTab = tab;
-        
+
         // Update tab buttons styling
         const upcomingBtn = document.getElementById('upcomingTab');
         const takenBtn = document.getElementById('takenTab');
-        
+
         if (tab === 'upcoming') {
             upcomingBtn.style.backgroundColor = '#007bff';
             upcomingBtn.style.color = 'white';
@@ -269,7 +281,7 @@
             upcomingBtn.style.backgroundColor = '#6c757d';
             upcomingBtn.style.color = 'white';
         }
-        
+
         // Re-render table
         renderVaccineCards();
     }
@@ -277,42 +289,43 @@
     // Load data when page loads
     document.addEventListener('DOMContentLoaded', function() {
         loadImmunizationSchedule();
-        
+
         // Add tab button event listeners
         document.getElementById('upcomingTab').addEventListener('click', function() {
             switchTab('upcoming');
         });
-        
+
         document.getElementById('takenTab').addEventListener('click', function() {
             switchTab('taken');
         });
-        
+
         // Add QR code functionality
         document.getElementById('childQrCodeButton').addEventListener('click', function() {
             const qrContainer = document.getElementById('childQrCodeContainer');
             const qrButton = document.getElementById('childQrCodeButton');
             const qrImage = document.getElementById('childQrCodeImage');
             const qrCode = document.getElementById('childQrCode');
-            
+
             if (qrCode.src) {
                 qrContainer.style.display = 'block';
                 qrImage.src = qrCode.src;
                 qrButton.style.display = 'none';
             }
         });
-        
+
         // Close QR code functionality
         document.getElementById('closeQrCodeButton').addEventListener('click', function() {
             const qrContainer = document.getElementById('childQrCodeContainer');
             const qrButton = document.getElementById('childQrCodeButton');
-            
+
             qrContainer.style.display = 'none';
             qrButton.style.display = 'block';
         });
     });
-	</script>
+</script>
 
-	</body>
-</html> 
+</body>
+
+</html>
 
 <?php include 'Include/footer.php'; ?>
