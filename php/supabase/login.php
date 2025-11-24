@@ -101,6 +101,134 @@ function isFlutterRequest() {
     return false;
 }
 
+function buildEmailVariants($input) {
+    $variants = [];
+    $original = trim((string)($input ?? ''));
+    if ($original !== '') {
+        $variants[] = $original;
+        $variants[] = strtolower($original);
+    }
+    $sanitized = filter_var($original, FILTER_SANITIZE_EMAIL);
+    if ($sanitized) {
+        $variants[] = $sanitized;
+        $variants[] = strtolower($sanitized);
+    }
+    return array_values(array_unique(array_filter($variants)));
+}
+
+function buildPhoneVariants($input) {
+    $variants = [];
+    $trimmed = trim((string)($input ?? ''));
+    if ($trimmed === '') {
+        return [];
+    }
+
+    $digitsOnly = preg_replace('/\D+/', '', $trimmed);
+    if ($digitsOnly !== '') {
+        $variants[] = $digitsOnly;
+    }
+
+    if (strlen($digitsOnly) === 11 && $digitsOnly[0] === '0') {
+        $variants[] = '+63' . substr($digitsOnly, 1);
+        $variants[] = substr($digitsOnly, 1);
+    } elseif (strlen($digitsOnly) === 10) {
+        $variants[] = '0' . $digitsOnly;
+        $variants[] = '+63' . $digitsOnly;
+    } elseif (strlen($digitsOnly) === 12 && strncmp($digitsOnly, '63', 2) === 0) {
+        $variants[] = '+' . $digitsOnly;
+        $variants[] = '0' . substr($digitsOnly, 2);
+    } elseif (strpos($trimmed, '+') === 0 && $digitsOnly !== '') {
+        $variants[] = '+' . $digitsOnly;
+    }
+
+    $variants[] = $trimmed;
+
+    return array_values(array_unique(array_filter($variants)));
+}
+
+function attemptUserLookupByEmail(array $variants, bool $caseInsensitive = false) {
+    $result = [
+        'found' => false,
+        'user_data' => null,
+        'user_type' => null,
+        'available_roles' => []
+    ];
+
+    if (empty($variants)) {
+        return $result;
+    }
+
+    $tables = [
+        'super_admin' => 'super_admin',
+        'admin' => 'admin',
+        'bhw' => 'bhw',
+        'midwives' => 'midwife',
+        'users' => 'user'
+    ];
+
+    foreach ($tables as $table => $role) {
+        foreach ($variants as $variant) {
+            $conditionValue = $caseInsensitive ? ['operator' => 'ilike', 'value' => $variant] : $variant;
+            $rows = supabaseSelect($table, '*', ['email' => $conditionValue], null, 1);
+            if ($rows && count($rows) > 0) {
+                if (!in_array($role, $result['available_roles'], true)) {
+                    $result['available_roles'][] = $role;
+                }
+                if (!$result['found']) {
+                    $result['found'] = true;
+                    $result['user_data'] = $rows[0];
+                    $result['user_type'] = $role;
+                    if ($role === 'super_admin') {
+                        return $result;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    return $result;
+}
+
+function attemptUserLookupByPhone(array $variants) {
+    $result = [
+        'found' => false,
+        'user_data' => null,
+        'user_type' => null,
+        'available_roles' => []
+    ];
+
+    if (empty($variants)) {
+        return $result;
+    }
+
+    $tables = [
+        'bhw' => 'bhw',
+        'midwives' => 'midwife',
+        'users' => 'user',
+        'admin' => 'admin'
+    ];
+
+    foreach ($tables as $table => $role) {
+        foreach ($variants as $variant) {
+            $rows = supabaseSelect($table, '*', ['phone_number' => $variant], null, 1);
+            if ($rows && count($rows) > 0) {
+                if (!in_array($role, $result['available_roles'], true)) {
+                    $result['available_roles'][] = $role;
+                }
+                if (!$result['found']) {
+                    $result['found'] = true;
+                    $result['user_data'] = $rows[0];
+                    $result['user_type'] = $role;
+                }
+                break;
+            }
+        }
+    }
+
+    return $result;
+}
+
 // Initialize (reference only)
 if (function_exists('initializeSupabaseTables')) {
     initializeSupabaseTables($supabase);
@@ -157,6 +285,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $email_or_phone = trim($_POST['Email_number'] ?? '');
 $password = $_POST['password'] ?? '';
 $is_flutter = isFlutterRequest(); // Use the robust detection function
+$email_variants = [];
+$phone_variants = [];
 
 if (empty($email_or_phone) || empty($password)) {
     echo json_encode([
@@ -175,33 +305,27 @@ try {
     $is_email = filter_var($email_or_phone, FILTER_VALIDATE_EMAIL);
     
     if ($is_email) {
-        // Match exactly what create_account.php does: FILTER_SANITIZE_EMAIL
-        $email_or_phone = filter_var($email_or_phone, FILTER_SANITIZE_EMAIL);
+        $email_variants = buildEmailVariants($_POST['Email_number'] ?? $email_or_phone);
     }
 
     if ($is_flutter) {
         // FLUTTER APP: Only check users table (parents only)
         if ($is_email) {
-            $email_variations = [
-                $email_or_phone,
-                strtolower(trim($_POST['Email_number'] ?? '')),
-                trim($_POST['Email_number'] ?? '')
-            ];
-            
-            foreach ($email_variations as $email_to_try) {
-                $rows = supabaseSelect('users', '*', ['email' => $email_to_try]);
-                if ($rows && count($rows) > 0) {
-                    $user_data = $rows[0];
-                    $user_type = 'user';
-                    $user_found = true;
-                    break;
-                }
+            $lookup = attemptUserLookupByEmail($email_variants, false);
+            if (!$lookup['found']) {
+                $lookup = attemptUserLookupByEmail($email_variants, true);
+            }
+            if ($lookup['found']) {
+                $user_data = $lookup['user_data'];
+                $user_type = 'user';
+                $user_found = true;
             }
         } else {
             // Phone login for Flutter
-            $rows = supabaseSelect('users', '*', ['phone_number' => $email_or_phone]);
-            if ($rows && count($rows) > 0) {
-                $user_data = $rows[0];
+            $phone_variants = buildPhoneVariants($email_or_phone);
+            $lookup = attemptUserLookupByPhone($phone_variants);
+            if ($lookup['found']) {
+                $user_data = $lookup['user_data'];
                 $user_type = 'user';
                 $user_found = true;
             }
@@ -209,111 +333,24 @@ try {
     } else {
         // WEB LOGIN: Check all tables and support multiple roles
         if ($is_email) {
-            // Try multiple email variations for compatibility with older records
-            $email_variations = [
-                $email_or_phone, // sanitized version
-                strtolower(trim($_POST['Email_number'] ?? '')), // original lowercase
-                trim($_POST['Email_number'] ?? '') // original as-is
-            ];
-            
-            // Check all tables to find user and collect all roles
-            foreach ($email_variations as $email_to_try) {
-                // Check super_admin
-                $rows = supabaseSelect('super_admin', '*', ['email' => $email_to_try]);
-                if ($rows && count($rows) > 0 && !$user_found) {
-                    $user_data = $rows[0];
-                    $user_type = 'super_admin';
-                    $user_found = true;
-                    $available_roles[] = 'super_admin';
-                    break; // Super admin is highest priority, stop here
-                }
-
-                // Check admin
-                $rows = supabaseSelect('admin', '*', ['email' => $email_to_try]);
-                if ($rows && count($rows) > 0) {
-                    if (!$user_found) {
-                        $user_data = $rows[0];
-                        $user_type = 'admin';
-                        $user_found = true;
-                    }
-                    $available_roles[] = 'admin';
-                }
-
-                // Check bhw
-                $rows = supabaseSelect('bhw', '*', ['email' => $email_to_try]);
-                if ($rows && count($rows) > 0) {
-                    if (!$user_found) {
-                        $user_data = $rows[0];
-                        $user_type = 'bhw';
-                        $user_found = true;
-                    }
-                    $available_roles[] = 'bhw';
-                }
-
-                // Check midwives
-                $rows = supabaseSelect('midwives', '*', ['email' => $email_to_try]);
-                if ($rows && count($rows) > 0) {
-                    if (!$user_found) {
-                        $user_data = $rows[0];
-                        $user_type = 'midwife';
-                        $user_found = true;
-                    }
-                    $available_roles[] = 'midwife';
-                }
-
-                // Check users
-                $rows = supabaseSelect('users', '*', ['email' => $email_to_try]);
-                if ($rows && count($rows) > 0) {
-                    if (!$user_found) {
-                        $user_data = $rows[0];
-                        $user_type = 'user';
-                        $user_found = true;
-                    }
-                    $available_roles[] = 'user';
-                }
+            $lookup = attemptUserLookupByEmail($email_variants, false);
+            if (!$lookup['found']) {
+                $lookup = attemptUserLookupByEmail($email_variants, true);
+            }
+            if ($lookup['found']) {
+                $user_found = true;
+                $user_data = $lookup['user_data'];
+                $user_type = $lookup['user_type'];
+                $available_roles = $lookup['available_roles'];
             }
         } else {
-            // Phone login: Check all tables
-            // Check bhw
-            $rows = supabaseSelect('bhw', '*', ['phone_number' => $email_or_phone]);
-            if ($rows && count($rows) > 0) {
-                $user_data = $rows[0];
-                $user_type = 'bhw';
+            $phone_variants = buildPhoneVariants($email_or_phone);
+            $lookup = attemptUserLookupByPhone($phone_variants);
+            if ($lookup['found']) {
                 $user_found = true;
-                $available_roles[] = 'bhw';
-            }
-
-            // Check midwives
-            $rows = supabaseSelect('midwives', '*', ['phone_number' => $email_or_phone]);
-            if ($rows && count($rows) > 0) {
-                if (!$user_found) {
-                    $user_data = $rows[0];
-                    $user_type = 'midwife';
-                    $user_found = true;
-                }
-                $available_roles[] = 'midwife';
-            }
-
-            // Check users
-            $rows = supabaseSelect('users', '*', ['phone_number' => $email_or_phone]);
-            if ($rows && count($rows) > 0) {
-                if (!$user_found) {
-                    $user_data = $rows[0];
-                    $user_type = 'user';
-                    $user_found = true;
-                }
-                $available_roles[] = 'user';
-            }
-
-            // Check admin (for phone login if needed)
-            $rows = supabaseSelect('admin', '*', ['phone_number' => $email_or_phone]);
-            if ($rows && count($rows) > 0) {
-                if (!$user_found) {
-                    $user_data = $rows[0];
-                    $user_type = 'admin';
-                    $user_found = true;
-                }
-                $available_roles[] = 'admin';
+                $user_data = $lookup['user_data'];
+                $user_type = $lookup['user_type'];
+                $available_roles = $lookup['available_roles'];
             }
         }
 
@@ -383,8 +420,10 @@ try {
             "status" => "failed",
             "message" => "Email/phone not found. Please check your credentials.",
             "debug" => [
-                "searched_email" => $is_email ? $email_or_phone : null,
-                "is_email" => $is_email,
+                "searched_email" => $is_email ? ($email_variants[0] ?? $email_or_phone) : null,
+                "is_email" => (bool)$is_email,
+                "email_variants" => $is_email ? $email_variants : [],
+                "phone_variants" => !$is_email ? $phone_variants : [],
                 "is_flutter" => $is_flutter,
                 "user_agent" => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
             ]

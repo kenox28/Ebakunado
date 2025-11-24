@@ -86,7 +86,19 @@ class SupabaseDB {
         
         // Add WHERE conditions (URL-encode values, no quotes per PostgREST)
         foreach ($conditions as $column => $value) {
-            if (is_array($value)) {
+            if (is_array($value) && isset($value['operator']) && array_key_exists('value', $value)) {
+                $operator = strtolower(trim($value['operator']));
+                $conditionValue = $value['value'];
+
+                if (is_array($conditionValue)) {
+                    $encoded = array_map(function($v) {
+                        return rawurlencode((string)$v);
+                    }, $conditionValue);
+                    $endpoint .= $column . '=' . $operator . '.(' . implode(',', $encoded) . ')&';
+                } else {
+                    $endpoint .= $column . '=' . $operator . '.' . rawurlencode((string)$conditionValue) . '&';
+                }
+            } elseif (is_array($value)) {
                 // Handle IN conditions
                 $encoded = array_map(function($v) {
                     return rawurlencode((string)$v);

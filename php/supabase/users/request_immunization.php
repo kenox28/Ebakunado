@@ -13,9 +13,9 @@ header('Content-Type: application/json');
 ob_start();
 
 try {
-    include '../../../database/SupabaseConfig.php';
-    include '../../../database/DatabaseHelper.php';
-    require_once '../../../vendor/autoload.php';
+include '../../../database/SupabaseConfig.php';
+include '../../../database/DatabaseHelper.php';
+require_once '../../../vendor/autoload.php';
 } catch (Throwable $e) {
     error_log('Error loading includes: ' . $e->getMessage());
     error_log('Stack trace: ' . $e->getTraceAsString());
