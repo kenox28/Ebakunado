@@ -30,11 +30,11 @@ try {
 
     // Get all immunization records for all children
     foreach ($baby_ids as $baby_id) {
+        // Fetch all records without ordering first to ensure we get all vaccines including IPV
         $vaccinations = supabaseSelect(
             'immunization_records',
             'id,baby_id,vaccine_name,dose_number,schedule_date,batch_schedule_date,catch_up_date,date_given,status',
-            ['baby_id' => $baby_id],
-            'schedule_date.asc'
+            ['baby_id' => $baby_id]
         );
 
         if ($vaccinations) {
@@ -64,11 +64,15 @@ try {
         }
     }
 
-    // Sort by child name, then by schedule date
+    // Sort by child name, then by schedule date (handle NULLs properly)
     usort($immunization_records, function($a, $b) {
         if ($a['child_name'] === $b['child_name']) {
             $aDate = $a['batch_schedule_date'] ?? $a['schedule_date'] ?? $a['catch_up_date'] ?? '';
             $bDate = $b['batch_schedule_date'] ?? $b['schedule_date'] ?? $b['catch_up_date'] ?? '';
+            // Handle empty dates - put them at the end
+            if ($aDate === '' && $bDate === '') return 0;
+            if ($aDate === '') return 1;
+            if ($bDate === '') return -1;
             return strcmp($aDate, $bDate);
         }
         return strcmp($a['child_name'], $b['child_name']);

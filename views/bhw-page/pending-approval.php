@@ -73,13 +73,11 @@ if ($user_id) {
                         <thead>
                             <tr>
                                 <th>Child Name</th>
-                                <th>Gender</th>
                                 <th>Birth Date</th>
                                 <th>Place of Birth</th>
                                 <th>Mother's Name</th>
                                 <th>Father's Name</th>
                                 <th>Address</th>
-                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -89,9 +87,6 @@ if ($user_id) {
                                     <div class="skeleton skeleton-text skeleton-col-1"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
-                                </td>
-                                <td>
                                     <div class="skeleton skeleton-text skeleton-col-3"></div>
                                 </td>
                                 <td>
@@ -105,9 +100,6 @@ if ($user_id) {
                                 </td>
                                 <td>
                                     <div class="skeleton skeleton-text skeleton-col-2"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-pill skeleton-col-5"></div>
                                 </td>
                                 <td>
                                     <div class="skeleton skeleton-btn skeleton-col-6"></div>
@@ -118,9 +110,6 @@ if ($user_id) {
                                     <div class="skeleton skeleton-text skeleton-col-1"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
-                                </td>
-                                <td>
                                     <div class="skeleton skeleton-text skeleton-col-3"></div>
                                 </td>
                                 <td>
@@ -134,9 +123,6 @@ if ($user_id) {
                                 </td>
                                 <td>
                                     <div class="skeleton skeleton-text skeleton-col-2"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-pill skeleton-col-5"></div>
                                 </td>
                                 <td>
                                     <div class="skeleton skeleton-btn skeleton-col-6"></div>
@@ -147,9 +133,6 @@ if ($user_id) {
                                     <div class="skeleton skeleton-text skeleton-col-1"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
-                                </td>
-                                <td>
                                     <div class="skeleton skeleton-text skeleton-col-3"></div>
                                 </td>
                                 <td>
@@ -163,9 +146,6 @@ if ($user_id) {
                                 </td>
                                 <td>
                                     <div class="skeleton skeleton-text skeleton-col-2"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-pill skeleton-col-5"></div>
                                 </td>
                                 <td>
                                     <div class="skeleton skeleton-btn skeleton-col-6"></div>
@@ -354,10 +334,6 @@ if ($user_id) {
                 },
                 {
                     type: 'text',
-                    widthClass: 'skeleton-col-2'
-                },
-                {
-                    type: 'text',
                     widthClass: 'skeleton-col-3'
                 },
                 {
@@ -375,10 +351,6 @@ if ($user_id) {
                 {
                     type: 'text',
                     widthClass: 'skeleton-col-2'
-                },
-                {
-                    type: 'pill',
-                    widthClass: 'skeleton-col-5'
                 },
                 {
                     type: 'btn',
@@ -455,11 +427,11 @@ if ($user_id) {
                 if (data.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
                         renderTableMessage(body, 'Failed to load data. Please try again.', {
-                            colspan: 9,
+                            colspan: 7,
                             kind: 'error'
                         });
                     } else {
-                        body.innerHTML = '<tr class="message-row error"><td colspan="9">Failed to load data. Please try again.</td></tr>';
+                        body.innerHTML = '<tr class="message-row error"><td colspan="7">Failed to load data. Please try again.</td></tr>';
                     }
                     updatePaPager({
                         page,
@@ -475,10 +447,10 @@ if ($user_id) {
                 if (count === 0) {
                     if (typeof renderTableMessage === 'function') {
                         renderTableMessage(body, 'No records found', {
-                            colspan: 9
+                            colspan: 7
                         });
                     } else {
-                        body.innerHTML = '<tr class="message-row"><td colspan="9">No records found</td></tr>';
+                        body.innerHTML = '<tr class="message-row"><td colspan="7">No records found</td></tr>';
                     }
                     updatePaPager({
                         page: data.page || page,
@@ -497,13 +469,11 @@ if ($user_id) {
                             <td hidden>${item.user_id || ''}</td>
                             <td hidden>${item.baby_id || ''}</td>
                             <td>${fullName || '-'}</td>
-                            <td>${item.child_gender || ''}</td>
                             <td>${birthDateFmt}</td>
                             <td>${item.place_of_birth || ''}</td>
                             <td>${item.mother_name || ''}</td>
                             <td>${item.father_name || ''}</td>
                             <td>${item.address || ''}</td>
-                            <td>${item.status || ''}</td>
                             <td><button class="btn view-btn" onclick="viewChildInformation('${item.baby_id}')">
                                 <span class="material-symbols-rounded">visibility</span>
                                 View</button>
@@ -584,21 +554,21 @@ if ($user_id) {
                 if (data.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
                         renderTableMessage(body, 'Failed to load data. Please try again.', {
-                            colspan: 9,
+                            colspan: 7,
                             kind: 'error'
                         });
                     } else {
-                        body.innerHTML = '<tr class="message-row error"><td colspan="9">Failed to load data. Please try again.</td></tr>';
+                        body.innerHTML = '<tr class="message-row error"><td colspan="7">Failed to load data. Please try again.</td></tr>';
                     }
                     return;
                 }
                 if (!data.data || data.data.length === 0) {
                     if (typeof renderTableMessage === 'function') {
                         renderTableMessage(body, 'No records found', {
-                            colspan: 9
+                            colspan: 7
                         });
                     } else {
-                        body.innerHTML = '<tr class="message-row"><td colspan="9">No records found</td></tr>';
+                        body.innerHTML = '<tr class="message-row"><td colspan="7">No records found</td></tr>';
                     }
                     return;
                 }
@@ -612,13 +582,11 @@ if ($user_id) {
 							<td hidden>${item.user_id || ''}</td>
 							<td hidden>${item.baby_id || ''}</td>
 							<td>${fullName || '-'}</td>
-							<td>${item.child_gender || ''}</td>
                             <td>${birthDateFmt}</td>
 							<td>${item.place_of_birth || ''}</td>
 							<td>${item.mother_name || ''}</td>
 							<td>${item.father_name || ''}</td>
 							<td>${item.address || ''}</td>
-							<td>${item.status || ''}</td>
 							<td><button class="btn view-btn" onclick=\"viewChildInformation('${item.baby_id}')\">
                             <span class="material-symbols-rounded">visibility</span>
                             View</button>

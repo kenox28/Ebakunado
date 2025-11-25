@@ -33,7 +33,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 
     <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/user/dashboard.css" />
+    <link rel="stylesheet" href="../../css/user/dashboard.css?v=1.0.1" />
 </head>
 
 <body>
