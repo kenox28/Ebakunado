@@ -491,7 +491,7 @@ $user_fname = $_SESSION['fname'] ?? '';
         function viewSchedule(babyId) {
             if (!babyId) return;
             const encoded = encodeURIComponent(String(babyId));
-            window.location.href = `upcoming_schedule.php?baby_id=${encoded}`;
+            window.location.href = `upcoming-schedule.php?baby_id=${encoded}`;
         }
 
         function addChild() {
