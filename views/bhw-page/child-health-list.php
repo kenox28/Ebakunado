@@ -26,12 +26,14 @@ if ($user_id) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Child Health Record Lists</title>
     <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/main.css?v=1.0.2" />
+    <link rel="stylesheet" href="../../css/header.css?v=1.0.1" />
+    <link rel="stylesheet" href="../../css/sidebar.css?v=1.0.1" />
+
     <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/bhw/child-health-list.css" />
+    <link rel="stylesheet" href="../../css/bhw/table-style.css?v=1.0.3" />
+    <link rel="stylesheet" href="../../css/bhw/child-health-list.css?v=1.0.4" />
 </head>
 
 <body>
@@ -39,103 +41,150 @@ if ($user_id) {
     <?php include 'include/sidebar.php'; ?>
 
     <main>
-        <section>
-            <h2 class="section-title">
-                <span class="material-symbols-rounded">list_alt</span>
-                Child Health Record Lists
-            </h2>
-        </section>
         <section class="child-health-list-section">
-            <div class="filters-bar">
-                <div class="filters-header">
-                    <span class="material-symbols-rounded" aria-hidden="true">tune</span>
-                    <span>Filters:</span>
-                </div>
-                <div class="filters">
-                    <div class="select-with-icon">
-                        <span class="material-symbols-rounded" aria-hidden="true">search</span>
-                        <input id="chlSearchInput" type="text" placeholder="Search by name, mother, address" />
-                    </div>
-                    <div class="select-with-icon">
-                        <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
-                        <input id="chlPurok" type="text" placeholder="e.g. Purok 1" />
-                    </div>
-                    <button id="chlApplyFiltersBtn" class="btn btn-primary" type="button">Apply</button>
-                    <button id="chlClearFiltersBtn" class="btn btn-secondary" type="button">Clear</button>
-                </div>
+            <div class="page-header">
+                <h1 class="page-title">Child Health Records</h1>
+                <p class="page-subtitle">Manage and review child health information.</p>
             </div>
 
-            <div class="table-container">
-                <table class="table table-hover" id="childhealthrecord">
-                    <thead>
-                        <tr>
-                            <th>Fullname</th>
-                            <th>Birth Date</th>
-                            <th>Place of Birth</th>
-                            <th>Mother</th>
-                            <th>Address</th>
-                            <th>Schedule</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="childhealthrecordBody">
-                        <tr class="skeleton-row">
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
-                            <td>
-                                <div class="skeleton-actions-pair">
-                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
-                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+            <div class="data-table-card">
+                <div class="data-table-toolbar data-table-toolbar--stack">
+                    <div class="data-table-toolbar__top">
+                        <div class="data-table-toolbar__titles">
+                            <h2 class="data-table-title">CHR Lists</h2>
+                        </div>
+                        <div class="data-table-toolbar__controls">
+                            <div class="data-table-search">
+                                <span class="material-symbols-rounded data-table-search__icon" aria-hidden="true">search</span>
+                                <input id="chlSearchInput" class="data-table-search__input" type="text" placeholder="Search by name, mother, address" />
+                            </div>
+                            <button id="chlClearFiltersBtn" class="btn clear-btn btn-icon">Clear</button>
+                            <button id="chlApplyFiltersBtn" class="btn apply-btn btn-icon" type="button">Apply</button>
+                        </div>
+                    </div>
+
+                    <div class="data-table-actions">
+                        <div class="filters">
+                            <div class="filter-item">
+                                <label class="filter-label" for="chlPurok">Purok</label>
+                                <div class="input-field">
+                                    <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
+                                    <input id="chlPurok" type="text" placeholder="e.g. Purok 1" />
                                 </div>
-                            </td>
-                        </tr>
-                        <tr class="skeleton-row">
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
-                            <td>
-                                <div class="skeleton-actions-pair">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-table-wrap">
+                    <table class="data-table" id="childhealthrecord">
+                        <thead>
+                            <tr>
+                                <th>Fullname</th>
+                                <th>Birth Date</th>
+                                <th>Place of Birth</th>
+                                <th>Mother</th>
+                                <th>Address</th>
+                                <th>Schedule</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="childhealthrecordBody">
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
                                     <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-actions-pair">
+                                        <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                        <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
                                     <div class="skeleton skeleton-btn skeleton-col-6"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="skeleton-row">
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-btn skeleton-col-6"></div></td>
-                            <td>
-                                <div class="skeleton-actions-pair">
+                                </td>
+                                <td>
+                                    <div class="skeleton-actions-pair">
+                                        <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                        <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
                                     <div class="skeleton skeleton-btn skeleton-col-6"></div>
-                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div id="chlPager" class="pager">
-                <div id="chlPageInfo" class="page-info">&nbsp;</div>
-                <div class="pager-controls">
-                    <button id="chlPrevBtn" type="button" class="pager-btn">
-                        <span class="material-symbols-rounded">chevron_backward</span>
-                        Prev
-                    </button>
-                    <span id="chlPageButtons" class="page-buttons"></span>
-                    <button id="chlNextBtn" type="button" class="pager-btn">
-                        Next
-                        <span class="material-symbols-rounded">chevron_forward</span>
-                    </button>
+                                </td>
+                                <td>
+                                    <div class="skeleton-actions-pair">
+                                        <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                        <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div id="chlPager" class="pager">
+                        <div id="chlPageInfo" class="page-info">&nbsp;</div>
+                        <div class="pager-controls">
+                            <button id="chlPrevBtn" type="button" class="pager-btn">
+                                <span class="material-symbols-rounded">chevron_backward</span>
+                                Prev
+                            </button>
+                            <span id="chlPageButtons" class="page-buttons"></span>
+                            <button id="chlNextBtn" type="button" class="pager-btn">
+                                Next
+                                <span class="material-symbols-rounded">chevron_forward</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -147,49 +196,93 @@ if ($user_id) {
     <script>
         // Column config for skeleton (7 visible columns)
         function getChildHealthListColsConfig() {
-            return [
-                { type: 'text', widthClass: 'skeleton-col-1' }, // Fullname
-                { type: 'text', widthClass: 'skeleton-col-3' }, // Birth Date
-                { type: 'text', widthClass: 'skeleton-col-4' }, // Place of Birth
-                { type: 'text', widthClass: 'skeleton-col-5' }, // Mother
-                { type: 'text', widthClass: 'skeleton-col-3' }, // Address
-                { type: 'btn',  widthClass: 'skeleton-col-6' }, // Schedule
-                { type: 'btn',  widthClass: 'skeleton-col-6' }  // Action (paired buttons via post-adjust)
+            return [{
+                    type: 'text',
+                    widthClass: 'skeleton-col-1'
+                }, // Fullname
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-3'
+                }, // Birth Date
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-4'
+                }, // Place of Birth
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-5'
+                }, // Mother
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-3'
+                }, // Address
+                {
+                    type: 'btn',
+                    widthClass: 'skeleton-col-6'
+                }, // Schedule
+                {
+                    type: 'btn',
+                    widthClass: 'skeleton-col-6'
+                } // Action (paired buttons via post-adjust)
             ];
         }
         // Date formatting helper: Mon D, YYYY
-        function formatDate(dateStr){
-            if(!dateStr) return '';
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
             const d = new Date(dateStr);
-            if(isNaN(d.getTime())) return dateStr; // fallback if invalid
-            return d.toLocaleDateString(undefined,{ month:'short', day:'numeric', year:'numeric'});
+            if (isNaN(d.getTime())) return dateStr; // fallback if invalid
+            return d.toLocaleDateString(undefined, {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
         }
         // --- Status chips (use main.css .chip styles, with dynamic fallback like CHR) ---
-        (function initChipRegistry(){
+        (function initChipRegistry() {
             if (!window.__CHIP_STYLE_REG__) window.__CHIP_STYLE_REG__ = new Set();
         })();
 
-        function sanitizeStatus(val){
+        function sanitizeStatus(val) {
             return String(val || '').trim().toLowerCase();
         }
 
-        function escapeHtml(str){
-            return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[s]));
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, s => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                '\'': '&#39;'
+            } [s]));
         }
 
-        function ensureChipStyle(variant, colors){
+        // Helper to render a cell value or a hyphen when empty
+        function displayCell(val) {
+            try {
+                const s = String(val == null ? '' : val).trim();
+                return s ? escapeHtml(s) : '-';
+            } catch (e) {
+                return '-';
+            }
+        }
+
+        function ensureChipStyle(variant, colors) {
             const key = 'chip--' + variant;
             const reg = window.__CHIP_STYLE_REG__;
             if (reg && reg.has(key)) return;
             const style = document.createElement('style');
-            const { bg, fg, bd } = colors || {};
+            const {
+                bg,
+                fg,
+                bd
+            } = colors || {};
             const css = `.chip--${variant}{background:${bg||'#f3f4f6'};color:${fg||'#374151'};border:1px solid ${bd||'#e5e7eb'};}`;
             style.textContent = css;
             document.head.appendChild(style);
             if (reg) reg.add(key);
         }
 
-        function statusVariantFromText(status){
+        function statusVariantFromText(status) {
             const s = sanitizeStatus(status);
             if (!s) return 'default';
             // Map common keywords to existing variants from main.css
@@ -206,16 +299,28 @@ if ($user_id) {
             return 'default';
         }
 
-        function renderStatusChip(status){
+        function renderStatusChip(status) {
             const raw = (status == null ? '' : String(status));
             const variant = statusVariantFromText(raw);
             // Inject dynamic styles for new variants not present in main.css
             if (variant === 'pending') {
-                ensureChipStyle('pending', { bg: '#fff4e5', fg: '#8a5a00', bd: '#ffd8a8' });
+                ensureChipStyle('pending', {
+                    bg: '#fff4e5',
+                    fg: '#8a5a00',
+                    bd: '#ffd8a8'
+                });
             } else if (variant === 'approved') {
-                ensureChipStyle('approved', { bg: '#e6f4ea', fg: '#137333', bd: '#b7dec2' });
+                ensureChipStyle('approved', {
+                    bg: '#e6f4ea',
+                    fg: '#137333',
+                    bd: '#b7dec2'
+                });
             } else if (variant === 'rejected') {
-                ensureChipStyle('rejected', { bg: '#fdecea', fg: '#b3261e', bd: '#f5c6c3' });
+                ensureChipStyle('rejected', {
+                    bg: '#fdecea',
+                    fg: '#b3261e',
+                    bd: '#f5c6c3'
+                });
             }
             // Known variants (taken, upcoming, missed, completed, transferred, default) already exist in main.css
             return `<span class="chip chip--${variant}">${escapeHtml(raw)}</span>`;
@@ -276,7 +381,10 @@ if ($user_id) {
                 const data = await res.json();
                 if (data.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 7, kind: 'error' });
+                        renderTableMessage(body, 'Failed to load data. Please try again.', {
+                            colspan: 7,
+                            kind: 'error'
+                        });
                     } else {
                         body.innerHTML = '<tr class="message-row error"><td colspan="7">Failed to load data. Please try again.</td></tr>';
                     }
@@ -286,7 +394,9 @@ if ($user_id) {
                 const rowsData = Array.isArray(data.data) ? data.data : [];
                 if (rowsData.length === 0) {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(body, 'No records found', { colspan: 7 });
+                        renderTableMessage(body, 'No records found', {
+                            colspan: 7
+                        });
                     } else {
                         body.innerHTML = '<tr class="message-row"><td colspan="7">No records found</td></tr>';
                     }
@@ -298,28 +408,28 @@ if ($user_id) {
                 rowsData.forEach(item => {
                     const birthDate = formatDate(item.child_birth_date);
                     rows += `<tr>
-							<td>${item.child_fname || ''} ${item.child_lname || ''}</td>
-							<td>${birthDate}</td>
-							<td>${item.place_of_birth || ''}</td>
-							<td>${item.mother_name || ''}</td>
-							<td>${item.address || ''}</td>
+                            <td>${displayCell((item.child_fname || '') + ' ' + (item.child_lname || ''))}</td>
+                            <td>${displayCell(birthDate)}</td>
+                            <td>${displayCell(item.place_of_birth)}</td>
+                            <td>${displayCell(item.mother_name)}</td>
+                            <td>${displayCell(item.address)}</td>
                             <td>
                                 <button class="btn view-schedule-btn"
                                         onclick="viewSchedule('${item.baby_id}', this)"
                                         aria-expanded="false">
-                                    <span class="material-symbols-rounded btn-icon">calendar_month</span>
+                                    <span class="material-symbols-rounded btn-icon">schedule</span>
                                     <span class="btn-text">Schedule</span>
                                     <span class="material-symbols-rounded btn-chevron">expand_more</span>
                                 </button>
                             </td>
                             <td>
-                                <a class="btn viewCHR-btn" href="child-health-record.php?baby_id=${encodeURIComponent(item.baby_id)}">
+                                <a class="btn viewCHR-btn" href="child-health-record.php?baby_id=${encodeURIComponent(item.baby_id)}" title="View CHR">
                                     <span class="material-symbols-rounded btn-icon">visibility</span>
-                                    <span class="btn-text">View CHR</span>
+                                    <span class="btn-text">View</span>
                                 </a>
-                                <a class="btn downloadCHR-btn" href="../../php/supabase/bhw/download_chr.php?baby_id=${encodeURIComponent(item.baby_id)}">
+                                <a class="btn downloadCHR-btn" href="../../php/supabase/bhw/download_chr.php?baby_id=${encodeURIComponent(item.baby_id)}" title="Download CHR">
                                     <span class="material-symbols-rounded btn-icon">download</span>
-                                    <span class="btn-text">Download CHR</span>
+                                    <span class="btn-text">Download</span>
                                 </a>
                             </td>
 						</tr>`;
@@ -331,9 +441,12 @@ if ($user_id) {
                 updateChlPagination(data.total || 0, chlPage, data.limit || chlLimit, canNext);
             } catch (e) {
                 if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: 7, kind: 'error' });
+                    renderTableMessage(body, 'Failed to load data. Please try again.', {
+                        colspan: 7,
+                        kind: 'error'
+                    });
                 } else {
-                        body.innerHTML = '<tr class="message-row error"><td colspan="7">Failed to load data. Please try again.</td></tr>';
+                    body.innerHTML = '<tr class="message-row error"><td colspan="7">Failed to load data. Please try again.</td></tr>';
                 }
                 updateChlPagination(0, page, chlLimit, false);
             }
@@ -368,14 +481,22 @@ if ($user_id) {
             const canNext = (typeof hasMore === 'boolean' ? hasMore : true) && canNextByTotal;
             nextBtn.disabled = !canNext;
 
-            prevBtn.onclick = () => { if (page > 1) getChildHealthRecord(page - 1, { keep: true }); };
-            nextBtn.onclick = () => { if (canNext) getChildHealthRecord(page + 1, { keep: true }); };
+            prevBtn.onclick = () => {
+                if (page > 1) getChildHealthRecord(page - 1, {
+                    keep: true
+                });
+            };
+            nextBtn.onclick = () => {
+                if (canNext) getChildHealthRecord(page + 1, {
+                    keep: true
+                });
+            };
         }
 
         // Immediate schedule skeleton for collapse expansion
         function buildScheduleSkeletonTableHTML() {
             return `
-                <table>
+                <table class="data-table small sched-table">
                     <thead>
                         <tr>
                             <th>Vaccine</th>
@@ -392,7 +513,9 @@ if ($user_id) {
                 </table>`;
         }
 
-    window.addEventListener('DOMContentLoaded', () => getChildHealthRecord(1, { keep: false }));
+        window.addEventListener('DOMContentLoaded', () => getChildHealthRecord(1, {
+            keep: false
+        }));
         document.addEventListener('DOMContentLoaded', () => {
             const applyBtn = document.getElementById('chlApplyFiltersBtn');
             const clearBtn = document.getElementById('chlClearFiltersBtn');
@@ -452,7 +575,7 @@ if ($user_id) {
                 const res = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
                 const data = await res.json();
 
-                    const tbody = detailsRow.querySelector('.sched-body');
+                const tbody = detailsRow.querySelector('.sched-body');
                 if (!data || data.status !== 'success') {
                     if (tbody) tbody.innerHTML = '<tr class="message-row error"><td colspan="6">Failed to load data. Please try again.</td></tr>';
                     return;
@@ -468,12 +591,12 @@ if ($user_id) {
                     const status = (r.status || '').toString();
                     const showCatch = status.trim().toLowerCase() === 'missed';
                     html += `<tr>
-                        <td>${escapeHtml(r.vaccine_name || '')}</td>
-                        <td style="text-align:center">${escapeHtml(String(r.dose_number || ''))}</td>
-                        <td>${escapeHtml(formatDate(r.schedule_date) || '')}</td>
-                        <td>${escapeHtml(formatDate(r.date_given) || '')}</td>
-                        <td>${renderStatusChip(status)}</td>
-                        <td>${showCatch ? escapeHtml(formatDate(r.catch_up_date) || '') : ''}</td>
+                        <td>${displayCell(r.vaccine_name)}</td>
+                        <td style="text-align:center">${displayCell(r.dose_number)}</td>
+                        <td>${displayCell(formatDate(r.schedule_date))}</td>
+                        <td>${displayCell(formatDate(r.date_given))}</td>
+                        <td>${status ? renderStatusChip(status) : '-'}</td>
+                        <td>${showCatch ? displayCell(formatDate(r.catch_up_date)) : '-'}</td>
                     </tr>`;
                 });
                 if (tbody) tbody.innerHTML = html;
@@ -530,19 +653,22 @@ if ($user_id) {
             console.log('[QR] Scan success:', decodedText);
             closeScanner();
 
-
-
-            const match = decodedText.match(/baby_id=([^&\s]+)/i);
-            if (match && match[1]) {
-                document.getElementById('searchInput').value = decodeURIComponent(match[1]);
-                filterTable();
-                focusRowByBabyId(decodeURIComponent(match[1]));
-                return;
+            try {
+                const match = decodedText.match(/baby_id=([^&\s]+)/i);
+                const searchEl = document.getElementById('chlSearchInput');
+                const valueToUse = match && match[1] ? decodeURIComponent(match[1]) : decodedText;
+                if (searchEl) {
+                    searchEl.value = valueToUse;
+                    // Trigger a search using the page's loader if available
+                    if (typeof getChildHealthRecord === 'function') {
+                        getChildHealthRecord(1);
+                    }
+                }
+                // attempt to focus the row if present
+                focusRowByBabyId(valueToUse);
+            } catch (err) {
+                console.error('[QR] onScanSuccess handling failed:', err);
             }
-
-            document.getElementById('searchInput').value = decodedText;
-            filterTable();
-            focusRowByBabyId(decodedText);
         }
 
         function onScanFailure(err) {
@@ -661,17 +787,20 @@ if ($user_id) {
                 if (data.status !== 'success' || !data.data || data.data.length === 0) {
                     html += '<div class="small">No schedule</div>';
                 } else {
-                    html += '<table class="small"><tr><th>Vaccine</th><th>Dose No.</th><th>Due</th><th>Date Given</th><th>Status</th><th>Catch-up Date</th></tr>';
+                    html += '<table class="data-table small sched-table"><thead><tr><th>Vaccine</th><th>Dose No.</th><th>Due</th><th>Date Given</th><th>Status</th><th>Catch-up Date</th></tr></thead><tbody>';
                     data.data.forEach(r => {
+                        const st = (r.status || '').toString();
+                        const showC = st.trim().toLowerCase() === 'missed';
                         html += `<tr>
-                            <td>${r.vaccine_name}</td>
-                            <td>${r.dose_number}</td>
-                            <td>${formatDate(r.schedule_date)}</td>
-                            <td>${formatDate(r.date_given)}</td>
-                            <td>${renderStatusChip(r.status)}</td>
-                            <td>${((r.status || '').toLowerCase() === 'missed') ? formatDate(r.catch_up_date) : ''}</td>
+                            <td>${displayCell(r.vaccine_name)}</td>
+                            <td style="text-align:center">${displayCell(r.dose_number)}</td>
+                            <td>${displayCell(formatDate(r.schedule_date))}</td>
+                            <td>${displayCell(formatDate(r.date_given))}</td>
+                            <td>${st ? renderStatusChip(st) : '-'}</td>
+                            <td>${showC ? displayCell(formatDate(r.catch_up_date)) : '-'}</td>
                         </tr>`;
                     });
+                    html += '</tbody>';
                     html += '</table>';
                 }
 

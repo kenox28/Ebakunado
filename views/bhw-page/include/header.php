@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="../../css/modals.css" />
 <header class="header">
     <div class="header-left">
         <button
@@ -8,7 +7,6 @@
             aria-label="Open menu"
             aria-expanded="false"
             aria-controls="sideNav">menu</button>
-        <h1 class="header-greeting">Welcome, <?php echo htmlspecialchars($user_name); ?>!</h1>
     </div>
 
     <div class="header-right">

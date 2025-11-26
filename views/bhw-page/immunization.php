@@ -24,20 +24,22 @@ if ($user_id) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Immunization</title>
+    <title>Immunization Records</title>
 
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>BHW Dashboard</title>
         <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-        <link rel="stylesheet" href="../../css/main.css" />
-        <link rel="stylesheet" href="../../css/header.css" />
-        <link rel="stylesheet" href="../../css/sidebar.css" />
+        <link rel="stylesheet" href="../../css/main.css?v=1.0.2" />
+        <link rel="stylesheet" href="../../css/header.css?v=1.0.1" />
+        <link rel="stylesheet" href="../../css/sidebar.css?v=1.0.1" />
+
         <link rel="stylesheet" href="../../css/notification-style.css" />
         <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-        <link rel="stylesheet" href="../../css/bhw/immunization-style.css">
-        <link rel="stylesheet" href="../../css/bhw/growth-assessment.css">
+        <link rel="stylesheet" href="../../css/bhw/table-style.css?v=1.0.3" />
+        <link rel="stylesheet" href="../../css/bhw/immunization-style.css?v=1.0.5">
+        <link rel="stylesheet" href="../../css/bhw/growth-assessment.css?v=1.0.1">
     </head>
 
 <body>
@@ -68,186 +70,204 @@ if ($user_id) {
     </div>
 
     <main>
-        <section class="section-container">
-            <h2 class="section-title">
-                <div class="title-left">
-                    <span class="material-symbols-rounded">syringe</span>
-                    Immunization Records
-                </div>
-                <div class="title-actions">
-                    <button class="btn btn-outline-primary" id="openScannerBtn" onclick="openScanner()">
-                        <span class="material-symbols-rounded" aria-hidden="true">qr_code_scanner</span>
-                        Scan QR
-                    </button>
-                </div>
-            </h2>
-        </section>
         <section class="immunization-section">
-            <div class="filters-header">
-                <span class="material-symbols-rounded" aria-hidden="true">tune</span>
-                <span>Filters:</span>
-            </div>
-            <div class="filters">
-                <div class="select-with-icon">
-                    <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
-                    <input id="filterDate" type="date" />
-                </div>
-
-                <div class="select-with-icon">
-                    <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
-                    <select id="filterStatus">
-                        <option value="upcoming" selected>Upcoming</option>
-                        <option value="missed">Missed</option>
-                        <option value="completed">Completed</option>
-                    </select>
-                </div>
-
-                <div class="select-with-icon">
-                    <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
-                    <select id="filterVaccine">
-                        <option value="" disabled selected>Vaccines</option>
-                        <option value="all">All</option>
-                    </select>
-                </div>
-
-                <div class="select-with-icon">
-                    <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
-                    <input id="filterPurok" type="text" placeholder="e.g. Purok 1" />
-                </div>
-
-                <button class="btn btn-primary" id="applyFiltersBtn">Apply</button>
-                <button class="btn btn-secondary" id="clearFiltersBtn">Clear</button>
+            <div class="page-header">
+                <h1 class="page-title">Immunization Records</h1>
+                <p class="page-subtitle">Manage and review child vaccination information.</p>
             </div>
 
-            <div class="table-container">
-                <table class="table table-hover" id="childhealthrecord">
-                    <thead>
-                        <tr>
-                            <th>Fullname</th>
-                            <th>Address</th>
-                            <th>Vaccine</th>
-                            <th id="scheduleDateHeader">Schedule Date</th>
-                            <th>Batch Schedule</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="childhealthrecordBody">
-                        <tr class="skeleton-row">
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-1"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-2"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-3"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-4"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-pill skeleton-col-5"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-btn skeleton-col-6"></div>
-                            </td>
-                        </tr>
-                        <tr class="skeleton-row">
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-1"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-2"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-3"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-4"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-pill skeleton-col-5"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-btn skeleton-col-6"></div>
-                            </td>
-                        </tr>
-                        <tr class="skeleton-row">
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-1"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-2"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-3"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-4"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-pill skeleton-col-5"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-btn skeleton-col-6"></div>
-                            </td>
-                        </tr>
-                        <tr class="skeleton-row">
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-1"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-2"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-3"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-4"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-pill skeleton-col-5"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-btn skeleton-col-6"></div>
-                            </td>
-                        </tr>
-                        <tr class="skeleton-row">
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-1"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-2"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-3"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-text skeleton-col-4"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-pill skeleton-col-5"></div>
-                            </td>
-                            <td>
-                                <div class="skeleton skeleton-btn skeleton-col-6"></div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="pager" id="pager">
-                <div id="pageInfo" class="page-info">&nbsp;</div>
-                <div class="pager-controls">
-                    <button id="prevBtn" type="button" class="pager-btn">
-                        <span class="marow-2terial-symbols-rounded">chevron_backward</span>
-                        Prev
-                    </button>
-                    <span id="pageButtons" class="page-buttons"></span>
-                    <button id="nextBtn" type="button" class="pager-btn">
-                        Next
-                        <span class="material-symbols-rounded">chevron_forward</span>
-                    </button>
+            <div class="data-table-card">
+                <div class="data-table-toolbar data-table-toolbar--stack">
+                    <div class="data-table-toolbar__top">
+                        <div class="data-table-toolbar__titles">
+                            <h2 class="data-table-title">Child Immunization List</h2>
+                        </div>
+                        <div class="data-table-toolbar__controls">
+                            <button class="btn clear-btn btn-icon" id="clearFiltersBtn">Clear</button>
+                            <button class="btn apply-btn btn-icon" id="applyFiltersBtn">Apply</button>
+                            <button class="btn qr-btn btn-icon" id="openScannerBtn" onclick="openScanner()" type="button">
+                                <span class="material-symbols-rounded" aria-hidden="true">qr_code_scanner</span>
+                                Scan QR
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filters separated into their own row inside the toolbar -->
+                    <div class="data-table-actions">
+                        <div class="filters">
+                            <div class="filter-item">
+                                <label class="filter-label" for="filterDate">Date</label>
+                                <div class="input-field">
+                                    <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
+                                    <input id="filterDate" type="date" />
+                                </div>
+                            </div>
+
+                            <div class="filter-item">
+                                <label class="filter-label" for="filterStatus">Status</label>
+                                <div class="input-field">
+                                    <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
+                                    <select id="filterStatus">
+                                        <option value="" disabled selected>Vaccines</option>
+                                        <option value="upcoming" selected>Upcoming</option>
+                                        <option value="missed">Missed</option>
+                                        <option value="completed">Completed</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="filter-item">
+                                <label class="filter-label" for="filterVaccine">Vaccine</label>
+                                <div class="input-field">
+                                    <span class="material-symbols-rounded" aria-hidden="true">vaccines</span>
+                                    <select id="filterVaccine">
+                                        <option value="" disabled selected>Vaccines</option>
+                                        <option value="all">All</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="filter-item">
+                                <label class="filter-label" for="filterPurok">Purok</label>
+                                <div class="input-field">
+                                    <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
+                                    <input id="filterPurok" type="text" placeholder="e.g. Purok 1" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-table-wrap">
+                    <table class="data-table" id="childhealthrecord">
+                        <thead>
+                            <tr>
+                                <th>Fullname</th>
+                                <th>Address</th>
+                                <th>Vaccine</th>
+                                <th id="scheduleDateHeader">Schedule Date</th>
+                                <th>Batch Schedule</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="childhealthrecordBody">
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                </td>
+                            </tr>
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                </td>
+                            </tr>
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                </td>
+                            </tr>
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                </td>
+                            </tr>
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pager" id="pager">
+                        <div id="pageInfo" class="page-info">&nbsp;</div>
+                        <div class="pager-controls">
+                            <button id="prevBtn" type="button" class="pager-btn">
+                                <span class="material-symbols-rounded">chevron_backward</span>
+                                Prev
+                            </button>
+                            <span id="pageButtons" class="page-buttons"></span>
+                            <button id="nextBtn" type="button" class="pager-btn">
+                                Next
+                                <span class="material-symbols-rounded">chevron_forward</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -502,8 +522,7 @@ if ($user_id) {
             const feedingStatus = feedingStatusRaw ? {
                 ...feedingStatusRaw,
                 text: feedingStatusRaw.type === 'exclusive_breastfeeding' ?
-                    `${feedingStatusRaw.month}${ordinal(feedingStatusRaw.month)} month exclusive breastfeeding` :
-                    `${feedingStatusRaw.month}${ordinal(feedingStatusRaw.month)} month complementary feeding`
+                    `${feedingStatusRaw.month}${ordinal(feedingStatusRaw.month)} month exclusive breastfeeding` : `${feedingStatusRaw.month}${ordinal(feedingStatusRaw.month)} month complementary feeding`
             } : null;
             const motherTDStatus = getMotherTDStatus();
 
@@ -644,10 +663,10 @@ if ($user_id) {
 
             document.getElementById('immunizationFormContainer').innerHTML = html;
             document.getElementById('immunizationOverlay').style.display = 'flex';
-            
+
             // Fetch child details for growth assessment
             fetchChildDetailsForGrowth(babyId);
-            
+
             // Add event listeners for height and weight inputs
             setupGrowthAssessmentListeners();
         }
@@ -659,7 +678,7 @@ if ($user_id) {
 
         async function submitImmunizationForm() {
             const formData = new FormData();
-            
+
             formData.append('record_id', document.getElementById('im_record_id').value || '');
             formData.append('user_id', document.getElementById('im_user_id').value || '');
             formData.append('baby_id', document.getElementById('im_baby_id').value || '');
@@ -672,16 +691,16 @@ if ($user_id) {
             formData.append('remarks', document.getElementById('im_remarks').value || '');
             // Mark as completed automatically when saved
             formData.append('mark_completed', '1');
-            
+
             const catchUpDate = document.getElementById('im_catch_up_date')?.value || '';
             if (catchUpDate) formData.append('catch_up_date', catchUpDate);
-            
+
             // Add growth assessment data
             const growthWfa = document.getElementById('im_growth_wfa');
             const growthLfa = document.getElementById('im_growth_lfa');
             const growthWfl = document.getElementById('im_growth_wfl');
             const growthAgeMonths = document.getElementById('im_growth_age_months');
-            
+
             if (growthWfa) formData.append('growth_wfa', growthWfa.value || '');
             if (growthLfa) formData.append('growth_lfa', growthLfa.value || '');
             if (growthWfl) formData.append('growth_wfl', growthWfl.value || '');
@@ -708,15 +727,18 @@ if ($user_id) {
                     method: 'POST',
                     body: formData
                 });
-                
+
                 const responseText = await res.text();
                 let data;
                 try {
                     data = JSON.parse(responseText);
                 } catch (parseErr) {
-                    data = { status: 'error', message: 'Invalid server response' };
+                    data = {
+                        status: 'error',
+                        message: 'Invalid server response'
+                    };
                 }
-                
+
                 if (data.status === 'success') {
                     closeImmunizationForm();
                     await fetchChildHealthRecord();
@@ -736,33 +758,37 @@ if ($user_id) {
                 body.innerHTML = '<tr class="message-row"><td colspan="7">No records found</td></tr>';
                 return;
             }
-            
+
             // Get current filter status to determine header and display logic
             const filterStatus = document.getElementById('filterStatus').value || '';
             const isMissedFilter = filterStatus.toLowerCase() === 'missed';
-            
+
             // Update header dynamically
             const scheduleHeader = document.getElementById('scheduleDateHeader');
             if (scheduleHeader) {
                 scheduleHeader.textContent = isMissedFilter ? 'Catch Up Date' : 'Schedule Date';
             }
-            
+
             let rows = '';
             const formatDate = (dateStr) => {
                 if (!dateStr) return '-';
                 const date = new Date(dateStr);
                 if (Number.isNaN(date.getTime())) return dateStr;
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                return date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
             };
 
             records.forEach(item => {
                 // Determine which date to show in Schedule Date column based on filter
-                const scheduleDateToShow = isMissedFilter 
-                    ? (item.catch_up_date || '-')
-                    : (item.schedule_date || '-');
+                const scheduleDateToShow = isMissedFilter ?
+                    (item.catch_up_date || '-') :
+                    (item.schedule_date || '-');
                 const formattedScheduleDate = scheduleDateToShow !== '-' ? formatDate(scheduleDateToShow) : '-';
                 const formattedBatchDate = item.batch_schedule_date ? formatDate(item.batch_schedule_date) : '-';
-                
+
                 rows += `<tr>
                             <td hidden>${item.id || ''}</td>
                             <td hidden>${item.user_id || ''}</td>
@@ -1008,14 +1034,23 @@ if ($user_id) {
             if (applyBtn) applyBtn.addEventListener('click', applyFilters);
             if (clearBtn) clearBtn.addEventListener('click', clearFilters);
 
-            // Make the custom calendar icon open the date picker
+            // Make the custom calendar icon open the date picker (supports both .select-with-icon and .input-field wrappers)
             const dateInput = document.getElementById('filterDate');
-            const dateIcon = dateInput?.closest('.select-with-icon')?.querySelector('.material-symbols-rounded');
+            let dateIcon = null;
+            if (dateInput) {
+                const wrapper = dateInput.closest('.select-with-icon, .input-field');
+                dateIcon = wrapper ? wrapper.querySelector('.material-symbols-rounded') : null;
+            }
             if (dateInput && dateIcon) {
                 dateIcon.style.cursor = 'pointer';
-                dateIcon.addEventListener('click', () => {
-                    if (typeof dateInput.showPicker === 'function') dateInput.showPicker();
-                    dateInput.focus();
+                dateIcon.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    if (typeof dateInput.showPicker === 'function') {
+                        try { dateInput.showPicker(); } catch (err) { dateInput.focus(); }
+                    } else {
+                        dateInput.focus();
+                        try { dateInput.click(); } catch (err) {}
+                    }
                 });
             }
 
@@ -1233,12 +1268,12 @@ if ($user_id) {
                     body: formData
                 });
                 const data = await response.json();
-                
+
                 if (data.status === 'success' && data.data && data.data.length > 0) {
                     const child = data.data[0];
                     const birthDateInput = document.getElementById('im_child_birth_date');
                     const genderInput = document.getElementById('im_child_gender');
-                    
+
                     if (birthDateInput) birthDateInput.value = child.child_birth_date || '';
                     if (genderInput) genderInput.value = child.child_gender || '';
                 }
@@ -1305,7 +1340,7 @@ if ($user_id) {
 
                 // Display assessment results
                 let html = '<div class="growth-indicators">';
-                
+
                 if (assessment.ageMonths !== null && assessment.ageMonths !== undefined) {
                     html += `<div class="growth-info"><strong>Age:</strong> ${assessment.ageMonths} months</div>`;
                 }
@@ -1419,7 +1454,6 @@ if ($user_id) {
                 container.appendChild(ageField);
             }
         }
-        
     </script>
 
 </body>

@@ -26,13 +26,13 @@ if ($user_id) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BHW Dashboard</title>
     <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/main.css?v=1.0.1" />
+    <link rel="stylesheet" href="../../css/header.css?v=1.0.1" />
+    <link rel="stylesheet" href="../../css/sidebar.css?v=1.0.1" />
 
     <link rel="stylesheet" href="../../css/notification-style.css" />
     <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/bhw/dashboard.css?v=1.0.4" />
+    <link rel="stylesheet" href="../../css/bhw/dashboard.css?v=1.0.2" />
 
 </head>
 
@@ -41,142 +41,119 @@ if ($user_id) {
     <?php include 'include/sidebar.php'; ?>
 
     <main>
-        <section class="section-container">
-            <h2 class="dashboard section-title">
-                <span class="material-symbols-rounded">dashboard</span>
-                Dashboard Overview
-            </h2>
-        </section>
-        <section class="dashboard-section">
-            <div class="dashboard-overview">
-                <div class="card-wrapper">
-                    <div class="card card-1">
+        <section class="dashboard-overview">
+            <div class="page-header">
+                <h1 class="page-title">Dashboard Overview</h1>
+                <p class="page-subtitle">Welcome, <?php echo htmlspecialchars($user_name); ?>! BHW Dashboard – manage child records and immunization data efficiently.</p>
+            </div>
+
+            <div class="card-wrapper">
+                <div class="card card-1">
+                    <div class="card-top">
+                        <div class="card-info">
+                            <p class="card-title">Pending Approvals</p>
+                            <p class="card-number" id="pendingCount">0</p>
+                        </div>
                         <div class="card-icon">
                             <span class="material-symbols-rounded">hourglass_top</span>
                         </div>
-                        <div class="card-info">
-                            <p class="card-number" id="pendingCount">0</p>
-                            <p class="card-title">Pending Approvals</p>
-                            <a class="card-link" href="#">
-                                <span class="material-symbols-rounded">visibility</span>
-                                View Details
-                            </a>
-                        </div>
                     </div>
+                    <div class="card-bottom">
+                        <a class="card-link" href="#">
+                            <span class="material-symbols-rounded">visibility</span>
+                            View Details
+                        </a>
+                    </div>
+                </div>
 
-                    <div class="card card-2">
+                <div class="card card-2">
+                    <div class="card-top">
+                        <div class="card-info">
+                            <p class="card-title">Today's Vaccinations</p>
+                            <p class="card-number" id="todayCount">0</p>
+                        </div>
                         <div class="card-icon">
                             <span class="material-symbols-rounded">vaccines</span>
                         </div>
-                        <div class="card-info">
-                            <p class="card-number" id="todayCount">0</p>
-                            <p class="card-title">Today's Vaccinations</p>
-                            <a class="card-link" href="#">
-                                <span class="material-symbols-rounded">visibility</span>
-                                View Details
-                            </a>
-                        </div>
                     </div>
+                    <div class="card-bottom">
+                        <a class="card-link" href="#">
+                            <span class="material-symbols-rounded">visibility</span>
+                            View Details
+                        </a>
+                    </div>
+                </div>
 
-                    <div class="card card-3">
+                <div class="card card-3">
+                    <div class="card-top">
+                        <div class="card-info">
+                            <p class="card-title">Missed Vaccinations</p>
+                            <p class="card-number" id="missedCount">0</p>
+                        </div>
                         <div class="card-icon">
                             <span class="material-symbols-rounded">warning</span>
                         </div>
-                        <div class="card-info">
-                            <p class="card-number" id="missedCount">0</p>
-                            <p class="card-title">Missed Vaccinations</p>
-                            <a class="card-link" href="#">
-                                <span class="material-symbols-rounded">visibility</span>
-                                View Details
-                            </a>
-                        </div>
                     </div>
+                    <div class="card-bottom">
+                        <a class="card-link" href="#">
+                            <span class="material-symbols-rounded">visibility</span>
+                            View Details
+                        </a>
+                    </div>
+                </div>
 
-                    <div class="card card-4">
+                <div class="card card-4">
+                    <div class="card-top">
+                        <div class="card-info">
+                            <p class="card-title">Total Children</p>
+                            <p class="card-number" id="totalCount">0</p>
+                        </div>
                         <div class="card-icon">
                             <span class="material-symbols-rounded">child_care</span>
                         </div>
-                        <div class="card-info">
-                            <p class="card-number" id="totalCount">0</p>
-                            <p class="card-title">Total Children</p>
-                            <a class="card-link" href="#">
-                                <span class="material-symbols-rounded">visibility</span>
-                                View Details
-                            </a>
-                        </div>
+                    </div>
+                    <div class="card-bottom">
+                        <a class="card-link" href="#">
+                            <span class="material-symbols-rounded">visibility</span>
+                            View Details
+                        </a>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Monthly Vaccine Schedule Chart -->
-            <div class="monthly-vaccine-section">
-                <div class="monthly-vaccine-card">
-                    <div class="monthly-vaccine-header">
-                        <h3 class="monthly-vaccine-title">
-                            <span class="material-symbols-rounded">calendar_month</span>
-                            Monthly Vaccine Schedule
-                        </h3>
-                        <div class="month-nav-controls">
-                            <button class="month-nav-btn" id="prevMonthBtn" title="Previous Month">
-                                <span class="material-symbols-rounded">chevron_left</span>
-                            </button>
-                            <div class="month-display" id="monthDisplay">November 2025</div>
-                            <button class="month-nav-btn" id="nextMonthBtn" title="Next Month">
-                                <span class="material-symbols-rounded">chevron_right</span>
-                            </button>
-                        </div>
+        <!-- Monthly Vaccine Schedule Chart -->
+        <section class="monthly-vaccine-section">
+            <div class="monthly-vaccine-card">
+                <div class="monthly-vaccine-header">
+                    <h3 class="monthly-vaccine-title">
+                        Monthly Vaccine Schedule
+                    </h3>
+                    <div class="month-nav-controls">
+                        <button class="month-nav-btn" id="prevMonthBtn" title="Previous Month">
+                            <span class="material-symbols-rounded">chevron_left</span>
+                        </button>
+                        <div class="month-display" id="monthDisplay">November 2025</div>
+                        <button class="month-nav-btn" id="nextMonthBtn" title="Next Month">
+                            <span class="material-symbols-rounded">chevron_right</span>
+                        </button>
                     </div>
-                    <div class="monthly-vaccine-quick-switch">
-                        <button class="quick-switch-btn active" data-month="current" id="currentMonthBtn">Current Month</button>
-                        <button class="quick-switch-btn" data-month="next" id="nextMonthQuickBtn">Next Month</button>
+                </div>
+                <div class="monthly-vaccine-quick-switch">
+                    <button class="quick-switch-btn active" data-month="current" id="currentMonthBtn">Current Month</button>
+                    <button class="quick-switch-btn" data-month="next" id="nextMonthQuickBtn">Next Month</button>
+                </div>
+                <div class="charts-wrapper">
+                    <div class="chart-container chart-bar">
+                        <h4 class="chart-title">All Vaccines</h4>
+                        <canvas id="vaccineChart"></canvas>
                     </div>
-                    <div class="charts-wrapper">
-                        <div class="chart-container chart-bar">
-                            <h4 class="chart-title">All Vaccines</h4>
-                            <canvas id="vaccineChart"></canvas>
-                        </div>
-                        <div class="chart-container chart-donut">
-                            <h4 class="chart-title">Top 5 Vaccines Distribution</h4>
-                            <canvas id="vaccineDonutChart"></canvas>
-                        </div>
+                    <div class="chart-container chart-donut">
+                        <h4 class="chart-title">Top 5 Vaccines Distribution</h4>
+                        <canvas id="vaccineDonutChart"></canvas>
                     </div>
                 </div>
             </div>
-
-            <!-- <div class="activity-task-container" >
-                <div class="activity-section">
-                    <h2 class="dashboard-heading">Recent Activities</h2>
-                    <div class="activity-list" id="activityList">
-                        <div class="loading">
-                            <p>Loading recent activity...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tasks-section">
-                    <h2 class="dashboard-heading">Task Overview</h2>
-                    <div class="task-wrapper">
-                        <div class="task-card urgent" id="overdueCard">
-                            <div class="task-header">
-                                <h4>🚨 Overdue Tasks</h4>
-                                <span class="task-count" id="overdueCount">0</span>
-                            </div>
-                            <p>Vaccinations that are past due date</p>
-                            <a href="immunization.php" class="task-action">View Details</a>
-                        </div>
-                        <div class="task-card">
-                            <div class="task-card warning" id="tomorrowCard">
-                                <div class="task-header">
-                                    <h4>📅 Tomorrow's Tasks</h4>
-                                    <span class="task-count" id="tomorrowCount">0</span>
-                                </div>
-                                <p>Vaccinations scheduled for tomorrow</p>
-                                <a href="immunization.php" class="task-action">View Details</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
         </section>
     </main>
 
@@ -213,43 +190,26 @@ if ($user_id) {
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
                 showError('Network error: ' + error.message);
-                // Ensure card numbers don't stay in perpetual skeleton state on error
-                if (typeof setDashboardCardNumbers === 'function') {
-                    setDashboardCardNumbers({
-                        pendingCount: 0,
-                        todayCount: 0,
-                        missedCount: 0,
-                        totalCount: 0
-                    });
-                } else {
-                    const ids = ['pendingCount', 'todayCount', 'missedCount', 'totalCount'];
-                    ids.forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) el.textContent = '0';
-                    });
-                }
+                // Ensure card numbers are reset on error
+                const ids = ['pendingCount', 'todayCount', 'missedCount', 'totalCount'];
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = '0';
+                });
             }
         }
 
         function updateStats(stats) {
-            // If skeleton API is available, replace numbers via helper for smooth cross-fade
-            if (typeof setDashboardCardNumbers === 'function') {
-                setDashboardCardNumbers({
-                    pendingCount: stats.pending_approvals,
-                    todayCount: stats.today_vaccinations,
-                    missedCount: stats.missed_vaccinations,
-                    totalCount: stats.total_children
-                });
-            } else {
-                const p = document.getElementById('pendingCount');
-                const t = document.getElementById('todayCount');
-                const m = document.getElementById('missedCount');
-                const tc = document.getElementById('totalCount');
-                if (p) p.textContent = stats.pending_approvals;
-                if (t) t.textContent = stats.today_vaccinations;
-                if (m) m.textContent = stats.missed_vaccinations;
-                if (tc) tc.textContent = stats.total_children;
-            }
+            // Update card numbers directly (no skeleton transition)
+            const p = document.getElementById('pendingCount');
+            const t = document.getElementById('todayCount');
+            const m = document.getElementById('missedCount');
+            const tc = document.getElementById('totalCount');
+            if (p) p.textContent = stats.pending_approvals;
+            if (t) t.textContent = stats.today_vaccinations;
+            if (m) m.textContent = stats.missed_vaccinations;
+            if (tc) tc.textContent = stats.total_children;
+
             // Safely update any action counters if present (currently not in markup)
             const pa = document.getElementById('pendingActionCount');
             const ta = document.getElementById('todayActionCount');
@@ -780,10 +740,6 @@ if ($user_id) {
 
         // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Apply skeleton shimmer to card numbers immediately
-            if (typeof applyDashboardCardNumbersSkeleton === 'function') {
-                applyDashboardCardNumbersSkeleton();
-            }
             // Fetch and populate real data
             loadDashboardData();
         });

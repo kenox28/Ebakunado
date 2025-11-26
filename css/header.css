@@ -8,269 +8,271 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	border-left: 1px solid #d9d9d9;
 	border-bottom: 1px solid #d9d9d9;
 	position: relative;
 
 	grid-area: header;
+	background-color: #FFFFFF;
 	font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial,
 		sans-serif;
 }
 
 .header-left {
-	display: flex;
-	align-items: center;
-	gap: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
 }
 
 .icon-menu {
-	color: var(--primary-color);
-	font-size: 3.2rem;
-	line-height: 1;
-	cursor: pointer;
+  color: var(--primary-color);
+  font-size: 3.2rem;
+  line-height: 1;
+  cursor: pointer;
 
-	background: transparent;
-	border: none;
-	padding: 0;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 36px;
-	height: 36px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
 
-	border-radius: 8px;
-	transition: background-color 160ms ease, color 160ms ease, transform 60ms ease,
-		box-shadow 160ms ease;
+  border-radius: 8px;
+  transition: background-color 160ms ease, color 160ms ease, transform 60ms ease,
+    box-shadow 160ms ease;
 }
 
 .icon-menu:hover {
-	background-color: #f5f5f5;
+  background-color: #f5f5f5;
 }
 
 .icon-menu:active {
-	transform: scale(0.96);
-	background-color: #e9e9e9;
-	box-shadow: inset 0 0 0 1px #d4d4d4;
+  transform: scale(0.96);
+  background-color: #e9e9e9;
+  box-shadow: inset 0 0 0 1px #d4d4d4;
 }
 
 .icon-menu:focus-visible {
-	background-color: #e9e9e9;
-	outline: 2px solid var(--primary-color);
-	outline-offset: 2px;
-	border-radius: 6px;
+  background-color: #e9e9e9;
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 .icon-menu.is-active {
-	background-color: #e9e9e9;
-	box-shadow: inset 0 0 0 2px var(--primary-color);
+  background-color: #e9e9e9;
+  box-shadow: inset 0 0 0 2px var(--primary-color);
 }
 
 .header-greeting {
-	color: var(--primary-color);
-	font-size: 1.6rem;
-	font-weight: 600;
-	text-transform: capitalize;
+  color: var(--primary-color);
+  font-size: 1.6rem;
+  font-weight: 600;
+  text-transform: capitalize;
 }
 
 .header-right {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .profile-menu {
-	position: absolute;
-	top: calc(100% + 8px);
-	right: 0;
-	width: 180px;
-	padding: 8px 0;
-	background: var(--background-white, #fff);
-	border: 1px solid var(--border-color, #e0e0e0);
-	border-radius: 8px;
-	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-	display: none;
-	z-index: 1000;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 180px;
+  padding: 8px 0;
+  background: var(--background-white, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  display: none;
+  z-index: 1000;
 }
 
 .profile-menu.open {
-	display: block;
+  display: block;
 }
 
 .header-user {
-	display: flex;
-	align-items: center;
-	gap: 0.8rem;
-	padding: 0.4rem 0.8rem;
-	border-radius: 10px;
-	cursor: pointer;
-	position: relative;
-	user-select: none;
-	transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  transition: background-color 0.2s ease;
 }
 
 .header-user:hover {
-	background-color: #f5f5f5;
+  background-color: #f5f5f5;
 }
 
 .profile-trigger {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-	font-family: inherit;
-	padding: 0.5rem 1rem;
-	border-radius: 10px;
-	cursor: pointer;
-	position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: inherit;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
 }
 
 .profile-trigger:hover {
-	background-color: #f5f5f5;
-	transition: 0.3s ease;
+  background-color: #f5f5f5;
+  transition: 0.3s ease;
 }
 
 .user-avatar {
-	width: 30px;
-	height: 30px;
-	object-fit: cover;
-	border-radius: 50%;
-	border: 2px solid var(--border-color);
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
 }
 
 .icon-dropdown {
-	font-size: 2rem;
-	line-height: 1;
-	color: #333333;
-	transition: transform 160ms ease;
+  font-size: 2rem;
+  line-height: 1;
+  color: #333333;
+  transition: transform 160ms ease;
 }
 
 .profile-trigger.is-open .icon-dropdown {
-	transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .profile-trigger {
-	transition: background-color 160ms ease, transform 60ms ease,
-		box-shadow 160ms ease;
+  transition: background-color 160ms ease, transform 60ms ease,
+    box-shadow 160ms ease;
 }
 
 .profile-trigger:focus-visible {
-	outline: 2px solid black;
-	outline-offset: 2px;
-	border-radius: 8px;
+  outline: 2px solid black;
+  outline-offset: 2px;
+  border-radius: 8px;
 }
 
 .profile-trigger.is-pressed {
-	background-color: #00000012;
-	box-shadow: inset 0 0 0 1px #0000001f;
+  background-color: #00000012;
+  box-shadow: inset 0 0 0 1px #0000001f;
 }
 
 .profile-trigger.is-open .icon-dropdown {
-	transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
-/* Container alignment */
 .header .dropdown-root {
-	position: relative;
+  position: relative;
 }
 
 .header .profile-trigger {
-	display: inline-flex;
-	align-items: center;
-	gap: 10px;
-	height: 40px;
-	padding: 6px 10px;
-	background: transparent;
-	border: 1px solid transparent;
-	border-radius: 10px;
-	cursor: pointer;
-	transition: background-color 160ms ease, box-shadow 160ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  background-color: #f5f5f5;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 160ms ease, box-shadow 160ms ease;
 }
 
 .header .profile-trigger:hover {
-	background-color: #f5f5f5;
+  background-color: #efefef;
+  border-color: #e5e7eb;
 }
 
 .header .profile-trigger:focus-visible {
-	outline: 2px solid var(--primary-color);
-	outline-offset: 2px;
-	border-radius: 8px;
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: 8px;
 }
 
 .header .profile-trigger .icon-dropdown {
-	font-size: 2rem;
-	line-height: 1;
-	color: #666;
-	transition: transform 160ms ease;
+  font-size: 2rem;
+  line-height: 1;
+  color: #666;
+  transition: transform 160ms ease;
 }
 .header .dropdown-root.is-open .icon-dropdown {
-	transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .header .user-avatar {
-	width: 28px;
-	height: 28px;
-	border-radius: 999px;
-	border: 2px solid var(--border, var(--border-color));
-	object-fit: cover;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 2px solid var(--border, var(--border-color));
+  object-fit: cover;
 }
 .header .user-avatar.lg {
-	width: 48px;
-	height: 48px;
+  width: 48px;
+  height: 48px;
 }
 
 .header .user-meta {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	line-height: 1.1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.1;
+  gap: 2px;
 }
 
 .header .user-name {
-	font-family: inherit;
-	font-size: 1.4rem;
-	font-weight: 600;
-	color: #333;
-	text-transform: capitalize;
+  font-family: inherit;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #333;
+  text-transform: capitalize;
 }
 
 .header .user-role {
-	font-family: inherit;
-	font-size: 1.1rem;
-	font-weight: 400;
-	color: #666;
-	text-transform: capitalize;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: #666;
+  text-transform: capitalize;
 }
 
 /* Dropdown panel */
 .header .panel.profile {
-	position: absolute;
-	top: calc(100% + 10px);
-	right: 0;
-	width: 320px;
-	background: var(--background-white);
-	border: 1px solid var(--border-color, #e0e0e0);
-	border-radius: 8px;
-	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-	padding: 8px 10px;
-	z-index: 1000;
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 320px;
+  background: var(--background-white);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  padding: 8px 10px;
+  z-index: 1000;
 }
 
 /* Profile card in panel */
 .header .profile-card {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 12px;
-	padding: 8px;
-	border-radius: 10px;
-	background: var(--surface, #f8fafc);
-	border: 1px solid var(--border, var(--border-color));
-	margin: 4px 4px 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 10px;
+  background: var(--surface, #f8fafc);
+  border: 1px solid var(--border, var(--border-color));
+  margin: 4px 4px 8px;
 }
 
 .header .profile-card .name {
-	font-size: 1.4rem;
-	font-weight: 700;
-	margin: 0;
-	text-transform: capitalize;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  text-transform: capitalize;
 }
 .header .profile-card .role {
   font-size: 1.2rem;
@@ -280,94 +282,92 @@
 }
 
 .header .profile-card .email {
-	font-size: 1.2rem;
-	color: var(--muted, #6b7280);
-	margin: 0;
-	text-transform: lowercase;
+  font-size: 1.2rem;
+  color: var(--muted, #6b7280);
+  margin: 0;
+  text-transform: lowercase;
 }
 
 /* Menu groups and items */
 .header .menu-group {
-	padding: 4px;
+  padding: 4px;
 }
 .header .menu-group:not(:last-of-type) {
-	border-bottom: 1px solid var(--border-color);
-	padding-bottom: 6px;
-	margin-bottom: 6px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 6px;
+  margin-bottom: 6px;
 }
 
 .header .menu-item {
-	width: 100%;
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 10px 12px;
-	background: transparent;
-	border: none;
-	color: var(--text-label, #333);
-	font-family: inherit;
-	font-size: 1.35rem;
-	font-weight: 500;
-	cursor: pointer;
-	text-decoration: none;
-	border-radius: 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-label, #333);
+  font-family: inherit;
+  font-size: 1.35rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: 8px;
 }
 
 .header .menu-item:hover,
 .header .menu-item:focus {
-	background-color: #f5f5f5;
-	outline: none;
+  background-color: #f5f5f5;
+  outline: none;
 }
 .header .menu-item.danger {
-	color: #dc2626;
+  color: #dc2626;
 }
 .header .menu-item.danger .material-symbols-rounded {
-	color: #dc2626;
+  color: #dc2626;
 }
 .header .menu-item .material-symbols-rounded {
-	font-size: 2rem;
-	color: #5a6169;
+  font-size: 2rem;
+  color: #5a6169;
 }
 
-/* Small pill tag (e.g., sync_alt) */
 .header .menu-item .tag {
-	margin-left: auto;
-	background: #eef2ff;
-	color: #3f51b5;
-	padding: 2px 8px;
-	border-radius: 999px;
-	font-size: 1.1rem;
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
+  margin-left: auto;
+  background: #eef2ff;
+  color: #3f51b5;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .header .menu-item .tag .material-symbols-rounded {
-	font-size: 1.4rem;
-	line-height: 1;
+  font-size: 1.4rem;
+  line-height: 1;
 }
 
 .profile-menu {
-	position: absolute;
-	top: calc(100% + 8px);
-	right: 0;
-	width: 180px;
-	padding: 8px 0;
-	background: var(--background-white, #fff);
-	border: 1px solid var(--border-color, #e0e0e0);
-	border-radius: 10px;
-	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
-	display: none;
-	z-index: 1000;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 180px;
+  padding: 8px 0;
+  background: var(--background-white, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
+  display: none;
+  z-index: 1000;
 }
 
 .profile-menu.open {
-	display: block;
+  display: block;
 }
 
-/* Responsive tweak: hide long name on small screens */
 @media (max-width: 640px) {
-	.header .user-meta {
-		display: none;
-	}
+  .header .user-meta {
+    display: none;
+  }
 }

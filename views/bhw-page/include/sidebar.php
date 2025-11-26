@@ -28,13 +28,11 @@ if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available
                     alt="eBakunado Logo" />
             </div>
             <div class="brand-text-block">
-                <h1 class="brand-name">eBakunado</h1>
-                <h2 class="brand-tagline">Immunization Data Management</h2>
+                <h1 class="brand-name">e-Bakunado</h1>
             </div>
         </div>
 
         <div class="sidebar-section">
-            <h2 class="sidebar-section-title">Main Menu</h2>
             <ul class="sidebar-menu">
                 <!-- Dashboard -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'dashboard.php' ? ' active' : ''; ?>">
@@ -118,25 +116,6 @@ if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available
                 </li>
                 <?php endif; ?>
             </ul>
-        </div>
-
-        <?php
-            $sessionProfileImg = isset($_SESSION['profileimg']) ? trim((string)$_SESSION['profileimg']) : '';
-            $sidebarProfileImg = ($sessionProfileImg && $sessionProfileImg !== 'noprofile.png')
-                ? $sessionProfileImg
-                : '../../assets/images/user-profile.png';
-        ?>
-        <div class="sidebar-profile">
-            <div class="profile-avatar-container">
-                <img
-                    class="profile-avatar"
-                    src="<?php echo htmlspecialchars($sidebarProfileImg); ?>"
-                    alt="User Profile" />
-            </div>
-            <div class="profile-text-block">
-                <h2 class="profile-name"><?php echo htmlspecialchars($user_fullname); ?></h2>
-                <h3 class="profile-role"><?php echo $user_type; ?></h3>
-            </div>
         </div>
     </nav>
 </aside>
