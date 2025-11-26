@@ -1,52 +1,5 @@
 <?php
-session_start();
-?>
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Login - Ebakunado</title>
-		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-	</head>
-	<body>
-		<div class="form-container">
-			<h1>Login</h1>
-			<form action="" id="LoginForm">
-				<!-- CSRF Token for security -->
-				<input type="hidden" name="csrf_token" id="csrf_token" value="" />
-				
-				<div class="form-group">
-					<input type="text" name="Email_number" id="Email_number" placeholder="Enter email or phone number" required />
-				</div>
-				
-				<div class="form-group">
-					<input type="password" name="password" id="password" placeholder="Enter password" required />
-				</div>
-				
-				<button type="submit" class="submit-btn">Login</button>
-			</form>
-			
-			<div class="links">
-				<a href="create_account.php">Create Account</a>
-				<a href="#" id="forgotPasswordLink">Forgot Password?</a>
-				<a href="landing_page.php">Back to Home</a>
-			</div>
-			
-			<!-- Forgot Password Form (Hidden by default) -->
-			<div id="forgotPasswordForm" style="display: none;">
-				<h2>Forgot Password</h2>
-				<form id="ForgotPasswordForm">
-					<div class="form-group">
-						<input type="text" name="email_phone" id="email_phone" placeholder="Enter email or phone number" required />
-					</div>
-					<button type="submit" class="submit-btn">Send OTP</button>
-					<button type="button" id="cancelForgotPassword" class="cancel-btn">Cancel</button>
-				</form>
-			</div>
-		</div>
-	</body>
-	<!-- <script src="/js/login.js?v=1.0.3"></script> -->
-	<script src="../js/supabase_js/login.js?v=1.0.15"></script>
-</html> 
+// Legacy login entry point.
+// Always redirect to the new unified auth login page.
+header('Location: ./auth/login.php');
+exit();

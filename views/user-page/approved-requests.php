@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: ../login.php");
+    header("Location: login");
     exit();
 }
 
@@ -26,8 +26,8 @@ $user_fname = $_SESSION['fname'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Approved Requests</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css?v=1.0.3" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css?v=1.0.3" />
     <style>
     @keyframes spin {
         from { transform: rotate(0deg); }
@@ -37,11 +37,11 @@ $user_fname = $_SESSION['fname'] ?? '';
         transition: opacity 0.2s;
     }
     </style>
-    <link rel="stylesheet" href="../../css/header.css?v=1.0.3" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/user/approved-requests.css" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.3" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/skeleton-loading.css" />
+    <link rel="stylesheet" href="css/user/approved-requests.css" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -79,7 +79,7 @@ $user_fname = $_SESSION['fname'] ?? '';
         </section>
     </main>
 
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
     <script>
 document.addEventListener('DOMContentLoaded', loadApprovedRequests);
 
@@ -106,7 +106,7 @@ async function loadApprovedRequests(){
     }
 
     try{
-        const res = await fetch('/ebakunado/php/supabase/users/get_my_chr_requests.php');
+        const res = await fetch('php/supabase/users/get_my_chr_requests.php');
         if (!res.ok){
             if (typeof renderTableMessage === 'function') {
                 renderTableMessage(tbody, 'Failed to load data. Please try again.', { colspan: 6, kind: 'error' });
@@ -199,7 +199,7 @@ async function loadApprovedRequests(){
                     if (docUrl && docUrl.trim() !== '') {
                         try {
                             // Try proxy first to avoid CORS
-                            const proxyRes = await fetch(`/ebakunado/php/supabase/users/download_chr_doc.php?url=${encodeURIComponent(docUrl)}`, { credentials: 'same-origin' });
+                            const proxyRes = await fetch(`php/supabase/users/download_chr_doc.php?url=${encodeURIComponent(docUrl)}`, { credentials: 'same-origin' });
                             if (proxyRes.ok) {
                                 const pdfBlob = await proxyRes.blob();
                                 const fileName = `BabyCard_${nameSafe || 'Child'}.pdf`;
@@ -238,7 +238,7 @@ async function loadApprovedRequests(){
                         throw new Error('Child details not found');
                     }
                     const child = cJson.data[0];
-                    const iRes = await fetch('../../php/supabase/users/get_my_immunization_records.php', { method: 'POST', body: fd });
+                    const iRes = await fetch('php/supabase/users/get_my_immunization_records.php', { method: 'POST', body: fd });
                     const iJson = await iRes.json();
                     const immunizations = Array.isArray(iJson.data) ? iJson.data : [];
                     a.innerHTML = '<span class="material-symbols-rounded" style="display:inline-block;animation:spin 1s linear infinite;" aria-hidden="true">sync</span> Creating PDF...';
@@ -281,7 +281,7 @@ async function loadApprovedRequests(){
 async function buildAndDownloadZipClient(ctx){
     const pdfBytes = await (async () => {
         try{
-            const r1 = await fetch(`../../php/supabase/users/download_chr_doc.php?url=${encodeURIComponent(ctx.docUrl)}`, { credentials: 'same-origin' });
+            const r1 = await fetch(`php/supabase/users/download_chr_doc.php?url=${encodeURIComponent(ctx.docUrl)}`, { credentials: 'same-origin' });
             if (r1.ok){ return await r1.arrayBuffer(); }
         }catch(_){}
         const r2 = await fetch(ctx.docUrl, { mode: 'cors' });
@@ -290,14 +290,14 @@ async function buildAndDownloadZipClient(ctx){
     })();
     const child = await (async () => {
         const fd = new FormData(); fd.append('baby_id', ctx.babyId);
-        const r = await fetch('../../php/supabase/users/get_child_details.php', { method: 'POST', body: fd });
+        const r = await fetch('php/supabase/users/get_child_details.php', { method: 'POST', body: fd });
         const j = await r.json();
         if (!(j && j.status==='success' && j.data && j.data.length>0)) throw new Error('Child details not found');
         return j.data[0];
     })();
     const immunizations = await (async () => {
         const fd = new FormData(); fd.append('baby_id', ctx.babyId);
-        const r = await fetch('../../php/supabase/users/get_my_immunization_records.php', { method:'POST', body: fd });
+        const r = await fetch('php/supabase/users/get_my_immunization_records.php', { method:'POST', body: fd });
         const j = await r.json();
         if (!(j && j.status==='success' && Array.isArray(j.data))) return [];
         return j.data;
@@ -335,7 +335,7 @@ async function renderBabyCardPdf(child, immunizations){
     function toAbs(p){ if (!p) return p; return p.startsWith('../../') ? p : ('../../' + p.replace(/^\/+/,'') ); }
     let bg = null;
     if (layout && layout.background_path){ bg = await loadBg(toAbs(layout.background_path)); }
-    if (!bg || !bg.naturalWidth){ bg = await loadBg(toAbs((layout && layout.fallback_background_path) || '/ebakunado/assets/images/babycard.jpg')); }
+    if (!bg || !bg.naturalWidth){ bg = await loadBg(toAbs((layout && layout.fallback_background_path) || '../../assets/images/babycard.jpg')); }
     if (!bg || !bg.naturalWidth){ throw new Error('Background not found'); }
     const page = (layout && layout.page) || { orientation:'landscape', unit:'mm', format:'a4' };
     const doc = new jsPDF({ orientation:page.orientation||'landscape', unit:page.unit||'mm', format:page.format||'a4' });
@@ -411,6 +411,6 @@ function loadImage(src){
 }
 </script>
 
-    <script src="../../js/header-handler/profile-menu.js?v=1.0.4" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/header-handler/profile-menu.js?v=1.0.4" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
 </body>

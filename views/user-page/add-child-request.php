@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: ../login.php");
+    header("Location: login");
     exit();
 }
 
@@ -26,13 +26,13 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Child Request</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css?v=1.0.1" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/modals.css" />
-    <link rel="stylesheet" href="../../css/user/add-child-request.css?v=1.0.1" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/modals.css" />
+    <link rel="stylesheet" href="css/user/add-child-request.css?v=1.0.1" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;700" />
@@ -83,13 +83,13 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="child_fname">Baby First Name *</label>
-                            <input value="example" type="text" name="child_fname" placeholder="Enter baby's first name" required>
+                            <input type="text" name="child_fname" placeholder="Enter baby's first name" required>
                         </div>
 
 
                         <div class="form-group">
                             <label for="child_lname">Baby Last Name *</label>
-                            <input value="example" type="text" name="child_lname" placeholder="Enter baby's last name" required>
+                            <input type="text" name="child_lname" placeholder="Enter baby's last name" required>
                         </div>
 
                         <div class="form-group">
@@ -102,9 +102,27 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                             <input type="text" name="place_of_birth" placeholder="Enter place of birth">
                         </div>
 
-                        <div class="form-group">
-                            <label for="child_address">Address *</label>
-                            <input value="<?php echo $place; ?>" type="text" name="child_address" value="<?php echo $place; ?>" required>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Address Details *</label>
+                            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                                <div class="form-group">
+                                    <label for="child_province">Province</label>
+                                    <input type="text" id="child_province" placeholder="Enter province" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="child_city">City/Municipality</label>
+                                    <input type="text" id="child_city" placeholder="Enter city or municipality" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="child_barangay">Barangay</label>
+                                    <input type="text" id="child_barangay" placeholder="Enter barangay" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="child_purok">Purok</label>
+                                    <input type="text" id="child_purok" placeholder="Enter purok or zone" required>
+                                </div>
+                            </div>
+                            <input type="hidden" id="child_address" name="child_address">
                         </div>
 
                         <div class="form-group">
@@ -327,8 +345,8 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
         </div>
     </div>
 
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
     <script>
         // Form submit
         document.getElementById('requestform').addEventListener('submit', function(e) {
@@ -381,7 +399,7 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
             }
         });
         requestModalPrimary?.addEventListener('click', () => {
-            window.location.href = 'children_list.php';
+            window.location.href = 'children';
         });
         requestModalSecondary?.addEventListener('click', () => {
             closeRequestSuccessModal();
@@ -524,10 +542,23 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
             });
         })();
 
+        function setChildAddressValue() {
+            const province = document.getElementById('child_province')?.value.trim() || '';
+            const city = document.getElementById('child_city')?.value.trim() || '';
+            const barangay = document.getElementById('child_barangay')?.value.trim() || '';
+            const purok = document.getElementById('child_purok')?.value.trim() || '';
+            const parts = [purok, barangay, city, province].filter(part => part !== '');
+            const target = document.getElementById('child_address');
+            if (target) {
+                target.value = parts.join(', ');
+            }
+        }
+
         async function Request_Immunization() {
             const formEl = document.getElementById('requestform');
             const fileInput = document.getElementById('babys_card');
             const fileGroup = document.getElementById('fileUploadGroup');
+            setChildAddressValue();
             const formData = new FormData(formEl);
 
             // Start loading
@@ -537,7 +568,7 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
             try {
                 const data = await new Promise(function(resolve, reject) {
                     const xhr = new XMLHttpRequest();
-                    xhr.open('POST', '/ebakunado/php/supabase/users/request_immunization.php');
+                    xhr.open('POST', 'php/supabase/users/request_immunization.php');
 
                     xhr.onload = function() {
                         try {
@@ -651,7 +682,25 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                 const formData = new FormData();
                 formData.append('family_code', familyCode);
 
-                const response = await fetch('/ebakunado/php/supabase/users/claim_child_with_code.php', {
+                const previewRes = await fetch('php/supabase/users/preview_child_by_code.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const previewData = await previewRes.json();
+
+                if (previewData.status !== 'success') {
+                    resultDiv.innerHTML = `<div class="alert alert-error">${previewData.message}</div>`;
+                    return;
+                }
+
+                const confirmMsg = `Claim this child?\n\nChild: ${previewData.child_name || 'Unknown'}\nBaby ID: ${previewData.baby_id || 'N/A'}`;
+                const confirmed = window.confirm(confirmMsg);
+                if (!confirmed) {
+                    resultDiv.innerHTML = '<div class="alert alert-info">Claim cancelled.</div>';
+                    return;
+                }
+
+                const response = await fetch('php/supabase/users/claim_child_with_code.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -661,7 +710,7 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                 if (data.status === 'success') {
                     resultDiv.innerHTML = `
                 <div class="alert alert-success">
-                    <h4 class="alert-title">Child added successfully</h4>
+                    <h4 class="alert-title">Child claimed successfully</h4>
                     <p><strong>Child:</strong> ${data.child_name}</p>
                     <p><strong>Baby ID:</strong> ${data.baby_id}</p>
                     <p>The child has been added to your account. You can now view their records in your dashboard.</p>
@@ -670,7 +719,7 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                     document.getElementById('familyCode').value = '';
 
                     setTimeout(() => {
-                        window.location.href = 'children_list.php';
+                        window.location.href = 'children';
                     }, 3000);
                 } else {
                     resultDiv.innerHTML = `<div class="alert alert-error">${data.message}</div>`;

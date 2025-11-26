@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: ../login.php");
+    header("Location: login");
     exit();
 }
 
@@ -26,20 +26,20 @@ $user_fname = $_SESSION['fname'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Children</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/bhw/profile-management.css?v=1.0.4" />
-    <link rel="stylesheet" href="../../css/modals.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/bhw/profile-management.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/modals.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
     <?php include 'include/header.php'; ?>
     <?php include 'include/sidebar.php'; ?>
-    <script src="../../js/utils/ui-feedback.js"></script>
+    <script src="js/utils/ui-feedback.js"></script>
 
     <main>
         <section class="profile-management-section">
@@ -58,7 +58,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                 <div class="profile-avatar">
                     <img
                         id="profileImage"
-                        src="<?php echo !empty($noprofile) ? htmlspecialchars($noprofile) : '../../assets/images/user-profile.png'; ?>"
+                        src="<?php echo !empty($noprofile) ? htmlspecialchars($noprofile) : 'assets/images/user-profile.png'; ?>"
                         alt="User Profile" />
                     <button class="change-photo-btn" onclick="document.getElementById('photoInput').click()">
                         <span class="material-symbols-rounded">camera_alt</span>
@@ -201,8 +201,8 @@ $user_fname = $_SESSION['fname'] ?? '';
         </section>
     </main>
 
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
     <script>
         // Load profile data on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -211,7 +211,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 
         async function loadProfileData() {
             try {
-                const response = await fetch('/ebakunado/php/supabase/users/get_profile_data.php');
+                const response = await fetch('php/supabase/users/get_profile_data.php');
                 const data = await response.json();
 
                 if (data.status === 'success') {
@@ -259,7 +259,7 @@ $user_fname = $_SESSION['fname'] ?? '';
             formData.append('photo', file);
 
             try {
-                const response = await fetch('/ebakunado/php/supabase/users/upload_profile_photo.php', {
+                const response = await fetch('php/supabase/users/upload_profile_photo.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -297,7 +297,7 @@ $user_fname = $_SESSION['fname'] ?? '';
             const formData = new FormData(this);
 
             try {
-                const response = await fetch('/ebakunado/php/supabase/users/update_profile.php', {
+                const response = await fetch('php/supabase/users/update_profile.php', {
                     method: 'POST',
                     body: formData
                 });

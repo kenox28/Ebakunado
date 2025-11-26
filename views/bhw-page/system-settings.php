@@ -12,9 +12,9 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>System Settings</title>
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
 </head>
 <body>
     <?php include 'include/header.php'; ?>
@@ -120,7 +120,7 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
         document.addEventListener('DOMContentLoaded', function() { loadCurrentSettings(); });
         async function loadCurrentSettings() {
             try {
-                const response = await fetch('/ebakunado/php/supabase/bhw/get_system_settings.php');
+                const response = await fetch('php/supabase/bhw/get_system_settings.php');
                 const data = await response.json();
                 if (data.status === 'success') {
                     document.getElementById('email_username').value = data.settings.email_username || '';
@@ -155,7 +155,7 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
             e.preventDefault();
             const formData = new FormData(this);
             try {
-                const response = await fetch('/ebakunado/php/supabase/bhw/save_system_settings.php', { method: 'POST', body: formData });
+                const response = await fetch('php/supabase/bhw/save_system_settings.php', { method: 'POST', body: formData });
                 const data = await response.json();
                 if (data.status === 'success') { showSuccess('System settings saved successfully! All features will use the new configuration.'); loadCurrentSettings(); }
                 else { showError('Failed to save settings: ' + data.message); }
@@ -167,7 +167,7 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
             const resultsDiv = document.getElementById('testResults'); resultsDiv.style.display = 'none';
             try {
                 const formData = new FormData(); formData.append('test_type', 'email'); formData.append('email_username', document.getElementById('email_username').value); formData.append('email_password', document.getElementById('email_password').value);
-                const response = await fetch('/ebakunado/php/supabase/bhw/test_system_config.php', { method: 'POST', body: formData });
+                const response = await fetch('php/supabase/bhw/test_system_config.php', { method: 'POST', body: formData });
                 const data = await response.json();
                 if (data.status === 'success') { resultsDiv.className = 'test-results success'; resultsDiv.innerHTML = '✅ Email configuration test successful!<br>' + data.message; resultsDiv.style.display = 'block'; }
                 else { resultsDiv.className = 'test-results error'; resultsDiv.innerHTML = '❌ Email test failed: ' + data.message; resultsDiv.style.display = 'block'; }
@@ -180,7 +180,7 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
             const resultsDiv = document.getElementById('testResults'); resultsDiv.style.display = 'none';
             try {
                 const formData = new FormData(); formData.append('test_type', 'sms'); formData.append('sms_api_key', document.getElementById('sms_api_key').value); formData.append('sms_device_id', document.getElementById('sms_device_id').value);
-                const response = await fetch('/ebakunado/php/supabase/bhw/test_system_config.php', { method: 'POST', body: formData });
+                const response = await fetch('php/supabase/bhw/test_system_config.php', { method: 'POST', body: formData });
                 const data = await response.json();
                 if (data.status === 'success') { resultsDiv.className = 'test-results success'; resultsDiv.innerHTML = '✅ SMS configuration test successful!<br>' + data.message; resultsDiv.style.display = 'block'; }
                 else { resultsDiv.className = 'test-results error'; resultsDiv.innerHTML = '❌ SMS test failed: ' + data.message; resultsDiv.style.display = 'block'; }
@@ -193,7 +193,7 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
             const resultsDiv = document.getElementById('testResults'); resultsDiv.style.display = 'none';
             try {
                 const formData = new FormData(); formData.append('test_type', 'create_account');
-                const response = await fetch('/ebakunado/php/supabase/bhw/test_system_config.php', { method: 'POST', body: formData });
+                const response = await fetch('php/supabase/bhw/test_system_config.php', { method: 'POST', body: formData });
                 const data = await response.json();
                 if (data.status === 'success') { resultsDiv.className = 'test-results success'; resultsDiv.innerHTML = '✅ Create Account test successful!<br>' + data.message; resultsDiv.style.display = 'block'; }
                 else { resultsDiv.className = 'test-results error'; resultsDiv.innerHTML = '❌ Create Account test failed: ' + data.message; resultsDiv.style.display = 'block'; }
@@ -206,7 +206,7 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
             const resultsDiv = document.getElementById('testResults'); resultsDiv.style.display = 'none';
             try {
                 const formData = new FormData(); formData.append('test_type', 'forgot_password');
-                const response = await fetch('/ebakunado/php/supabase/bhw/test_system_config.php', { method: 'POST', body: formData });
+                const response = await fetch('php/supabase/bhw/test_system_config.php', { method: 'POST', body: formData });
                 const data = await response.json();
                 if (data.status === 'success') { resultsDiv.className = 'test-results success'; resultsDiv.innerHTML = '✅ Forgot Password test successful!<br>' + data.message; resultsDiv.style.display = 'block'; }
                 else { resultsDiv.className = 'test-results error'; resultsDiv.innerHTML = '❌ Forgot Password test failed: ' + data.message; resultsDiv.style.display = 'block'; }
@@ -218,7 +218,7 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
             const button = event.target; const originalText = button.textContent; button.disabled = true; button.textContent = 'Testing...';
             const resultsDiv = document.getElementById('testResults'); resultsDiv.style.display = 'none';
             try {
-                const response = await fetch('/ebakunado/php/supabase/bhw/send_schedule_notifications.php');
+                const response = await fetch('php/supabase/bhw/send_schedule_notifications.php');
                 const data = await response.json();
                 if (data.status === 'success') { resultsDiv.className = 'test-results success'; resultsDiv.innerHTML = '✅ Vaccination reminder system test successful!<br>' + 'Notifications sent: ' + data.notifications_sent + '<br>' + 'Date checked: ' + data.date; resultsDiv.style.display = 'block'; }
                 else { resultsDiv.className = 'test-results error'; resultsDiv.innerHTML = '❌ Vaccination reminder test failed: ' + data.message; resultsDiv.style.display = 'block'; }
@@ -259,7 +259,7 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
         }
         </script>
     </main>
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
 </body>
 </html>
 

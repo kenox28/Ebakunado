@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['super_admin_id'])) {
-    header("Location: ../login.php");
+    header("Location: login");
     exit();
 }
 ?>
@@ -14,12 +14,12 @@ if (!isset($_SESSION['super_admin_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BHW Management</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/super-admin/header.css" />
-    <link rel="stylesheet" href="../../css/super-admin/sidebar.css" />
-    <link rel="stylesheet" href="../../css/super-admin/bhw-management.css" />
-    <link rel="stylesheet" href="../../css/super-admin/table-style.css?v=1.0.4" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/super-admin/header.css" />
+    <link rel="stylesheet" href="css/super-admin/sidebar.css" />
+    <link rel="stylesheet" href="css/super-admin/bhw-management.css" />
+    <link rel="stylesheet" href="css/super-admin/table-style.css?v=1.0.4" />
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -105,11 +105,11 @@ if (!isset($_SESSION['super_admin_id'])) {
             </div>
     </main>
 
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
-    <script src="../../js/supabase_js/superadmin/common.js?v=1.0.4"></script>
-    <script src="../../js/supabase_js/superadmin/bhw-management.js?v=1.0.3"></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
+    <script src="js/supabase_js/superadmin/common.js?v=1.0.4"></script>
+    <script src="js/supabase_js/superadmin/bhw-management.js?v=1.0.3"></script>
     <script>
         // Search clear toggle for BHW
         (function() {

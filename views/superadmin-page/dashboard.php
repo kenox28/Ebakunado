@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['super_admin_id'])) {
-    header("Location: ../login.php");
+    header("Location: login");
     exit();
 }
 ?>
@@ -14,12 +14,12 @@ if (!isset($_SESSION['super_admin_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/super-admin/header.css" />
-    <link rel="stylesheet" href="../../css/super-admin/sidebar.css" />
-    <link rel="stylesheet" href="../../css/super-admin/dashboard.css?v=1.0.4" />
-    <link rel="stylesheet" href="../../css/super-admin/table-style.css?v=1.0.2">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/super-admin/header.css" />
+    <link rel="stylesheet" href="css/super-admin/sidebar.css" />
+    <link rel="stylesheet" href="css/super-admin/dashboard.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/super-admin/table-style.css?v=1.0.2">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -51,7 +51,7 @@ if (!isset($_SESSION['super_admin_id'])) {
                     </div>
                     <div class="card-bottom">
                         <span class="trend up" id="usersTrend">Loading...</span>
-                        <a class="card-link" href="../../views/superadmin-page/user-management.php">
+                        <a class="card-link" href="superadmin-users">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -70,7 +70,7 @@ if (!isset($_SESSION['super_admin_id'])) {
                     </div>
                     <div class="card-bottom">
                         <span class="trend up" id="bhwTrend">Loading...</span>
-                        <a class="card-link" href="../../views/superadmin-page/bhw-management.php">
+                        <a class="card-link" href="superadmin-bhw">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -89,7 +89,7 @@ if (!isset($_SESSION['super_admin_id'])) {
                     </div>
                     <div class="card-bottom">
                         <span class="trend up" id="midwivesTrend">Loading...</span>
-                        <a class="card-link" href="../../views/superadmin-page/midwife-management.php">
+                        <a class="card-link" href="superadmin-midwives">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -108,7 +108,7 @@ if (!isset($_SESSION['super_admin_id'])) {
                     </div>
                     <div class="card-bottom">
                         <span class="trend up" id="locationsTrend">Loading...</span>
-                        <a class="card-link" href="../../views/superadmin-page/location-management.php">
+                        <a class="card-link" href="superadmin-locations">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -127,7 +127,7 @@ if (!isset($_SESSION['super_admin_id'])) {
                     </div>
                     <div class="card-bottom">
                         <span class="trend up" id="logsTrend">Loading...</span>
-                        <a class="card-link" href="../../views/superadmin-page/activity-logs.php">
+                        <a class="card-link" href="superadmin-activity-logs">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -164,11 +164,11 @@ if (!isset($_SESSION['super_admin_id'])) {
         </section>
     </main>
 
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
-    <script src="../../js/supabase_js/superadmin/common.js?v=1.0.4"></script>
-    <script src="../../js/supabase_js/superadmin/dashboard.js?v=1.0.4"></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
+    <script src="js/supabase_js/superadmin/common.js?v=1.0.4"></script>
+    <script src="js/supabase_js/superadmin/dashboard.js?v=1.0.4"></script>
 </body>
 
 </html>

@@ -15,6 +15,7 @@ if ($user_id) {
 } else {
     echo "<!-- Session: NOT FOUND - Available sessions: " . implode(', ', array_keys($_SESSION)) . " -->";
 }
+$defaultStatus = (isset($_GET['view']) && $_GET['view'] === 'added') ? 'pendingcode' : 'pending';
 ?>
 
 <!DOCTYPE html>
@@ -24,14 +25,14 @@ if ($user_id) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Approval</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <!-- <link rel="stylesheet" href="../../css/main.css?v=20251106" /> -->
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/bhw/pending-approval-style.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <!-- <link rel="stylesheet" href="css/main.css?v=20251106" /> -->
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/skeleton-loading.css" />
+    <link rel="stylesheet" href="css/bhw/pending-approval-style.css" />
 </head>
 
 <body>
@@ -59,9 +60,9 @@ if ($user_id) {
                         </div>
                         <div class="select-with-icon">
                             <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
-                            <select id="paStatus">
-                                <option value="pending">Pending</option>
-                                <option value="transfer">Transfer</option>
+                            <select id="paStatus" data-default-status="<?php echo htmlspecialchars($defaultStatus, ENT_QUOTES); ?>">
+                                <option value="pending" <?php echo $defaultStatus === 'pending' ? 'selected' : ''; ?>>Pending Requests</option>
+                                <option value="pendingcode" <?php echo $defaultStatus === 'pendingcode' ? 'selected' : ''; ?>>Added Children</option>
                             </select>
                         </div>
                         <button id="paClear" type="button" class="btn btn-secondary">Clear</button>
@@ -70,7 +71,7 @@ if ($user_id) {
 
                 <div class="table-container">
                     <table class="table table-hover" id="childhealthrecord">
-                        <thead>
+                        <thead id="childTableHead">
                             <tr>
                                 <th>Child Name</th>
                                 <th>Birth Date</th>
@@ -322,9 +323,9 @@ if ($user_id) {
         <img id="childImageLarge" alt="Baby Card Full View" src="" />
     </div>
 
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script>
         function getPendingColsConfig() {
@@ -359,6 +360,42 @@ if ($user_id) {
             ];
         }
 
+        function getAddedChildColsConfig() {
+            return [{
+                    type: 'text',
+                    widthClass: 'skeleton-col-2'
+                }, // Family Code
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-1'
+                }, // Child Name
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-2'
+                }, // Gender
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-3'
+                }, // Birth Date
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-4'
+                }, // Place of Birth
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-5'
+                }, // Mother's Name
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-3'
+                }, // Father's Name
+                {
+                    type: 'text',
+                    widthClass: 'skeleton-col-2'
+                } // Address
+            ];
+        }
+
         function formatDate(dateStr) {
             if (!dateStr) return '';
             const d = new Date(dateStr);
@@ -377,6 +414,7 @@ if ($user_id) {
             document.head.appendChild(style);
         })();
 
+        const defaultStatus = "<?php echo $defaultStatus; ?>";
         const paState = {
             page: 1,
             limit: 10,
@@ -394,7 +432,11 @@ if ($user_id) {
             const pageInfo = document.getElementById('paPageInfo');
 
             const search = (document.getElementById('paSearch').value || '').trim();
-            const status = (document.getElementById('paStatus').value || 'pending');
+            const statusSelect = document.getElementById('paStatus');
+            const status = (statusSelect && statusSelect.value) ? statusSelect.value : defaultStatus;
+            const isAddedChildView = status === 'pendingcode';
+            const tableHead = document.getElementById('childTableHead');
+            const columnCount = isAddedChildView ? 8 : 7;
             const limit = paState.limit;
 
             paState.page = page;
@@ -410,7 +452,7 @@ if ($user_id) {
 
             if (!opts || !opts.keep) {
                 if (typeof applyTableSkeleton === 'function') {
-                    applyTableSkeleton(body, getPendingColsConfig(), limit);
+                    applyTableSkeleton(body, isAddedChildView ? getAddedChildColsConfig() : getPendingColsConfig(), limit);
                 }
             }
 
@@ -421,17 +463,40 @@ if ($user_id) {
                     status,
                     search
                 });
-                const res = await fetch('../../php/supabase/bhw/pending_chr.php?' + qs.toString());
+                const res = await fetch('php/supabase/bhw/pending_chr.php?' + qs.toString());
                 const data = await res.json();
+
+                if (tableHead) {
+                    tableHead.innerHTML = isAddedChildView ?
+                        `<tr>
+                            <th>Family Code</th>
+                            <th>Child Name</th>
+                            <th>Gender</th>
+                            <th>Birth Date</th>
+                            <th>Place of Birth</th>
+                            <th>Mother's Name</th>
+                            <th>Father's Name</th>
+                            <th>Address</th>
+                        </tr>` :
+                        `<tr>
+                            <th>Child Name</th>
+                            <th>Birth Date</th>
+                            <th>Place of Birth</th>
+                            <th>Mother's Name</th>
+                            <th>Father's Name</th>
+                            <th>Address</th>
+                            <th>Action</th>
+                        </tr>`;
+                }
 
                 if (data.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
                         renderTableMessage(body, 'Failed to load data. Please try again.', {
-                            colspan: 7,
+                            colspan: columnCount,
                             kind: 'error'
                         });
                     } else {
-                        body.innerHTML = '<tr class="message-row error"><td colspan="7">Failed to load data. Please try again.</td></tr>';
+                        body.innerHTML = `<tr class="message-row error"><td colspan="${columnCount}">Failed to load data. Please try again.</td></tr>`;
                     }
                     updatePaPager({
                         page,
@@ -447,10 +512,10 @@ if ($user_id) {
                 if (count === 0) {
                     if (typeof renderTableMessage === 'function') {
                         renderTableMessage(body, 'No records found', {
-                            colspan: 7
+                            colspan: columnCount
                         });
                     } else {
-                        body.innerHTML = '<tr class="message-row"><td colspan="7">No records found</td></tr>';
+                        body.innerHTML = `<tr class="message-row"><td colspan="${columnCount}">No records found</td></tr>`;
                     }
                     updatePaPager({
                         page: data.page || page,
@@ -464,7 +529,23 @@ if ($user_id) {
                 rowsData.forEach(item => {
                     const fullName = `${item.child_fname || ''} ${item.child_lname || ''}`.trim();
                     const birthDateFmt = formatDate(item.child_birth_date);
-                    rows += `<tr>
+                    const familyCode = item.user_id || '-';
+                    if (isAddedChildView) {
+                        rows += `<tr>
+                            <td hidden>${item.id || ''}</td>
+                            <td hidden>${item.user_id || ''}</td>
+                            <td hidden>${item.baby_id || ''}</td>
+                            <td>${familyCode}</td>
+                            <td>${fullName || '-'}</td>
+                            <td>${item.child_gender || ''}</td>
+                            <td>${birthDateFmt}</td>
+                            <td>${item.place_of_birth || ''}</td>
+                            <td>${item.mother_name || ''}</td>
+                            <td>${item.father_name || ''}</td>
+                            <td>${item.address || ''}</td>
+                        </tr>`;
+                    } else {
+                        rows += `<tr>
                             <td hidden>${item.id || ''}</td>
                             <td hidden>${item.user_id || ''}</td>
                             <td hidden>${item.baby_id || ''}</td>
@@ -479,6 +560,7 @@ if ($user_id) {
                                 View</button>
                             </td>
                         </tr>`;
+                    }
                 });
                 body.innerHTML = rows;
 
@@ -490,11 +572,11 @@ if ($user_id) {
             } catch (e) {
                 if (typeof renderTableMessage === 'function') {
                     renderTableMessage(body, 'Failed to load data. Please try again.', {
-                        colspan: 9,
+                        colspan: columnCount,
                         kind: 'error'
                     });
                 } else {
-                    body.innerHTML = '<tr class="message-row error"><td colspan="9">Failed to load data. Please try again.</td></tr>';
+                    body.innerHTML = `<tr class="message-row error"><td colspan="${columnCount}">Failed to load data. Please try again.</td></tr>`;
                 }
                 updatePaPager({
                     page,
@@ -549,7 +631,7 @@ if ($user_id) {
                 applyTableSkeleton(body, getPendingColsConfig(), 10);
             }
             try {
-                const res = await fetch('../../php/supabase/bhw/pending_chr.php');
+                const res = await fetch('php/supabase/bhw/pending_chr.php');
                 const data = await res.json();
                 if (data.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
@@ -613,7 +695,7 @@ if ($user_id) {
         async function viewChildInformation(baby_id) {
             formData = new FormData();
             formData.append('baby_id', baby_id);
-            const response = await fetch('../../php/supabase/bhw/child_information.php', {
+            const response = await fetch('php/supabase/bhw/child_information.php', {
                 method: 'POST',
                 body: formData
             });
@@ -622,6 +704,11 @@ if ($user_id) {
                 console.log(data.data);
 
                 originalChildData = data.data[0];
+                const isAddedChild = (String(originalChildData.status || '').toLowerCase() === 'pendingcode');
+                const actionButtons = document.querySelector('.childinfo-actions');
+                if (actionButtons) {
+                    actionButtons.style.display = isAddedChild ? 'none' : '';
+                }
 
                 document.querySelector('#childName').value = data.data[0].child_fname + ' ' + data.data[0].child_lname;
                 document.querySelector('#childGender').value = data.data[0].child_gender;
@@ -722,7 +809,7 @@ if ($user_id) {
                 applyTableSkeleton(tbody, getVaccinationColsConfig(), 14);
             }
             try {
-                const response = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
+                const response = await fetch('php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
                 const data = await response.json();
                 if (!data || data.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
@@ -798,7 +885,7 @@ if ($user_id) {
         async function acceptRecord(baby_id) {
             const formData = new FormData();
             formData.append('baby_id', baby_id);
-            const response = await fetch('../../php/supabase/bhw/accept_chr.php', {
+            const response = await fetch('php/supabase/bhw/accept_chr.php', {
                 method: 'POST',
                 body: formData
             });
@@ -818,7 +905,7 @@ if ($user_id) {
 
             const formData = new FormData();
             formData.append('baby_id', baby_id);
-            const response = await fetch('../../php/supabase/bhw/reject_chr.php', {
+            const response = await fetch('php/supabase/bhw/reject_chr.php', {
                 method: 'POST',
                 body: formData
             });
@@ -833,6 +920,10 @@ if ($user_id) {
 
 
         document.addEventListener('DOMContentLoaded', () => {
+            const statusSelect = document.getElementById('paStatus');
+            if (statusSelect) {
+                statusSelect.value = defaultStatus;
+            }
             document.getElementById('paPrevBtn').addEventListener('click', () => {
                 if (paState.loading) return;
                 const nextPage = Math.max(1, (paState.page || 1) - 1);
@@ -855,7 +946,9 @@ if ($user_id) {
             }));
             document.getElementById('paClear').addEventListener('click', () => {
                 document.getElementById('paSearch').value = '';
-                document.getElementById('paStatus').value = 'pending';
+                if (statusSelect) {
+                    statusSelect.value = defaultStatus;
+                }
                 loadPending(1, {
                     keep: true
                 });
@@ -1089,7 +1182,7 @@ if ($user_id) {
                     formData.append(key, updateData[key]);
                 });
 
-                const response = await fetch('../../php/supabase/bhw/update_child_info.php', {
+                const response = await fetch('php/supabase/bhw/update_child_info.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -1134,12 +1227,12 @@ if ($user_id) {
         }
 
         async function logoutBhw() {
-            const response = await fetch('../../php/supabase/bhw/logout.php', {
+            const response = await fetch('php/supabase/bhw/logout.php', {
                 method: 'POST'
             });
             const data = await response.json();
             if (data.status === 'success') {
-                window.location.href = '../../views/auth/login.php';
+                window.location.href = 'login';
             } else {
                 alert('Logout failed: ' + data.message);
             }
@@ -1194,7 +1287,7 @@ if ($user_id) {
             formData.append('baby_id', baby_id);
 
             try {
-                const response = await fetch('../../php/supabase/bhw/child_information.php', {
+                const response = await fetch('php/supabase/bhw/child_information.php', {
                     method: 'POST',
                     body: formData
                 });

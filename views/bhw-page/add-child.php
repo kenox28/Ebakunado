@@ -17,13 +17,13 @@ if ($user_types != 'midwifes') {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Child</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/modals.css" />
-    <link rel="stylesheet" href="../../css/bhw/add-child.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/modals.css" />
+    <link rel="stylesheet" href="css/bhw/add-child.css" />
 </head>
 
 <body>
@@ -66,27 +66,19 @@ if ($user_types != 'midwifes') {
 
                         <div class="form-group">
                             <label for="province">Province *</label>
-                            <select id="province" name="province" required onchange="loadCities()">
-                                <option value="">Select Province</option>
-                            </select>
+                            <input type="text" id="province" name="province" placeholder="Enter province" required>
                         </div>
                         <div class="form-group">
                             <label for="city_municipality">City/Municipality *</label>
-                            <select id="city_municipality" name="city_municipality" required onchange="loadBarangays()">
-                                <option value="">Select City/Municipality</option>
-                            </select>
+                            <input type="text" id="city_municipality" name="city_municipality" placeholder="Enter city or municipality" required>
                         </div>
                         <div class="form-group">
                             <label for="barangay">Barangay *</label>
-                            <select id="barangay" name="barangay" required onchange="loadPuroks()">
-                                <option value="">Select Barangay</option>
-                            </select>
+                            <input type="text" id="barangay" name="barangay" placeholder="Enter barangay" required>
                         </div>
                         <div class="form-group">
                             <label for="purok">Purok</label>
-                            <select id="purok" name="purok">
-                                <option value="">Select Purok</option>
-                            </select>
+                            <input type="text" id="purok" name="purok" placeholder="Enter purok">
                         </div>
 
                         <div class="form-group">
@@ -234,8 +226,8 @@ if ($user_types != 'midwifes') {
             </div>
         </div>
 
-        <script src="../../js/header-handler/profile-menu.js" defer></script>
-        <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
+        <script src="js/header-handler/profile-menu.js" defer></script>
+        <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
         <script>
             document.querySelectorAll('input[type="radio"]').forEach(radio => {
                 radio.addEventListener('change', function() {
@@ -306,98 +298,6 @@ if ($user_types != 'midwifes') {
             });
             addChildModalDone?.addEventListener('click', closeAddChildModal);
 
-            document.addEventListener('DOMContentLoaded', function() {
-                loadProvinces();
-            });
-
-            async function loadProvinces() {
-                try {
-                    const response = await fetch('/ebakunado/php/supabase/admin/get_places.php?type=provinces');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const provinces = await response.json();
-                    const provinceSelect = document.getElementById("province");
-                    provinceSelect.innerHTML = '<option value="">Select Province</option>';
-                    if (Array.isArray(provinces)) {
-                        provinces.forEach((provinceObj) => {
-                            const option = document.createElement("option");
-                            option.value = provinceObj.province;
-                            option.textContent = provinceObj.province;
-                            provinceSelect.appendChild(option);
-                        });
-                    }
-                } catch (error) {
-                    console.error("Error loading provinces:", error);
-                }
-            }
-
-            async function loadCities() {
-                const province = document.getElementById("province").value;
-                const citySelect = document.getElementById("city_municipality");
-                const barangaySelect = document.getElementById("barangay");
-                const purokSelect = document.getElementById("purok");
-                citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
-                barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-                purokSelect.innerHTML = '<option value="">Select Purok</option>';
-                if (!province) return;
-                try {
-                    const response = await fetch(`/ebakunado/php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(province)}`);
-                    const cities = await response.json();
-                    cities.forEach((cityObj) => {
-                        const option = document.createElement("option");
-                        option.value = cityObj.city_municipality;
-                        option.textContent = cityObj.city_municipality;
-                        citySelect.appendChild(option);
-                    });
-                } catch (error) {
-                    console.error("Error loading cities:", error);
-                }
-            }
-
-            async function loadBarangays() {
-                const province = document.getElementById("province").value;
-                const city = document.getElementById("city_municipality").value;
-                const barangaySelect = document.getElementById("barangay");
-                const purokSelect = document.getElementById("purok");
-                barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-                purokSelect.innerHTML = '<option value="">Select Purok</option>';
-                if (!province || !city) return;
-                try {
-                    const response = await fetch(`/ebakunado/php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(province)}&city_municipality=${encodeURIComponent(city)}`);
-                    const barangays = await response.json();
-                    barangays.forEach((barangayObj) => {
-                        const option = document.createElement("option");
-                        option.value = barangayObj.barangay;
-                        option.textContent = barangayObj.barangay;
-                        barangaySelect.appendChild(option);
-                    });
-                } catch (error) {
-                    console.error("Error loading barangays:", error);
-                }
-            }
-
-            async function loadPuroks() {
-                const province = document.getElementById("province").value;
-                const city = document.getElementById("city_municipality").value;
-                const barangay = document.getElementById("barangay").value;
-                const purokSelect = document.getElementById("purok");
-                purokSelect.innerHTML = '<option value="">Select Purok</option>';
-                if (!province || !city || !barangay) return;
-                try {
-                    const response = await fetch(`/ebakunado/php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(province)}&city_municipality=${encodeURIComponent(city)}&barangay=${encodeURIComponent(barangay)}`);
-                    const puroks = await response.json();
-                    puroks.forEach((purokObj) => {
-                        const option = document.createElement("option");
-                        option.value = purokObj.purok;
-                        option.textContent = purokObj.purok;
-                        purokSelect.appendChild(option);
-                    });
-                } catch (error) {
-                    console.error("Error loading puroks:", error);
-                }
-            }
-
             document.getElementById('addChildForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const submitBtn = document.querySelector('.submit-btn');
@@ -406,7 +306,7 @@ if ($user_types != 'midwifes') {
                 submitBtn.textContent = 'Adding Child...';
                 try {
                     const formData = new FormData(this);
-                    const response = await fetch('/ebakunado/php/supabase/shared/create_family_code.php', {
+                    const response = await fetch('php/supabase/shared/create_family_code.php', {
                         method: 'POST',
                         body: formData
                     });
@@ -425,11 +325,6 @@ if ($user_types != 'midwifes') {
                         this.reset();
                         document.querySelectorAll('.radio-option').forEach(option => option.classList.remove('selected'));
                         document.querySelectorAll('.checkbox-option').forEach(option => option.classList.remove('checked'));
-                        document.getElementById('province').innerHTML = '<option value="">Select Province</option>';
-                        document.getElementById('city_municipality').innerHTML = '<option value="">Select City/Municipality</option>';
-                        document.getElementById('barangay').innerHTML = '<option value="">Select Barangay</option>';
-                        document.getElementById('purok').innerHTML = '<option value="">Select Purok</option>';
-                        loadProvinces();
                         document.querySelector('input[type="radio"]').closest('.radio-option').classList.add('selected');
                     } else {
                         resultDiv.className = 'result-message result-error';

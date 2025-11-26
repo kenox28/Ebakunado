@@ -178,7 +178,7 @@ try {
     echo json_encode([
         'status' => 'success',
         'message' => 'Successfully switched to ' . ucfirst($target_role) . ' role',
-        'redirect_url' => '../../views/bhw-page/dashboard.php'
+        'redirect_url' => 'health-dashboard'
     ]);
     
 } catch (Exception $e) {

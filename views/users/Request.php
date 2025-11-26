@@ -270,9 +270,27 @@
                     <input type="text" name="place_of_birth" placeholder="Enter place of birth">
                 </div>
                 
-                <div class="form-group">
-                    <label for="child_address">Address *</label>
-                    <input value="<?php echo $place; ?>" type="text" name="child_address" value="<?php echo $place; ?>" required>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label>Address Details *</label>
+                    <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+                        <div class="form-group">
+                            <label for="child_province">Province</label>
+                            <input type="text" id="child_province" placeholder="Enter province" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="child_city">City/Municipality</label>
+                            <input type="text" id="child_city" placeholder="Enter city or municipality" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="child_barangay">Barangay</label>
+                            <input type="text" id="child_barangay" placeholder="Enter barangay" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="child_purok">Purok</label>
+                            <input type="text" id="child_purok" placeholder="Enter purok or zone" required>
+                        </div>
+                    </div>
+                    <input type="hidden" id="child_address" name="child_address">
                 </div>
                 
                 <div class="form-group">
@@ -441,10 +459,23 @@ document.querySelector('#requestform').addEventListener('submit', function(e) {
     Request_Immunization();
 });
 
+function setChildAddressValue() {
+    const province = document.getElementById('child_province')?.value.trim() || '';
+    const city = document.getElementById('child_city')?.value.trim() || '';
+    const barangay = document.getElementById('child_barangay')?.value.trim() || '';
+    const purok = document.getElementById('child_purok')?.value.trim() || '';
+    const parts = [purok, barangay, city, province].filter(Boolean);
+    const target = document.getElementById('child_address');
+    if (target) {
+        target.value = parts.join(', ');
+    }
+}
+
 async function Request_Immunization() {
+    setChildAddressValue();
     const formData = new FormData(requestform);
     // const doc = await fetch('/ebakunado/php/users/request_immunization.php', {
-    const doc = await fetch('/ebakunado/php/supabase/users/request_immunization.php', {
+    const doc = await fetch('../../php/supabase/users/request_immunization.php', {
         method: 'POST',
         body: formData
     });
@@ -487,8 +518,26 @@ async function claimChildWithCode() {
     try {
         const formData = new FormData();
         formData.append('family_code', familyCode);
+
+        const previewRes = await fetch('../../php/supabase/users/preview_child_by_code.php', {
+            method: 'POST',
+            body: formData
+        });
+        const previewData = await previewRes.json();
+
+        if (previewData.status !== 'success') {
+            resultDiv.innerHTML = `<div style="color: #f44336; padding: 10px; background: #ffebee; border-radius: 4px;">❌ ${previewData.message}</div>`;
+            return;
+        }
+
+        const confirmMsg = `Claim this child?\n\nChild: ${previewData.child_name || 'Unknown'}\nBaby ID: ${previewData.baby_id || 'N/A'}`;
+        const confirmed = window.confirm(confirmMsg);
+        if (!confirmed) {
+            resultDiv.innerHTML = '<div style="color: #1976d2; padding: 10px; background: #e3f2fd; border-radius: 4px;">Claim cancelled.</div>';
+            return;
+        }
         
-        const response = await fetch('/ebakunado/php/supabase/users/claim_child_with_code.php', {
+        const response = await fetch('../../php/supabase/users/claim_child_with_code.php', {
             method: 'POST',
             body: formData
         });
@@ -498,7 +547,7 @@ async function claimChildWithCode() {
         if (data.status === 'success') {
             resultDiv.innerHTML = `
                 <div style="color: #2e7d32; padding: 15px; background: #e8f5e8; border-radius: 4px;">
-                    <h4 style="margin: 0 0 10px 0;">✅ Child Added Successfully!</h4>
+                    <h4 style="margin: 0 0 10px 0;">✅ Child Claimed Successfully!</h4>
                     <p style="margin: 0 0 5px 0;"><strong>Child:</strong> ${data.child_name}</p>
                     <p style="margin: 0 0 5px 0;"><strong>Baby ID:</strong> ${data.baby_id}</p>
                     <p style="margin: 0;">The child has been added to your account. You can now view their records in your dashboard.</p>

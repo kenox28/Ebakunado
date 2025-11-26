@@ -60,12 +60,15 @@ if (isset($_SESSION['user_type'])) {
     $user_type = null;
 }
 
+// Use clean routes instead of direct file paths
 if ($user_type === 'bhw' || $user_type === 'midwife') {
-    $redirect_url = "../../views/bhw-page/dashboard.php";
+    $redirect_url = "health-dashboard";
 } else if ($user_type === 'admin') {
-    $redirect_url = "../../views/admin/home.php";
+    $redirect_url = "admin-dashboard";
 } else if ($user_type === 'super_admin') {
-    $redirect_url = "../../views/superadmin/dashboard.php";
+    $redirect_url = "superadmin-dashboard";
+} else if ($user_type === 'user') {
+    $redirect_url = "dashboard";
 }
 
 if ($redirect_url) {
@@ -79,12 +82,12 @@ if ($redirect_url) {
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-	<link rel="stylesheet" href="../../css/fonts.css" />
-	<link rel="stylesheet" href="../../css/modals.css" />
-	<link rel="stylesheet" href="../../css/variables.css" />
-	<link rel="stylesheet" href="../../css/login-style.css?v=1.0.2" />
-	<link rel="stylesheet" href="../../css/queries.css?v=1.0.1" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+	<link rel="stylesheet" href="css/fonts.css" />
+	<link rel="stylesheet" href="css/modals.css" />
+	<link rel="stylesheet" href="css/variables.css" />
+	<link rel="stylesheet" href="css/login-style.css?v=1.0.2" />
+	<link rel="stylesheet" href="css/queries.css?v=1.0.1" />
 	<style>
 		/* Forgot Password Form Styling */
 		#forgotPasswordForm {
@@ -125,7 +128,7 @@ if ($redirect_url) {
 
 <body class="page-login">
 	<main class="auth-main">
-		<a class="back-to-home" href="../landing-page/landing-page.html">
+		<a class="back-to-home" href="home">
 			&larr; Back to Homepage
 		</a>
 
@@ -135,7 +138,7 @@ if ($redirect_url) {
 					<header class="auth-header">
 						<img
 							class="brand-logo"
-							src="../../assets/images/white-ebakunado-logo-with-label.png"
+							src="assets/images/white-ebakunado-logo-with-label.png"
 							alt="Ebakunado Logo" />
 						<div class="brand-text">
 							<h2 class="brand-title">Immunization Data Management</h2>
@@ -223,8 +226,8 @@ if ($redirect_url) {
 		</section>
 	</main>
 
-		<script src="../../js/auth-handler/password-toggle.js"></script>
-		<script src="../../js/utils/ui-feedback.js"></script>
+		<script src="js/auth-handler/password-toggle.js"></script>
+		<script src="js/utils/ui-feedback.js"></script>
 		
 		<script>
 		// Check if user is already logged in (via JWT token in localStorage or cookie)
@@ -238,22 +241,22 @@ if ($redirect_url) {
 			
 			if (jwtToken) {
 				// Verify token and get user type
-				fetch('../../php/supabase/test_jwt.php?action=verify&token=' + encodeURIComponent(jwtToken))
+				fetch('php/supabase/test_jwt.php?action=verify&token=' + encodeURIComponent(jwtToken))
 					.then(res => res.json())
 					.then(data => {
 						if (data.status === 'success' && data.payload) {
 							const userType = data.payload.user_type;
 							let redirectUrl = null;
 							
-							// Determine redirect URL based on user type
+							// Determine redirect URL based on user type, using clean routes
 							if (userType === 'bhw' || userType === 'midwife') {
-								redirectUrl = '../../views/bhw-page/dashboard.php';
+								redirectUrl = 'health-dashboard';
 							} else if (userType === 'admin') {
-								redirectUrl = '../../views/admin/home.php';
+								redirectUrl = 'admin-dashboard';
 							} else if (userType === 'super_admin') {
-								redirectUrl = '../../views/superadmin/dashboard.php';
+								redirectUrl = 'superadmin-dashboard';
 							} else if (userType === 'user') {
-								redirectUrl = '../../views/user-page/dashboard.php';
+								redirectUrl = 'dashboard';
 							}
 							
 							if (redirectUrl) {
@@ -272,7 +275,7 @@ if ($redirect_url) {
 		})();
 		</script>
 		
-		<script src="../../js/supabase_js/login.js?v=1.0.28"></script>
+		<script src="js/supabase_js/login.js?v=1.0.29"></script>
 		
 	</body>
 </html>

@@ -19,13 +19,13 @@ if ($user_types != 'midwifes') {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile Management</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/bhw/profile-management.css" />
-    <link rel="stylesheet" href="../../css/modals.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/bhw/profile-management.css" />
+    <link rel="stylesheet" href="css/modals.css" />
 </head>
 
 <body>
@@ -49,7 +49,7 @@ if ($user_types != 'midwifes') {
                 <div class="profile-avatar">
                     <img
                         class="profile-avatar" id="profileImage"
-                        src="../../assets/images/user-profile.png"
+                        src="assets/images/user-profile.png"
                         alt="User Profile" />
                     <button class="change-photo-btn" onclick="document.getElementById('photoInput').click()">
                         <span class="material-symbols-rounded">camera_alt</span>
@@ -165,10 +165,10 @@ if ($user_types != 'midwifes') {
         </section>
     </main>
 
-    <script src="../../js/utils/ui-feedback.js"></script>
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/auth-handler/password-toggle.js"></script>
+    <script src="js/utils/ui-feedback.js"></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/auth-handler/password-toggle.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             loadProfileData();
@@ -176,7 +176,7 @@ if ($user_types != 'midwifes') {
 
         async function loadProfileData() {
             try {
-                const response = await fetch('../../php/supabase/shared/get_profile_data.php');
+                const response = await fetch('php/supabase/shared/get_profile_data.php');
                 const data = await response.json();
 
                 if (data.status === 'success') {
@@ -205,7 +205,7 @@ if ($user_types != 'midwifes') {
             const formData = new FormData();
             formData.append('photo', file);
             try {
-                const response = await fetch('../../php/supabase/shared/upload_profile_photo.php', {
+                const response = await fetch('php/supabase/shared/upload_profile_photo.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -256,7 +256,7 @@ if ($user_types != 'midwifes') {
             e.preventDefault();
             const formData = new FormData(this);
             try {
-                const response = await fetch('../../php/supabase/shared/update_profile.php', {
+                const response = await fetch('php/supabase/shared/update_profile.php', {
                     method: 'POST',
                     body: formData
                 });

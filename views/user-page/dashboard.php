@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: ../../views/auth/login.php");
+    header("Location: login");
     exit();
 }
 
@@ -26,14 +26,14 @@ $user_fname = $_SESSION['fname'] ?? '';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css?v=1.0.2" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/sidebar.css" />
 
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/user/dashboard.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/skeleton-loading.css" />
+    <link rel="stylesheet" href="css/user/dashboard.css?v=1.0.1" />
 </head>
 
 <body>
@@ -152,9 +152,9 @@ $user_fname = $_SESSION['fname'] ?? '';
 
     </main>
 
-    <script src="../../js/header-handler/profile-menu.js?v=1.0.4" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
+    <script src="js/header-handler/profile-menu.js?v=1.0.4" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
     <script>
         let currentFilter = 'upcoming';
         const qrModalEl = document.getElementById('qrModal');
@@ -175,8 +175,8 @@ $user_fname = $_SESSION['fname'] ?? '';
         }
 
         async function fetchSummary(filter = null) {
-            const url = filter ? `../../php/supabase/users/get_children_summary.php?filter=${encodeURIComponent(filter)}` :
-                `../../php/supabase/users/get_children_summary.php`;
+            const url = filter ? `php/supabase/users/get_children_summary.php?filter=${encodeURIComponent(filter)}` :
+                `php/supabase/users/get_children_summary.php`;
             const res = await fetch(url);
             return await res.json();
         }
@@ -308,13 +308,20 @@ $user_fname = $_SESSION['fname'] ?? '';
             try {
                 // Card numbers show skeleton shimmer (set on page load); fetch and replace with values
 
-                // Load children data first (this will give us all the stats we need)
-                const childrenResponse = await fetch('../../php/supabase/users/get_accepted_child.php');
-                const childrenData = await childrenResponse.json();
+                // OPTIMIZATION: Load both API calls in parallel instead of sequentially (faster!)
+                const [childrenResponse, summaryResponse] = await Promise.all([
+                    fetch('php/supabase/users/get_accepted_child.php'),
+                    fetch('php/supabase/users/get_dashboard_summary.php')
+                ]);
+
+                const [childrenData, summaryData] = await Promise.all([
+                    childrenResponse.json(),
+                    summaryResponse.json()
+                ]);
 
                 if (childrenData.status === 'success') {
                     // Calculate statistics from children data
-                    calculateStatsFromChildren(childrenData.data || []);
+                    calculateStatsFromChildren(childrenData.data || [], summaryData);
                 } else {
                     // Set default values when request failed
                     if (typeof setDashboardCardNumbers === 'function') {
@@ -351,7 +358,7 @@ $user_fname = $_SESSION['fname'] ?? '';
             }
         }
 
-        function calculateStatsFromChildren(children) {
+        function calculateStatsFromChildren(children, summaryData) {
             let totalChildren = children.length;
             let totalMissed = 0;
             let totalToday = 0;
@@ -369,45 +376,29 @@ $user_fname = $_SESSION['fname'] ?? '';
                 }
             });
 
+            // Get approved CHR count from summary data (already loaded in parallel)
+            const approvedChr = (summaryData && summaryData.status === 'success') 
+                ? summaryData.data.approved_chr_documents || 0 
+                : 0;
+
+            // Use today's schedule count from summary if available (more accurate)
+            const todaySchedule = (summaryData && summaryData.status === 'success')
+                ? summaryData.data.upcoming_schedule_today || totalToday
+                : totalToday;
+
             // Update the stats display using skeleton helper if available
             if (typeof setDashboardCardNumbers === 'function') {
                 setDashboardCardNumbers({
                     totalChildren: totalChildren,
+                    approvedChr: approvedChr,
                     missedCount: totalMissed,
-                    todaySchedule: totalToday,
+                    todaySchedule: todaySchedule,
                 });
             } else {
                 document.getElementById('totalChildren').textContent = totalChildren;
+                document.getElementById('approvedChr').textContent = approvedChr;
                 document.getElementById('missedCount').textContent = totalMissed;
-                document.getElementById('todaySchedule').textContent = totalToday;
-            }
-
-            // Get approved CHR count (we'll load this separately)
-            loadApprovedChrCount();
-        }
-
-        async function loadApprovedChrCount() {
-            try {
-                const response = await fetch('../../php/supabase/users/get_dashboard_summary.php');
-                const data = await response.json();
-
-                const value = (data.status === 'success') ? data.data.approved_chr_documents : 0;
-                if (typeof setDashboardCardNumbers === 'function') {
-                    setDashboardCardNumbers({
-                        approvedChr: value
-                    });
-                } else {
-                    document.getElementById('approvedChr').textContent = String(value);
-                }
-            } catch (error) {
-                console.error('Error loading approved CHR count:', error);
-                if (typeof setDashboardCardNumbers === 'function') {
-                    setDashboardCardNumbers({
-                        approvedChr: 0
-                    });
-                } else {
-                    document.getElementById('approvedChr').textContent = '0';
-                }
+                document.getElementById('todaySchedule').textContent = todaySchedule;
             }
         }
 
@@ -485,17 +476,17 @@ $user_fname = $_SESSION['fname'] ?? '';
         function viewChildRecord(babyId) {
             if (!babyId) return;
             const encoded = encodeURIComponent(String(babyId));
-            window.location.href = `child-health-record.php?baby_id=${encoded}`;
+            window.location.href = `immunizations?baby_id=${encoded}`;
         }
 
         function viewSchedule(babyId) {
             if (!babyId) return;
             const encoded = encodeURIComponent(String(babyId));
-            window.location.href = `upcoming-schedule.php?baby_id=${encoded}`;
+            window.location.href = `upcoming?baby_id=${encoded}`;
         }
 
         function addChild() {
-            window.location.href = 'approved-requests.php';
+            window.location.href = 'approved-requests';
         }
 
         // QR Modal functions

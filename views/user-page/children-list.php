@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: ../login.php");
+    header("Location: login");
     exit();
 }
 
@@ -26,13 +26,13 @@ $user_fname = $_SESSION['fname'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Children</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/user/children-list.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/skeleton-loading.css" />
+    <link rel="stylesheet" href="css/user/children-list.css" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -104,9 +104,9 @@ $user_fname = $_SESSION['fname'] ?? '';
         </section>
     </main>
 
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
     <script>
         let allChildrenData = [];
         let allChrStatusData = [];
@@ -149,7 +149,7 @@ $user_fname = $_SESSION['fname'] ?? '';
         async function loadChildrenData() {
             try {
                 // Load all children data (not just accepted ones) for proper filtering
-                const res = await fetch('../../php/supabase/users/get_accepted_child.php');
+                const res = await fetch('php/supabase/users/get_accepted_child.php');
                 if (!res.ok) {
                     loadError = true;
                     allChildrenData = [];
@@ -171,7 +171,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 
         async function loadChrStatusData() {
             try {
-                const res = await fetch('../../php/supabase/users/get_child_list.php');
+                const res = await fetch('php/supabase/users/get_child_list.php');
                 if (!res.ok) {
                     loadError = true;
                     allChrStatusData = [];
@@ -253,7 +253,14 @@ $user_fname = $_SESSION['fname'] ?? '';
             let rowsHtml = '';
             filteredChildren.forEach(child => {
                 const fullName = (child.name) || [child.child_fname || '', child.child_lname || ''].filter(Boolean).join(' ');
-                const ageText = (child.age && child.age > 0) ? (child.age + ' years') : (child.weeks_old != null ? (child.weeks_old + ' weeks') : '');
+                let ageText = '';
+                const years = Number(child.age);
+                const weeks = Number(child.weeks_old);
+                if (!isNaN(years) && years > 0) {
+                    ageText = Math.round(years) + ' years';
+                } else if (!isNaN(weeks) && weeks >= 0) {
+                    ageText = Math.round(weeks) + ' weeks';
+                }
                 const gender = child.gender || '';
                 const babyId = child.baby_id || child.id || '';
                 const upc = child.scheduled_count || 0;
@@ -267,7 +274,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                     `<td>${mis}</td>` +
                     `<td>${tak}</td>` +
                     '<td class="actions-cell">' +
-                    (babyId ? `<a class="view-btn" href="child-health-record.php?baby_id=${encodeURIComponent(String(babyId))}"><span class="material-symbols-rounded">visibility</span> View</a>` : '<span class="text-muted">N/A</span>') +
+                    (babyId ? `<a class="view-btn" href="immunizations?baby_id=${encodeURIComponent(String(babyId))}"><span class="material-symbols-rounded">visibility</span> View</a>` : '<span class="text-muted">N/A</span>') +
                     '</td>' +
                     '</tr>';
             });

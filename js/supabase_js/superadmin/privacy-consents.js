@@ -28,7 +28,7 @@ async function loadPrivacyConsents() {
 	const tbody = document.getElementById("consentsTableBody");
 	try {
 		const response = await fetch(
-			"../../php/supabase/superadmin/get_privacy_consents.php"
+			"php/supabase/superadmin/get_privacy_consents.php"
 		);
 		const result = await response.json();
 

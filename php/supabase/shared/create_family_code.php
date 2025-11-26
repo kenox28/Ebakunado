@@ -90,7 +90,7 @@ $insert = supabaseInsert('child_health_records', [
     'family_planning' => $family_planning !== '' ? $family_planning : null,
     'date_newbornscreening' => $date_newbornScreening !== '' && $date_newbornScreening !== null ? $date_newbornScreening : null,
     'placenewbornscreening' => trim($placeNewbornScreening) !== '' ? trim($placeNewbornScreening) : null,
-    'status' => 'pending',
+    'status' => 'pendingcode',
     'date_created' => date('Y-m-d H:i:s')
 ]);
 

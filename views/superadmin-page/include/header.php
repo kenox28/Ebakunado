@@ -1,6 +1,6 @@
 <?php
 if (!isset($_SESSION['super_admin_id'])) {
-    header("Location: ../login.php");
+    header("Location: login");
     exit();
 }
 // Ensure name variables are available (parallels sidebar.php)
@@ -24,7 +24,7 @@ $user_fullname = trim((($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ??
         $sessionProfileImg = isset($_SESSION['profileimg']) ? trim((string)$_SESSION['profileimg']) : '';
         $headerProfileImg = ($sessionProfileImg && $sessionProfileImg !== 'noprofile.png')
             ? $sessionProfileImg
-            : '../../assets/images/user-profile.png';
+            : 'assets/images/user-profile.png';
         $emailDisplay = isset($_SESSION['email']) ? htmlspecialchars((string)$_SESSION['email']) : '—';
         
         $has_user_role = false;
@@ -58,7 +58,7 @@ $user_fullname = trim((($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ??
                     </div>
                 </div>
                 <div class="menu-group" aria-label="Account">
-                    <a class="menu-item" href="./profile-management.php" role="menuitem"><span class="material-symbols-rounded">person</span>My Account</a>
+                    <a class="menu-item" href="superadmin-profile" role="menuitem"><span class="material-symbols-rounded">person</span>My Account</a>
                     <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">badge</span>View Profile</a>
                     <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">settings</span>System Settings</a>
                 </div>
@@ -66,7 +66,7 @@ $user_fullname = trim((($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ??
                     <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">lock</span>Privacy & Security</a>
                 </div>
                 <div class="menu-group" aria-label="Danger zone">
-                    <button class="menu-item danger" type="button" role="menuitem" onclick="logoutBhw()"><span class="material-symbols-rounded">logout</span>Logout</button>
+                    <button class="menu-item danger" type="button" role="menuitem" onclick="logoutSuperAdmin()"><span class="material-symbols-rounded">logout</span>Logout</button>
                 </div>
             </nav>
         </div>

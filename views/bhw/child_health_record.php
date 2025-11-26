@@ -360,7 +360,7 @@
 		});
 		const data = await response.json();
 		if (data.status === 'success') {
-			window.location.href = '../../views/login.php';
+			window.location.href = '../../views/auth/login.php';
 		} else {
 			alert('Logout failed: ' + data.message);
 		}

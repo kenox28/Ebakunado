@@ -10,9 +10,9 @@ async function getAdmins() {
 	try {
 		console.log("Loading admins...");
 		const response = await fetch(
-			"../../php/supabase/superadmin/show_admins.php"
+			"php/supabase/superadmin/show_admins.php"
 		);
-		// const response = await fetch("../../php/mysql/superadmin/show_admins.php");
+		// const response = await fetch("php/mysql/superadmin/show_admins.php");
 		const data = await response.json();
 		console.log("All admins loaded:", data);
 
@@ -83,9 +83,9 @@ async function saveAdmin() {
 
 	try {
 		const response = await fetch(
-			"../../../php/supabase/superadmin/save_admin.php",
+			"../php/supabase/superadmin/save_admin.php",
 			{
-				// const response = await fetch("../../php/mysql/superadmin/save_admin.php", {
+				// const response = await fetch("php/mysql/superadmin/save_admin.php", {
 				method: "POST",
 				body: formData,
 			}
@@ -110,8 +110,8 @@ async function editAdmin(admin_id) {
 	try {
 		console.log("Editing admin with ID:", admin_id);
 		const response = await fetch(
-			`../../../php/supabase/superadmin/edit_admin.php?admin_id=${admin_id}`
-			// `../../php/mysql/superadmin/edit_admin.php?admin_id=${admin_id}`
+			`../php/supabase/superadmin/edit_admin.php?admin_id=${admin_id}`
+			// `php/mysql/superadmin/edit_admin.php?admin_id=${admin_id}`
 		);
 		console.log("Edit admin response status:", response.status);
 		const data = await response.json();
@@ -169,9 +169,9 @@ async function updateAdmin() {
 
 	try {
 		const response = await fetch(
-			"../../../php/supabase/superadmin/edit_admin.php",
+			"../php/supabase/superadmin/edit_admin.php",
 			{
-				// const response = await fetch("../../php/mysql/superadmin/edit_admin.php", {
+				// const response = await fetch("php/mysql/superadmin/edit_admin.php", {
 				method: "POST",
 				body: formData,
 			}
@@ -216,8 +216,8 @@ async function deleteAdmin(admin_id) {
 			formData.append("admin_id", admin_id);
 
 			const response = await fetch(
-				"../../../php/supabase/superadmin/delete_admin.php",
-				// "../../php/mysql/superadmin/delete_admin.php",
+				"../php/supabase/superadmin/delete_admin.php",
+				// "php/mysql/superadmin/delete_admin.php",
 				{
 					method: "POST",
 					body: formData,
@@ -266,8 +266,8 @@ async function deleteSelectedAdmins() {
 			for (const checkbox of selectedBoxes) {
 				const formData = new FormData();
 				formData.append("admin_id", checkbox.value);
-				await fetch("../../../php/supabase/superadmin/delete_admin.php", {
-					// await fetch("../../php/mysql/superadmin/delete_admin.php", {
+				await fetch("../php/supabase/superadmin/delete_admin.php", {
+					// await fetch("php/mysql/superadmin/delete_admin.php", {
 					method: "POST",
 					body: formData,
 				});

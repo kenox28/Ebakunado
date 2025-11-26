@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: ../../views/auth/login.php");
+    header("Location: login");
     exit();
 }
 
@@ -26,14 +26,14 @@ $user_fname = $_SESSION['fname'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Child Immunization Schedule</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css?v=1.0.2" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/sidebar.css" />
 
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/user/child-upcoming-schedule.css" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/skeleton-loading.css" />
+    <link rel="stylesheet" href="css/user/child-upcoming-schedule.css" />
 </head>
 
 <body>
@@ -55,7 +55,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                     <div class="child-meta">
                         <div class="meta-top">
                             <h2 id="childName" class="child-name">Unknown Child</h2>
-                            <a id="switchChildBtn" class="btn-switch" title="Switch Child" href="dashboard.php">
+                            <a id="switchChildBtn" class="btn-switch" title="Switch Child" href="dashboard">
                                 <span class="material-symbols-rounded">switch_account</span>
                                 <span>Switch</span>
                             </a>
@@ -112,9 +112,9 @@ $user_fname = $_SESSION['fname'] ?? '';
         </div>
     </main>
 
-    <script src="../../js/header-handler/profile-menu.js?v=1.0.4" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
+    <script src="js/header-handler/profile-menu.js?v=1.0.4" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
     <script>
         let scheduleData = [];
         let currentTab = 'upcoming';
@@ -124,7 +124,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 
         async function loadImmunizationSchedule() {
             try {
-                const endpoint = '/ebakunado/php/supabase/users/get_immunization_schedule.php' + (selectedBabyId ? ('?baby_id=' + encodeURIComponent(selectedBabyId)) : '');
+                const endpoint = 'php/supabase/users/get_immunization_schedule.php' + (selectedBabyId ? ('?baby_id=' + encodeURIComponent(selectedBabyId)) : '');
                 const response = await fetch(endpoint);
                 const data = await response.json();
 
@@ -171,7 +171,7 @@ $user_fname = $_SESSION['fname'] ?? '';
             try {
                 const formData = new FormData();
                 formData.append('baby_id', baby_id);
-                const response = await fetch('/ebakunado/php/supabase/users/get_child_details.php', {
+                const response = await fetch('php/supabase/users/get_child_details.php', {
                     method: 'POST',
                     body: formData
                 });

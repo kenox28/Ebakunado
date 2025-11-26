@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function logoutBhw() {
-	const response = await fetch("../../php/supabase/bhw/logout.php", {
+	const response = await fetch("php/supabase/bhw/logout.php", {
 		method: "POST",
 	});
 	const data = await response.json();
@@ -82,6 +82,6 @@ async function logoutBhw() {
 		localStorage.removeItem("jwt_token");
 		// Also clear any other auth data if needed
 		sessionStorage.clear();
-		window.location.href = "../../views/auth/login.php";
+		window.location.href = "login";
 	}
 }

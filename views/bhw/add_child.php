@@ -245,30 +245,22 @@
                     <!-- Address Dropdown System -->
                     <div class="form-group">
                         <label for="province">Province *</label>
-                        <select id="province" name="province" required onchange="loadCities()">
-                            <option value="">Select Province</option>
-                        </select>
+                        <input type="text" id="province" name="province" placeholder="Enter province" required>
                     </div>
 
                     <div class="form-group">
                         <label for="city_municipality">City/Municipality *</label>
-                        <select id="city_municipality" name="city_municipality" required onchange="loadBarangays()">
-                            <option value="">Select City/Municipality</option>
-                        </select>
+                        <input type="text" id="city_municipality" name="city_municipality" placeholder="Enter city or municipality" required>
                     </div>
 
                     <div class="form-group">
                         <label for="barangay">Barangay *</label>
-                        <select id="barangay" name="barangay" required onchange="loadPuroks()">
-                            <option value="">Select Barangay</option>
-                        </select>
+                        <input type="text" id="barangay" name="barangay" placeholder="Enter barangay" required>
                     </div>
 
                     <div class="form-group">
                         <label for="purok">Purok</label>
-                        <select id="purok" name="purok">
-                            <option value="">Select Purok</option>
-                        </select>
+                        <input type="text" id="purok" name="purok" placeholder="Enter purok">
                     </div>
                 
                 <div class="form-group">
@@ -504,130 +496,6 @@ document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
     });
 });
 
-// Load provinces on page load
-document.addEventListener('DOMContentLoaded', function() {
-    loadProvinces();
-});
-
-// Cascading Dropdown Functions
-async function loadProvinces() {
-    try {
-        console.log("Loading provinces...");
-        const response = await fetch('/ebakunado/php/supabase/admin/get_places.php?type=provinces');
-        console.log("Response status:", response.status);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const provinces = await response.json();
-        console.log("Provinces received:", provinces);
-
-        const provinceSelect = document.getElementById("province");
-        if (!provinceSelect) {
-            console.error("Province select element not found!");
-            return;
-        }
-
-        provinceSelect.innerHTML = '<option value="">Select Province</option>';
-
-        if (Array.isArray(provinces) && provinces.length > 0) {
-            provinces.forEach((provinceObj) => {
-                const option = document.createElement("option");
-                option.value = provinceObj.province;
-                option.textContent = provinceObj.province;
-                provinceSelect.appendChild(option);
-            });
-            console.log(`Added ${provinces.length} provinces to dropdown`);
-        } else {
-            console.log("No provinces found or invalid data format");
-        }
-    } catch (error) {
-        console.error("Error loading provinces:", error);
-    }
-}
-
-async function loadCities() {
-    const province = document.getElementById("province").value;
-    const citySelect = document.getElementById("city_municipality");
-    const barangaySelect = document.getElementById("barangay");
-    const purokSelect = document.getElementById("purok");
-
-    // Reset dependent dropdowns
-    citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
-    barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-    purokSelect.innerHTML = '<option value="">Select Purok</option>';
-
-    if (!province) return;
-
-    try {
-        const response = await fetch(`/ebakunado/php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(province)}`);
-        const cities = await response.json();
-
-        cities.forEach((cityObj) => {
-            const option = document.createElement("option");
-            option.value = cityObj.city_municipality;
-            option.textContent = cityObj.city_municipality;
-            citySelect.appendChild(option);
-        });
-    } catch (error) {
-        console.error("Error loading cities:", error);
-    }
-}
-
-async function loadBarangays() {
-    const province = document.getElementById("province").value;
-    const city = document.getElementById("city_municipality").value;
-    const barangaySelect = document.getElementById("barangay");
-    const purokSelect = document.getElementById("purok");
-
-    // Reset dependent dropdowns
-    barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-    purokSelect.innerHTML = '<option value="">Select Purok</option>';
-
-    if (!province || !city) return;
-
-    try {
-        const response = await fetch(`/ebakunado/php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(province)}&city_municipality=${encodeURIComponent(city)}`);
-        const barangays = await response.json();
-
-        barangays.forEach((barangayObj) => {
-            const option = document.createElement("option");
-            option.value = barangayObj.barangay;
-            option.textContent = barangayObj.barangay;
-            barangaySelect.appendChild(option);
-        });
-    } catch (error) {
-        console.error("Error loading barangays:", error);
-    }
-}
-
-async function loadPuroks() {
-    const province = document.getElementById("province").value;
-    const city = document.getElementById("city_municipality").value;
-    const barangay = document.getElementById("barangay").value;
-    const purokSelect = document.getElementById("purok");
-
-    // Reset purok dropdown
-    purokSelect.innerHTML = '<option value="">Select Purok</option>';
-
-    if (!province || !city || !barangay) return;
-
-    try {
-        const response = await fetch(`/ebakunado/php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(province)}&city_municipality=${encodeURIComponent(city)}&barangay=${encodeURIComponent(barangay)}`);
-        const puroks = await response.json();
-
-        puroks.forEach((purokObj) => {
-            const option = document.createElement("option");
-            option.value = purokObj.purok;
-            option.textContent = purokObj.purok;
-            purokSelect.appendChild(option);
-        });
-    } catch (error) {
-        console.error("Error loading puroks:", error);
-    }
-}
-
 // Handle form submission
 document.getElementById('addChildForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -670,16 +538,7 @@ document.getElementById('addChildForm').addEventListener('submit', async functio
             this.reset();
             document.querySelectorAll('.radio-option').forEach(option => option.classList.remove('selected'));
             document.querySelectorAll('.checkbox-option').forEach(option => option.classList.remove('checked'));
-            
-            // Reset dropdowns
-            document.getElementById('province').innerHTML = '<option value="">Select Province</option>';
-            document.getElementById('city_municipality').innerHTML = '<option value="">Select City/Municipality</option>';
-            document.getElementById('barangay').innerHTML = '<option value="">Select Barangay</option>';
-            document.getElementById('purok').innerHTML = '<option value="">Select Purok</option>';
-            
-            // Reload provinces
-            loadProvinces();
-            
+
             // Reset first radio button to selected
             document.querySelector('input[type="radio"]').closest('.radio-option').classList.add('selected');
         } else {

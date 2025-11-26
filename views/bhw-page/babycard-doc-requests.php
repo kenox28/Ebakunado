@@ -17,12 +17,12 @@ if ($user_types != 'midwifes') {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Baby Card Requests</title>
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/bhw/chr-doc-requests.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/skeleton-loading.css" />
+    <link rel="stylesheet" href="css/bhw/chr-doc-requests.css" />
 </head>
 
 <body>
@@ -143,7 +143,7 @@ if ($user_types != 'midwifes') {
                     params.set('page', page);
                     params.set('limit', pageSize);
 
-                    const res = await fetch(`/ebakunado/php/supabase/bhw/list_babycard_doc_requests.php?${params.toString()}`);
+                    const res = await fetch(`php/supabase/bhw/list_babycard_doc_requests.php?${params.toString()}`);
                     const data = await res.json();
 
                     if (!(data && data.status === 'success')) {
@@ -254,7 +254,7 @@ if ($user_types != 'midwifes') {
                     const fd = new FormData();
                     fd.append('request_id', requestId);
                     console.log('Sending approval request for ID:', requestId);
-                    const res = await fetch('../../php/supabase/bhw/approve_babycard_doc.php', {
+                    const res = await fetch('php/supabase/bhw/approve_babycard_doc.php', {
                         method: 'POST',
                         body: fd
                     });
@@ -302,7 +302,7 @@ if ($user_types != 'midwifes') {
                 try {
                     const fd = new FormData();
                     fd.append('request_id', requestId);
-                    const res = await fetch('../../php/supabase/bhw/reject_babycard_doc.php', {
+                    const res = await fetch('php/supabase/bhw/reject_babycard_doc.php', {
                         method: 'POST',
                         body: fd
                     });
@@ -323,8 +323,8 @@ if ($user_types != 'midwifes') {
             }
         </script>
     </main>
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
 </body>
 
 </html>

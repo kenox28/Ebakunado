@@ -129,7 +129,7 @@ try {
     echo json_encode([
         'status' => 'success',
         'message' => 'Successfully switched to Parent role',
-        'redirect_url' => '../../views/users/home.php'
+        'redirect_url' => 'dashboard'
     ]);
     
 } catch (Exception $e) {

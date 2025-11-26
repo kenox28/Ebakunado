@@ -25,14 +25,14 @@ if ($user_id) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BHW Dashboard</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
 
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/bhw/dashboard.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/skeleton-loading.css" />
+    <link rel="stylesheet" href="css/bhw/dashboard.css?v=1.0.4" />
 
 </head>
 
@@ -162,7 +162,7 @@ if ($user_id) {
                                 <span class="task-count" id="overdueCount">0</span>
                             </div>
                             <p>Vaccinations that are past due date</p>
-                            <a href="immunization.php" class="task-action">View Details</a>
+                            <a href="health-immunizations" class="task-action">View Details</a>
                         </div>
                         <div class="task-card">
                             <div class="task-card warning" id="tomorrowCard">
@@ -171,7 +171,7 @@ if ($user_id) {
                                     <span class="task-count" id="tomorrowCount">0</span>
                                 </div>
                                 <p>Vaccinations scheduled for tomorrow</p>
-                                <a href="immunization.php" class="task-action">View Details</a>
+                                <a href="health-immunizations" class="task-action">View Details</a>
                             </div>
                         </div>
                     </div>
@@ -181,15 +181,15 @@ if ($user_id) {
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
     <script>
         // Dashboard Data Loading
         async function loadDashboardData() {
             try {
                 console.log('Loading BHW dashboard data...');
-                const response = await fetch('/ebakunado/php/supabase/bhw/get_dashboard_stats.php');
+                const response = await fetch('php/supabase/bhw/get_dashboard_stats.php');
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -730,7 +730,9 @@ if ($user_id) {
             const match = decodedText.match(/baby_id=([^&\s]+)/i);
             if (match && match[1]) {
                 // Redirect to child health record with the baby_id
-                window.location.href = `child_health_record.php?baby_id=${encodeURIComponent(match[1])}`;
+                const path = window.location.pathname;
+                const base = path.substring(0, path.lastIndexOf('/'));
+                window.location.href = base + '/health-child/' + encodeURIComponent(match[1]);
             } else {
                 // Show the decoded text or handle other QR codes
                 alert('QR Code scanned: ' + decodedText);
@@ -790,7 +792,7 @@ if ($user_id) {
 
         async function logoutBhw() {
             // const response = await fetch('/ebakunado/php/bhw/logout.php', { method: 'POST' });
-            const response = await fetch('/ebakunado/php/supabase/bhw/logout.php', {
+            const response = await fetch('php/supabase/bhw/logout.php', {
                 method: 'POST'
             });
             const data = await response.json();
@@ -798,7 +800,7 @@ if ($user_id) {
                 // Clear JWT token from localStorage
                 localStorage.removeItem('jwt_token');
                 sessionStorage.clear();
-                window.location.href = '../../views/auth/login.php';
+                window.location.href = 'login';
             } else {
                 alert('Logout failed: ' + data.message);
             }

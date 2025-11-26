@@ -15,7 +15,7 @@ $columns = 'id,user_id,baby_id,child_fname,child_lname,child_gender,child_birth_
 // Inputs
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $limit = isset($_GET['limit']) ? max(1, min(100, (int)$_GET['limit'])) : 10;
-$status = isset($_GET['status']) && in_array(strtolower($_GET['status']), ['pending','transfer']) ? strtolower($_GET['status']) : 'pending';
+$status = isset($_GET['status']) && in_array(strtolower($_GET['status']), ['pending','pendingcode']) ? strtolower($_GET['status']) : 'pending';
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 // Base where
@@ -26,8 +26,21 @@ $where = ['status' => $status];
 $offset = ($page - 1) * $limit;
 
 if ($search !== '') {
-    // Simple client-side search on fname/lname since PostgREST ilike not wired in helper
-    $all = supabaseSelect('child_health_records', $columns, $where, 'date_created.desc');
+    // OPTIMIZATION: Fetch in batches and filter, but limit total fetch to prevent excessive data
+    $all = [];
+    $batchSize = 200;
+    $offset = 0;
+    $maxFetch = 1000; // Limit total records fetched for search
+    
+    while (count($all) < $maxFetch) {
+        $batch = supabaseSelect('child_health_records', $columns, $where, 'date_created.desc', $batchSize, $offset);
+        if (!$batch || count($batch) === 0) break;
+        $all = array_merge($all, $batch);
+        if (count($batch) < $batchSize) break;
+        $offset += $batchSize;
+    }
+    
+    // Filter by search term
     $filtered = [];
     $q = strtolower($search);
     if (is_array($all)) {

@@ -16,9 +16,9 @@ document.addEventListener("DOMContentLoaded", function () {
 async function getAdmins() {
 	try {
 		const response = await fetch(
-			"../../php/supabase/superadmin/show_admins.php"
+			"php/supabase/superadmin/show_admins.php"
 		);
-		// const response = await fetch("../../php/mysql/superadmin/show_admins.php");
+		// const response = await fetch("php/mysql/superadmin/show_admins.php");
 		const data = await response.json();
 
 		const tbody = document.querySelector("#adminsTableBody");
@@ -76,9 +76,9 @@ async function saveAdmin() {
 
 	try {
 		const response = await fetch(
-			"../../php/supabase/superadmin/save_admin.php",
+			"php/supabase/superadmin/save_admin.php",
 			{
-				// const response = await fetch("../../php/mysql/superadmin/save_admin.php", {
+				// const response = await fetch("php/mysql/superadmin/save_admin.php", {
 				method: "POST",
 				body: formData,
 			}
@@ -101,8 +101,8 @@ async function saveAdmin() {
 async function editAdmin(admin_id) {
 	try {
 		const response = await fetch(
-			`../../php/supabase/superadmin/edit_admin.php?admin_id=${admin_id}`
-			// `../../php/mysql/superadmin/edit_admin.php?admin_id=${admin_id}`
+			`php/supabase/superadmin/edit_admin.php?admin_id=${admin_id}`
+			// `php/mysql/superadmin/edit_admin.php?admin_id=${admin_id}`
 		);
 		const data = await response.json();
 
@@ -159,9 +159,9 @@ async function updateAdmin() {
 
 	try {
 		const response = await fetch(
-			"../../php/supabase/superadmin/edit_admin.php",
+			"php/supabase/superadmin/edit_admin.php",
 			{
-				// const response = await fetch("../../php/mysql/superadmin/edit_admin.php", {
+				// const response = await fetch("php/mysql/superadmin/edit_admin.php", {
 				method: "POST",
 				body: formData,
 			}
@@ -198,9 +198,9 @@ async function deleteAdmin(admin_id) {
 			formData.append("admin_id", admin_id);
 
 			const response = await fetch(
-				"../../php/supabase/superadmin/delete_admin.php",
+				"php/supabase/superadmin/delete_admin.php",
 				{
-					// const response = await fetch("../../php/mysql/superadmin/delete_admin.php", {
+					// const response = await fetch("php/mysql/superadmin/delete_admin.php", {
 					method: "POST",
 					body: formData,
 				}
@@ -247,8 +247,8 @@ async function deleteSelectedAdmins() {
 			for (const checkbox of selectedBoxes) {
 				const formData = new FormData();
 				formData.append("admin_id", checkbox.value);
-				await fetch("../../php/supabase/superadmin/delete_admin.php", {
-					// await fetch("../../php/mysql/superadmin/delete_admin.php", {
+				await fetch("php/supabase/superadmin/delete_admin.php", {
+					// await fetch("php/mysql/superadmin/delete_admin.php", {
 					method: "POST",
 					body: formData,
 				});
@@ -271,8 +271,8 @@ async function deleteSelectedAdmins() {
 
 async function getUsers() {
 	try {
-		const response = await fetch("../../php/supabase/admin/show_users.php");
-		// const response = await fetch("../../php/mysql/admin/show_users.php");
+		const response = await fetch("php/supabase/admin/show_users.php");
+		// const response = await fetch("php/mysql/admin/show_users.php");
 		const data = await response.json();
 
 		const tbody = document.querySelector("#usersTableBody");
@@ -312,8 +312,8 @@ function toggleAllUsers() {
 async function editUser(user_id) {
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/edit_user.php?user_id=${user_id}`
-			// `../../php/mysql/admin/edit_user.php?user_id=${user_id}`
+			`php/supabase/admin/edit_user.php?user_id=${user_id}`
+			// `php/mysql/admin/edit_user.php?user_id=${user_id}`
 		);
 		const data = await response.json();
 
@@ -450,8 +450,8 @@ async function saveUser() {
 	formData.append("place", place);
 
 	try {
-		const response = await fetch("../../php/supabase/admin/save_user.php", {
-			// const response = await fetch("../../php/mysql/admin/save_user.php", {
+		const response = await fetch("php/supabase/admin/save_user.php", {
+			// const response = await fetch("php/mysql/admin/save_user.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -488,8 +488,8 @@ async function deleteUser(user_id) {
 			const formData = new FormData();
 			formData.append("user_id", user_id);
 
-			const response = await fetch("../../php/supabase/admin/delete_user.php", {
-				// const response = await fetch("../../php/mysql/admin/delete_user.php", {
+			const response = await fetch("php/supabase/admin/delete_user.php", {
+				// const response = await fetch("php/mysql/admin/delete_user.php", {
 				method: "POST",
 				body: formData,
 			});
@@ -535,8 +535,8 @@ async function deleteSelectedUsers() {
 			for (const checkbox of selectedBoxes) {
 				const formData = new FormData();
 				formData.append("user_id", checkbox.value);
-				await fetch("../../php/supabase/admin/delete_user.php", {
-					// await fetch("../../php/mysql/admin/delete_user.php", {
+				await fetch("php/supabase/admin/delete_user.php", {
+					// await fetch("php/mysql/admin/delete_user.php", {
 					method: "POST",
 					body: formData,
 				});
@@ -559,8 +559,8 @@ async function deleteSelectedUsers() {
 
 async function getBhw() {
 	try {
-		const response = await fetch("../../php/supabase/admin/show_bhw.php");
-		// const response = await fetch("../../php/mysql/admin/show_bhw.php");
+		const response = await fetch("php/supabase/admin/show_bhw.php");
+		// const response = await fetch("php/mysql/admin/show_bhw.php");
 		const data = await response.json();
 
 		const tbody = document.querySelector("#bhwTableBody");
@@ -600,8 +600,8 @@ function toggleAllBhw() {
 async function editBhw(bhw_id) {
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/edit_bhw.php?bhw_id=${bhw_id}`
-			// `../../php/mysql/admin/edit_bhw.php?bhw_id=${bhw_id}`
+			`php/supabase/admin/edit_bhw.php?bhw_id=${bhw_id}`
+			// `php/mysql/admin/edit_bhw.php?bhw_id=${bhw_id}`
 		);
 		const data = await response.json();
 
@@ -741,8 +741,8 @@ async function saveBhw() {
 	formData.append("place", place);
 
 	try {
-		const response = await fetch("../../php/supabase/admin/save_bhw.php", {
-			// const response = await fetch("../../php/mysql/admin/save_bhw.php", {
+		const response = await fetch("php/supabase/admin/save_bhw.php", {
+			// const response = await fetch("php/mysql/admin/save_bhw.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -777,8 +777,8 @@ async function deleteBhw(bhw_id) {
 			const formData = new FormData();
 			formData.append("bhw_id", bhw_id);
 
-			const response = await fetch("../../php/supabase/admin/delete_bhw.php", {
-				// const response = await fetch("../../php/mysql/admin/delete_bhw.php", {
+			const response = await fetch("php/supabase/admin/delete_bhw.php", {
+				// const response = await fetch("php/mysql/admin/delete_bhw.php", {
 				method: "POST",
 				body: formData,
 			});
@@ -824,8 +824,8 @@ async function deleteSelectedBhw() {
 			for (const checkbox of selectedBoxes) {
 				const formData = new FormData();
 				formData.append("bhw_id", checkbox.value);
-				await fetch("../../php/supabase/admin/delete_bhw.php", {
-					// await fetch("../../php/mysql/admin/delete_bhw.php", {
+				await fetch("php/supabase/admin/delete_bhw.php", {
+					// await fetch("php/mysql/admin/delete_bhw.php", {
 					method: "POST",
 					body: formData,
 				});
@@ -848,8 +848,8 @@ async function deleteSelectedBhw() {
 
 async function getMidwives() {
 	try {
-		const response = await fetch("../../php/supabase/admin/show_midwives.php");
-		// const response = await fetch("../../php/mysql/admin/show_midwives.php");
+		const response = await fetch("php/supabase/admin/show_midwives.php");
+		// const response = await fetch("php/mysql/admin/show_midwives.php");
 		const data = await response.json();
 
 		const tbody = document.querySelector("#midwivesTableBody");
@@ -896,8 +896,8 @@ function toggleAllMidwives() {
 async function editMidwife(midwife_id) {
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/edit_midwife.php?midwife_id=${midwife_id}`
-			// `../../php/mysql/admin/edit_midwife.php?midwife_id=${midwife_id}`
+			`php/supabase/admin/edit_midwife.php?midwife_id=${midwife_id}`
+			// `php/mysql/admin/edit_midwife.php?midwife_id=${midwife_id}`
 		);
 		const data = await response.json();
 
@@ -1060,8 +1060,8 @@ async function saveMidwife() {
 	formData.append("place", place);
 
 	try {
-		const response = await fetch("../../php/supabase/admin/save_midwife.php", {
-			// const response = await fetch("../../php/mysql/admin/save_midwife.php", {
+		const response = await fetch("php/supabase/admin/save_midwife.php", {
+			// const response = await fetch("php/mysql/admin/save_midwife.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -1097,9 +1097,9 @@ async function deleteMidwife(midwife_id) {
 			formData.append("midwife_id", midwife_id);
 
 			const response = await fetch(
-				"../../php/supabase/admin/delete_midwife.php",
+				"php/supabase/admin/delete_midwife.php",
 				{
-					// const response = await fetch("../../php/mysql/admin/delete_midwife.php", {
+					// const response = await fetch("php/mysql/admin/delete_midwife.php", {
 					method: "POST",
 					body: formData,
 				}
@@ -1146,8 +1146,8 @@ async function deleteSelectedMidwives() {
 			for (const checkbox of selectedBoxes) {
 				const formData = new FormData();
 				formData.append("midwife_id", checkbox.value);
-				await fetch("../../php/supabase/admin/delete_midwife.php", {
-					// await fetch("../../php/mysql/admin/delete_midwife.php", {
+				await fetch("php/supabase/admin/delete_midwife.php", {
+					// await fetch("php/mysql/admin/delete_midwife.php", {
 					method: "POST",
 					body: formData,
 				});
@@ -1171,9 +1171,9 @@ async function deleteSelectedMidwives() {
 async function getActivityLogs() {
 	try {
 		const response = await fetch(
-			"../../php/supabase/admin/show_activitylog.php"
+			"php/supabase/admin/show_activitylog.php"
 		);
-		// const response = await fetch("../../php/mysql/admin/show_activitylog.php");
+		// const response = await fetch("php/mysql/admin/show_activitylog.php");
 		const data = await response.json();
 
 		const tbody = document.querySelector("#activityLogsTableBody");
@@ -1223,8 +1223,8 @@ async function deleteActivityLog(log_id) {
 			const formData = new FormData();
 			formData.append("log_id", log_id);
 
-			const response = await fetch("../../php/supabase/admin/delete_log.php", {
-				// const response = await fetch("../../php/mysql/admin/delete_log.php", {
+			const response = await fetch("php/supabase/admin/delete_log.php", {
+				// const response = await fetch("php/mysql/admin/delete_log.php", {
 				method: "POST",
 				body: formData,
 			});
@@ -1270,8 +1270,8 @@ async function deleteSelectedActivityLogs() {
 			for (const checkbox of selectedBoxes) {
 				const formData = new FormData();
 				formData.append("log_id", checkbox.value);
-				await fetch("../../php/supabase/admin/delete_log.php", {
-					// await fetch("../../php/mysql/admin/delete_log.php", {
+				await fetch("php/supabase/admin/delete_log.php", {
+					// await fetch("php/mysql/admin/delete_log.php", {
 					method: "POST",
 					body: formData,
 				});
@@ -1294,8 +1294,8 @@ async function deleteSelectedActivityLogs() {
 
 async function getLocations() {
 	try {
-		const response = await fetch("../../php/supabase/admin/show_locations.php");
-		// const response = await fetch("../../php/mysql/admin/show_locations.php");
+		const response = await fetch("php/supabase/admin/show_locations.php");
+		// const response = await fetch("php/mysql/admin/show_locations.php");
 		const data = await response.json();
 
 		const tbody = document.querySelector("#locationsTableBody");
@@ -1348,8 +1348,8 @@ async function saveLocation() {
 	formData.append("purok", document.getElementById("add_purok").value);
 
 	try {
-		const response = await fetch("../../php/supabase/admin/add_location.php", {
-			// const response = await fetch("../../php/mysql/admin/add_location.php", {
+		const response = await fetch("php/supabase/admin/add_location.php", {
+			// const response = await fetch("php/mysql/admin/add_location.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -1385,9 +1385,9 @@ async function deleteLocation(location_id) {
 			formData.append("location_id", location_id);
 
 			const response = await fetch(
-				"../../php/supabase/admin/delete_location.php",
+				"php/supabase/admin/delete_location.php",
 				{
-					// const response = await fetch("../../php/mysql/admin/delete_location.php", {
+					// const response = await fetch("php/mysql/admin/delete_location.php", {
 					method: "POST",
 					body: formData,
 				}
@@ -1434,8 +1434,8 @@ async function deleteSelectedLocations() {
 			for (const checkbox of selectedBoxes) {
 				const formData = new FormData();
 				formData.append("location_id", checkbox.value);
-				await fetch("../../php/supabase/admin/delete_location.php", {
-					// await fetch("../../php/mysql/admin/delete_location.php", {
+				await fetch("php/supabase/admin/delete_location.php", {
+					// await fetch("php/mysql/admin/delete_location.php", {
 					method: "POST",
 					body: formData,
 				});
@@ -1529,8 +1529,8 @@ function clearSearch(searchInputId, tableBodyId) {
 async function loadAdminProvinces() {
 	try {
 		const response = await fetch(
-			"../../../php/supabase/admin/get_places.php?type=provinces"
-			// "../../php/mysql/admin/get_places.php?type=provinces"
+			"../php/supabase/admin/get_places.php?type=provinces"
+			// "php/mysql/admin/get_places.php?type=provinces"
 		);
 		const provinces = await response.json();
 
@@ -1551,8 +1551,8 @@ async function loadAdminCities() {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
 				province
 			)}`
 		);
@@ -1582,8 +1582,8 @@ async function loadAdminBarangays() {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(city)}`
 		);
@@ -1612,8 +1612,8 @@ async function loadAdminPuroks() {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(
 				city
@@ -1637,8 +1637,8 @@ async function loadAdminPuroks() {
 async function loadEditAdminProvinces(currentPlace = "") {
 	try {
 		const response = await fetch(
-			"../../php/supabase/admin/get_places.php?type=provinces"
-			// "../../php/mysql/admin/get_places.php?type=provinces"
+			"php/supabase/admin/get_places.php?type=provinces"
+			// "php/mysql/admin/get_places.php?type=provinces"
 		);
 		const provinces = await response.json();
 
@@ -1670,8 +1670,8 @@ async function loadEditAdminCities(currentPlace = "") {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
 				province
 			)}`
 		);
@@ -1706,8 +1706,8 @@ async function loadEditAdminBarangays(currentPlace = "") {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(city)}`
 		);
@@ -1743,8 +1743,8 @@ async function loadEditAdminPuroks(currentPlace = "") {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(
 				city
@@ -1775,8 +1775,8 @@ async function loadEditAdminPuroks(currentPlace = "") {
 async function loadEditUserProvinces(currentPlace = "") {
 	try {
 		const response = await fetch(
-			"../../php/supabase/admin/get_places.php?type=provinces"
-			// "../../php/mysql/admin/get_places.php?type=provinces"
+			"php/supabase/admin/get_places.php?type=provinces"
+			// "php/mysql/admin/get_places.php?type=provinces"
 		);
 		const provinces = await response.json();
 
@@ -1808,8 +1808,8 @@ async function loadEditUserCities(currentPlace = "") {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
 				province
 			)}`
 		);
@@ -1844,8 +1844,8 @@ async function loadEditUserBarangays(currentPlace = "") {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(city)}`
 		);
@@ -1881,8 +1881,8 @@ async function loadEditUserPuroks(currentPlace = "") {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(
 				city
@@ -1913,8 +1913,8 @@ async function loadEditUserPuroks(currentPlace = "") {
 async function loadEditBhwProvinces(currentPlace = "") {
 	try {
 		const response = await fetch(
-			"../../php/supabase/admin/get_places.php?type=provinces"
-			// "../../php/mysql/admin/get_places.php?type=provinces"
+			"php/supabase/admin/get_places.php?type=provinces"
+			// "php/mysql/admin/get_places.php?type=provinces"
 		);
 		const provinces = await response.json();
 
@@ -1946,8 +1946,8 @@ async function loadEditBhwCities(currentPlace = "") {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
 				province
 			)}`
 		);
@@ -1982,8 +1982,8 @@ async function loadEditBhwBarangays(currentPlace = "") {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(city)}`
 		);
@@ -2019,8 +2019,8 @@ async function loadEditBhwPuroks(currentPlace = "") {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(
 				city
@@ -2051,8 +2051,8 @@ async function loadEditBhwPuroks(currentPlace = "") {
 async function loadEditMidwifeProvinces(currentPlace = "") {
 	try {
 		const response = await fetch(
-			"../../php/supabase/admin/get_places.php?type=provinces"
-			// "../../php/mysql/admin/get_places.php?type=provinces"
+			"php/supabase/admin/get_places.php?type=provinces"
+			// "php/mysql/admin/get_places.php?type=provinces"
 		);
 		const provinces = await response.json();
 
@@ -2084,8 +2084,8 @@ async function loadEditMidwifeCities(currentPlace = "") {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
 				province
 			)}`
 		);
@@ -2120,8 +2120,8 @@ async function loadEditMidwifeBarangays(currentPlace = "") {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(city)}`
 		);
@@ -2157,8 +2157,8 @@ async function loadEditMidwifePuroks(currentPlace = "") {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(
 				city
@@ -2188,8 +2188,8 @@ async function loadEditMidwifePuroks(currentPlace = "") {
 
 async function logoutSuperAdmin() {
 	try {
-		const response = await fetch("../../php/supabase/superadmin/logout.php", {
-			// const response = await fetch("../../php/mysql/superadmin/logout.php", {
+		const response = await fetch("php/supabase/superadmin/logout.php", {
+			// const response = await fetch("php/mysql/superadmin/logout.php", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

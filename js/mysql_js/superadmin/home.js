@@ -2131,7 +2131,7 @@ async function logoutSuperAdmin() {
 		const data = await response.json();
 
 		if (data.status === "success") {
-			window.location.href = "../login.php";
+			window.location.href = "../auth/login.php";
 		} else {
 			Swal.fire("Error!", "Logout failed", "error");
 		}

@@ -25,13 +25,13 @@ if ($user_id) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Target Client List (TCL)</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/bhw/target-client-list.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/skeleton-loading.css" />
+    <link rel="stylesheet" href="css/bhw/target-client-list.css" />
 </head>
 
 <body>
@@ -102,7 +102,6 @@ if ($user_id) {
                             <th>Address</th>
                             <th>Weight (kg)</th>
                             <th>Height (cm)</th>
-                            <th>Status</th>
                             <th>Remarks</th>
                         </tr>
                     </thead>
@@ -115,7 +114,6 @@ if ($user_id) {
                             <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-pill skeleton-col-4"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
                         </tr>
                         <tr class="skeleton-row">
@@ -126,7 +124,6 @@ if ($user_id) {
                             <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-pill skeleton-col-4"></div></td>
                             <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
                         </tr>
                     </tbody>
@@ -164,12 +161,12 @@ if ($user_id) {
     </div>
 
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
     <script>
         // Column config for TCL collapsed view (9 columns)
-        const TCL_TOTAL_COLS = 9;
+        const TCL_TOTAL_COLS = 8;
         function getTclColsConfig() {
             return [
                 { type: 'text', widthClass: 'skeleton-col-1' }, // Name
@@ -179,7 +176,6 @@ if ($user_id) {
                 { type: 'text', widthClass: 'skeleton-col-5' }, // Address
                 { type: 'text', widthClass: 'skeleton-col-2' }, // Weight
                 { type: 'text', widthClass: 'skeleton-col-3' }, // Height
-                { type: 'pill', widthClass: 'skeleton-col-4' }, // Status
                 { type: 'text', widthClass: 'skeleton-col-5' }  // Remarks
             ];
         }
@@ -227,7 +223,7 @@ if ($user_id) {
                 if (status) params.set('status', status);
                 if (purok) params.set('purok', purok);
 
-                const res = await fetch(`../../php/supabase/bhw/get_target_client_list.php?${params.toString()}`);
+                const res = await fetch(`php/supabase/bhw/get_target_client_list.php?${params.toString()}`);
                 const data = await res.json();
                 if (data.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
@@ -294,22 +290,10 @@ if ($user_id) {
                     <td>${item.address || ''}</td>
                     <td>${item.weight || ''}</td>
                     <td>${item.height || ''}</td>
-                    <td>${statusChip(item.status)}</td>
                     <td>${item.remarks || ''}</td>
                 </tr>`;
             });
             body.innerHTML = rows;
-        }
-
-        function statusChip(status) {
-            const s = String(status || '').trim().toLowerCase();
-            const label = status || '—';
-            if (s === 'missed') return `<span class="chip chip--missed">${label}</span>`;
-            if (s === 'completed' || s === 'done') return `<span class="chip chip--completed">${label}</span>`;
-            if (s === 'scheduled' || s === 'upcoming') return `<span class="chip chip--upcoming">${label}</span>`;
-            if (s === 'transferred' || s === 'transfer') return `<span class="chip chip--transferred">${label}</span>`;
-            if (s === 'taken') return `<span class="chip chip--taken">${label}</span>`;
-            return `<span class="chip chip--default">${label}</span>`;
         }
 
         function getVaccineCell(status) {
@@ -327,6 +311,15 @@ if ($user_id) {
             const cleanStatus = String(status).replace(/✓|✗/g, '').trim();
 
             return `<span class="${className}">${cleanStatus}</span>`;
+        }
+
+        function formatVaccineExportValue(value) {
+            if (!value) return '';
+            const trimmed = String(value).trim();
+            if (trimmed.startsWith('✓')) {
+                return trimmed.replace('✓', '').trim();
+            }
+            return '';
         }
 
         function filterTable() { loadTCLData(1); }
@@ -424,7 +417,7 @@ if ($user_id) {
                 'Child Name', 'Sex', 'Date of Birth', 'Mother\'s Name', 'Address',
                 'BCG', 'Hepatitis B', 'Penta 1', 'Penta 2', 'Penta 3',
                 'OPV 1', 'OPV 2', 'OPV 3', 'PCV 1', 'PCV 2', 'PCV 3',
-                'MCV1 (AMV)', 'MCV2 (MMR)', 'Weight (kg)', 'Height (cm)', 'Status', 'Remarks'
+                'MCV1 (AMV)', 'MCV2 (MMR)', 'Weight (kg)', 'Height (cm)', 'Remarks'
             ];
 
             const csvContent = [
@@ -435,22 +428,21 @@ if ($user_id) {
                     item.date_of_birth,
                     `"${item.mother_name}"`,
                     `"${item.address}"`,
-                    `"${item.BCG}"`,
-                    `"${item['Hepatitis B']}"`,
-                    `"${item['Penta 1']}"`,
-                    `"${item['Penta 2']}"`,
-                    `"${item['Penta 3']}"`,
-                    `"${item['OPV 1']}"`,
-                    `"${item['OPV 2']}"`,
-                    `"${item['OPV 3']}"`,
-                    `"${item['PCV 1']}"`,
-                    `"${item['PCV 2']}"`,
-                    `"${item['PCV 3']}"`,
-                    `"${item['MCV1_AMV']}"`,
-                    `"${item['MCV2_MMR']}"`,
+                    `"${formatVaccineExportValue(item.BCG)}"`,
+                    `"${formatVaccineExportValue(item['Hepatitis B'])}"`,
+                    `"${formatVaccineExportValue(item['Penta 1'])}"`,
+                    `"${formatVaccineExportValue(item['Penta 2'])}"`,
+                    `"${formatVaccineExportValue(item['Penta 3'])}"`,
+                    `"${formatVaccineExportValue(item['OPV 1'])}"`,
+                    `"${formatVaccineExportValue(item['OPV 2'])}"`,
+                    `"${formatVaccineExportValue(item['OPV 3'])}"`,
+                    `"${formatVaccineExportValue(item['PCV 1'])}"`,
+                    `"${formatVaccineExportValue(item['PCV 2'])}"`,
+                    `"${formatVaccineExportValue(item['PCV 3'])}"`,
+                    `"${formatVaccineExportValue(item['MCV1_AMV'])}"`,
+                    `"${formatVaccineExportValue(item['MCV2_MMR'])}"`,
                     item.weight,
                     item.height,
-                    item.status,
                     `"${item.remarks}"`
                 ].join(','))
             ].join('\n');

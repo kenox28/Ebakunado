@@ -21,28 +21,45 @@ try {
     // Get paginated requests
     $requests = supabaseSelect('chrdocrequest', '*', ['status' => 'pendingCHR'], 'created_at.asc', $limit, $offset);
     
-    // Enrich with user and child names
+    // OPTIMIZATION: Fetch ALL user and child names in batch queries (fixes N+1 problem)
     $enrichedData = [];
     if ($requests) {
+        // Get all unique user_ids and baby_ids
+        $userIds = array_filter(array_unique(array_column($requests, 'user_id')));
+        $babyIds = array_filter(array_unique(array_column($requests, 'baby_id')));
+        
+        // Fetch ALL users in ONE query
+        $usersMap = [];
+        if (!empty($userIds)) {
+            $users = supabaseSelect('users', 'user_id,fname,lname', ['user_id' => $userIds]);
+            if ($users) {
+                foreach ($users as $u) {
+                    $uid = $u['user_id'] ?? '';
+                    if ($uid !== '') {
+                        $usersMap[$uid] = trim(($u['fname'] ?? '') . ' ' . ($u['lname'] ?? ''));
+                    }
+                }
+            }
+        }
+        
+        // Fetch ALL children in ONE query
+        $childrenMap = [];
+        if (!empty($babyIds)) {
+            $children = supabaseSelect('child_health_records', 'baby_id,child_fname,child_lname', ['baby_id' => $babyIds]);
+            if ($children) {
+                foreach ($children as $c) {
+                    $bid = $c['baby_id'] ?? '';
+                    if ($bid !== '') {
+                        $childrenMap[$bid] = trim(($c['child_fname'] ?? '') . ' ' . ($c['child_lname'] ?? ''));
+                    }
+                }
+            }
+        }
+        
+        // Enrich requests using the maps (no queries in loop!)
         foreach ($requests as $req) {
-            $userFullname = '';
-            $babyName = '';
-            
-            // Fetch user fullname
-            if (!empty($req['user_id'])) {
-                $users = supabaseSelect('users', 'fname,lname', ['user_id' => $req['user_id']], null, 1);
-                if ($users && count($users) > 0) {
-                    $userFullname = trim(($users[0]['fname'] ?? '') . ' ' . ($users[0]['lname'] ?? ''));
-                }
-            }
-            
-            // Fetch baby name
-            if (!empty($req['baby_id'])) {
-                $children = supabaseSelect('child_health_records', 'child_fname,child_lname', ['baby_id' => $req['baby_id']], null, 1);
-                if ($children && count($children) > 0) {
-                    $babyName = trim(($children[0]['child_fname'] ?? '') . ' ' . ($children[0]['child_lname'] ?? ''));
-                }
-            }
+            $userFullname = $usersMap[$req['user_id']] ?? '';
+            $babyName = $childrenMap[$req['baby_id']] ?? '';
             
             $enrichedData[] = [
                 'id' => $req['id'],

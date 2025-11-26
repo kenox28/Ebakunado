@@ -15,7 +15,7 @@ if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available
             <div class="brand-mark">
                 <img
                     class="brand-logo"
-                    src="../../assets/images/ebakunado-logo-without-label.png"
+                    src="assets/images/ebakunado-logo-without-label.png"
                     alt="eBakunado Logo" />
             </div>
             <div class="brand-text-block">
@@ -28,7 +28,7 @@ if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available
                 <!-- Main Menu -->
                  <li class="sidebar-group-label">Overview</li>
                 <li class="sidebar-menu-item<?php echo $currentPage === 'dashboard.php' ? ' active' : ''; ?>">
-                    <a href="../../views/superadmin-page/dashboard.php" class="menu-link">
+                    <a href="superadmin-dashboard" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">dashboard</span>
                         <span class="menu-label">Dashboard</span>
                     </a>
@@ -43,19 +43,19 @@ if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available
                     </a>
                 </li> -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'user-management.php' ? ' active' : ''; ?>">
-                    <a href="../../views/superadmin-page/user-management.php" class="menu-link">
+                    <a href="superadmin-users" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">person</span>
                         <span class="menu-label">Users</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item<?php echo $currentPage === 'bhw-management.php' ? ' active' : ''; ?>">
-                    <a href="../../views/superadmin-page/bhw-management.php" class="menu-link">
+                    <a href="superadmin-bhw" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">groups</span>
                         <span class="menu-label">BHW</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item<?php echo $currentPage === 'midwife-management.php' ? ' active' : ''; ?>">
-                    <a href="../../views/superadmin-page/midwife-management.php" class="menu-link">
+                    <a href="superadmin-midwives" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">clinical_notes</span>
                         <span class="menu-label">Midwife</span>
                     </a>
@@ -64,7 +64,7 @@ if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available
                 <!-- Group: Location Management -->
                 <li class="sidebar-group-label">Location Management</li>
                 <li class="sidebar-menu-item <?php echo $currentPage === 'location-management.php' ? ' active' : ''; ?>">
-                    <a href="../../views/superadmin-page/location-management.php" class="menu-link">
+                    <a href="superadmin-locations" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">map</span>
                         <span class="menu-label">Locations</span>
                     </a>
@@ -73,7 +73,7 @@ if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available
                 <!-- Group: Logs -->
                 <li class="sidebar-group-label">Logs</li>
                 <li class="sidebar-menu-item<?php echo $currentPage === 'activity-logs.php' ? ' active' : ''; ?>">
-                    <a href="../../views/superadmin-page/activity-logs.php" class="menu-link">
+                    <a href="superadmin-activity-logs" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">history</span>
                         <span class="menu-label">Activity Logs</span>
                     </a>

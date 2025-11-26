@@ -48,6 +48,27 @@ try {
 			if ($users) { foreach ($users as $u) { $userPhoneById[$u['user_id']] = $u['phone_number'] ?? ''; } }
 		}
 
+		// OPTIMIZATION: Fetch ALL immunization records for this batch in ONE query (fixes N+1 problem)
+		$babyIdsInBatch = array_column($children, 'baby_id');
+		$allImmRecs = [];
+		if (!empty($babyIdsInBatch)) {
+			$allImmRecs = supabaseSelect(
+				'immunization_records',
+				'baby_id,vaccine_name,dose_number,status,schedule_date,date_given,catch_up_date,weight,height,remarks',
+				['baby_id' => $babyIdsInBatch],
+				'schedule_date.asc'
+			) ?: [];
+		}
+		
+		// Group immunization records by baby_id for fast lookup
+		$immRecsByBaby = [];
+		foreach ($allImmRecs as $rec) {
+			$bid = $rec['baby_id'] ?? '';
+			if ($bid !== '') {
+				$immRecsByBaby[$bid][] = $rec;
+			}
+		}
+
 		foreach ($children as $idx => $child) {
 			// Build vaccination status per child
 			$vac = [
@@ -58,12 +79,9 @@ try {
 				'PCV 1' => '', 'PCV 2' => '', 'PCV 3' => '',
 				'MCV1_AMV' => '', 'MCV2_MMR' => ''
 			];
-			$immRecs = supabaseSelect(
-				'immunization_records',
-				'vaccine_name,dose_number,status,schedule_date,date_given,catch_up_date,weight,height',
-				['baby_id' => $child['baby_id']],
-				'schedule_date.asc'
-			);
+			// Get immunization records from pre-loaded data (no query!)
+			$immRecs = $immRecsByBaby[$child['baby_id']] ?? [];
+			$remarksList = [];
 			if ($immRecs) {
 				foreach ($immRecs as $rec) {
 					$vk = '';
@@ -92,6 +110,9 @@ try {
 						$display = 'SCHEDULED';
 					}
 					$vac[$vk] = $display;
+					if (!empty($rec['remarks'])) {
+						$remarksList[] = trim($rec['remarks']);
+					}
 				}
 			}
 
@@ -123,11 +144,19 @@ try {
 				'weight' => $child['birth_weight'] ?? '',
 				'height' => $child['birth_height'] ?? '',
 				'status' => $overall,
-				'remarks' => ($missed > 0 ? $missed . ' vaccine(s) missed' : ($sched > 0 ? $sched . ' vaccine(s) scheduled' : 'All vaccines completed')),
+				'remarks' => '',
 				'baby_id' => $child['baby_id'],
 				'user_id' => $child['user_id'],
 				'phone_number' => $userPhoneById[$child['user_id']] ?? ''
 			];
+			if (!empty($remarksList)) {
+				$trimmed = array_filter(array_map('trim', $remarksList), function($text){
+					return $text !== '';
+				});
+				if (!empty($trimmed)) {
+					$row['remarks'] = implode('; ', array_unique($trimmed));
+				}
+			}
 
 			// Apply filters
 			if ($search !== '') {

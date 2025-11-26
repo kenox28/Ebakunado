@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-	header("Location: ../login.php");
+	header("Location: login");
 	exit();
 }
 
@@ -19,7 +19,7 @@ $place = $_SESSION['place'] ?? '';
 $user_fname = $_SESSION['fname'] ?? '';
 ?>
 
-<link rel="stylesheet" href="../../css/modals.css" />
+<link rel="stylesheet" href="css/modals.css" />
 
 <header class="header">
     <div class="header-left">
@@ -59,16 +59,23 @@ $user_fname = $_SESSION['fname'] ?? '';
         $sessionProfileImg = isset($_SESSION['profileimg']) ? trim((string)$_SESSION['profileimg']) : '';
         $headerProfileImg = ($sessionProfileImg && $sessionProfileImg !== 'noprofile.png')
             ? $sessionProfileImg
-            : '../../assets/images/user-profile.png';
+            : 'assets/images/user-profile.png';
         $emailDisplay = isset($_SESSION['email']) ? htmlspecialchars((string)$_SESSION['email']) : '—';
         $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
         $user_type = $_SESSION['user_type'] ?? 'User';
-        $has_user_role = false;
-        if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available_roles'])) {
-            $has_user_role = true;
+
+        // Can this parent switch to a health worker role?
+        $can_switch_to_hw = false;
+        $switch_target_label = '';
+        if (isset($_SESSION['available_roles']) && is_array($_SESSION['available_roles'])) {
+            if (in_array('bhw', $_SESSION['available_roles'], true)) {
+                $can_switch_to_hw = true;
+                $switch_target_label = 'BHW';
+            } elseif (in_array('midwife', $_SESSION['available_roles'], true)) {
+                $can_switch_to_hw = true;
+                $switch_target_label = 'Midwife';
+            }
         }
-        $current_role_lower = strtolower((string)$user_type);
-        $switch_target_label = ($current_role_lower === 'parent' || $current_role_lower === 'parent/user') ? 'BHW' : 'Parent';
         // Derive display role (append / Parent when base role is just User)
         if (!isset($user_role_display)) {
             $user_role_display = $user_type;
@@ -104,13 +111,13 @@ $user_fname = $_SESSION['fname'] ?? '';
                     </div>
                 </div>
                 <div class="menu-group" aria-label="Account">
-                    <a class="menu-item" href="../../views/user-page/profile-management.php" role="menuitem"><span class="material-symbols-rounded">person</span>My Account</a>
+                    <a class="menu-item" href="profile" role="menuitem"><span class="material-symbols-rounded">person</span>My Account</a>
                     <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">badge</span>View Profile</a>
                     <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">settings</span>Settings</a>
                 </div>
                 <div class="menu-group" aria-label="Context">
-                    <?php if ($has_user_role): ?>
-                        <a class="menu-item" href="#" role="menuitem" onclick="switchToParentView(); return false;" aria-label="Switch role to <?php echo htmlspecialchars($switch_target_label); ?>">
+                    <?php if ($can_switch_to_hw && $switch_target_label): ?>
+                        <a class="menu-item" href="#" role="menuitem" onclick="switchToBHWView(); return false;" aria-label="Switch role to <?php echo htmlspecialchars($switch_target_label); ?>">
                             <span class="material-symbols-rounded" aria-hidden="true">account_circle</span>
                             Switch Role
                             <span class="tag" data-target-role="<?php echo htmlspecialchars($switch_target_label); ?>">
@@ -129,7 +136,7 @@ $user_fname = $_SESSION['fname'] ?? '';
     </div>
 </header>
 
-<script src="../../js/utils/ui-feedback.js"></script>
+<script src="js/utils/ui-feedback.js"></script>
 <script>
     let notifications = [];
     let notificationDropdownOpen = false;
@@ -155,7 +162,7 @@ $user_fname = $_SESSION['fname'] ?? '';
             console.log('Loading user notifications...');
             const startTime = Date.now();
 
-            const response = await fetch('../../php/supabase/users/get_user_notifications.php');
+            const response = await fetch('php/supabase/users/get_user_notifications.php');
             console.log('Response status:', response.status);
 
             if (!response.ok) {
@@ -237,7 +244,7 @@ $user_fname = $_SESSION['fname'] ?? '';
             try {
                 const fd = new FormData();
                 fd.append('id', notificationId);
-                fetch('../../php/supabase/users/mark_notification_read.php', {
+                fetch('php/supabase/users/mark_notification_read.php', {
                     method: 'POST',
                     body: fd
                 });
@@ -261,7 +268,7 @@ $user_fname = $_SESSION['fname'] ?? '';
         unreadCount = 0;
         updateNotificationBadge(0);
         try {
-            fetch('../../php/supabase/users/mark_notifications_read_all.php', {
+            fetch('php/supabase/users/mark_notifications_read_all.php', {
                 method: 'POST'
             });
         } catch (e) {}
@@ -298,7 +305,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 
     document.addEventListener('DOMContentLoaded', async function() {
         try {
-            const res = await fetch('../../php/supabase/users/get_user_notifications.php');
+            const res = await fetch('php/supabase/users/get_user_notifications.php');
             if (!res.ok) return;
             const data = await res.json();
             if (data && data.status === 'success' && data.data) {
@@ -317,9 +324,32 @@ $user_fname = $_SESSION['fname'] ?? '';
             }
         });
     });
+
+    window.switchToBHWView = async function () {
+        try {
+            const response = await fetch('php/supabase/shared/switch_back_to_bhw.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                window.location.href = data.redirect_url || 'health-dashboard';
+            } else {
+                alert('Error: ' + (data.message || 'Failed to switch to BHW/Midwife view'));
+            }
+        } catch (error) {
+            console.error('Error switching to BHW/Midwife view:', error);
+            alert('Error: Failed to switch to BHW/Midwife view. Please try again.');
+        }
+    };
+
     async function logoutUser() {
         if (!window.UIFeedback) {
-            window.location.href = "../../php/supabase/users/logout.php";
+            window.location.href = "php/supabase/users/logout.php";
             return;
         }
 
@@ -336,7 +366,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 
         const closeLoader = UIFeedback.showLoader("Logging out...");
         try {
-            const response = await fetch("../../php/supabase/users/logout.php", {
+            const response = await fetch("php/supabase/users/logout.php", {
                 method: "POST"
             });
             const data = await response.json();
@@ -354,7 +384,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                     duration: 3000
                 });
                 setTimeout(() => {
-                    window.location.href = "../../views/landing-page/landing-page.html";
+                    window.location.href = "home";
                 }, 800);
             } else {
                 UIFeedback.showToast({

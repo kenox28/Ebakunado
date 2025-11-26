@@ -156,7 +156,7 @@ try {
         $overdue_count = count($missed_schedules);
     }
 
-    // 8. Monthly Vaccine Counts
+    // 8. Monthly Vaccine Counts (OPTIMIZED: Filter in database, not PHP)
     function getMonthlyVaccineCounts($targetMonth) {
         // Get first and last day of the month
         $firstDay = date('Y-m-01', strtotime($targetMonth . '-01'));
@@ -193,59 +193,47 @@ try {
             return $result;
         }
         
-        // Fetch immunization records for the month
-        $immunizations = [];
-        $batchSize = 200;
-        $offset = 0;
-        while (true) {
-            $batch = supabaseSelect(
-                'immunization_records',
-                'id,baby_id,vaccine_name,schedule_date,catch_up_date,status',
-                ['baby_id' => $babyIds],
-                'schedule_date.asc',
-                $batchSize,
-                $offset
-            );
-            if (!$batch || count($batch) === 0) break;
-            $immunizations = array_merge($immunizations, $batch);
-            if (count($batch) < $batchSize) break;
-            $offset += $batchSize;
+        // OPTIMIZATION: Fetch only records that match our criteria using database filters
+        // This is MUCH faster than fetching ALL records and filtering in PHP
+        
+        // Fetch scheduled records with schedule_date in the month range
+        $scheduledRecords = supabaseSelect(
+            'immunization_records',
+            'vaccine_name',
+            [
+                'baby_id' => $babyIds,
+                'status' => 'scheduled',
+                'schedule_date.gte' => $firstDay,
+                'schedule_date.lte' => $lastDay
+            ]
+        ) ?: [];
+        
+        // Fetch missed records - we need to check both catch_up_date and schedule_date
+        // Fetch all missed records and do minimal PHP filtering for date logic
+        $missedRecords = supabaseSelect(
+            'immunization_records',
+            'vaccine_name,schedule_date,catch_up_date',
+            [
+                'baby_id' => $babyIds,
+                'status' => 'missed'
+            ]
+        ) ?: [];
+        
+        // Filter missed records: use catch_up_date if available, otherwise schedule_date
+        $missedInRange = [];
+        foreach ($missedRecords as $record) {
+            $targetDate = !empty($record['catch_up_date']) ? $record['catch_up_date'] : ($record['schedule_date'] ?? '');
+            if ($targetDate >= $firstDay && $targetDate <= $lastDay) {
+                $missedInRange[] = ['vaccine_name' => $record['vaccine_name']];
+            }
         }
         
-        // Filter by month and status
-        // Use catch_up_date if missed, otherwise use schedule_date (for procurement analysis)
-        // Include both 'scheduled' and 'missed' statuses (both need vaccines)
-        // Exclude 'taken' and 'completed' (already given)
-        $monthRecords = array_filter($immunizations, function($r) use ($firstDay, $lastDay) {
-            $status = strtolower($r['status'] ?? '');
-            
-            // Exclude already completed/taken vaccines
-            if ($status === 'taken' || $status === 'completed') {
-                return false;
-            }
-            
-            // Only include scheduled or missed vaccines (both need to be given)
-            if ($status !== 'scheduled' && $status !== 'missed') {
-                return false;
-            }
-            
-            // Determine which date to use for month calculation
-            // If missed and has catch_up_date, use catch_up_date
-            // Otherwise, use schedule_date (original guideline date)
-            $targetDate = '';
-            if ($status === 'missed' && !empty($r['catch_up_date'])) {
-                $targetDate = $r['catch_up_date'] ?? '';
-            } else {
-                $targetDate = $r['schedule_date'] ?? '';
-            }
-            
-            // Check if target date falls within the target month
-            return $targetDate >= $firstDay && $targetDate <= $lastDay;
-        });
+        // Combine all records
+        $allRecords = array_merge($scheduledRecords, $missedInRange);
         
-        // Count by vaccine
+        // Count by vaccine (minimal PHP processing - just counting)
         $counts = [];
-        foreach ($monthRecords as $record) {
+        foreach ($allRecords as $record) {
             $vaccineName = $record['vaccine_name'] ?? '';
             if ($vaccineName) {
                 $counts[$vaccineName] = ($counts[$vaccineName] ?? 0) + 1;

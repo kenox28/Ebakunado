@@ -16,12 +16,12 @@ if ($user_types != 'midwifes') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vaccination Planner</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/skeleton-loading.css" />
     <style>
         main.planner-container {
             padding: 20px;
@@ -338,7 +338,7 @@ if ($user_types != 'midwifes') {
         }
 
         try {
-            const res = await fetch(`../../php/supabase/bhw/get_vaccination_planner.php?${params.toString()}`);
+            const res = await fetch(`php/supabase/bhw/get_vaccination_planner.php?${params.toString()}`);
             const json = await res.json();
             console.log('[Planner] API response:', json);
             if (json.status !== 'success') {
@@ -549,7 +549,7 @@ if ($user_types != 'midwifes') {
             
             console.log('[Batch Update] Sending:', { record_ids: validIds, batch_schedule_date: batchDate });
             
-            const res = await fetch('../../php/supabase/bhw/update_batch_schedule.php', {
+            const res = await fetch('php/supabase/bhw/update_batch_schedule.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ record_ids: validIds, batch_schedule_date: batchDate })
@@ -625,9 +625,9 @@ if ($user_types != 'midwifes') {
         loadPlanner(1);
     });
 </script>
-<script src="../../js/header-handler/profile-menu.js" defer></script>
-<script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-<script src="../../js/utils/skeleton-loading.js" defer></script>
+<script src="js/header-handler/profile-menu.js" defer></script>
+<script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+<script src="js/utils/skeleton-loading.js" defer></script>
 </body>
 </html>
 

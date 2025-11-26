@@ -1,8 +1,5 @@
 <?php
-// Main entry point for the application
-require_once __DIR__ . '/app/Router.php';
-
-// Initialize and dispatch the router
-$router = new Router();
-$router->dispatch();
-?>
+// Legacy entry point.
+// Redirect to the new main front controller.
+header('Location: ./index.php');
+exit();

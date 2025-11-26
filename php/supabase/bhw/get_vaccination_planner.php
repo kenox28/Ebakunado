@@ -18,18 +18,33 @@ $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $limit = isset($_GET['limit']) ? max(1, (int)$_GET['limit']) : 10;
 
 try {
-    // Fetch all immunization records first (like get_immunization_view.php does)
+    // OPTIMIZATION: Use database filters instead of fetching ALL records
     $immColumns = 'id,baby_id,vaccine_name,dose_number,status,schedule_date,batch_schedule_date,catch_up_date';
     
-    // Fetch in batches to get all records
+    // Build conditions for database filtering
+    $conditions = [];
+    if ($vaccine !== 'all') {
+        $conditions['vaccine_name'] = $vaccine;
+    }
+    if ($statusFilter === 'completed') {
+        $conditions['status'] = 'taken';
+    } elseif ($statusFilter === 'scheduled' || $statusFilter === 'upcoming') {
+        $conditions['status'] = 'scheduled';
+    } elseif ($statusFilter === 'missed') {
+        $conditions['status'] = 'missed';
+    }
+    
+    // Fetch in batches with filters (much faster than fetching all then filtering)
     $immunizations = [];
     $batchSize = 200;
     $offset = 0;
-    while (true) {
+    $maxFetch = 2000; // Limit to prevent excessive data
+    
+    while (count($immunizations) < $maxFetch) {
         $batch = supabaseSelect(
             'immunization_records',
             $immColumns,
-            [],
+            $conditions,
             'schedule_date.asc',
             $batchSize,
             $offset

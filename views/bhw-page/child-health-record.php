@@ -25,14 +25,20 @@ if ($user_id) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Child Health Record</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css?v=1.0.1" />
-    <link rel="stylesheet" href="../../css/sidebar.css?v=1.0.1" />
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/bhw/child-health-record.css" />
-</head>
+    <?php
+    // Get base path for <base> tag to fix relative paths in nested routes
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    $baseDir = str_replace('\\', '/', dirname($scriptName));
+    $basePath = ($baseDir === '/' || $baseDir === '\\' || $baseDir === '.') ? '' : $baseDir;
+    echo '<base href="' . htmlspecialchars($basePath . '/', ENT_QUOTES) . '">';
+    ?>
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/skeleton-loading.css" />
+    <link rel="stylesheet" href="css/bhw/child-health-record.css?v=1.0.1" />
 </head>
 
 <body>
@@ -42,7 +48,7 @@ if ($user_id) {
     <main>
         <section class="child-health-record-section" id="chrRoot">
             <div class="chr-top-actions">
-                <a href="child-health-list.php" class="btn back-btn">
+                <a href="health-children" class="btn back-btn">
                     <span class="material-symbols-rounded">arrow_back</span>
                     Go Back
                 </a>
@@ -213,9 +219,9 @@ if ($user_id) {
         </section>
     </main>
 
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
     <script>
         // Format date as: short month name, numeric day, full year (e.g., Jan 5, 2025)
         function formatDateLong(dateString) {
@@ -245,8 +251,25 @@ if ($user_id) {
         }
 
         document.addEventListener('DOMContentLoaded', async function() {
-            const params = new URLSearchParams(window.location.search);
-            const babyId = params.get('baby_id') || '';
+            // Get baby_id from URL path parameter (route: /health-child/{id})
+            // First try to get from PHP $_GET (set by router)
+            let babyId = '<?php echo isset($_GET["id"]) ? htmlspecialchars($_GET["id"], ENT_QUOTES) : ""; ?>';
+            
+            // Fallback: extract from URL path if not in $_GET
+            if (!babyId) {
+                const pathParts = window.location.pathname.split('/').filter(p => p);
+                const healthChildIndex = pathParts.indexOf('health-child');
+                if (healthChildIndex !== -1 && pathParts[healthChildIndex + 1]) {
+                    babyId = decodeURIComponent(pathParts[healthChildIndex + 1]);
+                }
+            }
+            
+            // Also check query string as fallback
+            if (!babyId) {
+                const params = new URLSearchParams(window.location.search);
+                babyId = params.get('baby_id') || params.get('id') || '';
+            }
+            
             if (!babyId) {
                 alert('Missing baby_id');
                 return;
@@ -296,7 +319,7 @@ if ($user_id) {
                 // Fetch child details
                 const fd = new FormData();
                 fd.append('baby_id', babyId);
-                const childRes = await fetch('../../php/supabase/bhw/get_child_details.php', {
+                const childRes = await fetch('php/supabase/bhw/get_child_details.php', {
                     method: 'POST',
                     body: fd
                 });
@@ -366,7 +389,7 @@ if ($user_id) {
 
                 // Fetch immunization schedule for child
 
-                const schedRes = await fetch(`../../php/supabase/bhw/get_immunization_records.php?baby_id=${encodeURIComponent(babyId)}`);
+                const schedRes = await fetch(`php/supabase/bhw/get_immunization_records.php?baby_id=${encodeURIComponent(babyId)}`);
                 const schedJson = await schedRes.json();
                 if (schedJson.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
@@ -421,9 +444,27 @@ if ($user_id) {
             }
         });
 
+        // Helper function to get baby_id from route parameter or query string
+        function getBabyId() {
+            // First try PHP $_GET (set by router from route parameter {id})
+            const phpBabyId = '<?php echo isset($_GET["id"]) ? htmlspecialchars($_GET["id"], ENT_QUOTES) : ""; ?>';
+            if (phpBabyId) return phpBabyId;
+            
+            // Fallback: extract from URL path
+            const pathParts = window.location.pathname.split('/').filter(p => p);
+            const healthChildIndex = pathParts.indexOf('health-child');
+            if (healthChildIndex !== -1 && pathParts[healthChildIndex + 1]) {
+                return decodeURIComponent(pathParts[healthChildIndex + 1]);
+            }
+            
+            // Last resort: query string
+            const params = new URLSearchParams(window.location.search);
+            return params.get('baby_id') || params.get('id') || '';
+        }
+
         // Feeding and TD status update functions
         async function updateFeedingStatus() {
-            const babyId = new URLSearchParams(window.location.search).get('baby_id') || '';
+            const babyId = getBabyId();
             try {
                 const formData = new FormData();
                 formData.append('baby_id', babyId);
@@ -437,7 +478,7 @@ if ($user_id) {
                 formData.append('complementary_feeding_7mo', document.getElementById('cf_7mo').value);
                 formData.append('complementary_feeding_8mo', document.getElementById('cf_8mo').value);
 
-                const res = await fetch('../../php/supabase/bhw/update_feeding_status.php', {
+                const res = await fetch('php/supabase/bhw/update_feeding_status.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -449,7 +490,7 @@ if ($user_id) {
         }
 
         async function updateTDStatus() {
-            const babyId = new URLSearchParams(window.location.search).get('baby_id') || '';
+            const babyId = getBabyId();
             try {
                 const formData = new FormData();
                 formData.append('baby_id', babyId);
@@ -457,7 +498,7 @@ if ($user_id) {
                     formData.append(`mother_td_dose${i}_date`, document.getElementById(`td_dose${i}`).value);
                 }
 
-                const res = await fetch('../../php/supabase/bhw/update_td_status.php', {
+                const res = await fetch('php/supabase/bhw/update_td_status.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -469,14 +510,14 @@ if ($user_id) {
         }
 
         async function updateNewbornScreening() {
-            const babyId = new URLSearchParams(window.location.search).get('baby_id') || '';
+            const babyId = getBabyId();
             try {
                 const formData = new FormData();
                 formData.append('baby_id', babyId);
                 formData.append('date_newbornScreening', document.getElementById('nbs_date').value);
                 formData.append('placeNewbornScreening', document.getElementById('nbs_place').value);
 
-                const res = await fetch('../../php/supabase/bhw/update_newborn_screening.php', {
+                const res = await fetch('php/supabase/bhw/update_newborn_screening.php', {
                     method: 'POST',
                     body: formData
                 });

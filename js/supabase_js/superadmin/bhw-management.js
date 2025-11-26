@@ -8,8 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
 // Fetch and display BHW (reusing from home.js)
 async function getBhw() {
 	try {
-		const response = await fetch("../../php/supabase/admin/show_bhw.php");
-		// const response = await fetch("../../php/mysql/admin/show_bhw.php");
+		const response = await fetch("php/supabase/admin/show_bhw.php");
+		// const response = await fetch("php/mysql/admin/show_bhw.php");
 		const data = await response.json();
 
 		const tbody = document.querySelector("#bhwTableBody");
@@ -53,8 +53,8 @@ function toggleAllBhw() {
 async function editBhw(bhw_id) {
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/edit_bhw.php?bhw_id=${bhw_id}`
-			// `../../php/mysql/admin/edit_bhw.php?bhw_id=${bhw_id}`
+			`php/supabase/admin/edit_bhw.php?bhw_id=${bhw_id}`
+			// `php/mysql/admin/edit_bhw.php?bhw_id=${bhw_id}`
 		);
 		const data = await response.json();
 
@@ -198,8 +198,8 @@ async function updateBhw() {
 	formData.append("place", place);
 
 	try {
-		const response = await fetch("../../php/supabase/admin/save_user.php", {
-			// const response = await fetch("../../php/mysql/admin/save_user.php", {
+		const response = await fetch("php/supabase/admin/save_user.php", {
+			// const response = await fetch("php/mysql/admin/save_user.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -242,8 +242,8 @@ async function deleteBhw(bhw_id) {
 			const formData = new FormData();
 			formData.append("bhw_id", bhw_id);
 
-			const response = await fetch("../../php/supabase/admin/delete_bhw.php", {
-				// const response = await fetch("../../php/mysql/admin/delete_bhw.php", {
+			const response = await fetch("php/supabase/admin/delete_bhw.php", {
+				// const response = await fetch("php/mysql/admin/delete_bhw.php", {
 				method: "POST",
 				body: formData,
 			});
@@ -290,8 +290,8 @@ async function deleteSelectedBhw() {
 			for (const checkbox of selectedBoxes) {
 				const formData = new FormData();
 				formData.append("bhw_id", checkbox.value);
-				await fetch("../../php/supabase/admin/delete_bhw.php", {
-					// await fetch("../../php/mysql/admin/delete_bhw.php", {
+				await fetch("php/supabase/admin/delete_bhw.php", {
+					// await fetch("php/mysql/admin/delete_bhw.php", {
 					method: "POST",
 					body: formData,
 				});
@@ -317,8 +317,8 @@ async function loadEditBhwProvinces(currentPlace = "") {
 		window.currentBhwPlace = currentPlace;
 
 		const response = await fetch(
-			"../../php/supabase/admin/get_places.php?type=provinces"
-			// "../../php/mysql/admin/get_places.php?type=provinces"
+			"php/supabase/admin/get_places.php?type=provinces"
+			// "php/mysql/admin/get_places.php?type=provinces"
 		);
 		const data = await response.json();
 
@@ -347,8 +347,8 @@ async function loadEditBhwCities() {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
 				province
 			)}`
 		);
@@ -372,8 +372,8 @@ async function loadEditBhwBarangays() {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(city)}`
 		);
@@ -398,8 +398,8 @@ async function loadEditBhwPuroks() {
 
 	try {
 		const response = await fetch(
-			`../../php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
-				// `../../php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+			`php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
+				// `php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
 				province
 			)}&city_municipality=${encodeURIComponent(
 				city

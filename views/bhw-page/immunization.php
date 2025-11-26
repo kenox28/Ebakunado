@@ -30,14 +30,14 @@ if ($user_id) {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>BHW Dashboard</title>
-        <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-        <link rel="stylesheet" href="../../css/main.css" />
-        <link rel="stylesheet" href="../../css/header.css" />
-        <link rel="stylesheet" href="../../css/sidebar.css" />
-        <link rel="stylesheet" href="../../css/notification-style.css" />
-        <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-        <link rel="stylesheet" href="../../css/bhw/immunization-style.css">
-        <link rel="stylesheet" href="../../css/bhw/growth-assessment.css">
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+        <link rel="stylesheet" href="css/main.css" />
+        <link rel="stylesheet" href="css/header.css" />
+        <link rel="stylesheet" href="css/sidebar.css" />
+        <link rel="stylesheet" href="css/notification-style.css" />
+        <link rel="stylesheet" href="css/skeleton-loading.css" />
+        <link rel="stylesheet" href="css/bhw/immunization-style.css">
+        <link rel="stylesheet" href="css/bhw/growth-assessment.css">
     </head>
 
 <body>
@@ -271,10 +271,10 @@ if ($user_id) {
     </main>
 
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script src="../../js/growth-standards/who-growth-calculator.js" defer></script>
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
+    <script src="js/growth-standards/who-growth-calculator.js" defer></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
     <script>
         // spinner CSS (scoped)
         const style = document.createElement('style');
@@ -355,7 +355,7 @@ if ($user_id) {
                 if (vaccineSel && vaccineSel !== '') params.set('vaccine', vaccineSel);
                 if (purokQ) params.set('purok', purokQ);
 
-                const res = await fetch(`../../php/supabase/bhw/get_immunization_view.php?${params.toString()}`);
+                const res = await fetch(`php/supabase/bhw/get_immunization_view.php?${params.toString()}`);
                 const data = await res.json();
                 if (data.status !== 'success') {
                     body.innerHTML = '<tr class="message-row error"><td colspan="7">Failed to load data. Please try again.</td></tr>';
@@ -704,7 +704,7 @@ if ($user_id) {
             }
 
             try {
-                const res = await fetch('../../php/supabase/bhw/save_immunization.php', {
+                const res = await fetch('php/supabase/bhw/save_immunization.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -826,7 +826,7 @@ if ($user_id) {
         async function viewChildInformation(baby_id) {
             formData = new FormData();
             formData.append('baby_id', baby_id);
-            const response = await fetch('../../php/supabase/bhw/child_information.php', {
+            const response = await fetch('php/supabase/bhw/child_information.php', {
                 method: 'POST',
                 body: formData
             });
@@ -966,7 +966,7 @@ if ($user_id) {
             const formData = new FormData();
             formData.append('baby_id', baby_id);
             // const response = await fetch('../../php/bhw/accept_chr.php', { method: 'POST', body: formData });
-            const response = await fetch('../../php/supabase/bhw/accept_chr.php', {
+            const response = await fetch('php/supabase/bhw/accept_chr.php', {
                 method: 'POST',
                 body: formData
             });
@@ -982,7 +982,7 @@ if ($user_id) {
         async function rejectRecord(baby_id) {
             const formData = new FormData();
             formData.append('baby_id', baby_id);
-            const response = await fetch('../../php/mysql/bhw/reject_chr.php', {
+            const response = await fetch('php/mysql/bhw/reject_chr.php', {
                 method: 'POST',
                 body: formData
             });
@@ -1108,7 +1108,7 @@ if ($user_id) {
 
             try {
                 // Fetch immunization records for this baby
-                const response = await fetch(`../../php/supabase/bhw/get_immunization_records.php?baby_id=${encodeURIComponent(baby_id)}`);
+                const response = await fetch(`php/supabase/bhw/get_immunization_records.php?baby_id=${encodeURIComponent(baby_id)}`);
                 const data = await response.json();
 
                 if (data.status !== 'success' || !data.data || data.data.length === 0) {
@@ -1149,7 +1149,7 @@ if ($user_id) {
                 // Fetch child details to get full information for the form
                 const formData = new FormData();
                 formData.append('baby_id', baby_id);
-                const childResponse = await fetch('../../php/supabase/bhw/get_child_details.php', {
+                const childResponse = await fetch('php/supabase/bhw/get_child_details.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -1228,7 +1228,7 @@ if ($user_id) {
             try {
                 const formData = new FormData();
                 formData.append('baby_id', babyId);
-                const response = await fetch('../../php/supabase/bhw/get_child_details.php', {
+                const response = await fetch('php/supabase/bhw/get_child_details.php', {
                     method: 'POST',
                     body: formData
                 });

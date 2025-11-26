@@ -1,0 +1,14 @@
+RewriteEngine On
+
+# Adjust this base path for your environment:
+# - On localhost with the project at http://localhost/ebakunado/, keep: /ebakunado/
+# - On production at https://ebakunado.com/, change to: /
+RewriteBase /ebakunado/
+
+# If the requested resource does not map to an existing file or directory,
+# route the request to index.php so the PHP router can handle clean URLs.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+
+

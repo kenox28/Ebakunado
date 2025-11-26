@@ -19,7 +19,7 @@ async function logoutSuperAdmin() {
 	});
 
 	if (result.isConfirmed) {
-		const response = await fetch("../../php/supabase/superadmin/logout.php", {
+		const response = await fetch("php/supabase/superadmin/logout.php", {
 			method: "POST",
 		});
 
@@ -37,7 +37,7 @@ async function logoutSuperAdmin() {
 				showConfirmButton: false,
 				timer: 1500,
 			}).then(() => {
-				window.location.href = "../../views/landing-page/landing-page.html";
+				window.location.href = "home";
 			});
 		} else {
 			Swal.fire("Error!", data.message, "error");

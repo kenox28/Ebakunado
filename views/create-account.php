@@ -179,45 +179,46 @@ session_start();
 
             <div class="input-group">
               <label class="input-label" for="province">Province</label>
-              <select
+              <input
                 class="form-input"
+                type="text"
                 id="province"
                 name="province"
-                onchange="loadCities()"
-                required>
-                <option value="" disabled selected hidden>Select Province</option>
-              </select>
+                placeholder="Enter province"
+                required />
             </div>
 
             <div class="input-group">
               <label class="input-label" for="city_municipality">City/Municipality</label>
-              <select
+              <input
                 class="form-input"
+                type="text"
                 id="city_municipality"
                 name="city_municipality"
-                onchange="loadBarangays()"
-                required>
-                <option value="" disabled selected hidden>Select City/Municipality</option>
-              </select>
+                placeholder="Enter city or municipality"
+                required />
             </div>
 
             <div class="input-group">
               <label class="input-label" for="barangay">Barangay</label>
-              <select
+              <input
                 class="form-input"
+                type="text"
                 id="barangay"
                 name="barangay"
-                onchange="loadPuroks()"
-                required>
-                <option value="" disabled selected hidden>Select Barangay</option>
-              </select>
+                placeholder="Enter barangay"
+                required />
             </div>
 
             <div class="input-group">
               <label class="input-label" for="purok">Purok</label>
-              <select class="form-input" id="purok" name="purok" required>
-                <option value="" disabled selected hidden>Select Purok</option>
-              </select>
+              <input
+                class="form-input"
+                type="text"
+                id="purok"
+                name="purok"
+                placeholder="Enter purok"
+                required />
             </div>
 
             <div class="step-actions">

@@ -8,7 +8,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <div class="brand-mark">
                 <img
                     class="brand-logo"
-                    src="../../assets/images/ebakunado-logo-without-label.png"
+                    src="assets/images/ebakunado-logo-without-label.png"
                     alt="eBakunado Logo" />
             </div>
             <div class="brand-text-block">
@@ -22,7 +22,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <ul class="sidebar-menu">
                 <!-- Dashboard -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'dashboard.php' ? ' active' : ''; ?>">
-                    <a href="../../views/user-page/dashboard.php" class="menu-link">
+                    <a href="dashboard" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">dashboard</span>
                         <span class="menu-label">Dashboard</span>
                     </a>
@@ -30,7 +30,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
                 <!-- Pending Approval -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'children-list.php' ? ' active' : ''; ?>">
-                    <a href="../../views/user-page/children-list.php" class="menu-link">
+                    <a href="children" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">folder</span>
                         <span class="menu-label">Child Record</span>
                     </a>
@@ -38,7 +38,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
                 <!-- Child Health Record -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'approved-requests.php' ? ' active' : ''; ?>">
-                    <a href="../../views/user-page/approved-requests.php" class="menu-link">
+                    <a href="approved-requests" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">description</span>
                         <span class="menu-label">Approved Requests</span>
                     </a>
@@ -46,7 +46,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 
                 <!-- Add Child -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'add-child.php' ? ' active' : ''; ?>">
-                    <a href="../../views/user-page/add-child-request.php" class="menu-link">
+                    <a href="add-child" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">add_circle</span>
                         <span class="menu-label">Add Child</span>
                     </a>
@@ -58,7 +58,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <div class="profile-avatar-container">
                 <img
                     class="profile-avatar"
-                    src="<?php echo !empty($noprofile) ? htmlspecialchars($noprofile) : '../../assets/images/user-profile.png'; ?>"
+                    src="<?php echo !empty($noprofile) ? htmlspecialchars($noprofile) : 'assets/images/user-profile.png'; ?>"
                     alt="User Profile" />
             </div>
             <div class="profile-text-block">

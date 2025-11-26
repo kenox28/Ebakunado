@@ -25,13 +25,13 @@ if ($user_id) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Child Health Record Lists</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/bhw/child-health-list.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/skeleton-loading.css" />
+    <link rel="stylesheet" href="css/bhw/child-health-list.css" />
 </head>
 
 <body>
@@ -141,9 +141,9 @@ if ($user_id) {
         </section>
     </main>
 
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
     <script>
         // Column config for skeleton (7 visible columns)
         function getChildHealthListColsConfig() {
@@ -272,7 +272,7 @@ if ($user_id) {
                 if (searchVal) qs.set('search', searchVal);
                 if (purokVal) qs.set('purok', purokVal);
 
-                const res = await fetch('../../php/supabase/bhw/get_child_health_record.php?' + qs.toString());
+                const res = await fetch('php/supabase/bhw/get_child_health_record.php?' + qs.toString());
                 const data = await res.json();
                 if (data.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
@@ -313,11 +313,11 @@ if ($user_id) {
                                 </button>
                             </td>
                             <td>
-                                <a class="btn viewCHR-btn" href="child-health-record.php?baby_id=${encodeURIComponent(item.baby_id)}">
+                                <a class="btn viewCHR-btn" href="#" onclick="const path = window.location.pathname; const base = path.substring(0, path.lastIndexOf('/')); window.location.href = base + '/health-child/' + encodeURIComponent('${item.baby_id}'); return false;">
                                     <span class="material-symbols-rounded btn-icon">visibility</span>
                                     <span class="btn-text">View CHR</span>
                                 </a>
-                                <a class="btn downloadCHR-btn" href="../../php/supabase/bhw/download_chr.php?baby_id=${encodeURIComponent(item.baby_id)}">
+                                <a class="btn downloadCHR-btn" href="php/supabase/bhw/download_chr.php?baby_id=${encodeURIComponent(item.baby_id)}">
                                     <span class="material-symbols-rounded btn-icon">download</span>
                                     <span class="btn-text">Download CHR</span>
                                 </a>
@@ -449,7 +449,7 @@ if ($user_id) {
             tr.parentNode.insertBefore(detailsRow, tr.nextElementSibling);
 
             try {
-                const res = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
+                const res = await fetch('php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
                 const data = await res.json();
 
                     const tbody = detailsRow.querySelector('.sched-body');
@@ -611,12 +611,12 @@ if ($user_id) {
         }
         async function logoutBhw() {
             // const response = await fetch('/ebakunado/php/bhw/logout.php', { method: 'POST' });
-            const response = await fetch('../../php/supabase/bhw/logout.php', {
+            const response = await fetch('php/supabase/bhw/logout.php', {
                 method: 'POST'
             });
             const data = await response.json();
-            if (data.status === 'success') {
-                window.location.href = '../../views/login.php';
+                if (data.status === 'success') {
+                window.location.href = 'login';
             } else {
                 alert('Logout failed: ' + data.message);
             }
@@ -646,7 +646,7 @@ if ($user_id) {
             btn.setAttribute('aria-expanded', 'true');
 
             try {
-                const res = await fetch('../../php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
+                const res = await fetch('php/supabase/bhw/get_immunization_records.php?baby_id=' + encodeURIComponent(baby_id));
                 const data = await res.json();
 
                 // Re-check just before insert in case another insert happened

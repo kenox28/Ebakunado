@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="../../css/modals.css" />
+<link rel="stylesheet" href="css/modals.css" />
 <header class="header">
     <div class="header-left">
         <button
@@ -40,7 +40,7 @@
         $sessionProfileImg = isset($_SESSION['profileimg']) ? trim((string)$_SESSION['profileimg']) : '';
         $headerProfileImg = ($sessionProfileImg && $sessionProfileImg !== 'noprofile.png')
             ? $sessionProfileImg
-            : '../../assets/images/user-profile.png';
+            : 'assets/images/user-profile.png';
         $emailDisplay = isset($_SESSION['email']) ? htmlspecialchars((string)$_SESSION['email']) : '—';
         
         $has_user_role = false;
@@ -74,7 +74,7 @@
                     </div>
                 </div>
                 <div class="menu-group" aria-label="Account">
-                    <a class="menu-item" href="./profile-management.php" role="menuitem"><span class="material-symbols-rounded">person</span>My Account</a>
+                    <a class="menu-item" href="health-profile" role="menuitem"><span class="material-symbols-rounded">person</span>My Account</a>
                     <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">badge</span>View Profile</a>
                     <a class="menu-item" href="#" role="menuitem"><span class="material-symbols-rounded">settings</span>Settings</a>
                 </div>
@@ -135,8 +135,8 @@
                 // Determine endpoint based on user type
                 const isMidwife = <?php echo (isset($_SESSION['midwife_id']) ? 'true' : 'false'); ?>;
                 const endpoint = isMidwife ?
-                    '../../php/supabase/midwives/get_notifications.php' :
-                    '../../php/supabase/bhw/get_bhw_notifications.php';
+                    'php/supabase/midwives/get_notifications.php' :
+                    'php/supabase/bhw/get_bhw_notifications.php';
 
                 const response = await fetch(endpoint);
                 if (!response.ok) {
@@ -211,8 +211,8 @@
                 // Mark as read on server
                 const isMidwife = <?php echo (isset($_SESSION['midwife_id']) ? 'true' : 'false'); ?>;
                 const endpoint = isMidwife ?
-                    '../../php/supabase/midwives/mark_notification_read.php' :
-                    '../../php/supabase/bhw/mark_notification_read.php';
+                    'php/supabase/midwives/mark_notification_read.php' :
+                    'php/supabase/bhw/mark_notification_read.php';
 
                 const fd = new FormData();
                 fd.append('id', notificationId);
@@ -244,8 +244,8 @@
             // Persist to server
             const isMidwife = <?php echo (isset($_SESSION['midwife_id']) ? 'true' : 'false'); ?>;
             const endpoint = isMidwife ?
-                '../../php/supabase/midwives/mark_notifications_read_all.php' :
-                '../../php/supabase/bhw/mark_notifications_read_all.php';
+                'php/supabase/midwives/mark_notifications_read_all.php' :
+                'php/supabase/bhw/mark_notifications_read_all.php';
 
             fetch(endpoint, {
                 method: 'POST'
@@ -283,8 +283,8 @@
             try {
                 const isMidwife = <?php echo (isset($_SESSION['midwife_id']) ? 'true' : 'false'); ?>;
                 const endpoint = isMidwife ?
-                    '../../php/supabase/midwives/get_notifications.php' :
-                    '../../php/supabase/bhw/get_bhw_notifications.php';
+                    'php/supabase/midwives/get_notifications.php' :
+                    'php/supabase/bhw/get_bhw_notifications.php';
 
                 const res = await fetch(endpoint);
                 if (!res.ok) return;
@@ -302,7 +302,7 @@
             // Function to switch to Parent/User view
             async function switchToParentView() {
                 try {
-                    const response = await fetch('/ebakunado/php/supabase/shared/switch_role.php', {
+                    const response = await fetch('php/supabase/shared/switch_role.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -312,8 +312,8 @@
                     const data = await response.json();
 
                     if (data.status === 'success') {
-                        // Redirect to user home page
-                        window.location.href = data.redirect_url || '/ebakunado/views/users/home.php';
+                        // Redirect to parent dashboard (new user-page)
+                        window.location.href = data.redirect_url || 'health-dashboard';
                     } else {
                         // Show detailed error message
                         let errorMsg = data.message || 'Failed to switch to Parent view';
@@ -330,5 +330,5 @@
             }
         <?php endif; ?>
     </script>
-    <script src="../../js/utils/ui-feedback.js"></script>
+    <script src="js/utils/ui-feedback.js"></script>
 </header>

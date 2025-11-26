@@ -14,11 +14,23 @@ $user_id = $_SESSION['user_id'];
 
 try {
     // Get all accepted children for this user
-    $children = supabaseSelect(
-        'child_health_records', 
-        'baby_id,child_fname,child_lname', 
-        ['user_id' => $user_id, 'status' => 'accepted']
-    );
+$requestedBabyId = isset($_GET['baby_id']) ? trim($_GET['baby_id']) : '';
+
+if ($requestedBabyId !== '') {
+	$children = supabaseSelect(
+		'child_health_records',
+		'baby_id,child_fname,child_lname',
+		['user_id' => $user_id, 'status' => 'accepted', 'baby_id' => $requestedBabyId],
+		null,
+		1
+	);
+} else {
+	$children = supabaseSelect(
+		'child_health_records', 
+		'baby_id,child_fname,child_lname', 
+		['user_id' => $user_id, 'status' => 'accepted']
+	);
+}
 
     if (!$children) {
         echo json_encode(['status' => 'success', 'data' => []]);
@@ -29,7 +41,7 @@ try {
     $immunization_records = [];
 
     // Get all immunization records for all children
-    foreach ($baby_ids as $baby_id) {
+foreach ($baby_ids as $baby_id) {
         // Fetch all records without ordering first to ensure we get all vaccines including IPV
         $vaccinations = supabaseSelect(
             'immunization_records',

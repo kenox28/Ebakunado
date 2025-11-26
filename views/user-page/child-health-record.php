@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: ../login.php");
+    header("Location: login");
     exit();
 }
 
@@ -26,13 +26,13 @@ $user_fname = $_SESSION['fname'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Child Health Record</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/header.css" />
-    <link rel="stylesheet" href="../../css/sidebar.css" />
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/user/child-health-record.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/notification-style.css" />
+    <link rel="stylesheet" href="css/skeleton-loading.css" />
+    <link rel="stylesheet" href="css/user/child-health-record.css" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -192,9 +192,9 @@ $user_fname = $_SESSION['fname'] ?? '';
         </section>
     </main>
 
-    <script src="../../js/header-handler/profile-menu.js" defer></script>
-    <script src="../../js/sidebar-handler/sidebar-menu.js" defer></script>
-    <script src="../../js/utils/skeleton-loading.js" defer></script>
+    <script src="js/header-handler/profile-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/utils/skeleton-loading.js" defer></script>
     <script>
         // Using shared group maps from skeleton-loading.js (CHR_SKELETON)
 
@@ -281,7 +281,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                 // Fetch child details
                 const fd = new FormData();
                 fd.append('baby_id', babyId);
-                const childRes = await fetch('/ebakunado/php/supabase/users/get_child_details.php', {
+                const childRes = await fetch('php/supabase/users/get_child_details.php', {
                     method: 'POST',
                     body: fd
                 });
@@ -348,7 +348,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                         const fd2 = new FormData();
                         fd2.append('baby_id', babyId);
                         fd2.append('request_type', type);
-                        const res2 = await fetch('/ebakunado/php/supabase/users/request_chr_doc.php', {
+                        const res2 = await fetch('php/supabase/users/request_chr_doc.php', {
                             method: 'POST',
                             body: fd2
                         });
@@ -379,7 +379,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 
                 async function refreshChrDocStatus(type) {
                     try {
-                        const res = await fetch(`/ebakunado/php/supabase/users/get_chr_doc_status.php?baby_id=${encodeURIComponent(babyId)}&request_type=${encodeURIComponent(type)}`);
+                        const res = await fetch(`php/supabase/users/get_chr_doc_status.php?baby_id=${encodeURIComponent(babyId)}&request_type=${encodeURIComponent(type)}`);
                         const j = await res.json();
                         if (j.status === 'success' && j.data) {
                             const st = j.data.status || '';
@@ -415,7 +415,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                 }
 
                 // Fetch immunization schedule for child to build compact ledger
-                const schedRes = await fetch(`/ebakunado/php/supabase/users/get_immunization_schedule.php?baby_id=${encodeURIComponent(babyId)}`);
+                const schedRes = await fetch(`php/supabase/users/get_immunization_schedule.php?baby_id=${encodeURIComponent(babyId)}`);
                 if (!schedRes.ok) {
                     if (typeof renderTableMessage === 'function') {
                         renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', { colspan: 11, kind: 'error' });
@@ -435,95 +435,111 @@ $user_fname = $_SESSION['fname'] ?? '';
                 }
                 const allRows = Array.isArray(schedJson.data) ? schedJson.data : [];
 
-                // Filter only taken records
-                const takenRows = allRows.filter(r => r.status === 'taken' || r.status === 'completed');
-
-                // Determine next upcoming schedule per taken record (earliest future, not taken)
-                function nextScheduleAfter(dateStr) {
-                    if (!dateStr) return '';
-                    const future = allRows
-                        .filter(r => (r.status !== 'taken' && r.status !== 'completed'))
-                        .filter(r => {
-                            const due = r.catch_up_date || r.batch_schedule_date || r.schedule_date || '';
-                            return due && String(due) > String(dateStr);
-                        })
-                        .sort((a, b) => {
-                            const aDate = a.catch_up_date || a.batch_schedule_date || a.schedule_date || '';
-                            const bDate = b.catch_up_date || b.batch_schedule_date || b.schedule_date || '';
-                            return String(aDate).localeCompare(String(bDate));
-                        });
-                    if (!future.length) return '';
-                    const next = future[0];
-                    return next.catch_up_date || next.batch_schedule_date || next.schedule_date || '';
-                }
-
-                // Canonical vaccine order to avoid duplicates and ensure clear display
+                // Canonical vaccine order with normalization to match Supabase labels
                 const canonical = [
-                    'BCG',
-                    'HEPAB1 (w/in 24 hrs)',
-                    'HEPAB1 (More than 24hrs)',
-                    'Pentavalent (DPT-HepB-Hib) - 1st',
-                    'OPV - 1st',
-                    'PCV - 1st',
-                    'Rota Virus Vaccine - 1st',
-                    'Pentavalent (DPT-HepB-Hib) - 2nd',
-                    'OPV - 2nd',
-                    'PCV - 2nd',
-                    'Rota Virus Vaccine - 2nd',
-                    'Pentavalent (DPT-HepB-Hib) - 3rd',
-                    'OPV - 3rd',
-                    'PCV - 3rd',
-                    'MCV1 (AMV)',
-                    'MCV2 (MMR)'
+                    { key: 'bcg', label: 'BCG', aliases: ['bcg'] },
+                    { key: 'hepb_birth', label: 'Hepatitis B (Birth Dose)', aliases: ['hepatitis b', 'hepab1 (w/in 24 hrs)', 'hepab1 (more than 24hrs)'] },
+                    { key: 'penta1', label: 'Pentavalent (DPT-HepB-Hib) - 1st', aliases: ['pentavalent (dpt-hepb-hib) - 1st', 'pentavalent 1'] },
+                    { key: 'opv1', label: 'OPV - 1st', aliases: ['opv - 1st', 'opv 1'] },
+                    { key: 'pcv1', label: 'PCV - 1st', aliases: ['pcv - 1st', 'pcv 1'] },
+                    { key: 'rota1', label: 'Rota Virus Vaccine - 1st', aliases: ['rota virus vaccine - 1st', 'rota 1'] },
+                    { key: 'penta2', label: 'Pentavalent (DPT-HepB-Hib) - 2nd', aliases: ['pentavalent (dpt-hepb-hib) - 2nd', 'pentavalent 2'] },
+                    { key: 'opv2', label: 'OPV - 2nd', aliases: ['opv - 2nd', 'opv 2'] },
+                    { key: 'pcv2', label: 'PCV - 2nd', aliases: ['pcv - 2nd', 'pcv 2'] },
+                    { key: 'rota2', label: 'Rota Virus Vaccine - 2nd', aliases: ['rota virus vaccine - 2nd', 'rota 2'] },
+                    { key: 'penta3', label: 'Pentavalent (DPT-HepB-Hib) - 3rd', aliases: ['pentavalent (dpt-hepb-hib) - 3rd', 'pentavalent 3'] },
+                    { key: 'opv3', label: 'OPV - 3rd', aliases: ['opv - 3rd', 'opv 3'] },
+                    { key: 'pcv3', label: 'PCV - 3rd', aliases: ['pcv - 3rd', 'pcv 3'] },
+                    { key: 'mcv1', label: 'MCV1 (AMV)', aliases: ['mcv1 (amv)', 'mcv1'] },
+                    { key: 'mcv2', label: 'MCV2 (MMR)', aliases: ['mcv2 (mmr)', 'mcv2'] }
                 ];
 
-                // Pick best taken record per vaccine (earliest date_given)
-                const bestByName = {};
-                takenRows.forEach(r => {
-                    const name = String(r.vaccine_name || '');
-                    if (!(name in bestByName)) {
-                        bestByName[name] = r;
-                        return;
-                    }
-                    const cur = bestByName[name];
-                    const dNew = String(r.date_given || '');
-                    const dCur = String(cur.date_given || '');
-                    if (dNew && (!dCur || dNew < dCur)) bestByName[name] = r;
+                const aliasLookup = {};
+                canonical.forEach(entry => {
+                    entry.aliases.forEach(alias => {
+                        aliasLookup[alias.trim().toLowerCase()] = entry;
+                    });
                 });
 
+                const normalizeVaccine = (name) => {
+                    if (!name) return null;
+                    const key = String(name).trim().toLowerCase();
+                    return aliasLookup[key] || null;
+                };
+
+                const dueDateOf = (rec) => {
+                    if (!rec) return '';
+                    return rec.catch_up_date || rec.batch_schedule_date || rec.schedule_date || rec.date_given || '';
+                };
+
+                const recordsByKey = {};
+                allRows.forEach(r => {
+                    const normalized = normalizeVaccine(r.vaccine_name);
+                    if (!normalized) return;
+                    const key = normalized.key;
+                    if (!recordsByKey[key]) {
+                        recordsByKey[key] = {
+                            taken: null,
+                            upcoming: null,
+                            any: null,
+                            takenDue: '',
+                            upcomingDue: '',
+                            anyDue: ''
+                        };
+                    }
+                    const bucket = recordsByKey[key];
+                    const due = dueDateOf(r);
+                    const isTaken = r.status === 'taken' || r.status === 'completed';
+                    if (isTaken) {
+                        if (!bucket.taken || (due && due < bucket.takenDue)) {
+                            bucket.taken = r;
+                            bucket.takenDue = due;
+                        }
+                    } else {
+                        if (!bucket.upcoming || (due && due < bucket.upcomingDue)) {
+                            bucket.upcoming = r;
+                            bucket.upcomingDue = due;
+                        }
+                    }
+                    if (!bucket.any || (due && due < bucket.anyDue)) {
+                        bucket.any = r;
+                        bucket.anyDue = due;
+                    }
+                });
+
+                function getNextReferenceRecord(index) {
+                    for (let i = index + 1; i < canonical.length; i++) {
+                        const entry = canonical[i];
+                        const bucket = recordsByKey[entry.key];
+                        if (!bucket) continue;
+                        return bucket.upcoming || bucket.taken || bucket.any;
+                    }
+                    return null;
+                }
+
                 let ledgerHtml = '';
-                canonical.forEach(name => {
-                    const rec = bestByName[name];
+                canonical.forEach((entry, index) => {
+                    const bucket = recordsByKey[entry.key];
+                    const rec = bucket?.taken;
                     if (!rec) return; // show only taken vaccines
                     const date = rec.date_given || rec.batch_schedule_date || rec.schedule_date || '';
                     const ht = rec.height || rec.height_cm || '';
                     const wt = rec.weight || rec.weight_kg || '';
                     const muac = rec.muac || '-';
-                    const next = nextScheduleAfter(date);
-                    // Get next schedule details including batch date
-                    const nextRecord = allRows
-                        .filter(r => (r.status !== 'taken' && r.status !== 'completed'))
-                        .filter(r => {
-                            const due = r.catch_up_date || r.batch_schedule_date || r.schedule_date || '';
-                            return due && String(due) > String(date);
-                        })
-                        .sort((a, b) => {
-                            const aDate = a.catch_up_date || a.batch_schedule_date || a.schedule_date || '';
-                            const bDate = b.catch_up_date || b.batch_schedule_date || b.schedule_date || '';
-                            return String(aDate).localeCompare(String(bDate));
-                        })[0];
+                    const nextRecord = getNextReferenceRecord(index);
+                    const nextDateRaw = dueDateOf(nextRecord);
                     const nextBatchDate = nextRecord?.batch_schedule_date ? formatDate(nextRecord.batch_schedule_date) : '-';
                     ledgerHtml += `
                 <tr>
                     <td>${getValue(formatDate(date))}</td>
-                    <td>${getValue(name)}</td>
+                    <td>${getValue(entry.label)}</td>
                     <td>${getValue(ht)}</td>
                     <td>${getValue(wt)}</td>
                     <td>${getValue(muac)}</td>
                     <td>Taken</td>
                     <td>-</td>
                     <td>-</td>
-                    <td>${getValue(formatDate(next))}</td>
+                    <td>${getValue(formatDate(nextDateRaw))}</td>
                     <td>${getValue(nextBatchDate)}</td>
                     <td>-</td>
                 </tr>`;
