@@ -497,8 +497,9 @@ main {
 	cursor: pointer;
 }
 
-/* Sidebar */
-.sidebar-menu-item:nth-child(5) {
+/* Sidebar - Only apply to Child Health Record menu item when it has active class */
+/* This ensures it only highlights when PHP sets the active class, not on other pages */
+.sidebar-menu-item.active:nth-child(5) {
 	border-left-color: var(--primary-color);
 	background-color: #d8e6db;
 	color: var(--primary-color);

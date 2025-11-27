@@ -20,12 +20,12 @@ if ($user_types != 'midwifes') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile Management</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css" />
-    <link rel="stylesheet" href="css/header.css" />
-    <link rel="stylesheet" href="css/sidebar.css" />
-    <link rel="stylesheet" href="css/notification-style.css" />
-    <link rel="stylesheet" href="css/bhw/profile-management.css" />
-    <link rel="stylesheet" href="css/modals.css" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/bhw/profile-management.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/modals.css?v=1.0.1" />
 </head>
 
 <body>

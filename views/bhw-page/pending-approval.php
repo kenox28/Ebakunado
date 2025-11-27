@@ -26,13 +26,13 @@ $defaultStatus = (isset($_GET['view']) && $_GET['view'] === 'added') ? 'pendingc
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Approval</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.1" />
     <!-- <link rel="stylesheet" href="css/main.css?v=20251106" /> -->
-    <link rel="stylesheet" href="css/header.css" />
-    <link rel="stylesheet" href="css/sidebar.css" />
-    <link rel="stylesheet" href="css/notification-style.css" />
-    <link rel="stylesheet" href="css/skeleton-loading.css" />
-    <link rel="stylesheet" href="css/bhw/pending-approval-style.css" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/bhw/pending-approval-style.css?v=1.0.1" />
 </head>
 
 <body>
