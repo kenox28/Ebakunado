@@ -1,0 +1,106 @@
+/* -------------------------------------------------- */
+/* Global Data Table styles for user pages            */
+/* Adapted from css/bhw/table-style.css               */
+/* -------------------------------------------------- */
+:root {
+  --dt-border: #e5e7eb;
+  --dt-bg: #ffffff;
+  --dt-text: #1f2937;
+  --dt-muted: #6b7280;
+  --dt-header-bg: #f5f5f5;
+  --txt-muted: #6b7280;
+}
+
+.data-table-card {
+  background: var(--dt-bg);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 0 0 1px;
+}
+
+.data-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--dt-bg);
+}
+
+.data-table th,
+.data-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--dt-border);
+  text-align: left;
+  font-size: 1.3rem;
+  color: var(--dt-text);
+}
+
+.data-table thead th {
+  background: var(--dt-header-bg);
+  font-weight: 600;
+  font-size: 1.25rem;
+  letter-spacing: 0.3px;
+  color: #111827;
+  text-transform: uppercase;
+}
+
+.data-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.data-table tbody td {
+  text-transform: capitalize;
+}
+
+.data-table tbody td.no-capitalize {
+  text-transform: none;
+}
+
+.data-table .actions-cell {
+  text-align: center;
+}
+
+.data-table .message-row td,
+.data-table__message-row td {
+  text-align: center;
+  padding: 2.6rem 1.4rem;
+  color: var(--txt-muted);
+  font-size: 1.3rem;
+  font-weight: 400;
+}
+
+.data-table .message-row.error td,
+.data-table__message-row.error td {
+  color: #dc2626;
+  font-size: 1.3rem;
+  font-weight: 600;
+  background: #fff5f5;
+}
+
+.download-btn {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+
+.download-btn:hover {
+  background-color: #005529;
+  transform: translateY(-1px);
+}
+
+.download-btn .material-symbols-rounded {
+  font-size: 1.6rem;
+}
+

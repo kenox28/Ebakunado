@@ -44,7 +44,7 @@ if (!isset($_SESSION['super_admin_id'])) {
                     <div class="data-table-actions">
                         <div class="data-table-search" id="midwivesSearchWrap">
                             <span class="material-symbols-rounded data-table-search__icon">search</span>
-                            <input type="text" id="searchMidwives" class="data-table-search__input" placeholder="Search midwives..." />
+                            <input type="text" id="searchMidwives" class="data-table-search__input" placeholder="Search midwives..." data-remote-search="true" />
                             <button type="button" id="searchMidwivesClear" class="data-table-search__clear" aria-label="Clear search">
                                 <span class="material-symbols-rounded">close</span>
                             </button>
@@ -80,6 +80,19 @@ if (!isset($_SESSION['super_admin_id'])) {
                         </tbody>
                     </table>
                 </div>
+                <div class="pager">
+                    <p class="page-info" id="midwivesPageInfo">Showing 0-0 of 0</p>
+                    <div class="pager-controls">
+                        <button type="button" class="pager-btn" id="midwivesPrevBtn" data-page="1" disabled>
+                            <span class="material-symbols-rounded">chevron_left</span>
+                            Prev
+                        </button>
+                        <button type="button" class="pager-btn" id="midwivesNextBtn" data-page="1" disabled>
+                            Next
+                            <span class="material-symbols-rounded">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -110,8 +123,8 @@ if (!isset($_SESSION['super_admin_id'])) {
     <script src="js/header-handler/profile-menu.js" defer></script>
     <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="js/utils/skeleton-loading.js" defer></script>
-    <script src="js/supabase_js/superadmin/common.js?v=1.0.4"></script>
-    <script src="js/supabase_js/superadmin/midwife-management.js?v=1.0.3"></script>
+    <script src="js/supabase_js/superadmin/common.js?v=1.0.5"></script>
+    <script src="js/supabase_js/superadmin/midwife-management.js?v=1.0.5"></script>
     <script>
         // Search clear toggle for Midwives
         (function() {
@@ -127,10 +140,18 @@ if (!isset($_SESSION['super_admin_id'])) {
             clearBtn.addEventListener('click', function() {
                 input.value = '';
                 toggleClear();
-                if (typeof clearSearch === 'function') {
-                    clearSearch('searchMidwives', 'midwivesTableBody');
+                if (typeof getMidwives === 'function') {
+                    getMidwives(1);
                 }
                 input.focus();
+            });
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (typeof getMidwives === 'function') {
+                        getMidwives(1);
+                    }
+                }
             });
             toggleClear();
 

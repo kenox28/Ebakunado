@@ -25,7 +25,6 @@ if ($user_id) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BHW Dashboard</title>
-<<<<<<< HEAD
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
     <link rel="stylesheet" href="css/main.css?v=1.0.1" />
     <link rel="stylesheet" href="css/header.css?v=1.0.1" />
@@ -34,16 +33,6 @@ if ($user_id) {
     <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
     <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
     <link rel="stylesheet" href="css/bhw/dashboard.css?v=1.0.4" />
-=======
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css?v=1.0.1" />
-    <link rel="stylesheet" href="../../css/header.css?v=1.0.1" />
-    <link rel="stylesheet" href="../../css/sidebar.css?v=1.0.1" />
-
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/bhw/dashboard.css?v=1.0.2" />
->>>>>>> 389023935fcd7fafa2460b85769cdfa79846258e
 
 </head>
 
@@ -70,7 +59,7 @@ if ($user_id) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <a class="card-link" href="#">
+                        <a class="card-link" href="health-pending">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -88,7 +77,7 @@ if ($user_id) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <a class="card-link" href="#">
+                        <a class="card-link" href="health-immunizations?date=<?php echo date('Y-m-d'); ?>">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -106,7 +95,7 @@ if ($user_id) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <a class="card-link" href="#">
+                        <a class="card-link" href="health-immunizations?status=missed">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -124,7 +113,7 @@ if ($user_id) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <a class="card-link" href="#">
+                        <a class="card-link" href="health-children">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -133,39 +122,40 @@ if ($user_id) {
             </div>
         </section>
 
-        <!-- Monthly Vaccine Schedule Chart -->
-        <section class="monthly-vaccine-section">
-            <div class="monthly-vaccine-card">
-                <div class="monthly-vaccine-header">
-                    <h3 class="monthly-vaccine-title">
-                        Monthly Vaccine Schedule
-                    </h3>
-                    <div class="month-nav-controls">
-                        <button class="month-nav-btn" id="prevMonthBtn" title="Previous Month">
-                            <span class="material-symbols-rounded">chevron_left</span>
-                        </button>
-                        <div class="month-display" id="monthDisplay">November 2025</div>
-                        <button class="month-nav-btn" id="nextMonthBtn" title="Next Month">
-                            <span class="material-symbols-rounded">chevron_right</span>
-                        </button>
+            <!-- Monthly Vaccine Schedule Chart -->
+            <div class="monthly-vaccine-section">
+                <div class="monthly-vaccine-card">
+                    <div class="monthly-vaccine-header">
+                        <h3 class="monthly-vaccine-title">
+                            <span class="material-symbols-rounded">calendar_month</span>
+                            Monthly Vaccine Schedule
+                        </h3>
+                        <div class="month-nav-controls">
+                            <button class="month-nav-btn" id="prevMonthBtn" title="Previous Month">
+                                <span class="material-symbols-rounded">chevron_left</span>
+                            </button>
+                            <div class="month-display" id="monthDisplay">November 2025</div>
+                            <button class="month-nav-btn" id="nextMonthBtn" title="Next Month">
+                                <span class="material-symbols-rounded">chevron_right</span>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="monthly-vaccine-quick-switch">
-                    <button class="quick-switch-btn active" data-month="current" id="currentMonthBtn">Current Month</button>
-                    <button class="quick-switch-btn" data-month="next" id="nextMonthQuickBtn">Next Month</button>
-                </div>
-                <div class="charts-wrapper">
-                    <div class="chart-container chart-bar">
-                        <h4 class="chart-title">All Vaccines</h4>
-                        <canvas id="vaccineChart"></canvas>
+                    <div class="monthly-vaccine-quick-switch">
+                        <button class="quick-switch-btn active" data-month="current" id="currentMonthBtn">Current Month</button>
+                        <button class="quick-switch-btn" data-month="next" id="nextMonthQuickBtn">Next Month</button>
                     </div>
-                    <div class="chart-container chart-donut">
-                        <h4 class="chart-title">Top 5 Vaccines Distribution</h4>
-                        <canvas id="vaccineDonutChart"></canvas>
+                    <div class="charts-wrapper">
+                        <div class="chart-container chart-bar">
+                            <h4 class="chart-title">All Vaccines</h4>
+                            <canvas id="vaccineChart"></canvas>
+                        </div>
+                        <div class="chart-container chart-donut">
+                            <h4 class="chart-title">Top 5 Vaccines Distribution</h4>
+                            <canvas id="vaccineDonutChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
-<<<<<<< HEAD
 
             <!-- <div class="activity-task-container" >
                 <div class="activity-section">
@@ -201,9 +191,8 @@ if ($user_id) {
                     </div>
                 </div>
             </div> -->
-=======
->>>>>>> 389023935fcd7fafa2460b85769cdfa79846258e
-        </section>
+        <!-- Monthly Vaccine Schedule Chart -->
+        
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -239,26 +228,43 @@ if ($user_id) {
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
                 showError('Network error: ' + error.message);
-                // Ensure card numbers are reset on error
-                const ids = ['pendingCount', 'todayCount', 'missedCount', 'totalCount'];
-                ids.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.textContent = '0';
-                });
+                // Ensure card numbers don't stay in perpetual skeleton state on error
+                if (typeof setDashboardCardNumbers === 'function') {
+                    setDashboardCardNumbers({
+                        pendingCount: 0,
+                        todayCount: 0,
+                        missedCount: 0,
+                        totalCount: 0
+                    });
+                } else {
+                    const ids = ['pendingCount', 'todayCount', 'missedCount', 'totalCount'];
+                    ids.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.textContent = '0';
+                    });
+                }
             }
         }
 
         function updateStats(stats) {
-            // Update card numbers directly (no skeleton transition)
-            const p = document.getElementById('pendingCount');
-            const t = document.getElementById('todayCount');
-            const m = document.getElementById('missedCount');
-            const tc = document.getElementById('totalCount');
-            if (p) p.textContent = stats.pending_approvals;
-            if (t) t.textContent = stats.today_vaccinations;
-            if (m) m.textContent = stats.missed_vaccinations;
-            if (tc) tc.textContent = stats.total_children;
-
+            // If skeleton API is available, replace numbers via helper for smooth cross-fade
+            if (typeof setDashboardCardNumbers === 'function') {
+                setDashboardCardNumbers({
+                    pendingCount: stats.pending_approvals,
+                    todayCount: stats.today_vaccinations,
+                    missedCount: stats.missed_vaccinations,
+                    totalCount: stats.total_children
+                });
+            } else {
+                const p = document.getElementById('pendingCount');
+                const t = document.getElementById('todayCount');
+                const m = document.getElementById('missedCount');
+                const tc = document.getElementById('totalCount');
+                if (p) p.textContent = stats.pending_approvals;
+                if (t) t.textContent = stats.today_vaccinations;
+                if (m) m.textContent = stats.missed_vaccinations;
+                if (tc) tc.textContent = stats.total_children;
+            }
             // Safely update any action counters if present (currently not in markup)
             const pa = document.getElementById('pendingActionCount');
             const ta = document.getElementById('todayActionCount');
@@ -791,6 +797,10 @@ if ($user_id) {
 
         // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            // Apply skeleton shimmer to card numbers immediately
+            if (typeof applyDashboardCardNumbersSkeleton === 'function') {
+                applyDashboardCardNumbersSkeleton();
+            }
             // Fetch and populate real data
             loadDashboardData();
         });

@@ -1,22 +1,60 @@
 // User Management JavaScript
 
+const USERS_LIMIT = 10;
+let currentUsersPage = 1;
+
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", function () {
-	getUsers();
+	initUserPager();
+	setupUserSearchHandlers();
+	getUsers(1);
 	loadAddUserProvinces();
 });
 
 // Fetch and display users (reusing from home.js)
-async function getUsers() {
+async function getUsers(page = 1) {
 	try {
-		// MySQL: const response = await fetch("php/mysql/admin/show_users.php");
-		const response = await fetch("php/supabase/admin/show_users.php");
-		const data = await response.json();
-
 		const tbody = document.querySelector("#usersTableBody");
+		if (tbody) {
+			tbody.innerHTML =
+				'<tr class="data-table__message-row loading"><td colspan="11">Loading users...</td></tr>';
+		}
+
+		const searchInput = document.getElementById("searchUsers");
+		const searchTerm = searchInput ? searchInput.value.trim() : "";
+		const params = new URLSearchParams({
+			page: page,
+			limit: USERS_LIMIT,
+		});
+		if (searchTerm) {
+			params.append("search", searchTerm);
+		}
+
+		const response = await fetch(
+			`php/supabase/superadmin/list_users.php?${params.toString()}`
+		);
+		const result = await response.json();
+
+		if (result.status !== "success") {
+			throw new Error(result.message || "Failed to load users");
+		}
+
+		const data = Array.isArray(result.data) ? result.data : [];
+		const total = result.total || 0;
+
+		// Handle case where page is out of range after deletions
+		if (total > 0 && data.length === 0 && page > 1) {
+			getUsers(page - 1);
+			return;
+		}
+
 		tbody.innerHTML = "";
 
-		for (const user of data) {
+		if (!data.length) {
+			tbody.innerHTML =
+				'<tr class="data-table__message-row"><td colspan="11">No users found.</td></tr>';
+		} else {
+			for (const user of data) {
 			const formattedDate = formatDateShort(user.created_at);
 			tbody.innerHTML += `<tr>
 				<td class="checkbox-cell"><input type="checkbox" class="user-checkbox" value="${user.user_id}"></td>
@@ -34,10 +72,80 @@ async function getUsers() {
 					<button onclick="deleteUser('${user.user_id}')" class="action-icon-btn" aria-label="Delete user ${user.user_id}"><span class="material-symbols-rounded">delete</span></button>
 				</td>
 			</tr>`;
+			}
 		}
+
+		currentUsersPage = result.page || page;
+		updateUserPager({
+			page: currentUsersPage,
+			limit: result.limit || USERS_LIMIT,
+			total,
+			hasMore: result.has_more || false,
+		});
 	} catch (error) {
 		console.error("Error fetching users:", error);
+		const tbody = document.querySelector("#usersTableBody");
+		if (tbody) {
+			tbody.innerHTML =
+				'<tr class="data-table__message-row error"><td colspan="11">Failed to load users.</td></tr>';
+		}
+		updateUserPager({ page: 1, limit: USERS_LIMIT, total: 0, hasMore: false });
 	}
+}
+
+function initUserPager() {
+	const prevBtn = document.getElementById("usersPrevBtn");
+	const nextBtn = document.getElementById("usersNextBtn");
+
+	if (prevBtn) {
+		prevBtn.addEventListener("click", () => {
+			const page = parseInt(prevBtn.dataset.page || "1", 10);
+			if (page > 1) {
+				getUsers(page - 1);
+			}
+		});
+	}
+	if (nextBtn) {
+		nextBtn.addEventListener("click", () => {
+			const page = parseInt(nextBtn.dataset.page || "1", 10);
+			getUsers(page + 1);
+		});
+	}
+}
+
+function updateUserPager({ page, limit, total, hasMore }) {
+	const prevBtn = document.getElementById("usersPrevBtn");
+	const nextBtn = document.getElementById("usersNextBtn");
+	const info = document.getElementById("usersPageInfo");
+
+	if (!prevBtn || !nextBtn || !info) return;
+
+	const start = total === 0 ? 0 : (page - 1) * limit + 1;
+	const end = total === 0 ? 0 : Math.min(page * limit, total);
+
+	info.textContent = `Showing ${start}-${end} of ${total}`;
+	prevBtn.disabled = page <= 1;
+	nextBtn.disabled = !hasMore;
+
+	prevBtn.dataset.page = String(page);
+	nextBtn.dataset.page = String(page);
+}
+
+function setupUserSearchHandlers() {
+	const input = document.getElementById("searchUsers");
+	if (!input) return;
+
+	input.addEventListener("keydown", (event) => {
+		if (event.key === "Enter") {
+			event.preventDefault();
+			getUsers(1);
+		}
+	});
+	input.addEventListener("input", () => {
+		if (!input.value.trim()) {
+			getUsers(1);
+		}
+	});
 }
 
 // Format date to short month name, numeric day, full year (e.g., Nov 23, 2025)
@@ -154,7 +262,7 @@ async function saveUser() {
 			console.log("User created successfully!");
 			Swal.fire("Success!", "User created successfully", "success");
 			cancelAddUser();
-			getUsers();
+			getUsers(currentUsersPage);
 		} else {
 			console.error("Create user failed. Response data:", data);
 			if (data.debug) {
@@ -314,7 +422,7 @@ async function updateUser() {
 		if (data.status === "success") {
 			Swal.fire("Success!", "User updated successfully", "success");
 			cancelEditUser();
-			getUsers();
+			getUsers(currentUsersPage);
 		} else {
 			console.error("Update user error:", data);
 			Swal.fire(
@@ -363,7 +471,7 @@ async function deleteUser(user_id) {
 			const data = await response.json();
 			if (data.status === "success") {
 				Swal.fire("Deleted!", "User has been deleted.", "success");
-				getUsers();
+				getUsers(currentUsersPage);
 			} else {
 				Swal.fire("Error!", data.message, "error");
 			}
@@ -414,7 +522,7 @@ async function deleteSelectedUsers() {
 				`${selectedBoxes.length} user(s) deleted successfully`,
 				"success"
 			);
-			getUsers();
+			getUsers(currentUsersPage);
 		} catch (error) {
 			console.error("Error deleting users:", error);
 			Swal.fire("Error!", "Failed to delete users", "error");

@@ -1,9 +1,12 @@
-let consentData = [];
-let filteredConsents = [];
+const CONSENT_LIMIT = 10;
+let currentConsentPage = 1;
+let consentFilters = { search: "", start: "", end: "" };
+let consentPageData = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-	loadPrivacyConsents();
 	bindConsentFilters();
+	initConsentPager();
+	loadPrivacyConsents(1);
 });
 
 function bindConsentFilters() {
@@ -12,23 +15,48 @@ function bindConsentFilters() {
 	const endDateInput = document.getElementById("consentEndDate");
 	const clearBtn = document.getElementById("clearConsentFiltersBtn");
 
-	if (searchInput) searchInput.addEventListener("input", applyConsentFilters);
+	if (searchInput) {
+		searchInput.addEventListener("keydown", (e) => {
+			if (e.key === "Enter") {
+				e.preventDefault();
+				applyConsentFilters();
+			}
+		});
+		searchInput.addEventListener("input", () => {
+			if (!searchInput.value.trim()) {
+				applyConsentFilters();
+			}
+		});
+	}
 	if (startDateInput) startDateInput.addEventListener("change", applyConsentFilters);
 	if (endDateInput) endDateInput.addEventListener("change", applyConsentFilters);
-	if (clearBtn)
+	if (clearBtn) {
 		clearBtn.addEventListener("click", () => {
 			if (searchInput) searchInput.value = "";
 			if (startDateInput) startDateInput.value = "";
 			if (endDateInput) endDateInput.value = "";
 			applyConsentFilters();
 		});
+	}
 }
 
-async function loadPrivacyConsents() {
+async function loadPrivacyConsents(page = 1) {
 	const tbody = document.getElementById("consentsTableBody");
+	if (tbody) {
+		tbody.innerHTML =
+			'<tr class="data-table__message-row loading"><td colspan="6">Loading privacy consents...</td></tr>';
+	}
 	try {
+		const params = new URLSearchParams({
+			page,
+			limit: CONSENT_LIMIT,
+		});
+		if (consentFilters.search) params.append("search", consentFilters.search);
+		if (consentFilters.start) params.append("start", consentFilters.start);
+		if (consentFilters.end) params.append("end", consentFilters.end);
+
 		const response = await fetch(
-			"php/supabase/superadmin/get_privacy_consents.php"
+			`php/supabase/superadmin/get_privacy_consents.php?${params.toString()}`
 		);
 		const result = await response.json();
 
@@ -36,51 +64,45 @@ async function loadPrivacyConsents() {
 			throw new Error(result.message || "Failed to load privacy consents.");
 		}
 
-		consentData = Array.isArray(result.data) ? result.data : [];
-		filteredConsents = [...consentData];
-		renderConsentTable(filteredConsents);
+		const data = Array.isArray(result.data) ? result.data : [];
+		const total = result.total || 0;
+
+		if (total > 0 && data.length === 0 && page > 1) {
+			loadPrivacyConsents(page - 1);
+			return;
+		}
+
+		consentPageData = data;
+		renderConsentTable(consentPageData);
+
+		currentConsentPage = result.page || page;
+		updateConsentPager({
+			page: currentConsentPage,
+			limit: result.limit || CONSENT_LIMIT,
+			total,
+			hasMore: result.has_more || false,
+		});
 	} catch (error) {
 		console.error("Error loading privacy consents:", error);
 		if (tbody) {
 			tbody.innerHTML =
 				'<tr><td colspan="6" class="empty-state">Failed to load privacy consents.</td></tr>';
 		}
+		updateConsentPager({ page: 1, limit: CONSENT_LIMIT, total: 0, hasMore: false });
 	}
 }
 
 function applyConsentFilters() {
-	const searchValue = document
-		.getElementById("consentSearchInput")
-		?.value.trim()
-		.toLowerCase();
-	const startDateValue = document.getElementById("consentStartDate")?.value;
-	const endDateValue = document.getElementById("consentEndDate")?.value;
+	const searchValue = document.getElementById("consentSearchInput")?.value.trim() || "";
+	const startDateValue = document.getElementById("consentStartDate")?.value || "";
+	const endDateValue = document.getElementById("consentEndDate")?.value || "";
 
-	filteredConsents = consentData.filter((consent) => {
-		const fullName = (consent.full_name || "").toLowerCase();
-		const email = (consent.email || "").toLowerCase();
-		const phone = (consent.phone_number || "").toLowerCase();
-		const matchesSearch =
-			!searchValue ||
-			fullName.includes(searchValue) ||
-			email.includes(searchValue) ||
-			phone.includes(searchValue);
-
-		const consentDate = consent.agreed_date
-			? new Date(consent.agreed_date)
-			: null;
-		const matchesStart =
-			!startDateValue ||
-			(consentDate && consentDate >= new Date(startDateValue));
-		const matchesEnd =
-			!endDateValue ||
-			(consentDate &&
-				consentDate <= new Date(endDateValue + "T23:59:59"));
-
-		return matchesSearch && matchesStart && matchesEnd;
-	});
-
-	renderConsentTable(filteredConsents);
+	consentFilters = {
+		search: searchValue,
+		start: startDateValue,
+		end: endDateValue,
+	};
+	loadPrivacyConsents(1);
 }
 
 function renderConsentTable(rows) {
@@ -132,42 +154,90 @@ function formatConsentDate(dateInput) {
 	}).format(date);
 }
 
-function exportConsentsToCsv() {
-	if (!filteredConsents.length) {
-		Swal.fire("Nothing to export", "No privacy consent data to export.", "info");
-		return;
+async function exportConsentsToCsv() {
+	try {
+		const params = new URLSearchParams({
+			page: 1,
+			limit: 1000,
+		});
+		if (consentFilters.search) params.append("search", consentFilters.search);
+		if (consentFilters.start) params.append("start", consentFilters.start);
+		if (consentFilters.end) params.append("end", consentFilters.end);
+
+		const response = await fetch(
+			`php/supabase/superadmin/get_privacy_consents.php?${params.toString()}`
+		);
+		const result = await response.json();
+
+		if (result.status !== "success" || !Array.isArray(result.data) || !result.data.length) {
+			Swal.fire("Nothing to export", "No privacy consent data to export.", "info");
+			return;
+		}
+
+		const header = [
+			"Full Name",
+			"Email",
+			"Phone Number",
+			"Agreed",
+			"Agreed Date",
+			"IP Address",
+		];
+
+		const rows = result.data.map((consent) => [
+			consent.full_name || "",
+			consent.email || "",
+			consent.phone_number || "",
+			isConsentAgreed(consent) ? "Yes" : "No",
+			consent.agreed_date || "",
+			consent.ip_address || "",
+		]);
+
+		const csvContent = [header, ...rows]
+			.map((row) => row.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(","))
+			.join("\n");
+
+		const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = `privacy-consents-${new Date().toISOString().split("T")[0]}.csv`;
+		link.click();
+		URL.revokeObjectURL(url);
+	} catch (error) {
+		console.error("Failed to export consents:", error);
+		Swal.fire("Error", "Failed to export privacy consents.", "error");
 	}
+}
 
-	const header = [
-		"Full Name",
-		"Email",
-		"Phone Number",
-		"Agreed",
-		"Agreed Date",
-		"IP Address",
-	];
+function initConsentPager() {
+	const prevBtn = document.getElementById("consentPrevBtn");
+	const nextBtn = document.getElementById("consentNextBtn");
+	if (prevBtn) {
+		prevBtn.addEventListener("click", () => {
+			const page = parseInt(prevBtn.dataset.page || "1", 10);
+			if (page > 1) loadPrivacyConsents(page - 1);
+		});
+	}
+	if (nextBtn) {
+		nextBtn.addEventListener("click", () => {
+			const page = parseInt(nextBtn.dataset.page || "1", 10);
+			loadPrivacyConsents(page + 1);
+		});
+	}
+}
 
-	const rows = filteredConsents.map((consent) => [
-		consent.full_name || "",
-		consent.email || "",
-		consent.phone_number || "",
-		isConsentAgreed(consent) ? "Yes" : "No",
-		consent.agreed_date || "",
-		consent.ip_address || "",
-	]);
+function updateConsentPager({ page, limit, total, hasMore }) {
+	const prevBtn = document.getElementById("consentPrevBtn");
+	const nextBtn = document.getElementById("consentNextBtn");
+	const info = document.getElementById("consentPageInfo");
+	if (!prevBtn || !nextBtn || !info) return;
 
-	const csvContent = [header, ...rows]
-		.map((row) => row.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(","))
-		.join("\n");
-
-	const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-	const url = URL.createObjectURL(blob);
-	const link = document.createElement("a");
-	link.href = url;
-	link.download = `privacy-consents-${new Date()
-		.toISOString()
-		.split("T")[0]}.csv`;
-	link.click();
-	URL.revokeObjectURL(url);
+	const start = total === 0 ? 0 : (page - 1) * limit + 1;
+	const end = total === 0 ? 0 : Math.min(page * limit, total);
+	info.textContent = `Showing ${start}-${end} of ${total}`;
+	prevBtn.disabled = page <= 1;
+	nextBtn.disabled = !hasMore;
+	prevBtn.dataset.page = String(page);
+	nextBtn.dataset.page = String(page);
 }
 

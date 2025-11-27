@@ -12,8 +12,8 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>System Settings</title>
-    <link rel="stylesheet" href="css/main.css" />
-    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.1" />
     <link rel="stylesheet" href="css/sidebar.css" />
 </head>
 <body>

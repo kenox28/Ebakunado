@@ -32,7 +32,7 @@ if ($user_id) {
     <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
     <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
     <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.3" />
-    <link rel="stylesheet" href="css/bhw/child-health-list.css?v=1.0.5" />
+    <link rel="stylesheet" href="css/bhw/child-health-list.css?v=1.0.6" />
 </head>
 
 <body>

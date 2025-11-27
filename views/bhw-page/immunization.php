@@ -36,7 +36,7 @@ if ($user_id) {
         <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
         <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
         <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
-        <link rel="stylesheet" href="css/bhw/immunization-style.css?v=1.0.1">
+        <link rel="stylesheet" href="css/bhw/immunization-style.css?v=1.0.2">
         <link rel="stylesheet" href="css/bhw/growth-assessment.css?v=1.0.1">
         <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.3">
     </head>
@@ -94,6 +94,14 @@ if ($user_id) {
                     <!-- Filters separated into their own row inside the toolbar -->
                     <div class="data-table-actions">
                         <div class="filters">
+                            <div class="filter-item filter-search">
+                                <label class="filter-label" for="filterName">Search Child</label>
+                                <div class="input-field">
+                                    <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                                    <input id="filterName" type="text" placeholder="Enter child name" />
+                                </div>
+                            </div>
+
                             <div class="filter-item">
                                 <label class="filter-label" for="filterDate">Date</label>
                                 <div class="input-field">
@@ -107,8 +115,8 @@ if ($user_id) {
                                 <div class="input-field">
                                     <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
                                     <select id="filterStatus">
-                                        <option value="" disabled selected>Vaccines</option>
-                                        <option value="upcoming" selected>Upcoming</option>
+                                        <option value="" disabled>Status</option>
+                                        <option value="upcoming" selected>Scheduled</option>
                                         <option value="missed">Missed</option>
                                         <option value="completed">Completed</option>
                                     </select>
@@ -290,7 +298,7 @@ if ($user_id) {
     </main>
 
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script src="js/growth-standards/who-growth-calculator.js" defer></script>
+    <script src="js/growth-standards/who-growth-calculator.js?v=1.0.1" defer></script>
     <script src="js/header-handler/profile-menu.js" defer></script>
     <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="js/utils/skeleton-loading.js" defer></script>
@@ -368,11 +376,13 @@ if ($user_id) {
                 const statusSel = document.getElementById('filterStatus').value;
                 const vaccineSel = document.getElementById('filterVaccine').value;
                 const purokQ = (document.getElementById('filterPurok').value || '').trim();
+                const nameQuery = (document.getElementById('filterName')?.value || '').trim();
                 if (dateSel) params.set('date', dateSel);
                 if (statusSel) params.set('status', statusSel);
                 // Only send vaccine filter if a specific vaccine is selected (not empty)
                 if (vaccineSel && vaccineSel !== '') params.set('vaccine', vaccineSel);
                 if (purokQ) params.set('purok', purokQ);
+                if (nameQuery) params.set('name', nameQuery);
 
                 const res = await fetch(`php/supabase/bhw/get_immunization_view.php?${params.toString()}`);
                 const data = await res.json();
@@ -538,22 +548,23 @@ if ($user_id) {
                                     <input type="text" id="im_vaccine_name" value="${vaccineName}" readonly disabled />
                                 </label>
                             </div>
-                            <div class="form-group row-2">
-                                <label>
-                                    Guideline Schedule:
-                                    <input type="date" value="${scheduleDate}" readonly disabled />
-                                </label>
-                                <label>
-                                    Batch Schedule (from Vaccination Planner):
-                                    <input type="date" value="${batchScheduleDate}" readonly disabled />
-                                    <small style="display:block;color:#6c757d;">Update batch dates via Vaccination Planner.</small>
-                                </label>
+                            <div class="form-group row-2 schedule-summary">
+                                <div class="schedule-chip">
+                                    <span class="chip-label">Guideline:</span>
+                                    <strong>${scheduleDate || 'N/A'}</strong>
+                                </div>
+                                ${batchScheduleDate ? `
+                                <div class="schedule-chip">
+                                    <span class="chip-label">Batch:</span>
+                                    <strong>${batchScheduleDate}</strong>
+                                </div>` : ''}
                                 ${catchUpDate ? `
-                                <label>
-                                    Catch-up Date:
-                                    <input type="date" id="im_catch_up_date" value="${catchUpDate}" readonly disabled />
-                                </label>` : ''}
+                                <div class="schedule-chip">
+                                    <span class="chip-label">Catch-up:</span>
+                                    <strong>${catchUpDate}</strong>
+                                </div>` : ''}
                                 <input type="hidden" id="im_schedule_date" value="${scheduleDate}" />
+                                <input type="hidden" id="im_catch_up_date" value="${catchUpDate || ''}" />
                             </div>
                             <div class="form-group row-3">
                                 <input type="hidden" id="im_date_taken" value="${dateToday}" />
@@ -649,7 +660,7 @@ if ($user_id) {
 
                             <div class="form-actions">
                                 <button class="btn cancel-btn" onclick="closeImmunizationForm()">Cancel</button>
-                                <button class="btn save-btn" onclick="submitImmunizationForm()">Save</button>
+                                <button class="btn save-btn" onclick="submitImmunizationForm()">Confirm</button>
                             </div>
                         </div>
 
@@ -840,7 +851,7 @@ if ($user_id) {
                 return `<span class="chip chip--missed">Missed</span>`;
             }
             if (s === 'upcoming' || s === 'scheduled') {
-                return `<span class="chip chip--upcoming">Upcoming</span>`;
+                return `<span class="chip chip--upcoming">Scheduled</span>`;
             }
             if (s === 'completed') {
                 return `<span class="chip chip--completed">Completed</span>`;
@@ -934,6 +945,8 @@ if ($user_id) {
             document.getElementById('filterStatus').value = 'upcoming';
             document.getElementById('filterVaccine').value = '';
             document.getElementById('filterPurok').value = '';
+            const nameInput = document.getElementById('filterName');
+            if (nameInput) nameInput.value = '';
             fetchChildHealthRecord(1); // <-- FIXED
         }
 
@@ -1020,18 +1033,38 @@ if ($user_id) {
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // set defaults like before then load page 1
+            // Read URL query parameters and set filters
+            const urlParams = new URLSearchParams(window.location.search);
+            const dateParam = urlParams.get('date');
+            const statusParam = urlParams.get('status');
+            
             const dateInput = document.getElementById('filterDate');
-            if (dateInput) dateInput.value = '';
+            if (dateInput) {
+                dateInput.value = dateParam || '';
+            }
+            
             const statusSelEl = document.getElementById('filterStatus');
-            if (statusSelEl) statusSelEl.value = 'upcoming';
-            fetchChildHealthRecord(1); // <-- FIXED
+            if (statusSelEl) {
+                statusSelEl.value = statusParam || 'upcoming';
+            }
+            
+            // Load page 1 with filters applied
+            fetchChildHealthRecord(1);
         });
         window.addEventListener('DOMContentLoaded', function() {
             const applyBtn = document.getElementById('applyFiltersBtn');
             const clearBtn = document.getElementById('clearFiltersBtn');
             if (applyBtn) applyBtn.addEventListener('click', applyFilters);
             if (clearBtn) clearBtn.addEventListener('click', clearFilters);
+            const nameInput = document.getElementById('filterName');
+            if (nameInput) {
+                nameInput.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        applyFilters();
+                    }
+                });
+            }
 
             // Make the custom calendar icon open the date picker (supports both .select-with-icon and .input-field wrappers)
             const dateInput = document.getElementById('filterDate');

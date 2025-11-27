@@ -1,3 +1,68 @@
+<?php
+// Determine which page is currently loaded
+// Use REQUEST_URI to detect the route since PHP_SELF is always index.php for routed pages
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+// Remove query string
+if (($pos = strpos($requestUri, '?')) !== false) {
+    $requestUri = substr($requestUri, 0, $pos);
+}
+// Remove base path if exists
+$basePath = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
+if ($basePath !== '/' && $basePath !== '\\' && $basePath !== '.' && !empty($basePath)) {
+    $basePath = '/' . trim($basePath, '/');
+    if (!empty($basePath) && strpos($requestUri, $basePath) === 0) {
+        $requestUri = substr($requestUri, strlen($basePath));
+    }
+}
+$requestUri = trim($requestUri, '/');
+
+// Map routes to page names for active state
+$currentPage = 'dashboard.php'; // default
+
+// Check for specific routes (order matters - more specific first)
+if (preg_match('#^health-child/[^/]+$#', $requestUri)) {
+    // Child health record detail page: /health-child/{id}
+    $currentPage = 'child-health-list.php'; // Highlight the parent list page
+} elseif (strpos($requestUri, 'health-dashboard') === 0 || $requestUri === 'health-dashboard') {
+    $currentPage = 'dashboard.php';
+} elseif (strpos($requestUri, 'health-vaccination-planner') === 0) {
+    $currentPage = 'vaccination-planner.php';
+} elseif (strpos($requestUri, 'health-immunizations') === 0) {
+    $currentPage = 'immunization.php';
+} elseif (strpos($requestUri, 'health-pending') === 0) {
+    $currentPage = 'pending-approval.php';
+} elseif (strpos($requestUri, 'health-children') === 0 || $requestUri === 'health-children') {
+    $currentPage = 'child-health-list.php';
+} elseif (strpos($requestUri, 'health-target-client') === 0) {
+    $currentPage = 'target-client-list.php';
+} elseif (strpos($requestUri, 'health-add-child') === 0) {
+    $currentPage = 'add-child.php';
+} elseif (strpos($requestUri, 'health-chr-doc-requests') === 0) {
+    $currentPage = 'chr-doc-requests.php';
+} elseif (strpos($requestUri, 'health-babycard-requests') === 0) {
+    $currentPage = 'babycard-doc-requests.php';
+} else {
+    // Fallback to PHP_SELF for non-routed pages
+    $currentPage = basename($_SERVER['PHP_SELF']);
+}
+
+$user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
+$user_types = $_SESSION['user_type'];
+$user_name = $_SESSION['fname'] ?? 'User';
+$user_fullname = ($_SESSION['fname'] ?? '') . " " . ($_SESSION['lname'] ?? '');
+if ($user_types != 'midwife') {
+    $user_type = 'Barangay Health Worker';
+} else {
+    $user_type = 'Midwife';
+}
+
+// Check if user also exists in users table (has Parent role)
+// Use available_roles from session (set during login)
+$has_user_role = false;
+if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available_roles'])) {
+    $has_user_role = true;
+}
+?>
 <header class="header">
     <div class="header-left">
         <button

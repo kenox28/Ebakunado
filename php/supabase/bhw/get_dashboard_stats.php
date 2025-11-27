@@ -196,17 +196,25 @@ try {
         // OPTIMIZATION: Fetch only records that match our criteria using database filters
         // This is MUCH faster than fetching ALL records and filtering in PHP
         
-        // Fetch scheduled records with schedule_date in the month range
-        $scheduledRecords = supabaseSelect(
+        // Fetch scheduled records and filter using operational date (batch_date if available, else schedule_date)
+        $scheduledRecordsRaw = supabaseSelect(
             'immunization_records',
-            'vaccine_name',
+            'vaccine_name,schedule_date,batch_schedule_date',
             [
                 'baby_id' => $babyIds,
-                'status' => 'scheduled',
-                'schedule_date.gte' => $firstDay,
-                'schedule_date.lte' => $lastDay
+                'status' => 'scheduled'
             ]
         ) ?: [];
+
+        $scheduledRecords = [];
+        foreach ($scheduledRecordsRaw as $record) {
+            $targetDate = !empty($record['batch_schedule_date'])
+                ? $record['batch_schedule_date']
+                : ($record['schedule_date'] ?? '');
+            if ($targetDate !== '' && $targetDate >= $firstDay && $targetDate <= $lastDay) {
+                $scheduledRecords[] = ['vaccine_name' => $record['vaccine_name']];
+            }
+        }
         
         // Fetch missed records - we need to check both catch_up_date and schedule_date
         // Fetch all missed records and do minimal PHP filtering for date logic

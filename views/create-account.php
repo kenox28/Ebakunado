@@ -9,12 +9,12 @@ session_start();
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Create Account - Ebakunado</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-  <link rel="stylesheet" href="../css/fonts.css" />
-  <link rel="stylesheet" href="../css/variables.css" />
-  <link rel="stylesheet" href="../css/create-account-style.css?v=1.0.3" />
-  <link rel="stylesheet" href="/css/queries.css" />
-  <link rel="stylesheet" href="../css/modals.css?v=1.0.1" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
+  <link rel="stylesheet" href="css/fonts.css" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/create-account-style.css?v=1.0.3" />
+  <link rel="stylesheet" href="css/queries.css" />
+  <link rel="stylesheet" href="css/modals.css?v=1.0.1" />
   <style>
     .policy-card {
       margin-top: 0.75rem;
@@ -52,7 +52,7 @@ session_start();
 
 <body class="page-create-account">
   <main class="auth-main">
-    <a class="back-to-home" href="../views/auth/login.php">
+    <a class="back-to-home" href="login">
       &larr; Back to Login
     </a>
 
@@ -62,7 +62,7 @@ session_start();
         <header class="auth-header">
           <img
             class="brand-logo"
-            src="/ebakunado/assets/images/white-ebakunado-logo-with-label.png"
+            src="assets/images/white-ebakunado-logo-with-label.png"
             alt="Ebakunado Logo" />
           <div class="brand-text">
             <h2 class="brand-title">Create Your Parent Account</h2>
@@ -329,10 +329,10 @@ session_start();
     </section>
   </main>
 
-  <script src="/ebakunado/js/auth-handler/password-toggle.js"></script>
-  <script src="/ebakunado/js/auth-handler/create-account-stepper.js?v=1.0.1"></script>
-  <script src="/ebakunado/js/utils/ui-feedback.js"></script>
-  <script src="/ebakunado/js/supabase_js/create_account.js?v=1.0.11"></script>
+  <script src="js/auth-handler/password-toggle.js"></script>
+  <script src="js/auth-handler/create-account-stepper.js?v=1.0.1"></script>
+  <script src="js/utils/ui-feedback.js"></script>
+  <script src="js/supabase_js/create_account.js?v=1.0.12"></script>
 </body>
 
 </html>

@@ -27,12 +27,13 @@ $user_fname = $_SESSION['fname'] ?? '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Children</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css" />
-    <link rel="stylesheet" href="css/header.css" />
-    <link rel="stylesheet" href="css/sidebar.css" />
-    <link rel="stylesheet" href="css/notification-style.css" />
-    <link rel="stylesheet" href="css/skeleton-loading.css" />
-    <link rel="stylesheet" href="css/user/children-list.css" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/user/table-style.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/user/children-list.css?v=1.0.2" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -65,40 +66,42 @@ $user_fname = $_SESSION['fname'] ?? '';
                         <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
                     </div>
                 </div>
-                <div id="childrenContainer" class="table-container">
-                    <table class="table" aria-busy="true">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Age</th>
-                                <th>Gender</th>
-                                <th>Upcoming</th>
-                                <th>Missed</th>
-                                <th>Taken</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="childrenTbody">
-                            <tr class="skeleton-row">
-                                <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                                <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                <td><div class="skeleton skeleton-pill skeleton-col-3"></div></td>
-                            </tr>
-                            <tr class="skeleton-row">
-                                <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                                <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                <td><div class="skeleton skeleton-pill skeleton-col-3"></div></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div id="childrenContainer" class="table-container data-table-card">
+                    <div class="data-table-wrap">
+                        <table class="data-table" aria-busy="true">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Gender</th>
+                                    <th>Upcoming</th>
+                                    <th>Missed</th>
+                                    <th>Taken</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="childrenTbody">
+                                <tr class="skeleton-row">
+                                    <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                                    <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                    <td><div class="skeleton skeleton-pill skeleton-col-3"></div></td>
+                                </tr>
+                                <tr class="skeleton-row">
+                                    <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                                    <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
+                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
+                                    <td><div class="skeleton skeleton-pill skeleton-col-3"></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
@@ -199,7 +202,7 @@ $user_fname = $_SESSION['fname'] ?? '';
             const container = document.getElementById('childrenContainer');
             const filterSelect = document.getElementById('chrFilter');
             const selectedFilter = filterSelect.value;
-            const existingTable = container.querySelector('table.table');
+            const existingTable = container.querySelector('table.data-table');
             const tbody = document.getElementById('childrenTbody') || (existingTable && existingTable.querySelector('tbody'));
 
             // If both sources failed/no data
@@ -285,7 +288,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 
             // If table does not exist yet, build it (keeps original header styles from CSS)
             if (!existingTable) {
-                const tableHtml = '<table class="table" aria-busy="false">' +
+                const tableHtml = '<div class="data-table-wrap"><table class="data-table" aria-busy="false">' +
                     '<thead><tr>' +
                     renderHeaderCell('name', 'Name') +
                     renderHeaderCell('age', 'Age') +
@@ -295,7 +298,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                     renderHeaderCell('taken', 'Taken') +
                     '<th scope="col">Action</th>' +
                     '</tr></thead>' +
-                    '<tbody id="childrenTbody">' + rowsHtml + '</tbody></table>';
+                    '<tbody id="childrenTbody">' + rowsHtml + '</tbody></table></div>';
                 container.innerHTML = tableHtml;
                 attachSortHandlers();
             } else {

@@ -86,7 +86,7 @@ if ($redirect_url) {
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/modals.css" />
 	<link rel="stylesheet" href="css/variables.css" />
-	<link rel="stylesheet" href="css/login-style.css?v=1.0.2" />
+	<link rel="stylesheet" href="css/login-style.css?v=1.0.3" />
 	<link rel="stylesheet" href="css/queries.css?v=1.0.1" />
 	<style>
 		/* Forgot Password Form Styling */
@@ -215,7 +215,7 @@ if ($redirect_url) {
 								placeholder="Enter your email or phone number" />
 						</div>
 						<div class="submit-wrapper">
-							<button class="btn btn-primary" type="submit">Send OTP</button>
+							<button class="btn btn-primary forgot-btn" type="submit">Send OTP</button>
 						</div>
 						<div class="cancel-wrapper">
 							<button type="button" id="cancelForgotPassword" class="btn btn-secondary">Cancel</button>

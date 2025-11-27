@@ -44,7 +44,7 @@ if (!isset($_SESSION['super_admin_id'])) {
                     <div class="data-table-actions">
                         <div class="data-table-search" id="activityLogsSearchWrap">
                             <span class="material-symbols-rounded data-table-search__icon">search</span>
-                            <input type="text" id="searchActivityLogs" class="data-table-search__input" placeholder="Search activity logs..." />
+                            <input type="text" id="searchActivityLogs" class="data-table-search__input" placeholder="Search activity logs..." data-remote-search="true" />
                             <button type="button" id="searchActivityLogsClear" class="data-table-search__clear" aria-label="Clear search">
                                 <span class="material-symbols-rounded">close</span>
                             </button>
@@ -77,6 +77,19 @@ if (!isset($_SESSION['super_admin_id'])) {
                         </tbody>
                     </table>
                 </div>
+                <div class="pager">
+                    <p class="page-info" id="activityLogsPageInfo">Showing 0-0 of 0</p>
+                    <div class="pager-controls">
+                        <button type="button" class="pager-btn" id="activityLogsPrevBtn" data-page="1" disabled>
+                            <span class="material-symbols-rounded">chevron_left</span>
+                            Prev
+                        </button>
+                        <button type="button" class="pager-btn" id="activityLogsNextBtn" data-page="1" disabled>
+                            Next
+                            <span class="material-symbols-rounded">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -84,8 +97,8 @@ if (!isset($_SESSION['super_admin_id'])) {
     <script src="js/header-handler/profile-menu.js" defer></script>
     <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="js/utils/skeleton-loading.js" defer></script>
-    <script src="js/supabase_js/superadmin/common.js?v=1.0.4"></script>
-    <script src="js/supabase_js/superadmin/activity-logs.js?v=1.0.3"></script>
+    <script src="js/supabase_js/superadmin/common.js?v=1.0.6"></script>
+    <script src="js/supabase_js/superadmin/activity-logs.js?v=1.0.6"></script>
     <script>
         // Search clear toggle for Activity Logs
         (function() {

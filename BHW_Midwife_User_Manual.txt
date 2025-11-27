@@ -1,0 +1,553 @@
+================================================================================
+                    eBAKUNADO SYSTEM - USER MANUAL
+              For Barangay Health Workers (BHW) and Midwives
+================================================================================
+
+Welcome to the eBakunado System! This manual will guide you through using the 
+system step by step, from logging in to logging out.
+
+================================================================================
+                              TABLE OF CONTENTS
+================================================================================
+
+1. GETTING STARTED
+   1.1 How to Log In
+   1.2 Forgot Password
+   1.3 Dashboard Overview
+
+2. MAIN FEATURES
+   2.1 Dashboard
+   2.2 Vaccination Planner
+   2.3 Immunization Form
+   2.4 Pending Approval
+   2.5 Child Health Record
+   2.6 Target Client List
+   2.7 Add Child
+   2.8 Baby Card Requests (Midwife Only)
+
+3. PROFILE & SETTINGS
+   3.1 View Profile
+   3.2 My Account
+   3.3 Notifications
+
+4. LOGGING OUT
+
+================================================================================
+                          1. GETTING STARTED
+================================================================================
+
+1.1 HOW TO LOG IN
+-----------------
+
+Step 1: Open your web browser (Chrome, Firefox, Edge, etc.)
+
+Step 2: Go to the eBakunado login page
+
+Step 3: You will see the Health Worker Portal login form
+
+Step 4: Enter your Mobile Number
+   - Format: +63 9XX XXX XXXX
+   - Example: +63 912 345 6789
+
+Step 5: Enter your Password
+   - Type your password in the password field
+   - Click the eye icon to show/hide your password
+
+Step 6: Click the "Login" button
+
+Step 7: If your credentials are correct, you will be redirected to your Dashboard
+
+IMPORTANT: Make sure you are using the correct mobile number and password 
+assigned to you by your administrator.
+
+
+1.2 FORGOT PASSWORD
+-------------------
+
+If you forgot your password:
+
+Step 1: On the login page, click "Forgot Password?" link below the password field
+
+Step 2: Enter your Email or Phone Number in the field provided
+
+Step 3: Click "Send OTP" button
+
+Step 4: You will receive an OTP (One-Time Password) via email or SMS
+
+Step 5: Enter the OTP to reset your password
+
+Step 6: Follow the instructions to create a new password
+
+Step 7: Click "Cancel" if you remember your password
+
+
+1.3 DASHBOARD OVERVIEW
+----------------------
+
+After logging in, you will see your Dashboard. This is your main control center.
+
+The Dashboard shows:
+   - Pending Approvals: Number of immunization records waiting for your review
+   - Today's Vaccinations: Number of vaccinations scheduled for today
+   - Missed Vaccinations: Number of vaccinations that are overdue
+   - Total Children: Total number of children in the system
+
+You can click "View Details" on any card to see more information.
+
+The Dashboard also shows:
+   - Monthly Vaccine Schedule: Charts showing vaccine distribution for the 
+     current and next month
+   - You can switch between "Current Month" and "Next Month" views
+   - Use the arrow buttons to navigate between months
+
+
+================================================================================
+                          2. MAIN FEATURES
+================================================================================
+
+2.1 DASHBOARD
+-------------
+
+Location: Left sidebar menu - "Dashboard" (first item)
+
+Purpose: View overview statistics and monthly vaccine schedules
+
+What you can do:
+   - See pending approvals count
+   - Check today's vaccination schedule
+   - View missed vaccinations
+   - See total children registered
+   - View monthly vaccine charts
+   - Navigate to detailed pages by clicking "View Details" on any card
+
+How to use:
+   - The dashboard loads automatically when you log in
+   - All numbers update automatically
+   - Click any "View Details" link to go to the specific page
+
+
+2.2 VACCINATION PLANNER
+------------------------
+
+Location: Left sidebar menu - "Vaccination Planner"
+
+Purpose: Plan and schedule upcoming vaccinations
+
+What you can do:
+   - View vaccination schedule by date
+   - Filter by vaccine type, date range, or status
+   - See which children need which vaccines
+   - Plan vaccination activities in advance
+
+How to use:
+   Step 1: Click "Vaccination Planner" from the sidebar
+   Step 2: Use the filters at the top to narrow down your search
+   Step 3: Select date range, vaccine type, or status
+   Step 4: View the list of children who need vaccinations
+   Step 5: Use the table to see detailed information
+
+
+2.3 IMMUNIZATION FORM
+----------------------
+
+Location: Left sidebar menu - "Immunization Form"
+
+Purpose: Record and manage child immunization records
+
+What you can do:
+   - View all immunization records
+   - Search for specific children
+   - Filter by date, status, or vaccine type
+   - Scan QR codes to quickly access child records
+   - Add new immunization records
+   - Update existing records
+   - View missed or upcoming vaccinations
+
+How to use:
+   Step 1: Click "Immunization Form" from the sidebar
+   Step 2: Use the search box to find a child by name
+   Step 3: Use filters to narrow down results:
+      - Select date range
+      - Choose status (All, Completed, Pending, Missed)
+      - Filter by vaccine type
+   Step 4: Click "Apply" to filter the results
+   Step 5: Click "Clear" to reset all filters
+   Step 6: To scan a QR code:
+      - Click "Scan QR" button
+      - Allow camera permission when prompted
+      - Point camera at the child's QR code
+      - The system will automatically open the child's record
+   Step 7: Click on any child's name to view or edit their immunization record
+   Step 8: To add a new immunization:
+      - Find the child in the list
+      - Click on their name
+      - Fill in the immunization form
+      - Submit the form
+
+
+2.4 PENDING APPROVAL
+---------------------
+
+Location: Left sidebar menu - "Pending Approval"
+
+Purpose: Review and approve immunization records submitted by parents
+
+What you can do:
+   - View pending immunization submissions
+   - Review child information before approval
+   - Approve or reject submissions
+   - View added children waiting for family code assignment
+
+How to use:
+   Step 1: Click "Pending Approval" from the sidebar
+   Step 2: You will see a list of pending requests
+   Step 3: Use the search box to find a specific child
+   Step 4: Use the Status filter to view:
+      - "Pending Requests": Immunization records submitted by parents
+      - "Added Children": Children you added waiting for approval
+   Step 5: Review the child's information:
+      - Child Name
+      - Birth Date
+      - Place of Birth
+      - Mother's Name
+      - Father's Name
+      - Address
+   Step 6: Click "View" or "Approve" button to review details
+   Step 7: After reviewing, you can:
+      - Approve the submission
+      - Reject if information is incorrect
+      - Request corrections if needed
+   Step 8: Click "Clear" to reset search and filters
+
+
+2.5 CHILD HEALTH RECORD
+------------------------
+
+Location: Left sidebar menu - "Child Health Record"
+
+Purpose: View and manage complete child health records
+
+What you can do:
+   - View all registered children
+   - Search for specific children
+   - View complete health history
+   - Access immunization records
+   - View growth charts
+   - Edit child information
+   - Generate reports
+
+How to use:
+   Step 1: Click "Child Health Record" from the sidebar
+   Step 2: Use the search box to find a child by name
+   Step 3: Use filters to narrow down results:
+      - Filter by date range
+      - Filter by status
+      - Filter by location (barangay, purok)
+   Step 4: Click on a child's name to view their complete record
+   Step 5: In the child's record page, you can:
+      - View personal information
+      - See immunization history
+      - View growth measurements
+      - See health notes
+      - Edit information if needed
+   Step 6: Use the "Scan QR" button to quickly access a child's record
+   Step 7: Export data if needed
+
+
+2.6 TARGET CLIENT LIST
+------------------------
+
+Location: Left sidebar menu - "Target Client List"
+
+Purpose: Manage and track target clients for vaccination programs
+
+What you can do:
+   - View list of target clients
+   - Search for specific clients
+   - Filter by various criteria
+   - Export data to CSV
+   - Scan QR codes to access records
+   - Track vaccination status
+
+How to use:
+   Step 1: Click "Target Client List" from the sidebar
+   Step 2: Use the search box to find clients by name, mother's name, or address
+   Step 3: Apply filters as needed
+   Step 4: Click "Export CSV" to download the list as a spreadsheet
+   Step 5: Use "Scan QR" to quickly access a client's record
+   Step 6: Click on any client to view detailed information
+   Step 7: Click "Clear" to reset filters
+
+
+2.7 ADD CHILD
+--------------
+
+Location: Left sidebar menu - "Add Child"
+
+Purpose: Register a new child in the system
+
+What you can do:
+   - Create a new child record
+   - Enter child's basic information
+   - Enter parent/guardian information
+   - Generate a family code for parents to claim the record
+   - Set up initial health information
+
+How to use:
+   Step 1: Click "Add Child" from the sidebar
+   Step 2: Fill in the "Basic Child Information" section:
+      - Child First Name (required)
+      - Child Last Name (required)
+      - Birth Date (required)
+      - Place of Birth
+      - Province (required)
+      - City/Municipality (required)
+      - Barangay (required)
+      - Purok
+      - Birth Weight (kg)
+      - Birth Height (cm)
+      - Blood Type
+      - Allergies
+   Step 3: Fill in the "Parent/Guardian Information" section:
+      - Mother's First Name (required)
+      - Mother's Last Name (required)
+      - Mother's Mobile Number (required)
+      - Father's First Name
+      - Father's Last Name
+      - Father's Mobile Number
+      - Guardian's Name (if applicable)
+      - Guardian's Mobile Number (if applicable)
+   Step 4: Review all information for accuracy
+   Step 5: Click "Submit" or "Save" button
+   Step 6: A family code will be generated
+   Step 7: Share the family code with the parents so they can claim the 
+           child's record in their parent account
+   Step 8: The child will appear in "Pending Approval" with status "Added Children"
+          until approved
+
+IMPORTANT: Make sure all required fields (marked with *) are filled correctly.
+Double-check mobile numbers as parents will use them to claim the record.
+
+
+2.8 BABY CARD REQUESTS (MIDWIFE ONLY)
+--------------------------------------
+
+Location: Left sidebar menu - "Baby Card Requests" (visible only to Midwives)
+
+Purpose: Manage requests for baby card documents
+
+What you can do:
+   - View baby card requests from parents
+   - Approve or process requests
+   - Generate baby cards
+   - Track request status
+
+How to use:
+   Step 1: Click "Baby Card Requests" from the sidebar (Midwife only)
+   Step 2: View the list of pending requests
+   Step 3: Review each request
+   Step 4: Process or approve requests as needed
+   Step 5: Generate and provide baby cards to parents
+
+NOTE: This feature is only available to Midwives, not regular BHW users.
+
+
+================================================================================
+                      3. PROFILE & SETTINGS
+================================================================================
+
+3.1 VIEW PROFILE
+----------------
+
+Location: Top right corner - Click on your profile picture/name
+
+How to access:
+   Step 1: Look at the top right corner of the page
+   Step 2: Click on your profile picture or name
+   Step 3: A dropdown menu will appear
+   Step 4: Click "View Profile" to see your profile information
+
+What you can see:
+   - Your full name
+   - Your role (BHW or Midwife)
+   - Your email address
+   - Your profile picture
+
+
+3.2 MY ACCOUNT
+--------------
+
+Location: Top right corner - Profile menu - "My Account"
+
+How to access:
+   Step 1: Click on your profile picture/name in the top right corner
+   Step 2: Click "My Account" from the dropdown menu
+   Step 3: You will be taken to your account settings page
+
+What you can do:
+   - Update your personal information
+   - Change your password
+   - Update your profile picture
+   - Manage account settings
+
+
+3.3 NOTIFICATIONS
+-----------------
+
+Location: Top right corner - Bell icon (notifications button)
+
+How to use:
+   Step 1: Look for the bell icon in the top right corner
+   Step 2: Click on the bell icon
+   Step 3: A dropdown will show your notifications
+   Step 4: A red badge shows the number of unread notifications
+   Step 5: Click on any notification to view details
+   Step 6: Click "Mark all as read" to mark all notifications as read
+
+What notifications you might receive:
+   - New pending approvals
+   - Upcoming vaccinations
+   - Missed vaccinations
+   - System updates
+   - Important announcements
+
+Notifications are automatically marked as read when you click on them.
+
+
+3.4 SWITCH ROLE (If Available)
+--------------------------------
+
+If you have both BHW/Midwife and Parent accounts:
+
+Location: Top right corner - Profile menu - "Switch Role"
+
+How to use:
+   Step 1: Click on your profile picture/name
+   Step 2: Look for "Switch Role" option
+   Step 3: Click it to switch to your Parent account view
+   Step 4: You can switch back to BHW/Midwife view anytime
+
+NOTE: This option only appears if you have both account types linked.
+
+
+================================================================================
+                          4. LOGGING OUT
+================================================================================
+
+How to Log Out:
+---------------
+
+Step 1: Click on your profile picture or name in the top right corner
+
+Step 2: A dropdown menu will appear
+
+Step 3: Scroll down to the bottom of the menu
+
+Step 4: Click "Logout" button (it may be in red/danger color)
+
+Step 5: You will be automatically logged out and redirected to the login page
+
+IMPORTANT: Always log out when you finish your work, especially if you are 
+using a shared computer. This protects your account and patient information.
+
+
+================================================================================
+                          TIPS & BEST PRACTICES
+================================================================================
+
+1. NAVIGATION TIPS
+   - Use the left sidebar menu to navigate between pages
+   - The active page is highlighted in the sidebar
+   - Click the menu icon (☰) in the top left to show/hide the sidebar
+
+2. SEARCHING TIPS
+   - Use the search boxes to quickly find children or records
+   - Search works with partial names (you don't need to type the full name)
+   - Use filters to narrow down large lists
+
+3. QR CODE SCANNING TIPS
+   - Make sure you allow camera permission when prompted
+   - Ensure good lighting when scanning
+   - Hold the camera steady about 10-15 cm away from the QR code
+   - The scanner will automatically open the child's record when successful
+
+4. DATA ENTRY TIPS
+   - Always double-check information before submitting
+   - Required fields are marked with an asterisk (*)
+   - Make sure mobile numbers are correct (parents use them to claim records)
+   - Save your work frequently when filling long forms
+
+5. SECURITY TIPS
+   - Never share your login credentials with anyone
+   - Always log out when finished
+   - Use strong passwords
+   - Report any suspicious activity to your administrator
+
+6. TROUBLESHOOTING
+   - If a page doesn't load, try refreshing the page (F5 or refresh button)
+   - If you can't log in, check your mobile number and password
+   - If you forgot your password, use the "Forgot Password" feature
+   - Clear your browser cache if you experience display issues
+   - Contact your system administrator for technical support
+
+
+================================================================================
+                          FREQUENTLY ASKED QUESTIONS
+================================================================================
+
+Q: What should I do if I can't log in?
+A: Check your mobile number and password. Use "Forgot Password" if needed. 
+   Contact your administrator if the problem persists.
+
+Q: How do I find a specific child's record?
+A: Use the search box on any list page, or scan their QR code if available.
+
+Q: What's the difference between "Pending Requests" and "Added Children"?
+A: "Pending Requests" are submissions from parents. "Added Children" are 
+   children you added that are waiting for approval.
+
+Q: How do I generate a family code?
+A: When you add a new child, a family code is automatically generated. 
+   Share this code with the parents so they can claim the record.
+
+Q: Can I edit a child's information after adding them?
+A: Yes, go to "Child Health Record", find the child, and click on their name 
+   to view and edit their information.
+
+Q: What should I do if I make a mistake?
+A: You can usually edit records. If you can't edit something, contact your 
+   administrator for help.
+
+Q: How often should I check pending approvals?
+A: Check regularly, especially daily, to ensure timely processing of 
+   immunization records.
+
+Q: What if the QR scanner doesn't work?
+A: Make sure you allowed camera permission. Try refreshing the page. Ensure 
+   good lighting and hold the camera steady.
+
+
+================================================================================
+                          GETTING HELP
+================================================================================
+
+If you need assistance:
+
+1. Check this manual first
+2. Contact your system administrator
+3. Check the notifications for system updates or announcements
+4. Review the dashboard for any alerts or important information
+
+Remember: The system is designed to be user-friendly. If something seems 
+complicated, don't hesitate to ask for help!
+
+
+================================================================================
+                          END OF MANUAL
+================================================================================
+
+Thank you for using the eBakunado System!
+
+Last Updated: 2025
+Version: 1.0
+

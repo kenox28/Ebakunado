@@ -4,6 +4,33 @@
  * Implements Weight-for-Age, Length-for-Age, and Weight-for-Length classifications
  */
 
+// Determine application base path from the script tag so data fetches work on both
+// localhost/ebakunado and production (root) deployments.
+const growthStandardsScript = document.currentScript
+	? document.currentScript
+	: document.querySelector('script[src*="who-growth-calculator.js"]');
+let growthStandardsBasePath = "";
+
+if (growthStandardsScript) {
+	try {
+		const scriptUrl = new URL(growthStandardsScript.src, window.location.href);
+		const scriptPath = scriptUrl.pathname;
+		const jsIndex = scriptPath.lastIndexOf("/js/");
+		growthStandardsBasePath =
+			jsIndex >= 0 ? scriptPath.substring(0, jsIndex) : "";
+	} catch (error) {
+		console.warn("Unable to determine base path for growth standards:", error);
+		growthStandardsBasePath = "";
+	}
+}
+
+const buildGrowthDataUrl = (relativePath) => {
+	const normalized = relativePath.startsWith("/")
+		? relativePath
+		: `/${relativePath}`;
+	return `${growthStandardsBasePath}${normalized}`;
+};
+
 class GrowthStandardsCalculator {
 	constructor() {
 		this.standards = {
@@ -32,14 +59,14 @@ class GrowthStandardsCalculator {
 		try {
 			// Load Weight-for-Age standards
 			const wfaBoys = await fetch(
-				"../../data/growth-standards/weight-for-age-boys.json"
+				buildGrowthDataUrl("data/growth-standards/weight-for-age-boys.json")
 			);
 			this.standards.weightForAge.boys = await wfaBoys.json();
 
 			// Load girls data if available
 			try {
 				const wfaGirls = await fetch(
-					"../../data/growth-standards/weight-for-age-girls.json"
+					buildGrowthDataUrl("data/growth-standards/weight-for-age-girls.json")
 				);
 				this.standards.weightForAge.girls = await wfaGirls.json();
 			} catch (e) {
@@ -49,7 +76,7 @@ class GrowthStandardsCalculator {
 			// Load Length-for-Age standards (if available)
 			try {
 				const lfaBoys = await fetch(
-					"../../data/growth-standards/length-for-age-boys.json"
+					buildGrowthDataUrl("data/growth-standards/length-for-age-boys.json")
 				);
 				this.standards.lengthForAge.boys = await lfaBoys.json();
 			} catch (e) {
@@ -58,7 +85,7 @@ class GrowthStandardsCalculator {
 
 			try {
 				const lfaGirls = await fetch(
-					"../../data/growth-standards/length-for-age-girls.json"
+					buildGrowthDataUrl("data/growth-standards/length-for-age-girls.json")
 				);
 				this.standards.lengthForAge.girls = await lfaGirls.json();
 			} catch (e) {
@@ -68,7 +95,9 @@ class GrowthStandardsCalculator {
 			// Load Weight-for-Length standards (if available)
 			try {
 				const wflBoys = await fetch(
-					"../../data/growth-standards/weight-for-length-boys.json"
+					buildGrowthDataUrl(
+						"data/growth-standards/weight-for-length-boys.json"
+					)
 				);
 				this.standards.weightForLength.boys = await wflBoys.json();
 			} catch (e) {
@@ -77,7 +106,9 @@ class GrowthStandardsCalculator {
 
 			try {
 				const wflGirls = await fetch(
-					"../../data/growth-standards/weight-for-length-girls.json"
+					buildGrowthDataUrl(
+						"data/growth-standards/weight-for-length-girls.json"
+					)
 				);
 				this.standards.weightForLength.girls = await wflGirls.json();
 			} catch (e) {
@@ -468,5 +499,3 @@ class GrowthStandardsCalculator {
 
 // Create global instance
 const growthCalculator = new GrowthStandardsCalculator();
-
-

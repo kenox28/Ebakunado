@@ -78,5 +78,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function openCreateAccount() {
 	console.log("openCreateAccount");
-	window.location.href = "../../views/create-account.php";
+	window.location.href = "register";
 }
