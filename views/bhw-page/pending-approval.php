@@ -26,13 +26,15 @@ $defaultStatus = (isset($_GET['view']) && $_GET['view'] === 'added') ? 'pendingc
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Approval</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.3" />
     <!-- <link rel="stylesheet" href="css/main.css?v=20251106" /> -->
-    <link rel="stylesheet" href="css/header.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/bhw/pending-approval-style.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.3" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/notification-style.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/bhw/pending-approval-style.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.4" />
+    
 </head>
 
 <body>
@@ -40,279 +42,305 @@ $defaultStatus = (isset($_GET['view']) && $_GET['view'] === 'added') ? 'pendingc
     <?php include 'include/sidebar.php'; ?>
 
     <main>
-        <section class="section-container">
-            <h2 class="pending-approval section-title">
-                <span class="material-symbols-rounded">hourglass_top</span>
-                Pending Immunization List
-            </h2>
-        </section>
         <section class="pending-approval-section">
+            <div class="page-header">
+                <h1 class="page-title">Pending Immunization Submissions</h1>
+                <p class="page-subtitle">Review and verify child information before approval.</p>
+            </div>
+
             <div class="pending-approval-panel">
-                <div class="filters-bar">
-                    <div class="filters-header">
-                        <span class="material-symbols-rounded" aria-hidden="true">tune</span>
-                        <span>Filters:</span>
-                    </div>
-                    <div class="filters">
-                        <div class="select-with-icon">
-                            <span class="material-symbols-rounded" aria-hidden="true">search</span>
-                            <input id="paSearch" type="text" placeholder="Search name" />
+                <div class="data-table-card">
+                    <div class="data-table-toolbar data-table-toolbar--stack">
+                        <div class="data-table-toolbar__top">
+                            <div class="data-table-toolbar__titles">
+                                <h2 class="data-table-title">Immunization Approval List</h2>
+                            </div>
+                            <div class="data-table-toolbar__controls">
+                                <div class="data-table-search">
+                                    <span class="material-symbols-rounded data-table-search__icon" aria-hidden="true">search</span>
+                                    <input id="paSearch" class="data-table-search__input" type="text" placeholder="Search name" />
+                                </div>
+                                <button class="btn clear-btn btn-icon" id="paClear">Clear</button>
+                            </div>
                         </div>
-                        <div class="select-with-icon">
-                            <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
-                            <select id="paStatus" data-default-status="<?php echo htmlspecialchars($defaultStatus, ENT_QUOTES); ?>">
-                                <option value="pending" <?php echo $defaultStatus === 'pending' ? 'selected' : ''; ?>>Pending Requests</option>
-                                <option value="pendingcode" <?php echo $defaultStatus === 'pendingcode' ? 'selected' : ''; ?>>Added Children</option>
-                            </select>
+
+                        <div class="data-table-actions">
+                            <div class="filters">
+                                <div class="filter-item">
+                                    <label class="filter-label" for="paStatus">Status</label>
+                                    <div class="input-field">
+                                        <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
+                                        <select id="paStatus" data-default-status="<?php echo htmlspecialchars($defaultStatus, ENT_QUOTES); ?>">
+                                            <option value="pending" <?php echo $defaultStatus === 'pending' ? 'selected' : ''; ?>>Pending Requests</option>
+                                            <option value="pendingcode" <?php echo $defaultStatus === 'pendingcode' ? 'selected' : ''; ?>>Added Children</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <button id="paClear" type="button" class="btn btn-secondary">Clear</button>
                     </div>
-                </div>
 
-                <div class="table-container">
-                    <table class="table table-hover" id="childhealthrecord">
-                        <thead id="childTableHead">
-                            <tr>
-                                <th>Child Name</th>
-                                <th>Birth Date</th>
-                                <th>Place of Birth</th>
-                                <th>Mother's Name</th>
-                                <th>Father's Name</th>
-                                <th>Address</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="childhealthrecordBody">
-                            <tr class="skeleton-row">
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-5"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
-                                </td>
-                            </tr>
-                            <tr class="skeleton-row">
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-5"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
-                                </td>
-                            </tr>
-                            <tr class="skeleton-row">
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-5"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-btn skeleton-col-6"></div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="data-table-wrap">
+                        <table class="data-table" id="childhealthrecord">
+                            <thead id="childTableHead">
+                                <tr>
+                                    <th>Child Name</th>
 
-                <div class="pager" id="paPager">
-                    <div id="paPageInfo" class="page-info">&nbsp;</div>
-                    <div class="pager-controls">
-                        <button id="paPrevBtn" type="button" class="pager-btn">
-                            <span class="material-symbols-rounded">chevron_backward</span>
-                            Prev
-                        </button>
-                        <span id="paPageButtons" class="page-buttons"></span>
-                        <button id="paNextBtn" type="button" class="pager-btn">
-                            Next
-                            <span class="material-symbols-rounded">chevron_forward</span>
-                        </button>
+                                    <th>Birth Date</th>
+                                    <th>Place of Birth</th>
+                                    <th>Mother's Name</th>
+                                    <th>Father's Name</th>
+                                    <th>Address</th>
+  
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="childhealthrecordBody">
+                                <tr class="skeleton-row">
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-5"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                    </td>
+                                </tr>
+                                <tr class="skeleton-row">
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-5"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                    </td>
+                                </tr>
+                                <tr class="skeleton-row">
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-5"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-pill skeleton-col-5"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-btn skeleton-col-6"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="pager" id="paPager">
+                            <div id="paPageInfo" class="page-info">&nbsp;</div>
+                            <div class="pager-controls">
+                                <button id="paPrevBtn" type="button" class="pager-btn">
+                                    <span class="material-symbols-rounded">chevron_backward</span>
+                                    Prev
+                                </button>
+                                <span id="paPageButtons" class="page-buttons"></span>
+                                <button id="paNextBtn" type="button" class="pager-btn">
+                                    Next
+                                    <span class="material-symbols-rounded">chevron_forward</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <div class="childinformation-container">
-                <div class="pa-top-actions">
-                    <button class="btn back-btn" onclick="backToList()" id="closeButton">
-                        <span class="material-symbols-rounded">arrow_back</span>
-                        Back
-                    </button>
+        <section class="childinformation-container">
+            <div class="pa-top-actions">
+                <button class="btn back-btn" onclick="backToList()" id="closeButton">
+                    <span class="material-symbols-rounded">arrow_back</span>
+                    Back
+                </button>
+            </div>
+            <div class="child-information">
+                <h2 class="section-heading">
+                    <!-- <span class="material-symbols-rounded">article_person</span> -->
+                    Child Immunization Information Review
+                </h2>
+                <div class="childinfo-actions">
+                    <button class="btn reject-btn" id="rejectButton">Reject</button>
+                    <button class="btn accept-btn" id="acceptButton">Accept Record</button>
                 </div>
-                <div class="child-information childinfo-header">
-                    <h1 class="section-heading">
-                        <span class="material-symbols-rounded">
-                            article_person
-                        </span>
-                        Child Information Review
-                    </h1>
-                    <div class="childinfo-actions">
-                        <button class="btn reject-btn" id="rejectButton">Reject</button>
-                        <button class="btn accept-btn" id="acceptButton">Accept Record</button>
-                    </div>
-                </div>
+            </div>
 
-                <div class="childinfo-main">
-                    <div class="childinfo-details">
-                        <h2 class="childinfo-header">
-                            <div class="childinfo-title">
-                                <span class="material-symbols-rounded">person</span>
-                                <span>Child Details</span>
-                            </div>
-                            <button type="button" class="btn edit-btn" id="editChildInfoBtn" onclick="toggleChildInfoEditing()">
-                                <span class="material-symbols-rounded">edit</span>
-                                <span class="btn-text">Edit</span>
-                            </button>
-                        </h2>
-                        <div class="childinfo-grid">
-                            <div class="childinfo-row">
-                                <label>
-                                    Name:
-                                    <input type="text" id="childName">
-                                </label>
-                                <label>
-                                    Gender:
-                                    <select id="childGender">
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                    </select>
-                                </label>
-                            </div>
-
-                            <div class="childinfo-row">
-                                <label>
-                                    Birth Date:
-                                    <input type="date" id="childBirthDate">
-                                </label>
-                                <label>
-                                    Place of Birth:
-                                    <input type="text" id="childPlaceOfBirth">
-                                </label>
-                            </div>
-
-                            <div class="childinfo-row">
-                                <label>
-                                    Birth Weight (kg):
-                                    <input type="number" id="childWeight" step="0.01">
-                                </label>
-                                <label>
-                                    Birth Height (cm):
-                                    <input type="number" id="childHeight" step="0.01">
-                                </label>
-                            </div>
-
-                            <div class="childinfo-row">
-                                <label>
-                                    Mother:
-                                    <input type="text" id="childMother">
-                                </label>
-                                <label>
-                                    Father:
-                                    <input type="text" id="childFather">
-                                </label>
-                            </div>
-
-                            <div class="childinfo-row">
-                                <label>
-                                    Birth Attendant:
-                                    <select id="childBirthAttendant">
-                                        <option value="Doctor">Doctor</option>
-                                        <option value="Midwife">Midwife</option>
-                                        <option value="Nurse">Nurse</option>
-                                        <option value="Hilot">Hilot</option>
-                                        <option value="Others">Others</option>
-                                    </select>
-                                </label>
-                                <label>
-                                    Delivery Type:
-                                    <select id="childDeliveryType">
-                                        <option value="Normal">Normal</option>
-                                        <option value="Caesarean Section">Caesarean Section</option>
-                                    </select>
-                                </label>
-                            </div>
-
-                            <div class="childinfo-row">
-                                <label>
-                                    Birth Order:
-                                    <select id="childBirthOrder">
-                                        <option value="Single">Single</option>
-                                        <option value="Twin">Twin</option>
-                                    </select>
-                                </label>
-                                <label>
-                                    Address:
-                                    <input type="text" id="childAddress">
-                                </label>
-                            </div>
+            <div class="childinfo-main">
+                <div class="childinfo-details">
+                    <h2 class="childinfo-header">
+                        <div class="childinfo-title">
+                            <!-- <span class="material-symbols-rounded">person</span> -->
+                            <span>Child Details</span>
                         </div>
-
-                        <div class="childinfo-buttons">
-                            <button onclick="saveChildInfo()" class="btn save-btn">Save Changes</button>
-                            <button onclick="cancelEdit()" class="btn cancel-btn">Cancel</button>
-                        </div>
-                    </div>
-
-                    <div class="childinfo-image">
-                        <h2 class="childinfo-header">
-                            <div class="childinfo-title">
-                                <span class="material-symbols-rounded">image</span>
-                                <span>Baby's Card Image
-                            </div>
-                        </h2>
-                        <img src="" alt="Baby Card" id="childImage">
-                    </div>
-                </div> <!-- end .childinfo-main (two-column child info area) -->
-
-                <div class="vaccination-section">
-                    <h2 class="vaccination-header">
-                        <span class="material-symbols-rounded">
-                            syringe
-                        </span>
-                        Child's Vaccination Records
+                        <button type="button" class="btn edit-btn" id="editChildInfoBtn" onclick="toggleChildInfoEditing()">
+                            <span class="material-symbols-rounded">edit</span>
+                            <span class="btn-text">Edit</span>
+                        </button>
                     </h2>
-                    <div class="vaccination-record-list" id="vaccinationRecordsContainer">
+                    <div class="childinfo-grid">
+                        <div class="childinfo-row">
+                            <label>
+                                Name:
+                                <input type="text" id="childName">
+                            </label>
+                            <label>
+                                Gender:
+                                <select id="childGender">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="childinfo-row">
+                            <label>
+                                Birth Date:
+                                <input type="date" id="childBirthDate">
+                            </label>
+                            <label>
+                                Place of Birth:
+                                <input type="text" id="childPlaceOfBirth">
+                            </label>
+                        </div>
+
+                        <div class="childinfo-row">
+                            <label>
+                                Birth Weight (kg):
+                                <input type="number" id="childWeight" step="0.01">
+                            </label>
+                            <label>
+                                Birth Height (cm):
+                                <input type="number" id="childHeight" step="0.01">
+                            </label>
+                        </div>
+
+                        <div class="childinfo-row">
+                            <label>
+                                Mother:
+                                <input type="text" id="childMother">
+                            </label>
+                            <label>
+                                Father:
+                                <input type="text" id="childFather">
+                            </label>
+                        </div>
+
+                        <div class="childinfo-row">
+                            <label>
+                                Birth Attendant:
+                                <select id="childBirthAttendant">
+                                    <option value="Doctor">Doctor</option>
+                                    <option value="Midwife">Midwife</option>
+                                    <option value="Nurse">Nurse</option>
+                                    <option value="Hilot">Hilot</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </label>
+                            <label>
+                                Delivery Type:
+                                <select id="childDeliveryType">
+                                    <option value="Normal">Normal</option>
+                                    <option value="Caesarean Section">Caesarean Section</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="childinfo-row">
+                            <label>
+                                Birth Order:
+                                <select id="childBirthOrder">
+                                    <option value="Single">Single</option>
+                                    <option value="Twin">Twin</option>
+                                </select>
+                            </label>
+                            <label>
+                                Address:
+                                <input type="text" id="childAddress">
+                            </label>
+                        </div>
                     </div>
+
+                    <div class="childinfo-buttons">
+                        <button onclick="cancelEdit()" class="btn cancel-btn">Cancel</button>
+                        <button onclick="saveChildInfo()" class="btn save-btn">Save Changes</button>
+                    </div>
+                </div>
+
+                <div class="childinfo-image">
+                    <h2 class="childinfo-header">
+                        <div class="childinfo-title">
+                            <!-- <span class="material-symbols-rounded">image</span> -->
+                            <span>Baby Card Image
+                        </div>
+                    </h2>
+                    <img src="" alt="Baby Card" id="childImage">
+                </div>
+            </div> <!-- end .childinfo-main (two-column child info area) -->
+
+            <div class="vaccination-section">
+                <h2 class="vaccination-header">
+                    <!-- <span class="material-symbols-rounded">syringe</span> -->
+                    Child's Vaccination Records
+                </h2>
+                <div class="vaccination-record-list" id="vaccinationRecordsContainer">
                 </div>
             </div>
         </section>
@@ -741,7 +769,9 @@ $defaultStatus = (isset($_GET['view']) && $_GET['view'] === 'added') ? 'pendingc
                 document.querySelector('.childinformation-container').style.display = 'flex';
                 document.querySelector('.pending-approval-panel').style.display = 'none';
                 const headerSection = document.querySelector('.section-container');
+                const pageHeader = document.querySelector('.page-header');
                 if (headerSection) headerSection.style.display = 'none';
+                if (pageHeader) pageHeader.style.display = 'none';
             } else {
                 console.log(data.message);
             }
@@ -795,7 +825,7 @@ $defaultStatus = (isset($_GET['view']) && $_GET['view'] === 'added') ? 'pendingc
         }
 
         function buildVaccinationSkeletonTableHTML() {
-            return `<table class="table table-hover" style="width:100%;margin-top:10px;">` +
+            return `<table class="data-table">` +
                 `<thead><tr>` +
                 `<th>Vaccine</th><th>Dose</th><th>Schedule Date</th><th>Catch-up Date</th><th>Date Given</th><th>Status</th>` +
                 `</tr></thead><tbody id="vaccinationRecordsBody"></tbody></table>`;
@@ -838,12 +868,17 @@ $defaultStatus = (isset($_GET['view']) && $_GET['view'] === 'added') ? 'pendingc
                     const statusRaw = String(record.status || '').toLowerCase();
                     const statusClass = statusRaw === 'completed' ? 'success' : (statusRaw === 'missed' ? 'danger' : 'warning');
                     const statusText = statusRaw ? statusRaw.charAt(0).toUpperCase() + statusRaw.slice(1) : '-';
+                    const vaccine = record.vaccine_name || '-';
+                    const dose = (record.dose_number !== undefined && record.dose_number !== null && record.dose_number !== '') ? record.dose_number : '-';
+                    const sched = formatDate(record.schedule_date) || '-';
+                    const catchup = formatDate(record.catch_up_date) || '-';
+                    const given = formatDate(record.date_given) || '-';
                     rows += `<tr data-record-id="${record.id || ''}">` +
-                        `<td>${record.vaccine_name || ''}</td>` +
-                        `<td>${record.dose_number || ''}</td>` +
-                        `<td>${formatDate(record.schedule_date) || ''}</td>` +
-                        `<td>${formatDate(record.catch_up_date) || ''}</td>` +
-                        `<td>${formatDate(record.date_given) || ''}</td>` +
+                        `<td>${vaccine}</td>` +
+                        `<td>${dose}</td>` +
+                        `<td>${sched}</td>` +
+                        `<td>${catchup}</td>` +
+                        `<td>${given}</td>` +
                         `<td><span class="badge badge-${statusClass}">${statusText}</span></td>` +
                         `</tr>`;
                 });
@@ -1268,14 +1303,17 @@ $defaultStatus = (isset($_GET['view']) && $_GET['view'] === 'added') ? 'pendingc
             const listPanel = document.querySelector('.pending-approval-panel');
             const pager = document.getElementById('paPager');
             const details = document.querySelector('.childinformation-container');
+            const pageHeader = document.querySelector('.page-header');
 
             if (show) {
                 if (header) header.style.display = 'none';
+                if (pageHeader) pageHeader.style.display = 'none';
                 if (listPanel) listPanel.style.display = 'none';
                 if (pager) pager.style.display = 'none';
                 if (details) details.style.display = 'flex';
             } else {
                 if (header) header.style.display = '';
+                if (pageHeader) pageHeader.style.display = '';
                 if (listPanel) listPanel.style.display = '';
                 if (pager) pager.style.display = '';
                 if (details) details.style.display = 'none';

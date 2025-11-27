@@ -26,12 +26,14 @@ if ($user_id) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Target Client List (TCL)</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/header.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/bhw/target-client-list.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.3" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.3" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/notification-style.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/bhw/target-client-list.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.3" />
+
 </head>
 
 <body>
@@ -39,109 +41,163 @@ if ($user_id) {
     <?php include 'include/sidebar.php'; ?>
 
     <main>
-        <section>
+        <section class="target-client-list-section">
+            <div class="page-header">
+                <h1 class="page-title">Target Client List (TCL)</h1>
+                <p class="page-subtitle">Manage and review child vaccination information.</p>
+            </div>
+
             <h2 class="section-title">
-                <div class="title-left">
-                    <span class="material-symbols-rounded">format_list_bulleted</span>
-                    Target Client List (TCL)
-                </div>
                 <div class="title-actions">
-                    <button id="openScannerBtn" class="btn btn-outline-primary" onclick="openScanner()">
-                        <span class="material-symbols-rounded" aria-hidden="true">qr_code_scanner</span>
-                        Scan QR
-                    </button>
-                    <button class="btn" onclick="exportToCSV()">
-                        <span class="material-symbols-rounded" aria-hidden="true">file_download</span>
-                        Export CSV
-                    </button>
+
                 </div>
             </h2>
         </section>
 
         <section class="target-client-list-section">
-            <div class="filters-bar">
-                <div class="filters-header">
-                    <span class="material-symbols-rounded" aria-hidden="true">tune</span>
-                    <span>Filters:</span>
+            <div class="data-table-card">
+                <div class="data-table-toolbar data-table-toolbar--stack">
+                    <div class="data-table-toolbar__top">
+                        <div class="data-table-toolbar__titles">
+                            <h2 class="data-table-title">Target Client List</h2>
+                        </div>
+
+                        <div class="data-table-toolbar__controls">
+                            <div class="data-table-search">
+                                <span class="material-symbols-rounded data-table-search__icon" aria-hidden="true">search</span>
+                                <input id="searchInput" class="data-table-search__input" type="text" placeholder="Search by name, mother, address" oninput="filterTable()" />
+                            </div>
+                                                        <button id="clearFiltersBtn" class="btn clear-btn btn-icon">Clear</button>
+                            <button id="applyFiltersBtn" class="btn apply-btn btn-icon" type="button">Apply</button>
+
+                            <button class="btn export-btn btn-icon" onclick="exportToCSV()">
+                                <span class="material-symbols-rounded" aria-hidden="true">file_download</span>
+                                Export CSV
+                            </button>
+                            <button id="openScannerBtn" class="btn qr-btn btn-icon" onclick="openScanner()">
+                                <span class="material-symbols-rounded" aria-hidden="true">qr_code_scanner</span>
+                                Scan QR
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="data-table-actions">
+                        <div class="filters">
+                            <div class="filter-item">
+                                <label class="filter-label" for="paStatus">Status</label>
+                                <div class="input-field">
+                                    <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
+                                    <select id="filterStatus">
+                                        <option value="" disabled selected>Status</option>
+                                        <option value="all">All</option>
+                                        <option value="SCHEDULED">Scheduled</option>
+                                        <option value="MISSED">Missed</option>
+                                        <option value="TRANSFERRED">Transferred</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="filter-item">
+                                <label class="filter-label" for="paPurok">Purok</label>
+                                <div class="input-field">
+                                    <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
+                                    <input id="filterPurok" type="text" placeholder="e.g. Purok 1" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="filters">
-                    <div class="select-with-icon">
-                        <span class="material-symbols-rounded" aria-hidden="true">search</span>
-                        <input id="searchInput" type="text" placeholder="Search by name, mother, address" oninput="filterTable()">
+                <div class="data-table-wrap">
+                    <table class="data-table" id="tclTable">
+                        <thead>
+                            <tr>
+                                <th>Name of Child</th>
+                                <th>Sex</th>
+                                <th>Date of Birth</th>
+                                <th>Mother's Name</th>
+                                <th>Address</th>
+                                <th>Weight (kg)</th>
+                                <th>Height (cm)</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tclBody">
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-pill skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-5"></div>
+                                </td>
+                            </tr>
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-5"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-3"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-pill skeleton-col-4"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text skeleton-col-5"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="pager" id="pager">
+                        <div id="pageInfo" class="page-info">&nbsp;</div>
+                        <div class="pager-controls">
+                            <button id="tclPrevBtn" type="button" class="pager-btn">
+                                <span class="material-symbols-rounded">chevron_backward</span>
+                                Prev
+                            </button>
+                            <span id="tclPageButtons" class="page-buttons"></span>
+                            <button id="tclNextBtn" type="button" class="pager-btn">
+                                Next
+                                <span class="material-symbols-rounded">chevron_forward</span>
+                            </button>
+                        </div>
                     </div>
-
-                    <div class="select-with-icon">
-                        <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
-                        <select id="filterStatus">
-                            <option value="all">All</option>
-                            <option value="SCHEDULED">Scheduled</option>
-                            <option value="MISSED">Missed</option>
-                            <option value="TRANSFERRED">Transferred</option>
-                        </select>
-                    </div>
-
-                    <div class="select-with-icon">
-                        <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
-                        <input id="filterPurok" type="text" placeholder="e.g. Purok 1">
-                    </div>
-
-                    <button id="applyFiltersBtn" class="btn btn-primary">Apply</button>
-                    <button id="clearFiltersBtn" class="btn btn-secondary">Clear</button>
-                </div>
-            </div>
-
-            <div class="table-container">
-                <table class="table" id="tclTable">
-                    <thead>
-                        <tr>
-                            <th>Name of Child</th>
-                            <th>Sex</th>
-                            <th>Date of Birth</th>
-                            <th>Mother's Name</th>
-                            <th>Address</th>
-                            <th>Weight (kg)</th>
-                            <th>Height (cm)</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tclBody">
-                        <tr class="skeleton-row">
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                        </tr>
-                        <tr class="skeleton-row">
-                            <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-4"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-3"></div></td>
-                            <td><div class="skeleton skeleton-text skeleton-col-5"></div></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="pager" id="pager">
-                <div id="pageInfo" class="page-info">&nbsp;</div>
-                <div class="pager-controls">
-                    <button id="tclPrevBtn" type="button" class="pager-btn">
-                        <span class="material-symbols-rounded">chevron_backward</span>
-                        Prev
-                    </button>
-                    <span id="tclPageButtons" class="page-buttons"></span>
-                    <button id="tclNextBtn" type="button" class="pager-btn">
-                        Next
-                        <span class="material-symbols-rounded">chevron_forward</span>
-                    </button>
                 </div>
             </div>
         </section>
@@ -180,17 +236,21 @@ if ($user_id) {
             ];
         }
         // Date formatting helper
-        function formatDate(dateStr){
-            if(!dateStr) return '';
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
             const d = new Date(dateStr);
-            if(isNaN(d.getTime())) return dateStr;
-            return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+            if (isNaN(d.getTime())) return dateStr;
+            return d.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
         }
         let tclRecords = [];
         let tclPage = 1;
         const tclLimit = 10;
 
-        async function loadTCLData(page=1, opts={}) {
+        async function loadTCLData(page = 1, opts = {}) {
             const body = document.querySelector('#tclBody');
             const prevBtn = document.getElementById('tclPrevBtn');
             const nextBtn = document.getElementById('tclNextBtn');
@@ -227,7 +287,10 @@ if ($user_id) {
                 const data = await res.json();
                 if (data.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: TCL_TOTAL_COLS, kind: 'error' });
+                        renderTableMessage(body, 'Failed to load data. Please try again.', {
+                            colspan: TCL_TOTAL_COLS,
+                            kind: 'error'
+                        });
                     } else {
                         body.innerHTML = `<tr class="message-row error"><td colspan="${TCL_TOTAL_COLS}">Failed to load data. Please try again.</td></tr>`;
                     }
@@ -243,7 +306,10 @@ if ($user_id) {
             } catch (e) {
                 console.error('Error loading TCL data:', e);
                 if (typeof renderTableMessage === 'function') {
-                    renderTableMessage(body, 'Failed to load data. Please try again.', { colspan: TCL_TOTAL_COLS, kind: 'error' });
+                    renderTableMessage(body, 'Failed to load data. Please try again.', {
+                        colspan: TCL_TOTAL_COLS,
+                        kind: 'error'
+                    });
                 } else {
                     body.innerHTML = `<tr class="message-row error"><td colspan="${TCL_TOTAL_COLS}">Failed to load data. Please try again.</td></tr>`;
                 }
@@ -256,7 +322,9 @@ if ($user_id) {
             const body = document.querySelector('#tclBody');
             if (!records || records.length === 0) {
                 if (typeof renderTableMessage === 'function') {
-                    renderTableMessage(body, 'No records found', { colspan: TCL_TOTAL_COLS });
+                    renderTableMessage(body, 'No records found', {
+                        colspan: TCL_TOTAL_COLS
+                    });
                 } else {
                     body.innerHTML = `<tr class="message-row"><td colspan="${TCL_TOTAL_COLS}">No records found</td></tr>`;
                 }
@@ -283,7 +351,7 @@ if ($user_id) {
                 const vaccinesJson = encodeURIComponent(JSON.stringify(vaccines));
                 rows += `
                 <tr class="tcl-row" data-vaccines='${vaccinesJson}'>
-                    <td class="tcl-name-cell"><button type="button" class="vaccine-toggle" aria-label="Toggle vaccines"><span class="material-symbols-rounded">expand_more</span></button>${item.child_name || ''}</td>
+                    <td class="tcl-name-cell"><button type="button" class="vaccine-toggle" aria-label="Toggle vaccines" title="View vaccine details"><span class="material-symbols-rounded">expand_more</span></button>${item.child_name || ''}</td>
                     <td>${item.sex || ''}</td>
                     <td>${formatDate(item.date_of_birth) || ''}</td>
                     <td>${item.mother_name || ''}</td>
@@ -322,9 +390,13 @@ if ($user_id) {
             return '';
         }
 
-        function filterTable() { loadTCLData(1); }
+        function filterTable() {
+            loadTCLData(1);
+        }
 
-        function applyFilters() { filterTable(); }
+        function applyFilters() {
+            filterTable();
+        }
 
         function clearFilters() {
             document.getElementById('searchInput').value = '';
@@ -359,12 +431,20 @@ if ($user_id) {
         }
 
         document.getElementById('tclPrevBtn').addEventListener('click', (e) => {
-            console.log('TCL Prev clicked', { currentPage: tclPage });
-            if (tclPage > 1) loadTCLData(tclPage - 1, { keep: true });
+            console.log('TCL Prev clicked', {
+                currentPage: tclPage
+            });
+            if (tclPage > 1) loadTCLData(tclPage - 1, {
+                keep: true
+            });
         });
         document.getElementById('tclNextBtn').addEventListener('click', (e) => {
-            console.log('TCL Next clicked', { currentPage: tclPage });
-            loadTCLData(tclPage + 1, { keep: true });
+            console.log('TCL Next clicked', {
+                currentPage: tclPage
+            });
+            loadTCLData(tclPage + 1, {
+                keep: true
+            });
         });
 
         // Build vaccine detail HTML
@@ -394,7 +474,9 @@ if ($user_id) {
                 if (icon) icon.textContent = 'expand_more';
             } else {
                 let vaccinesObj = {};
-                try { vaccinesObj = JSON.parse(decodeURIComponent(vaccinesEncoded)); } catch(_) {}
+                try {
+                    vaccinesObj = JSON.parse(decodeURIComponent(vaccinesEncoded));
+                } catch (_) {}
                 const detailsHtml = buildVaccineDetails(vaccinesObj);
                 const detailsRow = document.createElement('tr');
                 detailsRow.className = 'vaccines-row';
@@ -523,8 +605,7 @@ if ($user_id) {
                     html5QrcodeInstance.stop();
                     html5QrcodeInstance.clear();
                 }
-            } catch (e) {
-            }
+            } catch (e) {}
         }
 
         function onScanSuccess(decodedText) {
@@ -542,8 +623,7 @@ if ($user_id) {
             filterTable();
         }
 
-        function onScanFailure(err) {
-        }
+        function onScanFailure(err) {}
 
         document.getElementById('applyFiltersBtn').addEventListener('click', applyFilters);
         document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);

@@ -1,10 +1,13 @@
 main {
   max-height: 100vh;
   overflow-y: auto;
+  background-color: #ebf2ed;
+  gap: 0 !important;
 }
 
-.pending-approval-section {
-  height: 110vh;
+.page-header {
+  padding: 1.6rem 1.6rem 2.8rem 1.6rem !important;
+  margin-bottom: 1.4rem !important;
 }
 
 .childinfo-actions {
@@ -42,17 +45,18 @@ main {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+  padding: 1.4rem;
 }
 .childinfo-buttons button {
   padding: 0.8rem 1.6rem;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 500;
   border-radius: 8px;
   cursor: pointer;
+  border: 1px solid #d1d5db;
   transition: background-color 0.15s ease, border-color 0.15s ease,
     color 0.15s ease, transform 0.05s ease;
-  border: 1px solid transparent;
 }
 .childinfo-buttons button:active {
   transform: scale(0.97);
@@ -67,30 +71,34 @@ main {
   background: #005d2d;
   border-color: #005d2d;
 }
-.save-btn:active {
+/* .save-btn:active {
   background: #005129;
   transform: scale(0.98);
-}
+} */
 
-.cancel-btn,
-.childinfo-buttons .cancel-btn {
-  background: transparent;
-  color: var(--primary-color);
-  border: 1px solid var(--primary-color);
+.cancel-btn {
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid #d1d5db;
 }
 .cancel-btn:hover {
-  background: #f9fafb;
-  border-color: #157347;
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
 }
-.cancel-btn:active {
+/* .cancel-btn:active {
   background: #f3f4f6;
   transform: scale(0.98);
-}
+} */
 
 .child-information {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 16px 18px 24px 16px;
+  background-color: var(--background-white);
+  border-radius: 14px;  
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
 }
 
 .pa-top-actions {
@@ -99,19 +107,20 @@ main {
   margin-bottom: 1rem;
 }
 
-.pa-top-actions .back-btn,
-.childinfo-actions .back-btn {
-  background: transparent;
-  color: var(--primary-color);
-  border: 1px solid var(--primary-color);
+.pa-top-actions .back-btn {
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
-.pa-top-actions #closeButton:hover,
-.childinfo-actions #closeButton:hover {
-  background: #f9fafb;
-  border-color: #157347;
+
+.pa-top-actions .back-btn:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
 }
-.pa-top-actions #closeButton:active,
-.childinfo-actions #closeButton:active {
+
+.pa-top-actions .back-btn:active {
   background: #f3f4f6;
 }
 
@@ -123,7 +132,7 @@ main {
 }
 
 .childinfo-details {
-  padding: 1.5rem;
+  padding: 0;
   border-radius: 10px;
   border: 1px solid #ccc;
   background-color: #ffffff;
@@ -134,7 +143,10 @@ main {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 16px 18px 16px;
 }
+
 .childinfo-title {
   display: inline-flex;
   align-items: center;
@@ -148,17 +160,26 @@ main {
   gap: 0.6rem;
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--primary-color);
-  margin-bottom: 1.2rem;
+  color: #1a1a1a;
+  margin-bottom: 0; 
 }
+
 .childinfo-header .material-symbols-rounded,
 .vaccination-header .material-symbols-rounded {
   font-size: 2rem;
 }
 
+.vaccination-header {
+  padding: 16px 16px 18px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
 .section-heading {
   display: flex;
   align-items: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #1f2937;
 }
 .section-heading .material-symbols-rounded {
   font-size: 2.8rem;
@@ -166,6 +187,7 @@ main {
 }
 
 .childinfo-grid {
+  padding: 1.6rem;
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -194,9 +216,9 @@ main {
 }
 .childinfo-row input:focus,
 .childinfo-row select:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
+  outline: none !important;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1) !important;
 }
 .childinfo-row input::placeholder {
   text-transform: capitalize;
@@ -206,7 +228,7 @@ main {
 }
 
 .childinfo-image {
-  padding: 1.5rem;
+  padding: 0;
   border-radius: 10px;
   background-color: #ffffff;
   border: 1px solid #ccc;
@@ -319,106 +341,11 @@ main {
 
 .vaccination-section {
   width: 100%;
-  padding: 1.5rem;
+  padding: 0;
   background-color: #ffffff;
   border-radius: 10px;
   border: 1px solid #ccc;
   overflow: auto;
-}
-
-.vaccination-section .vaccination-record-list {
-  display: block;
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: visible;
-  -webkit-overflow-scrolling: touch;
-}
-.vaccination-section .vaccination-record-list table {
-  min-width: 900px;
-  border-collapse: collapse;
-}
-.vaccination-section .vaccination-record-list th,
-.vaccination-section .vaccination-record-list td {
-  white-space: nowrap;
-}
-.vaccination-section .vaccination-record-list thead {
-  position: static;
-  top: auto;
-  z-index: auto;
-}
-
-/* =Data table: column width hints */
-.table th:nth-child(2),
-.table td:nth-child(2) {
-  min-width: 120px;
-}
-.table th:nth-child(3),
-.table td:nth-child(3) {
-  min-width: 120px;
-}
-.table th:nth-child(4),
-.table td:nth-child(4) {
-  min-width: 80px;
-}
-.table th:nth-child(5),
-.table td:nth-child(5) {
-  min-width: 120px;
-}
-.table th:nth-child(6),
-.table td:nth-child(6) {
-  min-width: 150px;
-}
-.table th:nth-child(7),
-.table td:nth-child(7) {
-  min-width: 150px;
-}
-.table th:nth-child(8),
-.table td:nth-child(8) {
-  min-width: 150px;
-}
-.table th:nth-child(9),
-.table td:nth-child(9) {
-  min-width: 200px;
-}
-.table th:nth-child(10),
-.table td:nth-child(10) {
-  min-width: 80px;
-}
-.table th:nth-child(11),
-.table td:nth-child(11) {
-  min-width: 80px;
-}
-.table th:nth-child(12),
-.table td:nth-child(12) {
-  min-width: 120px;
-}
-.table th:nth-child(13),
-.table td:nth-child(13) {
-  min-width: 100px;
-}
-.table th:nth-child(14),
-.table td:nth-child(14) {
-  min-width: 100px;
-}
-
-.table th:last-child,
-.table td:last-child {
-  text-align: center;
-}
-
-.loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem;
-  color: var(--text-secondary);
-  font-size: 1.4rem;
-}
-.loading i {
-  font-size: 2.4rem;
-  margin-bottom: 1rem;
-  color: var(--primary-color);
 }
 
 .view-btn {
@@ -443,16 +370,21 @@ main {
 }
 
 .childinfo-actions .reject-btn {
-  background: #dc3545;
-  color: #fff;
-  border: 1px solid #dc3545;
+    background-color: #e11d48;
+    color: #ffffff;
 }
+
 .childinfo-actions .reject-btn:hover {
-  background: #c82333;
-  border-color: #bd2130;
+    background-color: #be123c;
 }
-.childinfo-actions .reject-btn:active {
-  background: #b51f2d;
+
+.childinfo-actions .accept-btn {
+    background-color: #007a3d;
+    color: #ffffff;
+}
+
+.childinfo-actions .accept-btn:hover {
+    background-color: #006c35;
 }
 
 .pending-approval-section .table .message-row td {
@@ -480,21 +412,11 @@ main {
   box-sizing: border-box;
   flex: 1 1 auto;
   min-height: 0;
-  overflow: auto;
+  /* overflow: hidden; */
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1.1rem;
   display: none;
-}
-
-.childinformation-container {
-  display: none;
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  flex-direction: column;
-  gap: 1rem;
 }
 
 .childinfo-main {
@@ -517,136 +439,26 @@ main {
 .childinfo-details.editing .childinfo-buttons {
   display: flex;
 }
+
 .childinfo-details .edit-btn {
   display: inline-flex;
+  padding: 6px 12px;
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
 }
+
+.childinfo-details .edit-btn:hover {
+  background: #005d2d;
+  border-color: #005d2d;
+}
+
+.childinfo-details .edit-btn .material-symbols-rounded {
+  font-size: 1.6rem;
+}
+
 .childinfo-details.editing .edit-btn {
   display: none;
-}
-
-.pending-approval-section .filters {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 12px 16px;
-  padding: 12px 0;
-  font-size: 12px;
-  align-items: center;
-  align-content: flex-start;
-}
-.pending-approval-panel .filters-header {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 1.3rem;
-  font-weight: 500;
-  color: #1a1a1a;
-}
-.pending-approval-panel .filters-header .material-symbols-rounded {
-  font-size: 1.8rem;
-  color: #1a1a1a;
-}
-
-.pending-approval-panel .filters-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-.pending-approval-panel .filters-bar .filters {
-  flex: 0 0 auto;
-}
-.pending-approval-panel .filters-header {
-  margin-right: 1.2rem;
-}
-
-.pending-approval-section .filters input[type="text"],
-.pending-approval-section .filters select {
-  border: 1px solid #1a1a1a;
-}
-.pending-approval-section .filters .select-with-icon {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  flex: 1 1 200px;
-  min-width: 180px;
-}
-.pending-approval-section .filters .btn {
-  flex: 0 0 auto;
-}
-.pending-approval-section .filters input[type="text"],
-.pending-approval-section .filters select {
-  width: 100%;
-  height: 34px;
-  min-height: 34px;
-  line-height: 34px;
-  padding: 0 12px;
-  border: 0.5px solid #1a1a1a;
-  border-radius: 8px;
-  background: #fff;
-  color: #111827;
-  font: inherit;
-  font-size: 1.2rem;
-  text-transform: capitalize;
-  transition: border-color 0.2s ease, background-color 0.2s ease,
-    box-shadow 0.2s ease;
-  box-sizing: border-box;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-.pending-approval-section .filters .select-with-icon .material-symbols-rounded {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 18px;
-  color: #000;
-  cursor: pointer;
-  pointer-events: auto;
-  z-index: 2;
-  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
-}
-.pending-approval-section .filters .select-with-icon input[type="text"],
-.pending-approval-section .filters .select-with-icon select {
-  padding-right: 36px;
-}
-.pending-approval-section .filters input[type="text"]:focus,
-.pending-approval-section .filters select:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
-}
-.pending-approval-section .filters .select-with-icon:focus-within select,
-.pending-approval-section .filters .select-with-icon:focus-within input {
-  color: var(--primary-color);
-}
-.pending-approval-section
-  .filters
-  .select-with-icon:focus-within
-  .material-symbols-rounded {
-  color: var(--primary-color);
-}
-.pending-approval-section .filters select:not(:focus):hover,
-.pending-approval-section .filters .select-with-icon select:not(:focus):hover,
-.pending-approval-section .filters input[type="text"]:not(:focus):hover {
-  border-color: #76a582;
-  background-color: #fff;
-  box-shadow: none;
-  outline: none;
-}
-
-.pending-approval-section .filters .select-with-icon {
-  flex: 0 0 auto;
-}
-
-.pending-approval-section .filters #paSearch {
-  width: 300px;
-}
-
-.pending-approval-section .filters #paStatus {
-  width: 200px;
 }
 
 .vaccination-section .no-vaccination-records {

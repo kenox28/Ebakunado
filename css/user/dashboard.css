@@ -445,7 +445,7 @@ main {
   gap: 6px;
 }
 .child-actions button .material-symbols-rounded {
-  font-size: 18px;
+  font-size: 1.8rem;
   line-height: 1;
 }
 .child-actions button:hover {

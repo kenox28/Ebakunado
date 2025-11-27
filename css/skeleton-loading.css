@@ -55,8 +55,7 @@
   border-radius: 8px;
 }
 .skeleton-number {
-  height: 34px;
-  border-radius: 8px;
+  /* removed: keep for backward compatibility but no fixed size */
 }
 .skeleton-avatar {
   width: 48px;
@@ -216,7 +215,7 @@
 /* ==========================================================
    Dashboard card number (3-dot shimmer) fade behavior
    ========================================================== */
-.card-number {
+/* .card-number {
   position: relative;
 }
 .card-number .number-value,
@@ -236,13 +235,5 @@
 .card-number.is-loaded .skeleton-placeholder {
   opacity: 0;
   pointer-events: none;
-}
+} */
 
-/* Overlay shimmer dots atop where number will appear, for clean cross-fade */
-.card-number .skeleton-placeholder {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  width: auto;
-}

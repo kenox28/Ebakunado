@@ -1,250 +1,79 @@
-/* =Base: page/main scroll boundary */
-main {
+.main {
   max-height: 100vh;
   overflow-y: auto;
+  background-color: #ebf2ed;
 }
 
-/* =Section: child-health-list wrapper */
-.child-health-list-section .table-container {
-  overflow: auto;
-  overflow-y: hidden;
-  overflow-x: auto;
+.page-header {
+  padding: 1.6rem 1.6rem 2.8rem 1.6rem !important;
+  margin-bottom: 1.4rem !important;
 }
 
-/* Removed: table base and container (now global in main.css) */
-
-/* Keep nested schedule table and page-specific bits */
-.child-health-list-section .table tr.sched-row > td {
-  padding: 0.5rem;
-  background: #fff;
+.viewCHR-btn,
+.downloadCHR-btn {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
-.child-health-list-section .table tr.sched-row > td > table {
-  width: 100%;
-  margin: 0;
-  border-collapse: collapse;
-  table-layout: auto; /* allow natural widths to prevent overlap */
+.viewCHR-btn:hover,
+.downloadCHR-btn:hover {
+  background-color: #005529;
+  transform: translateY(-1px);
 }
-.child-health-list-section .table tr.sched-row > td > table th,
-.child-health-list-section .table tr.sched-row > td > table td {
-  padding: 0.5rem 0.75rem;
-  white-space: nowrap; /* default: keep most columns on one line */
-}
-/* Make Vaccine column wrap instead of overlapping */
-.child-health-list-section .table tr.sched-row > td > table th:nth-child(1),
-.child-health-list-section .table tr.sched-row > td > table td:nth-child(1) {
-  white-space: normal;
-  word-break: break-word;
-}
-/* Keep Dose No. compact and centered */
-.child-health-list-section .table tr.sched-row > td > table th:nth-child(2),
-.child-health-list-section .table tr.sched-row > td > table td:nth-child(2) {
-  width: 88px;
-  text-align: center;
-  white-space: nowrap;
-}
-/* Due and Date Given fixed widths */
-.child-health-list-section .table tr.sched-row > td > table th:nth-child(3),
-.child-health-list-section .table tr.sched-row > td > table td:nth-child(3),
-.child-health-list-section .table tr.sched-row > td > table th:nth-child(4),
-.child-health-list-section .table tr.sched-row > td > table td:nth-child(4) {
-  width: 130px;
-}
-/* Status column sized for chip */
-.child-health-list-section .table tr.sched-row > td > table th:nth-child(5),
-.child-health-list-section .table tr.sched-row > td > table td:nth-child(5) {
-  width: 140px;
-}
-/* Catch-up Date reasonable width */
-.child-health-list-section .table tr.sched-row > td > table th:nth-child(6),
-.child-health-list-section .table tr.sched-row > td > table td:nth-child(6) {
-  width: 150px;
+.viewCHR-btn .material-symbols-rounded,
+.downloadCHR-btn .material-symbols-rounded,
+.view-schedule-btn .material-symbols-rounded {
+  font-size: 1.6rem;
 }
 
-/* Responsiveness: relax fixed widths on narrower viewports */
-@media (max-width: 1200px) {
-  .child-health-list-section .table tr.sched-row > td > table th:nth-child(3),
-  .child-health-list-section .table tr.sched-row > td > table td:nth-child(3),
-  .child-health-list-section .table tr.sched-row > td > table th:nth-child(4),
-  .child-health-list-section .table tr.sched-row > td > table td:nth-child(4) {
-    width: 110px;
-  }
-  .child-health-list-section .table tr.sched-row > td > table th:nth-child(5),
-  .child-health-list-section .table tr.sched-row > td > table td:nth-child(5) {
-    width: 120px;
-  }
-  .child-health-list-section .table tr.sched-row > td > table th:nth-child(6),
-  .child-health-list-section .table tr.sched-row > td > table td:nth-child(6) {
-    width: 130px;
-  }
-}
-.child-health-list-section .table tr.sched-row > td > table thead {
-  background: #f2f2f2;
-  position: static;
-  top: auto;
-  z-index: auto;
+.view-schedule-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.6rem 1.2rem;
+
+  background: #ffffff;
+  color: #1a1a1a;
+  border: 1px solid #c8c8c8;
+  border-radius: 8px;
+
+  font-size: 1.2rem;
+  font-weight: 500;
+
+  transition: background 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.1s ease;
 }
 
-/* Keep action buttons’ page-specific variants */
-.child-health-list-section .table tbody td .btn + .btn {
-  margin-left: 8px;
-}
-.child-health-list-section .table .btn .material-symbols-rounded.btn-icon {
-  font-size: 18px;
-  line-height: 1;
-}
-.child-health-list-section .table .btn .material-symbols-rounded.btn-chevron {
-  font-size: 18px;
-  line-height: 1;
-  transition: transform 0.2s ease;
-}
-.child-health-list-section .view-schedule-btn {
-  background: transparent;
-  color: var(--primary-color);
-  border: 1px solid var(--primary-color);
-}
-.child-health-list-section .view-schedule-btn:hover {
+.view-schedule-btn:hover {
   background: #f9fafb;
-  border-color: #157347;
+  border-color: #9ca3af;
 }
-.child-health-list-section .view-schedule-btn:active {
+
+.view-schedule-btn:active {
   background: #f3f4f6;
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
-.child-health-list-section .view-schedule-btn:active .btn-chevron,
-.child-health-list-section
-  .view-schedule-btn[aria-expanded="true"]
-  .btn-chevron {
+
+.view-schedule-btn .btn-icon,
+.view-schedule-btn .btn-chevron {
+  font-size: 20px;
+  transition: transform 0.2s ease;
+  color: #1a1a1a;
+}
+
+.view-schedule-btn[aria-expanded="true"] .btn-chevron {
   transform: rotate(180deg);
 }
 
-.child-health-list-section .viewCHR-btn {
-  background: var(--primary-color);
-  color: #fff;
-  border-color: var(--primary-color);
-  text-decoration: none;
-}
-.child-health-list-section .viewCHR-btn:hover {
-  background: #005d2d;
-  border-color: #005d2d;
-}
-.child-health-list-section .viewCHR-btn:active {
-  background: #005129;
-  transform: scale(0.98);
-}
-
-/* Filters (match Immunization styles) */
-.child-health-list-section .filters {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1.2rem 1.6rem;
-  padding: 12px 0;
-  font-size: 1.2rem;
-  align-items: center;
-  align-content: flex-start;
-}
-.child-health-list-section .filters .select-with-icon {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  flex: 0 0 auto;
-  min-width: 0;
-}
-.child-health-list-section
-  .filters
-  .select-with-icon
-  .material-symbols-rounded {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 18px;
-  color: #000;
-  cursor: pointer;
-  pointer-events: auto;
-  z-index: 2;
-}
-.child-health-list-section .filters input[type="text"] {
-  width: 100%;
-  min-height: 34px;
-  line-height: 34px;
-  padding: 0 12px;
-  border: 0.5px solid #1a1a1a;
-  border-radius: 8px;
-  background: #fff;
-  color: #111827;
-  font: inherit;
-  font-size: 1.2rem;
-  text-transform: capitalize;
-  transition: border-color 0.2s ease, background-color 0.2s ease,
-    box-shadow 0.2s ease;
-  box-sizing: border-box;
-  padding-right: 36px;
-}
-.child-health-list-section .filters input[type="text"]:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
-  color: var(--primary-color);
-}
-
-/* Removed page-level .filters .btn overrides so Clear uses main.css */
-
-/* Filters bar: label + controls in one row aligned right */
-.child-health-list-section .filters-bar {
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-/* Filters label */
-.child-health-list-section .filters-header {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 1.3rem;
-  font-weight: 500;
-  color: #1a1a1a;
-  margin-right: 1.2rem;
-}
-.child-health-list-section .filters-header .material-symbols-rounded {
-  font-size: 1.8rem;
-  color: #1a1a1a;
-}
-
-/* Permanent widths */
-.child-health-list-section .filters .select-with-icon:has(#chlSearchInput) {
-  flex: 0 0 280px;
-  width: 350px;
-}
-.child-health-list-section .filters .select-with-icon:has(#chlPurok) {
-  flex: 0 0 200px;
-  width: 250px;
-}
-.child-health-list-section .filters #chlSearchInput {
-  width: 280px;
-}
-.child-health-list-section .filters #chlPurok {
-  width: 200px;
-}
-
-.btn-secondary:hover {
-  background: none !important;
-  color: var(--primary-color) !important;
-  box-shadow: none !important;
-}
-/* Empty & Error message rows (consistent with other tables) */
-.child-health-list-section .table .message-row td {
-  text-align: center;
-  padding: 2.4rem 1.2rem;
-  font-size: 1.3rem;
-  color: #6b7280; /* muted gray */
-  font-weight: 400;
-  text-transform: none;
-}
-.child-health-list-section .table .message-row.error td {
-  color: #b91c1c; /* red-700 */
-  font-weight: 500;
+.view-schedule-btn:focus-visible {
+  outline: 2px solid #1d1f2333;
+  outline-offset: 2px;
 }

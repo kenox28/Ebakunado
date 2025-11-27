@@ -26,7 +26,7 @@ $user_fullname = trim((($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ??
             ? $sessionProfileImg
             : 'assets/images/user-profile.png';
         $emailDisplay = isset($_SESSION['email']) ? htmlspecialchars((string)$_SESSION['email']) : '—';
-        
+
         $has_user_role = false;
         if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available_roles'])) {
             $has_user_role = true;

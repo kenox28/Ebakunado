@@ -26,7 +26,7 @@ if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available
         <div class="sidebar-section">
             <ul class="sidebar-menu">
                 <!-- Main Menu -->
-                 <li class="sidebar-group-label">Overview</li>
+                <li class="sidebar-group-label">Overview</li>
                 <li class="sidebar-menu-item<?php echo $currentPage === 'dashboard.php' ? ' active' : ''; ?>">
                     <a href="superadmin-dashboard" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">dashboard</span>

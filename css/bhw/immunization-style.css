@@ -1,6 +1,7 @@
 main {
   max-height: 100vh;
   overflow-y: auto;
+  background-color: #ebf2ed;
 }
 
 .immunization-section {
@@ -11,33 +12,39 @@ main {
   display: none;
 }
 
+.page-header {
+  padding: 1.6rem 1.6rem 2.8rem 1.6rem !important;
+  margin-bottom: 1.4rem !important;
+}
+
 /* Filters */
-.immunization-section .filters {
+/* .immunization-section .filters {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 12px 16px;
-  padding: 5px 0;
   font-size: 12px;
   align-items: center;
   align-content: flex-start;
-  margin-bottom: 1rem;
-}
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+} */
 
 /* Controls */
-.immunization-section .filters .select-with-icon {
+/* .immunization-section .filters .select-with-icon {
   position: relative;
   display: inline-flex;
   align-items: center;
-  flex: 1 1 200px;
-  min-width: 180px;
-}
-
-.immunization-section .filters .btn {
   flex: 0 0 auto;
-}
+  min-width: 180px;
+} */
 
-.immunization-section .filters input[type="date"],
+/* .immunization-section .filters .btn {
+  flex: 0 0 auto;
+} */
+
+/* .immunization-section .filters input[type="date"],
 .immunization-section .filters input[type="text"],
 .immunization-section .filters select {
   width: 100%;
@@ -48,7 +55,7 @@ main {
   border: 0.5px solid #1a1a1a;
   border-radius: 8px;
   background: #fff;
-  color: #111827;
+  color: #1A1A1A;
   font: inherit;
   font-size: 12px;
   text-transform: capitalize;
@@ -58,10 +65,10 @@ main {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-}
+} */
 
 /* Icon */
-.immunization-section .filters .select-with-icon .material-symbols-rounded {
+/* .immunization-section .filters .select-with-icon .material-symbols-rounded {
   position: absolute;
   right: 12px;
   top: 50%;
@@ -78,16 +85,16 @@ main {
 .immunization-section .filters .select-with-icon input[type="text"],
 .immunization-section .filters .select-with-icon select {
   padding-right: 36px;
-}
+} */
 
 /* Date native picker overrides */
-.immunization-section .filters input[type="date"] {
+/* .immunization-section .filters input[type="date"] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   background-image: none;
   position: relative;
-}
+} */
 
 /* Chromium/Edge/Safari */
 .immunization-section
@@ -122,6 +129,18 @@ main {
   }
 }
 
+/* Responsive: allow filters to wrap on smaller screens for better usability */
+@media (max-width: 780px) {
+  .immunization-section .filters {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+  .immunization-section .filters .select-with-icon {
+    flex: 1 1 200px;
+    min-width: 140px;
+  }
+}
+
 /* Uppercase date text */
 .immunization-section .filters input[type="date"],
 .form-group input[type="date"] {
@@ -143,7 +162,7 @@ main {
 
 .immunization-section .filters .select-with-icon:focus-within select,
 .immunization-section .filters .select-with-icon:focus-within input {
-  color: var(--primary-color);
+  color: #1A1A1A;
 }
 .immunization-section
   .filters
@@ -162,8 +181,6 @@ main {
   box-shadow: none;
   outline: none;
 }
-
-/* Removed page-scoped button styles (now global in main.css) */
 
 /* Center the Action column (keep page-specific) */
 .table th:last-child,

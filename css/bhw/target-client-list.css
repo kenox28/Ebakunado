@@ -1,13 +1,18 @@
 main {
   max-height: 100vh;
   overflow-y: auto;
+  background-color: #ebf2ed;
 }
 
 .target-client-list-section {
   height: 100vh;
 }
 
-/* Section title with actions */
+.page-header {
+  padding: 1.6rem 1.6rem 2.8rem 1.6rem !important;
+  margin-bottom: 1.4rem !important;
+}
+
 .section-title {
   display: flex;
   align-items: center;
@@ -29,7 +34,6 @@ main {
   font-size: 20px;
 }
 
-/* Vaccine details expansion */
 .vaccine-toggle {
   background: transparent;
   border: none;
@@ -83,8 +87,7 @@ main {
   font-size: 1.1rem;
 }
 
-/* Filters (aligned with immunization) */
-.target-client-list-section .filters {
+/* .target-client-list-section .filters {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -95,13 +98,12 @@ main {
   align-content: flex-start;
 }
 
-/* Select-with-icon wrappers (copied pattern from immunization) */
 .target-client-list-section .filters .select-with-icon {
   position: relative;
   display: inline-flex;
   align-items: center;
-  flex: 0 0 auto;           /* prevent stretching */
-  min-width: 0;             /* allow fixed-width inputs inside */
+  flex: 0 0 auto;           
+  min-width: 0;            
 }
 
 .target-client-list-section
@@ -122,18 +124,17 @@ main {
 
 .target-client-list-section .filters .select-with-icon input[type="text"],
 .target-client-list-section .filters .select-with-icon select {
-  padding-right: 36px;      /* room for trailing icon */
+  padding-right: 36px;     
 }
 
-/* Inputs */
 .target-client-list-section .filters input[type="text"],
 .target-client-list-section .filters select {
   width: 100%;
-  height: 34px;             /* match buttons */
+  height: 34px;            
   min-height: 34px;
   line-height: 34px;
-  padding: 0 12px;          /* vertical padding to 0 to keep 34px exact */
-  border: 0.5px solid #1a1a1a; /* align with immunization filters */
+  padding: 0 12px;         
+  border: 0.5px solid #1a1a1a; 
   border-radius: 8px;
   background: #fff;
   color: #111827;
@@ -147,7 +148,6 @@ main {
   -moz-appearance: none;
 }
 
-/* Focus + hover */
 .target-client-list-section .filters input[type="text"]:focus,
 .target-client-list-section .filters select:focus {
   outline: none;
@@ -172,21 +172,16 @@ main {
   outline: none;
 }
 
-/* Permanent widths for filters */
 #searchInput { width: 300px; }
 #filterStatus { width: 200px; }
 #filterPurok { width: 200px; }
 
-/* Buttons (aligned with immunization) */
 .btn-secondary:hover {
   background: none !important;
   color: var(--primary-color) !important;
   box-shadow: none !important;
-}
+} */
 
-/* Page-level table base styles removed – using global styles in main.css */
-
-/* Vaccine status colors */
 .vaccine-completed {
   color: #28a745;
   font-weight: bold;
@@ -200,7 +195,6 @@ main {
   font-weight: bold;
 }
 
-/* Loading and utility */
 .text-center {
   text-align: center;
 }
@@ -210,10 +204,8 @@ main {
   gap: 8px;
 }
 
-/* Removed sticky override – allow global sticky headers from main.css */
 
-/* Filters bar: label + controls in one row (align right) */
-.target-client-list-section .filters-bar {
+/* .target-client-list-section .filters-bar {
   display: flex;
   align-items: center;
   gap: 1.2rem;
@@ -224,7 +216,6 @@ main {
   flex: 0 0 auto;
 }
 
-/* Filters label (match Pending Approval) */
 .target-client-list-section .filters-header {
   display: inline-flex;
   align-items: center;
@@ -238,7 +229,6 @@ main {
   font-size: 1.8rem;
   color: #1a1a1a;
 }
-/* Empty & Error message rows */
 .target-client-list-section .table .message-row td {
   text-align: center;
   padding: 2.4rem 1.2rem;
@@ -250,4 +240,4 @@ main {
 .target-client-list-section .table .message-row.error td {
   color: #b91c1c;
   font-weight: 500;
-}
+} */

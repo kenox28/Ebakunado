@@ -136,6 +136,8 @@ $user_fname = $_SESSION['fname'] ?? '';
 
             // Load children data and CHR status data
             await Promise.all([loadChildrenData(), loadChrStatusData()]).catch(() => {});
+            // await Promise.all([loadChildrenData()]).catch(() => {});
+    
 
             // Render the table
             renderChildrenTable();
@@ -162,6 +164,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                 } else {
                     allChildrenData = Array.isArray(data.data) ? data.data : [];
                 }
+                
             } catch (err) {
                 console.error('Error loading children data:', err);
                 allChildrenData = [];
@@ -184,6 +187,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                 } else {
                     allChrStatusData = Array.isArray(data.data) ? data.data : [];
                 }
+                
             } catch (err) {
                 console.error('Error loading CHR status data:', err);
                 allChrStatusData = [];
