@@ -82,10 +82,11 @@ if ($redirect_url) {
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Login Portal</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
 	<link rel="stylesheet" href="css/fonts.css" />
-	<link rel="stylesheet" href="css/modals.css" />
 	<link rel="stylesheet" href="css/variables.css" />
+	<link rel="stylesheet" href="css/modals.css" />
 	<link rel="stylesheet" href="css/login-style.css?v=1.0.3" />
 	<link rel="stylesheet" href="css/queries.css?v=1.0.1" />
 	<style>
@@ -123,7 +124,6 @@ if ($redirect_url) {
 			to { opacity: 1; transform: translateY(0); }
 		}
 	</style>
-	<title>Login Portal</title>
 </head>
 
 <body class="page-login">

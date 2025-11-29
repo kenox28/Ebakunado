@@ -39,7 +39,7 @@ if ($user_id) {
         <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
         <link rel="stylesheet" href="css/bhw/immunization-style.css?v=1.0.3">
         <link rel="stylesheet" href="css/bhw/growth-assessment.css?v=1.0.1">
-        <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.4">
+        <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.3">
     </head>
 
 <body>
@@ -543,7 +543,7 @@ if ($user_id) {
                                     <input type="text" id="im_vaccine_name" value="${vaccineName}" readonly disabled />
                                 </label>
                             </div>
-                            <div class="form-group row-2">
+                            <div class="form-group row-1">
                                 <label>
                                     Guideline Schedule:
                                     <input type="date" value="${scheduleDate}" readonly disabled />
@@ -560,12 +560,12 @@ if ($user_id) {
                                 </label>` : ''}
                                 <input type="hidden" id="im_schedule_date" value="${scheduleDate}" />
                             </div>
-                            <div class="form-group row-3">
+                            <div class="form-group row-2">
                                 <input type="hidden" id="im_date_taken" value="${dateToday}" />
                             </div>
                         </div>
 
-                            <div class="form-group row-4">
+                            <div class="form-group row-3">
                                 ${feedingStatus ? `
                                 <div class="im-panel im-panel-feeding">
                                     <h4 class="im-panel-title">Update Feeding Status for ${vaccineName}</h4>
@@ -614,7 +614,7 @@ if ($user_id) {
                             <input type="hidden" id="im_schedule_date" value="${scheduleDate}" />
                             <input type="hidden" id="im_date_taken" value="${dateToday}" />
 
-                            <div class="form-group row-2">
+                            <div class="form-group row-1">
                                 <h4 class="im-group-title">Measurements</h4>
                                 <label>
                                     Temperature (°C):
@@ -644,7 +644,7 @@ if ($user_id) {
                         </div>
 
                     <!-- Dose and Lot fields removed: dose is auto-determined from record, lot/site not in schema -->
-                        <div class="form-group row-7">
+                        <div class="form-group row-6">
                             <label>
                                 Remarks (Optional)
                                 <textarea id="im_remarks" rows="3" placeholder="Optional remarks"></textarea>
