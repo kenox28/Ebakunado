@@ -1,4 +1,8 @@
 <?php
+// Restore session from JWT token if session expired
+require_once __DIR__ . '/../../../php/supabase/shared/restore_session_from_jwt.php';
+restore_session_from_jwt();
+
 // Determine which page is currently loaded
 // Use REQUEST_URI to detect the route since PHP_SELF is always index.php for routed pages
 $requestUri = $_SERVER['REQUEST_URI'] ?? '';

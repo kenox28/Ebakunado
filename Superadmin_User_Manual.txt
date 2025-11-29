@@ -1,0 +1,561 @@
+EBAKUNADO SYSTEM - USER MANUAL
+For Super Administrators
+
+GETTING STARTED
+
+Welcome to the eBakunado System Super Admin Portal! This manual will guide you through using the system step by step, from logging in to logging out.
+
+TABLE OF CONTENTS
+
+1. Getting Started
+   1.1 How to Log In
+   1.2 Forgot Password
+   1.3 Dashboard Overview
+
+2. Main Features
+   2.1 Dashboard
+   2.2 User Management
+   2.3 BHW Management
+   2.4 Midwife Management
+   2.5 Activity Logs
+   2.6 Privacy Consents
+   2.7 System Settings
+
+3. Profile & Settings
+   3.1 View Profile
+   3.2 My Account
+
+4. Logging Out
+
+5. Tips & Best Practices
+
+6. Frequently Asked Questions
+
+
+1. GETTING STARTED
+
+1.1 HOW TO LOG IN
+
+Step 1: Open your web browser (Chrome, Firefox, Edge, etc.)
+
+Step 2: Go to the eBakunado login page
+
+Step 3: You will see the login form
+
+Step 4: Enter your Mobile Number or Email
+   - Format: +63 9XX XXX XXXX or your email address
+   - Example: +63 912 345 6789 or admin@example.com
+
+Step 5: Enter your Password
+   - Type your password in the password field
+   - Click the eye icon to show/hide your password
+
+Step 6: Click the "Login" button
+
+Step 7: If your credentials are correct and you have Super Admin privileges, you will be redirected to your Dashboard
+
+Note: Make sure you are using the correct credentials assigned to you. Only users with Super Admin role can access this portal.
+
+
+1.2 FORGOT PASSWORD
+
+If you forgot your password, follow these steps:
+
+Step 1: On the login page, click "Forgot Password?" link below the password field
+
+Step 2: Enter your Email or Phone Number in the field provided
+
+Step 3: Click "Send OTP" button
+
+Step 4: You will receive an OTP (One-Time Password) via email or SMS
+
+Step 5: Enter the OTP to reset your password
+
+Step 6: Follow the instructions to create a new password
+
+Step 7: Click "Cancel" if you remember your password
+
+
+1.3 DASHBOARD OVERVIEW
+
+After logging in, you will see your Dashboard. This is your main control center for managing the entire system.
+
+The Dashboard shows:
+   - Total Users: Number of registered parent/guardian accounts
+   - Total BHW: Number of Barangay Health Worker accounts
+   - Total Midwives: Number of midwife accounts
+   - Activity Logs: Number of system activity records
+
+You can click "View Details" on any card to navigate to the detailed management page.
+
+The Dashboard also shows:
+   - Recent Activity: A table showing the latest system activities
+   - Activity information includes user, action, description, and timestamp
+   - Use pagination buttons to view more activities
+
+
+2. MAIN FEATURES
+
+2.1 DASHBOARD
+
+Location: Left sidebar menu - "Dashboard" (first item under Overview)
+
+Purpose: View system overview statistics and recent activities
+
+What you can do:
+   - See total counts of users, BHW, and midwives
+   - View activity log statistics
+   - Monitor recent system activities
+   - Navigate to detailed management pages by clicking "View Details" on any card
+
+How to use:
+   - The dashboard loads automatically when you log in
+   - All numbers update automatically
+   - Click any "View Details" link to go to the specific management page
+   - Use pagination buttons at the bottom of the Recent Activity table to view more entries
+
+
+2.2 USER MANAGEMENT
+
+Location: Left sidebar menu - "Users" (under User Management)
+
+Purpose: Manage parent/guardian user accounts
+
+What you can do:
+   - View all registered user accounts
+   - Search for specific users
+   - Add new user accounts
+   - Edit existing user information
+   - Delete user accounts (single or multiple)
+   - View user details and account information
+
+How to use:
+
+Step 1: Click "Users" from the sidebar
+
+Step 2: View the list of all user accounts
+
+Step 3: Use the search box to find a specific user by name, email, or phone number
+
+Step 4: To add a new user:
+   - Click "Add New User" button
+   - Fill in the user information form:
+     * First Name (required)
+     * Last Name (required)
+     * Email (required)
+     * Phone Number (required)
+     * Gender
+     * Address (Province, City/Municipality, Barangay, Purok)
+   - Click "Save" to create the account
+
+Step 5: To edit a user:
+   - Find the user in the list
+   - Click the "Edit" button in the Actions column
+   - A form will open with the user's current information
+   - Make your changes:
+     * Update personal information (name, email, phone, gender, address)
+     * Change Role: Select a new role from the dropdown:
+       - User: Regular parent/guardian account
+       - BHW: Barangay Health Worker account
+       - Midwife: Midwife account
+     * When you change the role, the system will automatically:
+       - Add the account to the appropriate table (bhw or midwives) while keeping the original user data
+       - The user data in the users table is NOT removed - it is preserved
+       - This allows the user to switch roles between Parent and BHW/Midwife
+       - Update permissions and access rights
+       - The user will appear in the corresponding management page
+   - Click "Update User" to save changes
+
+Note: When converting a User to BHW or Midwife, the original user data is preserved in the users table. This means the person can switch their role back to Parent if they have both accounts. The account will exist in both tables (users and bhw/midwives), allowing flexible role switching.
+
+Step 6: To delete a user:
+   - Select one or more users by checking the boxes in the first column
+   - Click "Delete Selected" button
+   - Confirm the deletion when prompted
+   - Or click the delete icon on a single user row
+
+Step 7: Use pagination buttons to navigate through pages if there are many users
+
+Note: Deleting a user account will remove all associated data. This action cannot be undone.
+
+
+2.3 BHW MANAGEMENT
+
+Location: Left sidebar menu - "BHW" (under User Management)
+
+Purpose: Manage Barangay Health Worker accounts
+
+What you can do:
+   - View all BHW accounts
+   - Search for specific BHW
+   - Edit BHW information
+   - Delete BHW accounts (single or multiple)
+   - View BHW permissions and details
+
+How to use:
+
+Step 1: Click "BHW" from the sidebar
+
+Step 2: View the list of all BHW accounts
+
+Step 3: Use the search box to find a specific BHW by name, email, or phone number
+
+Step 4: To edit a BHW:
+   - Find the BHW in the list
+   - Click the "Edit" button in the Actions column
+   - A form will open with the BHW's current information
+   - Update the information as needed:
+     * Personal information (name, email, phone, gender, address)
+     * Change Role: Select a new role from the dropdown:
+       - User: The BHW account will be removed, but if they have a user account, they can switch to Parent role
+       - BHW: Keep as Barangay Health Worker (current role)
+       - Midwife: Add account to midwives table while keeping BHW data (if they also have user account, it remains)
+     * Permissions and access settings
+   - Click "Update" to save changes
+   - When you change the role:
+     * If changing to User: The BHW account is removed from bhw table
+     * If changing to Midwife: The account is added to midwives table
+     * If the person has a user account, it remains in the users table, allowing them to switch roles
+
+Note: If a BHW was originally a User, their user data remains in the users table. This allows them to switch between Parent and BHW/Midwife roles using the role switch feature in their profile menu.
+
+Step 5: To delete a BHW:
+   - Select one or more BHW by checking the boxes in the first column
+   - Click "Delete Selected" button
+   - Confirm the deletion when prompted
+   - Or click the delete icon on a single BHW row
+
+Step 6: Use pagination buttons to navigate through pages
+
+Note: Deleting a BHW account will remove their access to the system. Make sure to transfer any important responsibilities before deletion.
+
+
+2.4 MIDWIFE MANAGEMENT
+
+Location: Left sidebar menu - "Midwife" (under User Management)
+
+Purpose: Manage midwife accounts
+
+What you can do:
+   - View all midwife accounts
+   - Search for specific midwives
+   - Edit midwife information
+   - Delete midwife accounts (single or multiple)
+   - View approval status and permissions
+
+How to use:
+
+Step 1: Click "Midwife" from the sidebar
+
+Step 2: View the list of all midwife accounts
+
+Step 3: Use the search box to find a specific midwife by name, email, or phone number
+
+Step 4: To edit a midwife:
+   - Find the midwife in the list
+   - Click the "Edit" button in the Actions column
+   - A form will open with the midwife's current information
+   - Update the information as needed:
+     * Personal information (name, email, phone, gender, address)
+     * Change Role: Select a new role from the dropdown:
+       - User: The midwife account will be removed, but if they have a user account, they can switch to Parent role
+       - BHW: Add account to bhw table while keeping midwife data (if they also have user account, it remains)
+       - Midwife: Keep as midwife (current role)
+     * Permissions and access settings
+     * Approval status
+   - Click "Update" to save changes
+   - When you change the role:
+     * If changing to User: The midwife account is removed from midwives table
+     * If changing to BHW: The account is added to bhw table
+     * If the person has a user account, it remains in the users table, allowing them to switch roles
+
+Note: If a midwife was originally a User, their user data remains in the users table. This allows them to switch between Parent and BHW/Midwife roles using the role switch feature in their profile menu.
+
+Step 5: To delete a midwife:
+   - Select one or more midwives by checking the boxes in the first column
+   - Click "Delete Selected" button
+   - Confirm the deletion when prompted
+   - Or click the delete icon on a single midwife row
+
+Step 6: Use pagination buttons to navigate through pages
+
+Note: Midwives have special permissions including Baby Card generation. Make sure to consider this when managing their accounts.
+
+
+2.5 ACTIVITY LOGS
+
+Location: Left sidebar menu - "Activity Logs" (under Logs)
+
+Purpose: Monitor and review all system activities
+
+What you can do:
+   - View all system activity records
+   - Search for specific activities
+   - Filter activities by user, action type, or date
+   - Delete activity log entries
+   - Track user actions and system events
+
+How to use:
+
+Step 1: Click "Activity Logs" from the sidebar
+
+Step 2: View the list of all activity logs
+
+Step 3: Use the search box to find specific activities by user, action, or description
+
+Step 4: Each log entry shows:
+   - Log ID
+   - User ID and User Type
+   - Action performed
+   - Description of the action
+   - IP Address
+   - Timestamp
+
+Step 5: To delete activity logs:
+   - Select one or more log entries by checking the boxes
+   - Click "Delete Selected" button
+   - Confirm the deletion when prompted
+
+Step 6: Use pagination buttons to view more log entries
+
+Note: Activity logs help track all system actions for security and auditing purposes. Be careful when deleting logs as they provide important audit trails.
+
+
+2.6 PRIVACY CONSENTS
+
+Location: Left sidebar menu - "Privacy Consents" (under Compliance & Settings)
+
+Purpose: Monitor Data Privacy Act acknowledgements from parents
+
+What you can do:
+   - View all privacy consent records
+   - Search for specific consent records
+   - Filter by date range
+   - Review consent timestamps and IP addresses
+   - Ensure compliance with data privacy regulations
+
+How to use:
+
+Step 1: Click "Privacy Consents" from the sidebar
+
+Step 2: View the list of all privacy consent records
+
+Step 3: Use the search box to find specific records by parent name, email, or phone number
+
+Step 4: Filter by date range:
+   - Enter a "From" date
+   - Enter a "To" date
+   - The list will automatically filter to show consents within that range
+
+Step 5: Each record shows:
+   - Parent/Guardian name
+   - Email address
+   - Phone number
+   - Whether they agreed to privacy terms
+   - Date and time of consent
+   - IP Address from which consent was given
+
+Step 6: Click "Clear Filters" to reset all filters
+
+Step 7: Use pagination buttons to view more records
+
+Note: Privacy consents are important for compliance with the Data Privacy Act. These records should be maintained for auditing purposes.
+
+
+2.7 SYSTEM SETTINGS
+
+Location: Left sidebar menu - "System Settings" (under Compliance & Settings)
+
+Purpose: Configure SMS and Email settings for system communications
+
+What you can do:
+   - Configure email settings for system notifications
+   - Configure SMS settings for OTP and notifications
+   - View current configuration
+   - Reset settings to defaults
+
+How to use:
+
+Step 1: Click "System Settings" from the sidebar
+
+Step 2: You will see the System SMS & Email Configuration form
+
+Step 3: Configure Email Settings:
+   - Gmail Username: Enter the Gmail address used for sending system emails
+     * Example: your-email@gmail.com
+   - Gmail App Password: Enter the Gmail App Password
+     * You need to generate an App Password at Google Account Settings
+     * Click the link provided to go to Google Account Settings
+     * Generate a new App Password and paste it here
+
+Step 4: Configure SMS Settings (TextBee):
+   - API Key: Enter your TextBee.dev API key
+   - Device ID: Enter your TextBee Device ID
+   - These settings are used for:
+     * OTP verification
+     * Password reset
+     * Daily vaccination notifications
+
+Step 5: Review Current Configuration:
+   - Scroll down to see the "Current Configuration" section
+   - This shows a snapshot of the values currently in use
+   - Verify that your settings are correct
+
+Step 6: Save your settings:
+   - Click "Save Settings" button
+   - Wait for confirmation that settings have been saved
+   - The current configuration display will update
+
+Step 7: To reset to defaults:
+   - Click "Reset to Defaults" button
+   - Confirm the action
+   - Settings will be restored to default values
+
+Note: System settings control all automated communications. Make sure email and SMS credentials are correct, otherwise users will not receive OTP codes, password reset links, or notifications.
+
+
+3. PROFILE & SETTINGS
+
+3.1 VIEW PROFILE
+
+Location: Top right corner - Click on your profile picture/name
+
+How to access:
+
+Step 1: Look at the top right corner of the page
+
+Step 2: Click on your profile picture or name
+
+Step 3: A dropdown menu will appear
+
+Step 4: Click "View Profile" to see your profile information
+
+What you can see:
+   - Your full name
+   - Your role (Admin)
+   - Your email address
+   - Your profile picture
+
+
+3.2 MY ACCOUNT
+
+Location: Top right corner - Profile menu - "My Account"
+
+How to access:
+
+Step 1: Click on your profile picture/name in the top right corner
+
+Step 2: Click "My Account" from the dropdown menu
+
+Step 3: You will be taken to your account settings page
+
+What you can do:
+   - Update your personal information
+   - Change your password
+   - Update your profile picture
+   - Manage account settings
+
+
+4. LOGGING OUT
+
+How to Log Out:
+
+Step 1: Click on your profile picture or name in the top right corner
+
+Step 2: A dropdown menu will appear
+
+Step 3: Scroll down to the bottom of the menu
+
+Step 4: Click "Logout" button (it may be in red/danger color)
+
+Step 5: You will be automatically logged out and redirected to the login page
+
+Note: Always log out when you finish your work, especially if you are using a shared computer. This protects your account and system security.
+
+
+5. TIPS & BEST PRACTICES
+
+1. NAVIGATION TIPS
+   - Use the left sidebar menu to navigate between pages
+   - The active page is highlighted in the sidebar
+   - Click the menu icon in the top left to show/hide the sidebar
+
+2. SEARCHING TIPS
+   - Use the search boxes to quickly find users, BHW, midwives, or activities
+   - Search works with partial names (you don't need to type the full name)
+   - Search is case-insensitive
+
+3. BULK OPERATIONS
+   - Use checkboxes to select multiple items for bulk deletion
+   - Use the checkbox in the header row to select all items on the current page
+   - Be careful with bulk deletions as they cannot be undone
+
+4. DATA MANAGEMENT TIPS
+   - Always verify information before deleting accounts
+   - Review activity logs regularly for security monitoring
+   - Keep system settings (SMS/Email) updated and tested
+   - Maintain privacy consent records for compliance
+   - When changing user roles, inform the user they need to log out and log back in to see their new role
+   - Role changes are logged in the activity logs for auditing purposes
+   - Remember: When converting a User to BHW or Midwife, the user data is preserved. This allows role switching between Parent and BHW/Midwife roles
+   - If you want to completely remove a user's ability to switch to Parent role, you would need to delete their user account separately
+
+5. SECURITY TIPS
+   - Never share your login credentials with anyone
+   - Always log out when finished
+   - Use strong passwords
+   - Review activity logs for suspicious activities
+   - Report any security concerns immediately
+
+6. TROUBLESHOOTING
+   - If a page doesn't load, try refreshing the page (F5 or refresh button)
+   - If you can't log in, check your credentials
+   - If you forgot your password, use the "Forgot Password" feature
+   - Clear your browser cache if you experience display issues
+   - Check system settings if users report not receiving emails or SMS
+
+
+6. FREQUENTLY ASKED QUESTIONS
+
+Q: What should I do if I can't log in?
+A: Check your mobile number/email and password. Use "Forgot Password" if needed. Contact your system administrator if the problem persists.
+
+Q: How do I add a new user account?
+A: Go to "User Management" > "Users", click "Add New User" button, fill in the form, and click "Save".
+
+Q: Can I restore a deleted account?
+A: No, deleted accounts cannot be restored. Always verify before deleting accounts.
+
+Q: How do I configure email settings?
+A: Go to "System Settings", enter your Gmail username and App Password. Generate an App Password from Google Account Settings if needed.
+
+Q: What is a Gmail App Password?
+A: It's a special password generated by Google for applications to access your Gmail account. You can generate it at myaccount.google.com/apppasswords.
+
+Q: How do I configure SMS settings?
+A: Go to "System Settings", enter your TextBee API Key and Device ID. These are provided by your TextBee service provider.
+
+Q: What are activity logs used for?
+A: Activity logs track all system actions for security auditing, troubleshooting, and compliance purposes.
+
+Q: Why should I check privacy consents?
+A: Privacy consents ensure compliance with the Data Privacy Act. They record when parents agreed to data processing terms.
+
+Q: Can I edit multiple accounts at once?
+A: No, you can only edit one account at a time. However, you can delete multiple accounts at once using bulk selection.
+
+Q: How do I change a user's role (e.g., from User to BHW or Midwife)?
+A: Go to the appropriate management page (Users, BHW, or Midwife), click "Edit" on the account, change the Role dropdown to the desired role, and click "Update". The account will be moved to the corresponding management section.
+
+Q: What happens when I change a user's role?
+A: When you change a User to BHW or Midwife, the system adds the account to the bhw or midwives table while preserving the original user data in the users table. This allows the person to switch roles between Parent and BHW/Midwife. The account will appear in the corresponding management page. The user will need to log out and log back in to see their new role.
+
+Q: Can I change a BHW to a Midwife or vice versa?
+A: Yes, you can change roles between User, BHW, and Midwife. Simply edit the account and select the new role from the dropdown. If the person was originally a User, their user account data remains, allowing them to switch back to Parent role.
+
+Q: Why can some BHW/Midwives switch to Parent role?
+A: If a BHW or Midwife was originally created as a User, their user data remains in the users table even after being converted to BHW or Midwife. This dual-account setup allows them to switch between roles using the "Switch Role" feature in their profile menu. This is intentional to allow flexibility for users who may need both roles.
+
+Q: What happens if system settings are incorrect?
+A: Users will not receive OTP codes, password reset links, or notifications. Always test settings after updating them.
+

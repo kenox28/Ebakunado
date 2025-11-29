@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+// Restore session from JWT token if session expired
+require_once __DIR__ . '/../../php/supabase/shared/restore_session_from_jwt.php';
+restore_session_from_jwt();
+
 if (!isset($_SESSION['super_admin_id'])) {
     header("Location: login");
     exit();

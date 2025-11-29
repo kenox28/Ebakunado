@@ -275,7 +275,7 @@ if ($redirect_url) {
 		})();
 		</script>
 		
-		<script src="js/supabase_js/login.js?v=1.0.29"></script>
+		<script src="js/supabase_js/login.js?v=1.0.30"></script>
 		
 	</body>
 </html>

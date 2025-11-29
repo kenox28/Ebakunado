@@ -8,7 +8,8 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-session_start();
+// Start session with error suppression to handle permission issues
+@session_start();
 
 // Include database helper
 include "../../../database/DatabaseHelper.php";
@@ -46,4 +47,5 @@ echo json_encode([
     "message" => ucfirst($user_type) . " logged out successfully",
     "clear_token" => true // Signal to frontend to clear localStorage
 ]);
+exit();
 ?>

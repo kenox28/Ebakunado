@@ -105,6 +105,26 @@ session_start();
 				color: #007bff;
 				margin-bottom: 15px;
 			}
+			.download-app {
+				background: linear-gradient(135deg, #28a745, #20c997);
+				color: white;
+			}
+			.download-app h2 {
+				color: white;
+			}
+			.download-app p {
+				color: rgba(255, 255, 255, 0.9);
+			}
+			.download-app .btn {
+				background: white;
+				color: #28a745;
+				font-weight: bold;
+			}
+			.download-app .btn:hover {
+				background: #f8f9fa;
+				transform: translateY(-2px);
+				box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+			}
 		</style>
 	</head>
 	<body>
@@ -142,6 +162,17 @@ session_start();
 				<div>
 					<a href="create_account.php" class="btn">Create New Account</a>
 					<a href="login.php" class="btn">Login to Existing Account</a>
+				</div>
+			</section>
+			
+			<section class="download-app">
+				<h2>Download Our Mobile App</h2>
+				<p>Get the Ebakunado mobile application for easy access to your healthcare records and immunization schedules on the go.</p>
+				<div style="text-align: center; margin-top: 30px;">
+					<a href="https://drive.google.com/uc?export=download&id=1M6u_cztd9qIsQ95wRXUk08CXTF7MB_Lc" class="btn" style="background: #28a745; font-size: 1.1em; padding: 18px 40px;" target="_blank">
+						<span style="margin-right: 10px;">📱</span>
+						Download Mobile App
+					</a>
 				</div>
 			</section>
 		</main>

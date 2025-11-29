@@ -1,10 +1,15 @@
 <?php
-session_start();
+// Start output buffering to prevent any output before JSON
+ob_start();
 
+// Set JSON header first
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
+
+// Start session with error suppression to handle permission issues
+@session_start();
 
 // Include database helper
 include "../../../database/DatabaseHelper.php";
@@ -23,31 +28,24 @@ try {
     // Continue with logout even if logging fails
 }
 
-try {
-	// Clear JWT token cookie
-	if (isset($_COOKIE['jwt_token'])) {
-		setcookie('jwt_token', '', time() - 3600, '/');
-		setcookie('jwt_token', '', time() - 3600, '/', '', false, true); // Also clear with secure flag
-	}
-	
-	// Clear session
-	$_SESSION = array();
-	if (ini_get("session.use_cookies")) {
-		$params = session_get_cookie_params();
-		setcookie(session_name(), '', time() - 42000,
-			$params["path"], $params["domain"],
-			$params["secure"], $params["httponly"]
-		);
-	}
-	session_destroy();
-	
-	echo json_encode([
-		'status' => 'success', 
-		'message' => 'Admin logged out successfully',
-		'clear_token' => true // Signal to frontend to clear localStorage
-	]);
-} catch (Exception $e) {
-	echo json_encode(['status' => 'error', 'message' => 'Logout failed']);
+// Clear JWT token cookie
+if (isset($_COOKIE['jwt_token'])) {
+    setcookie('jwt_token', '', time() - 3600, '/');
+    setcookie('jwt_token', '', time() - 3600, '/', '', false, true); // Also clear with secure flag
 }
+
+// Clear and destroy session
+session_unset();
+session_destroy();
+
+// Clear output buffer and return success response
+ob_clean();
+
+echo json_encode([
+    'status' => 'success', 
+    'message' => 'Admin logged out successfully',
+    'clear_token' => true // Signal to frontend to clear localStorage
+]);
+exit();
 ?>
 

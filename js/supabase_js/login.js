@@ -174,7 +174,7 @@ async function loginFun(e) {
 
 			if (data.user_type === "super_admin") {
 				console.log("Redirecting to superadmin dashboard");
-				window.location.href = "superadmin-dashboard";
+				window.location.href = "admin-dashboard";
 			} else if (data.user_type === "admin") {
 				console.log("Redirecting to admin home");
 				window.location.href = "admin-dashboard";
@@ -195,7 +195,7 @@ async function loginFun(e) {
 			console.log("Already logged in - user_type:", data.user_type);
 			if (data.user_type === "super_admin") {
 				console.log("Redirecting already logged in super_admin");
-				window.location.href = "superadmin-dashboard";
+				window.location.href = "admin-dashboard";
 			} else if (data.user_type === "admin") {
 				console.log("Redirecting already logged in admin");
 				window.location.href = "admin-dashboard";
