@@ -86,7 +86,7 @@ if ($redirect_url) {
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/modals.css" />
 	<link rel="stylesheet" href="css/variables.css" />
-	<link rel="stylesheet" href="css/login-style.css?v=1.0.2" />
+	<link rel="stylesheet" href="css/login-style.css?v=1.0.3" />
 	<link rel="stylesheet" href="css/queries.css?v=1.0.1" />
 	<style>
 		/* Forgot Password Form Styling */
@@ -123,7 +123,7 @@ if ($redirect_url) {
 			to { opacity: 1; transform: translateY(0); }
 		}
 	</style>
-	<title>Health Worker Portal</title>
+	<title>Login Portal</title>
 </head>
 
 <body class="page-login">
@@ -155,20 +155,20 @@ if ($redirect_url) {
 			<!-- Right Side -->
 			<div class="auth-right">
 				<header class="login-header">
-					<h1 class="portal-title">Health Worker Portal</h1>
+					<h1 class="portal-title">Welcome to eBakunado</h1>
+					<h2 class="form-title">Login to your account</h2>
 				</header>
 				<form class="login-form" action="#" id="LoginForm">
-					<h2 class="form-title">Sign In</h2>
 					<div class="input-group">
 						<input type="hidden" name="csrf_token" id="csrf_token" value="" />
-						<label class="input-label" for="mobile_number">Mobile No.</label>
+						<label class="input-label" for="Email_number">Email or Phone Number</label>
 						<input
 							class="form-input"
 							type="text"
 							id="Email_number"
 							name="Email_number"
 							required
-							placeholder="+63 9XX XXX XXXX" />
+							placeholder="Enter your email or phone number" />
 					</div>
 					<div class="input-group password-group">
 						<label class="input-label" for="password">Password</label>

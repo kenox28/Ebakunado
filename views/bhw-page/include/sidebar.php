@@ -73,7 +73,7 @@ if (isset($_SESSION['available_roles']) && in_array('user', $_SESSION['available
                     alt="eBakunado Logo" />
             </div>
             <div class="brand-text-block">
-                <h1 class="brand-name">e-Bakunado</h1>
+                <h1 class="brand-name">eBakunado</h1>
             </div>
         </div>
 
