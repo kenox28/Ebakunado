@@ -36,6 +36,22 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
     <link rel="stylesheet" href="css/notification-style.css?v=1.0.2" />
     <link rel="stylesheet" href="css/bhw/profile-management.css?v=1.0.5" />
     <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.4" />
+    <style>
+        .password-requirements .requirement-item.met {
+            color: #28a745;
+        }
+        .password-requirements .requirement-item.met .requirement-icon {
+            color: #28a745;
+        }
+        .password-requirements .requirement-item.met .requirement-icon::before {
+            content: "✓";
+            color: #28a745;
+            font-weight: bold;
+        }
+        .password-requirements .requirement-item:not(.met) .requirement-icon::before {
+            content: "";
+        }
+    </style>
 </head>
 
 <body>
@@ -243,6 +259,29 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
                                     <div class="form-group" id="group-new_password" style="display: none;">
                                         <label for="modal_new_password">New password</label>
                                         <input type="password" id="modal_new_password" class="form-control" data-field="new_password">
+                                        <!-- Password Requirements List -->
+                                        <div id="passwordRequirements" class="password-requirements" style="display: none; margin-top: 0.8rem; padding: 1rem; background: #f8f9fa; border-radius: 6px; border: 1px solid #e0e0e0;">
+                                            <div class="requirement-item" id="req-length" style="display: flex; align-items: center; gap: 0.8rem; font-size: 1.2rem; color: #666; margin-bottom: 0.6rem; transition: all 0.3s ease;">
+                                                <span class="requirement-icon" style="font-size: 1.4rem; color: #999; transition: all 0.3s ease; width: 1.6rem; text-align: center;"></span>
+                                                <span class="requirement-text" style="flex: 1;">At least 8 characters</span>
+                                            </div>
+                                            <div class="requirement-item" id="req-uppercase" style="display: flex; align-items: center; gap: 0.8rem; font-size: 1.2rem; color: #666; margin-bottom: 0.6rem; transition: all 0.3s ease;">
+                                                <span class="requirement-icon" style="font-size: 1.4rem; color: #999; transition: all 0.3s ease; width: 1.6rem; text-align: center;"></span>
+                                                <span class="requirement-text" style="flex: 1;">1 uppercase letter</span>
+                                            </div>
+                                            <div class="requirement-item" id="req-lowercase" style="display: flex; align-items: center; gap: 0.8rem; font-size: 1.2rem; color: #666; margin-bottom: 0.6rem; transition: all 0.3s ease;">
+                                                <span class="requirement-icon" style="font-size: 1.4rem; color: #999; transition: all 0.3s ease; width: 1.6rem; text-align: center;"></span>
+                                                <span class="requirement-text" style="flex: 1;">1 lowercase letter</span>
+                                            </div>
+                                            <div class="requirement-item" id="req-number" style="display: flex; align-items: center; gap: 0.8rem; font-size: 1.2rem; color: #666; margin-bottom: 0.6rem; transition: all 0.3s ease;">
+                                                <span class="requirement-icon" style="font-size: 1.4rem; color: #999; transition: all 0.3s ease; width: 1.6rem; text-align: center;"></span>
+                                                <span class="requirement-text" style="flex: 1;">1 number</span>
+                                            </div>
+                                            <div class="requirement-item" id="req-special" style="display: flex; align-items: center; gap: 0.8rem; font-size: 1.2rem; color: #666; margin-bottom: 0; transition: all 0.3s ease;">
+                                                <span class="requirement-icon" style="font-size: 1.4rem; color: #999; transition: all 0.3s ease; width: 1.6rem; text-align: center;"></span>
+                                                <span class="requirement-text" style="flex: 1;">1 special character</span>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="form-group" id="group-confirm_password" style="display: none;">
                                         <label for="modal_confirm_password">Confirm new password</label>
@@ -509,6 +548,8 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
                 document.getElementById('modal_new_password').setAttribute('name', 'new_password');
                 document.getElementById('modal_confirm_password').setAttribute('name', 'confirm_password');
                 document.getElementById('editModalTitle').textContent = 'Change password';
+                // Initialize password validation
+                initPasswordValidation();
             }
 
             // Prefill modal inputs
@@ -601,11 +642,120 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
                 setTimeout(() => {
                     overlay.setAttribute('hidden', 'true');
                     overlay.setAttribute('aria-hidden', 'true');
+                    // Reset password validation flag when modal closes
+                    passwordValidationInitialized = false;
+                    // Hide password requirements
+                    const passwordRequirements = document.getElementById('passwordRequirements');
+                    if (passwordRequirements) {
+                        passwordRequirements.style.display = 'none';
+                    }
                 }, 180);
                 try {
                     document.body.style.overflow = '';
                 } catch (e) {}
             }
+        }
+
+        // Password validation functions
+        let passwordValidationInitialized = false;
+        function initPasswordValidation() {
+            const passwordInput = document.getElementById('modal_new_password');
+            const passwordRequirements = document.getElementById('passwordRequirements');
+            
+            if (!passwordInput || !passwordRequirements || passwordValidationInitialized) return;
+
+            // Show requirements when password field is focused
+            passwordInput.addEventListener('focus', function() {
+                if (passwordRequirements) {
+                    passwordRequirements.style.display = 'block';
+                }
+            });
+
+            // Hide requirements when password field is blurred (if password is valid)
+            passwordInput.addEventListener('blur', function() {
+                if (passwordRequirements) {
+                    const password = this.value;
+                    const isValid = validatePasswordRequirements(password);
+                    if (isValid) {
+                        setTimeout(() => {
+                            if (passwordInput !== document.activeElement) {
+                                passwordRequirements.style.display = 'none';
+                            }
+                        }, 200);
+                    }
+                }
+            });
+
+            // Real-time password validation
+            passwordInput.addEventListener('input', function() {
+                validatePasswordRealTime(this.value);
+            });
+
+            passwordValidationInitialized = true;
+        }
+
+        function validatePasswordRealTime(password) {
+            const requirements = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                special: /[^A-Za-z0-9]/.test(password)
+            };
+
+            // Update each requirement indicator
+            const reqLength = document.getElementById('req-length');
+            if (reqLength) {
+                if (requirements.length) {
+                    reqLength.classList.add('met');
+                } else {
+                    reqLength.classList.remove('met');
+                }
+            }
+
+            const reqUppercase = document.getElementById('req-uppercase');
+            if (reqUppercase) {
+                if (requirements.uppercase) {
+                    reqUppercase.classList.add('met');
+                } else {
+                    reqUppercase.classList.remove('met');
+                }
+            }
+
+            const reqLowercase = document.getElementById('req-lowercase');
+            if (reqLowercase) {
+                if (requirements.lowercase) {
+                    reqLowercase.classList.add('met');
+                } else {
+                    reqLowercase.classList.remove('met');
+                }
+            }
+
+            const reqNumber = document.getElementById('req-number');
+            if (reqNumber) {
+                if (requirements.number) {
+                    reqNumber.classList.add('met');
+                } else {
+                    reqNumber.classList.remove('met');
+                }
+            }
+
+            const reqSpecial = document.getElementById('req-special');
+            if (reqSpecial) {
+                if (requirements.special) {
+                    reqSpecial.classList.add('met');
+                } else {
+                    reqSpecial.classList.remove('met');
+                }
+            }
+        }
+
+        function validatePasswordRequirements(password) {
+            return password.length >= 8 &&
+                   /[A-Z]/.test(password) &&
+                   /[a-z]/.test(password) &&
+                   /[0-9]/.test(password) &&
+                   /[^A-Za-z0-9]/.test(password);
         }
 
         const modalCloseBtn = document.getElementById('modalClose');
@@ -697,9 +847,9 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
                     } else if (newPass !== confirm) {
                         isValid = false;
                         errorMessage = 'New passwords do not match';
-                    } else if (newPass.length < 6) {
+                    } else if (!validatePasswordRequirements(newPass)) {
                         isValid = false;
-                        errorMessage = 'New password must be at least 6 characters';
+                        errorMessage = 'Password must meet all requirements: at least 8 characters, 1 uppercase, 1 lowercase, 1 number, and 1 special character';
                     }
                 }
 
