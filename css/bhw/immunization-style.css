@@ -157,13 +157,13 @@ main {
 }
 
 /* Focus */
-.immunization-section .filters input[type="date"]:focus,
+/* .immunization-section .filters input[type="date"]:focus,
 .immunization-section .filters input[type="text"]:focus,
 .immunization-section .filters select:focus {
-	outline: none;
-	border-color: var(--primary-color);
-	box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
-}
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
+} */
 
 .immunization-section .filters .select-with-icon:focus-within select,
 .immunization-section .filters .select-with-icon:focus-within input {
@@ -187,7 +187,6 @@ main {
 	outline: none;
 }
 
-/* Center the Action column (keep page-specific) */
 .table th:last-child,
 .table td:last-child {
 	text-align: center;
@@ -209,36 +208,7 @@ main {
 	color: var(--primary-color);
 }
 
-/* Column width hints for readability (keep page-specific) */
-.table th:nth-child(1),
-.table td:nth-child(1) {
-	min-width: 180px;
-} /* Fullname */
-.table th:nth-child(2),
-.table td:nth-child(2) {
-	min-width: 200px;
-} /* Address */
-.table th:nth-child(3),
-.table td:nth-child(3) {
-	min-width: 150px;
-} /* Vaccine */
-.table th:nth-child(4),
-.table td:nth-child(4) {
-	min-width: 140px;
-} /* Schedule Date */
-.table th:nth-child(5),
-.table td:nth-child(5) {
-	min-width: 130px;
-} /* Status */
-.table th:nth-child(6),
-.table td:nth-child(6) {
-	min-width: 120px;
-} /* Action */
-
-/* Removed: table base and container (now global in main.css) */
-
-/* View button hover (keep consistent) */
-.view-btn {
+.immunization-section .view-btn {
 	background-color: var(--primary-color);
 	color: #ffffff;
 	border: none;
@@ -251,11 +221,11 @@ main {
 	align-items: center;
 	gap: 0.4rem;
 }
-.view-btn:hover {
+.immunization-section .view-btn:hover {
 	background-color: #005529;
 	transform: translateY(-1px);
 }
-.view-btn .material-symbols-rounded {
+.immunization-section .view-btn .material-symbols-rounded {
 	font-size: 1.6rem;
 }
 
@@ -266,25 +236,26 @@ main {
 	display: none;
 	align-items: center;
 	justify-content: center;
-	background: rgba(0, 0, 0, 0.6);
+	background: rgba(0, 0, 0, 0.45);
+	padding: 4.8rem 1.6rem 3.2rem;
 	z-index: 9999;
+	backdrop-filter: blur(2px);
 }
 
 .immunization-modal {
 	background: #fff;
-	width: 860px;
+	width: 760px;
 	max-width: 95vw;
 	max-height: 90vh;
 	overflow-y: auto;
-	border-radius: 18px;
-	box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25);
-	padding: 0; /* allow header border to be full-bleed */
+	border-radius: 10px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+	padding: 0;
 	animation: modalIn 0.18s ease-out;
 }
 
-/* Provide padding to content below the header while keeping header full-bleed */
 .immunization-modal > :not(.immunization-header) {
-	padding: 16px 18px;
+	padding: 1.2rem 1.6rem;
 }
 
 @keyframes modalIn {
@@ -298,26 +269,29 @@ main {
 	}
 }
 
-/* QR Scanner Modal */
 .qr-overlay {
 	position: fixed;
 	inset: 0;
-	display: none; /* toggled to flex in JS */
+	display: none;
 	align-items: center;
 	justify-content: center;
-	background: rgba(0, 0, 0, 0.9);
+	background: rgba(0, 0, 0, 0.45);
+	padding: 4.8rem 1.6rem 3.2rem;
 	z-index: 10000;
+	backdrop-filter: blur(2px);
+	transition: opacity 0.18s ease, transform 0.18s ease;
+	overflow: auto;
 }
 
 .qr-modal {
 	background: #fff;
-	width: 640px;
-	max-width: 95vw;
+	width: 100%;
+	max-width: 640px;
 	border-radius: 12px;
 	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 	animation: modalIn 0.18s ease-out;
-	padding: 0; /* allow header border to be full-bleed */
-	overflow: hidden; /* keep rounded corners when header is full-bleed */
+	padding: 0;
+	overflow: hidden;
 }
 
 .qr-header {
@@ -325,7 +299,7 @@ main {
 	align-items: center;
 	justify-content: space-between;
 	border-bottom: 1px solid #d0d0d0;
-	padding: 16px 18px;
+	padding: 1.2rem 1.6rem;
 }
 .qr-title {
 	margin: 0;
@@ -334,18 +308,17 @@ main {
 	gap: 8px;
 	font-size: 16px;
 	font-weight: 600;
-	color: var(--primary-color);
+	color: #1a1a1a;
 }
 .qr-title .material-symbols-rounded {
 	font-size: 20px;
+	color: #1a1a1a;
 }
 
-/* QR modal body (padded content below the full-bleed header) */
 .qr-body {
-	padding: 16px 18px;
+	padding: 1.2rem 1.6rem;
 }
 
-/* Labeled camera select field */
 .qr-field {
 	margin-bottom: 12px;
 }
@@ -393,50 +366,37 @@ main {
 	justify-content: space-between;
 	align-items: center;
 	border-bottom: 1px solid #d0d0d0;
-	padding: 16px 18px;
+	padding: 1.2rem 1.6rem;
 }
 
 .immunization-title {
 	display: flex;
 	align-items: center;
 	gap: 1rem;
-	font-size: 16px;
+	font-size: 1.6rem;
 	font-weight: 600;
-	color: var(--primary-color);
+	color: #1f2937;
 }
 
-.close-btn {
-	padding: 0;
-	background: transparent;
-	border: none;
-	border-radius: 0;
-	cursor: pointer;
-	line-height: 1;
-}
-
-.close-btn:focus-visible {
-	outline: 2px solid var(--primary-color);
-	outline-offset: 2px;
+/* .close-btn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #374151;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  line-height: 1;
 }
 
 .close-btn .material-symbols-rounded {
-	display: inline-block;
-	font-size: 22px;
-	color: #1a1a1a;
-	transition: color 0.15s ease, transform 0.1s ease;
+  font-size: 22px;
 }
-
 .close-btn:hover {
-	background: transparent;
-}
-
-.close-btn .material-symbols-rounded:hover {
-	color: var(--primary-color);
-}
-
-.close-btn:active .material-symbols-rounded {
-	transform: scale(0.95);
-}
+  color: #111827;
+} */
 
 /* Form: base layout */
 .immunization-form .form-container {
@@ -515,66 +475,19 @@ main {
 	box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
 }
 
-/* Form actions: buttons */
-.immunization-form .form-actions {
+.immunization-modal .form-actions {
 	display: flex;
 	justify-content: flex-end;
-	gap: 12px;
-	margin-top: 16px;
-	border-top: none;
-	padding-top: 12px;
-}
-
-.immunization-form .form-actions .btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
 	gap: 0.8rem;
-	padding: 1rem 1.6rem;
-	border-radius: 8px;
-	font-size: 1.4rem;
-	font-weight: 500;
-	cursor: pointer;
-	border: 1px solid transparent;
-	transition: background-color 0.15s ease, border-color 0.15s ease,
-		color 0.15s ease, transform 0.05s ease;
-}
-
-/* Cancel: border-only */
-.immunization-form .form-actions .cancel-btn {
-	background: #ffffff;
-	color: var(--primary-color);
-	border-color: var(--primary-color);
-}
-.immunization-form .form-actions .cancel-btn:hover {
+	padding: 1.2rem 1.6rem 1.8rem;
+	border-top: 1px solid #e5e7eb;
 	background: #f9fafb;
-	border-color: #157347;
-}
-.immunization-form .form-actions .cancel-btn:active {
-	transform: scale(0.98);
-}
-.immunization-form .form-actions .cancel-btn:disabled {
-	opacity: 0.6;
-	cursor: not-allowed;
 }
 
-/* Save: primary */
-.immunization-form .form-actions .save-btn {
-	background: var(--primary-color);
-	color: #fff;
-	border-color: var(--primary-color);
-}
-.immunization-form .form-actions .save-btn:hover {
-	background: #005d2d;
-	border-color: #005d2d;
-}
-.immunization-form .form-actions .save-btn:active {
-	background: #005129;
-	transform: scale(0.98);
-}
-.immunization-form .form-actions .save-btn:disabled {
-	opacity: 0.6;
-	cursor: not-allowed;
+.immunization-modal .form-actions .btn {
+	font-size: 1.4rem;
+	line-height: 20px;
+	padding: 0.8rem 1.8rem;
 }
 
 /* Section headings inside the form (exclude panels) */
@@ -757,11 +670,6 @@ main {
 	color: #1a1a1a;
 }
 
-.btn-secondary:hover {
-	background: none !important;
-	color: var(--primary-color) !important;
-	box-shadow: none !important;
-}
 .immunization-section .table .message-row td {
 	text-align: center;
 	padding: 2.4rem 1.2rem;

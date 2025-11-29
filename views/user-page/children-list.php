@@ -34,7 +34,7 @@ $user_fname = $_SESSION['fname'] ?? '';
     <link rel="stylesheet" href="css/main.css?v=1.0.2" />
     <link rel="stylesheet" href="css/user/table-style.css?v=1.0.1" />
     <link rel="stylesheet" href="css/header.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.2" />
     <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
     <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
     <link rel="stylesheet" href="css/user/children-list.css?v=1.0.2" />
@@ -111,8 +111,8 @@ $user_fname = $_SESSION['fname'] ?? '';
         </section>
     </main>
 
-    <script src="js/header-handler/profile-menu.js" defer></script>
-    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/header-handler/profile-menu.js?v=1.0.2" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js?v=1.0.2" defer></script>
     <script src="js/utils/skeleton-loading.js" defer></script>
     <script>
         let allChildrenData = [];

@@ -25,7 +25,6 @@ $user_fname = $_SESSION['fname'] ?? '';
             </div>
             <div class="brand-text-block">
                 <h1 class="brand-name">eBakunado</h1>
-                <h2 class="brand-tagline">Immunization Data Management</h2>
             </div>
         </div>
 

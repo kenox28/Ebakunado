@@ -244,7 +244,7 @@
 /* Dropdown panel */
 .header .panel.profile {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 8px);
   right: 0;
   width: 320px;
   background: var(--background-white);

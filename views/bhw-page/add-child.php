@@ -22,12 +22,13 @@ if ($user_types != 'midwifes') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Child</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css" />
-    <link rel="stylesheet" href="css/header.css" />
-    <link rel="stylesheet" href="css/sidebar.css" />
-    <link rel="stylesheet" href="css/notification-style.css" />
-    <link rel="stylesheet" href="css/modals.css" />
-    <link rel="stylesheet" href="css/bhw/add-child.css" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
+
+    <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/modals.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/bhw/add-child.css?v=1.0.4" />
 </head>
 
 <body>
@@ -35,13 +36,9 @@ if ($user_types != 'midwifes') {
     <?php include 'include/sidebar.php'; ?>
     <main>
         <section class="add-child-section">
-            <div class="add-child-header">
-                <div class="add-child-header-content">
-                    <div class="add-child-header-text">
-                        <h1>Add New Child</h1>
-                        <p>Create a new child record and generate a family code for parents to claim</p>
-                    </div>
-                </div>
+            <div class="page-header">
+                <h1 class="page-title">Add Child Immunization Record</h1>
+                <p class="page-subtitle">Record child information and input required vaccination details.</p>
             </div>
 
             <form id="addChildForm" class="form-container">
@@ -94,30 +91,28 @@ if ($user_types != 'midwifes') {
                             <input type="text" id="birth_height" name="birth_height" placeholder="e.g., 50">
                         </div>
                         <div class="form-group">
-                            <label for="blood_type">Blood Type</label>
-                            <input type="text" id="blood_type" name="blood_type" placeholder="e.g., O+">
-                        </div>
-                        <div class="form-group">
                             <label for="allergies">Allergies</label>
                             <input type="text" id="allergies" name="allergies" placeholder="e.g., None">
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Baby Gender *</label>
-                        <div class="radio-group">
-                            <label class="radio-option">
-                                <input type="radio" name="child_gender" value="Male" checked>
-                                Male
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="child_gender" value="Female">
-                                Female
-                            </label>
+                        <div class="form-group">
+                            <label for="blood_type">Blood Type</label>
+                            <input type="text" id="blood_type" name="blood_type" placeholder="e.g., O+">
                         </div>
-                    </div>
 
-                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Baby Gender (Sex) *</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="child_gender" value="Male" checked>
+                                    Male
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="child_gender" value="Female">
+                                    Female
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label for="mother_name">Mother Name *</label>
                             <input type="text" id="mother_name" name="mother_name" placeholder="Enter mother's name" required>
@@ -126,35 +121,56 @@ if ($user_types != 'midwifes') {
                             <label for="father_name">Father Name</label>
                             <input type="text" id="father_name" name="father_name" placeholder="Enter father's name">
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label>Type of Delivery</label>
-                        <div class="radio-group">
-                            <label class="radio-option"><input type="radio" name="delivery_type" value="Normal"> Normal</label>
-                            <label class="radio-option"><input type="radio" name="delivery_type" value="Caesarean Section"> Caesarean Section</label>
+                        <div class="form-group">
+                            <label for="lpm">LMP (Last Menstrual Period)</label>
+                            <input type="date" id="lpm" name="lpm">
+                        </div>
+                        <div class="form-group">
+                            <label for="family_planning">Family Planning</label>
+                            <input type="text" id="family_planning" name="family_planning" placeholder="e.g., Natural, Pills, IUD">
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <form id="addChildForm" class="form-container">
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <span class="material-symbols-rounded">history</span>
+                        <span>Child History</span>
+                    </h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Type of Delivery</label>
+                            <div class="radio-group">
+                                <label class="radio-option"><input type="radio" name="delivery_type" value="Normal"> Normal</label>
+                                <label class="radio-option"><input type="radio" name="delivery_type" value="Caesarean Section"> Caesarean Section</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Birth Order</label>
+                            <div class="radio-group">
+                                <label class="radio-option"><input type="radio" name="birth_order" value="Single"> Single</label>
+                                <label class="radio-option"><input type="radio" name="birth_order" value="Twin"> Twin</label>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Birth Order</label>
-                        <div class="radio-group">
-                            <label class="radio-option"><input type="radio" name="birth_order" value="Single"> Single</label>
-                            <label class="radio-option"><input type="radio" name="birth_order" value="Twin"> Twin</label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Birth Attendant</label>
-                        <div class="radio-group">
-                            <label class="radio-option"><input type="radio" name="birth_attendant" value="Doctor"> Doctor</label>
-                            <label class="radio-option"><input type="radio" name="birth_attendant" value="Midwife"> Midwife</label>
-                            <label class="radio-option"><input type="radio" name="birth_attendant" value="Nurse"> Nurse</label>
-                            <label class="radio-option"><input type="radio" name="birth_attendant" value="Hilot"> Hilot</label>
-                            <label class="radio-option">
-                                <span>Other:</span>
-                                <input type="text" name="birth_attendant_others" placeholder="Specify">
-                            </label>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Birth Attendant</label>
+                            <div class="radio-group">
+                                <label class="radio-option"><input type="radio" name="birth_attendant" value="Doctor"> Doctor</label>
+                                <label class="radio-option"><input type="radio" name="birth_attendant" value="Midwife"> Midwife</label>
+                                <label class="radio-option"><input type="radio" name="birth_attendant" value="Nurse"> Nurse</label>
+                                <label class="radio-option"><input type="radio" name="birth_attendant" value="Hilot"> Hilot</label>
+                                <label class="radio-option">
+                                    <span>Other:</span>
+                                    <input type="text" name="birth_attendant_others" placeholder="Specify">
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -168,48 +184,43 @@ if ($user_types != 'midwifes') {
                             <input type="text" id="placeNewbornScreening" name="placeNewbornScreening" placeholder="Enter place of newborn screening">
                         </div>
                     </div>
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="lpm">LMP (Last Menstrual Period)</label>
-                            <input type="date" id="lpm" name="lpm">
-                        </div>
-                        <div class="form-group">
-                            <label for="family_planning">Family Planning</label>
-                            <input type="text" id="family_planning" name="family_planning" placeholder="e.g., Natural, Pills, IUD">
-                        </div>
-                    </div>
                 </div>
+            </form>
 
+            <form id="addChildForm" class="form-container">
                 <div class="form-section">
                     <h2 class="section-title">
                         <span class="material-symbols-rounded">vaccines</span>
                         <span>Vaccines Already Received</span>
                     </h2>
-                    <p>Check all vaccines that the child has already received:</p>
+                    <div class="form-group">
+                        <p class="form-note">Check all vaccines that the child has already received:</p>
 
-                    <div class="checkbox-grid">
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="BCG"> BCG (Tuberculosis)</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Hepatitis B"> Hepatitis B (Birth dose)</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 1st"> Pentavalent (DPT-HepB-Hib) - 1st</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 1st"> OPV - 1st (Oral Polio)</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 1st"> PCV - 1st (Pneumococcal)</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 2nd"> Pentavalent (DPT-HepB-Hib) - 2nd</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 2nd"> OPV - 2nd (Oral Polio)</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 2nd"> PCV - 2nd (Pneumococcal)</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 3rd"> Pentavalent (DPT-HepB-Hib) - 3rd</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 3rd"> OPV - 3rd (Oral Polio)</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="IPV"> IPV (Inactivated Polio Vaccine)</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 3rd"> PCV - 3rd (Pneumococcal)</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="MCV1 (AMV)"> MCV1 (AMV) - Anti-Measles Vaccine</label>
-                        <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="MCV2 (MMR)"> MCV2 (MMR) - Measles-Mumps-Rubella</label>
+                        <div class="checkbox-grid">
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="BCG"> BCG (Tuberculosis)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Hepatitis B"> Hepatitis B (Birth dose)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 1st"> Pentavalent (DPT-HepB-Hib) - 1st</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 1st"> OPV - 1st (Oral Polio)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 1st"> PCV - 1st (Pneumococcal)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 2nd"> Pentavalent (DPT-HepB-Hib) - 2nd</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 2nd"> OPV - 2nd (Oral Polio)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 2nd"> PCV - 2nd (Pneumococcal)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 3rd"> Pentavalent (DPT-HepB-Hib) - 3rd</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 3rd"> OPV - 3rd (Oral Polio)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="IPV"> IPV (Inactivated Polio Vaccine)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 3rd"> PCV - 3rd (Pneumococcal)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="MCV1 (AMV)"> MCV1 (AMV) - Anti-Measles Vaccine</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="MCV2 (MMR)"> MCV2 (MMR) - Measles-Mumps-Rubella</label>
+                        </div>
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn">
-                    <span class="material-symbols-rounded">person_add</span>
-                    Add Child & Generate Family Code
-                </button>
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">
+                        <span class="material-symbols-rounded">person_add</span>
+                        Add Child & Generate Family Code
+                    </button>
+                </div>
                 <div id="resultMessage" class="result-message"></div>
             </form>
         </section>

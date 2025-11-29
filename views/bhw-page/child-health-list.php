@@ -47,7 +47,7 @@ if ($user_id) {
         <section class="child-health-list-section">
             <div class="page-header">
                 <h1 class="page-title">Child Health Records</h1>
-                <p class="page-subtitle">Manage and review child health information.</p>
+                <p class="page-subtitle">View and manage submitted child health information.</p>
             </div>
 
             <div class="data-table-card">

@@ -66,7 +66,7 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
 
                 <div>
                     <input type="text" id="familyCode" placeholder="Enter family code (e.g., FAM-ABC123)">
-                    <button onclick="claimChildWithCode()">Claim Child</button>
+                    <button onclick="claimChildWithCode()">Link Child</button>
                 </div>
 
                 <div id="familyCodeResult"></div>

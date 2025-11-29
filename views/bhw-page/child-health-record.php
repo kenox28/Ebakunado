@@ -37,12 +37,14 @@ if ($user_id) {
     echo '<base href="' . htmlspecialchars($basePath . '/', ENT_QUOTES) . '">';
     ?>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.2" />
     <link rel="stylesheet" href="css/header.css?v=1.0.1" />
     <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
+
     <link rel="stylesheet" href="css/notification-style.css" />
     <link rel="stylesheet" href="css/skeleton-loading.css" />
-    <link rel="stylesheet" href="css/bhw/child-health-record.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/bhw/child-health-record.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.4" />
 </head>
 
 <body>
@@ -54,7 +56,7 @@ if ($user_id) {
             <div class="chr-top-actions">
                 <a href="health-children" class="btn back-btn">
                     <span class="material-symbols-rounded">arrow_back</span>
-                    Go Back
+                    Back
                 </a>
             </div>
 
@@ -157,13 +159,12 @@ if ($user_id) {
                             <label>8th mo food: <input type="text" id="cf_8mo"></label>
                         </div>
                     </div>
-
-                    <div class="section-btn">
-                        <button class="btn edit-btn" onclick="updateFeedingStatus()">
-                            <span class="material-symbols-rounded">restaurant_menu</span>
-                            Update Feeding Status
-                        </button>
-                    </div>
+                </div>
+                <div class="section-btn">
+                    <button class="btn edit-btn" onclick="updateFeedingStatus()">
+                        <span class="material-symbols-rounded">edit</span>
+                        Update Feeding Status
+                    </button>
                 </div>
             </div>
 
@@ -183,12 +184,12 @@ if ($user_id) {
                         <label>TD 4th dose: <input type="date" id="td_dose4"></label>
                         <label>TD 5th dose: <input type="date" id="td_dose5"></label>
                     </div>
-                    <div class="section-btn">
-                        <button class="btn edit-btn" onclick="updateTDStatus()">
-                            <span class="material-symbols-rounded">vaccines</span>
-                            Update TD Status
-                        </button>
-                    </div>
+                </div>
+                <div class="section-btn">
+                    <button class="btn edit-btn" onclick="updateTDStatus()">
+                        <span class="material-symbols-rounded">edit</span>
+                        Update TD Status
+                    </button>
                 </div>
             </div>
 
@@ -200,24 +201,26 @@ if ($user_id) {
                         Immunization Record
                     </h2>
                 </div>
-                <div class="table-container">
-                    <table class="table immunization-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Purpose</th>
-                                <th>HT</th>
-                                <th>WT</th>
-                                <th>ME/AC</th>
-                                <th>Status</th>
-                                <th>Condition of Baby</th>
-                                <th>Advice Given</th>
-                                <th>Next Sched Date</th>
-                                <th>Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ledgerBody"></tbody>
-                    </table>
+                <div class="data-table-card">
+                    <div class="data-table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Purpose</th>
+                                    <th>HT</th>
+                                    <th>WT</th>
+                                    <th>ME/AC</th>
+                                    <th>Status</th>
+                                    <th>Condition of Baby</th>
+                                    <th>Advice Given</th>
+                                    <th>Next Sched Date</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ledgerBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
@@ -415,29 +418,37 @@ if ($user_id) {
                 }
 
                 let ledgerHtml = '';
+                // Helper to render a cell value or a hyphen when empty
+                function cellVal(v) {
+                    if (v === null || v === undefined) return '-';
+                    if (typeof v === 'string') return v.trim() === '' ? '-' : v;
+                    if (typeof v === 'number') return String(v);
+                    return '-';
+                }
+
                 allRows.forEach(row => {
                     const rawDate = row.date_given || row.batch_schedule_date || row.schedule_date || '';
-                    const date = formatDateLong(rawDate);
-                    const catchUpDate = formatDateLong(row.catch_up_date || '');
-                    const ht = row.height || row.height_cm || '';
-                    const wt = row.weight || row.weight_kg || '';
-                    const muac = row.muac || row.me_ac || '';
-                    const status = row.status || 'scheduled';
+                    const date = formatDateLong(rawDate) || '-';
+                    const catchUpDate = formatDateLong(row.catch_up_date || '') || '-';
+                    const ht = cellVal(row.height || row.height_cm || '');
+                    const wt = cellVal(row.weight || row.weight_kg || '');
+                    const muac = cellVal(row.muac || row.me_ac || '');
+                    const status = (row.status || 'scheduled');
                     const statusText = status === 'taken' ? 'Taken' : (status === 'completed' ? 'Completed' : (status === 'missed' ? 'Missed' : 'Scheduled'));
                     const chipClass = status === 'scheduled' ? 'upcoming' : status;
 
                     ledgerHtml += `
                         <tr>
                             <td>${date}</td>
-                            <td>${row.vaccine_name || ''}</td>
+                            <td>${cellVal(row.vaccine_name || '')}</td>
                             <td>${ht}</td>
                             <td>${wt}</td>
                             <td>${muac}</td>
                             <td><span class="chip chip--${chipClass}">${statusText}</span></td>
-                            <td>${row.condition_of_baby || ''}</td>
-                            <td>${row.advice_given || ''}</td>
+                            <td>${cellVal(row.condition_of_baby || '')}</td>
+                            <td>${cellVal(row.advice_given || '')}</td>
                             <td>${catchUpDate}</td>
-                            <td>${row.remarks || ''}</td>
+                            <td>${cellVal(row.remarks || '')}</td>
                         </tr>`;
                 });
                 ledgerBody.innerHTML = ledgerHtml;

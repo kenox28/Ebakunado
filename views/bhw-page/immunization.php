@@ -35,14 +35,15 @@ if ($user_id) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>BHW Dashboard</title>
         <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-        <link rel="stylesheet" href="css/main.css?v=1.0.1" />
+        <link rel="stylesheet" href="css/main.css?v=1.0.2" />
         <link rel="stylesheet" href="css/header.css?v=1.0.1" />
         <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
+
         <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
         <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
         <link rel="stylesheet" href="css/bhw/immunization-style.css?v=1.0.2">
         <link rel="stylesheet" href="css/bhw/growth-assessment.css?v=1.0.1">
-        <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.3">
+        <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.4">
     </head>
 
 <body>
@@ -57,7 +58,7 @@ if ($user_id) {
                     <span class="material-symbols-rounded" aria-hidden="true">qr_code_scanner</span>
                     Scan Baby QR Code for Immunization
                 </h3>
-                <button id="closeScannerBtn" class="close-btn" aria-label="Close scanner">
+                <button id="closeScannerBtn" class="close-btn action-icon-btn" aria-label="Close scanner">
                     <span class="material-symbols-rounded" aria-hidden="true">close</span>
                 </button>
             </div>
@@ -290,7 +291,7 @@ if ($user_id) {
                             <span class="material-symbols-rounded">assignment</span>
                             Record Immunization
                         </h3>
-                        <button class="close-btn" onclick="closeImmunizationForm()">
+                        <button class="close-btn action-icon-btn" onclick="closeImmunizationForm()">
                             <span class="material-symbols-rounded">close</span>
                         </button>
                     </div>
@@ -1079,13 +1080,19 @@ if ($user_id) {
             }
             if (dateInput && dateIcon) {
                 dateIcon.style.cursor = 'pointer';
-                dateIcon.addEventListener('click', function (e) {
+                dateIcon.addEventListener('click', function(e) {
                     e.preventDefault();
                     if (typeof dateInput.showPicker === 'function') {
-                        try { dateInput.showPicker(); } catch (err) { dateInput.focus(); }
+                        try {
+                            dateInput.showPicker();
+                        } catch (err) {
+                            dateInput.focus();
+                        }
                     } else {
                         dateInput.focus();
-                        try { dateInput.click(); } catch (err) {}
+                        try {
+                            dateInput.click();
+                        } catch (err) {}
                     }
                 });
             }

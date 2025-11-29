@@ -96,16 +96,31 @@ try {
         error_log("ERROR: Could not retrieve current user data from " . $user_type . " table for ID: $user_id");
     }
     
-    // Prepare update data
+    // Prepare update data - only include fields that are provided (not empty)
+    // This prevents empty strings from overwriting existing values
     $updateData = [
-        'fname' => $fname,
-        'lname' => $lname,
-        'email' => $email,
-        'phone_number' => $phone_number,
-        'gender' => $gender,
-        'place' => $place,
         'updated' => date('c')
     ];
+    
+    // Only add fields to update if they are provided and not empty
+    if (!empty($fname)) {
+        $updateData['fname'] = $fname;
+    }
+    if (!empty($lname)) {
+        $updateData['lname'] = $lname;
+    }
+    if (!empty($email)) {
+        $updateData['email'] = $email;
+    }
+    if (!empty($phone_number)) {
+        $updateData['phone_number'] = $phone_number;
+    }
+    if (!empty($gender)) {
+        $updateData['gender'] = $gender;
+    }
+    if (!empty($place)) {
+        $updateData['place'] = $place;
+    }
     
     // Handle password change if provided
     if (!empty($current_password) && !empty($new_password) && !empty($confirm_password)) {
@@ -142,8 +157,18 @@ try {
         }
     }
     
+    // Get Supabase instance to verify connection
+    $supabase = getSupabase();
+    if (!$supabase) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Database connection failed'
+        ]);
+        exit();
+    }
+
     // Update user data in BHW/Midwife table
-    if ($user_type === 'midwife') {
+    if ($user_type === 'midwife' || $user_type === 'midwifes' || strtolower($user_type) === 'midwives') {
         $result = supabaseUpdate('midwives', $updateData, ['midwife_id' => $user_id]);
     } else {
         $result = supabaseUpdate('bhw', $updateData, ['bhw_id' => $user_id]);
@@ -152,16 +177,31 @@ try {
     if ($result !== false) {
         // If user exists in users table, sync the update
         if ($userExistsInUsersTable && $userUserId) {
-            // Prepare update data for users table (same fields but different column names)
+            // Prepare update data for users table - only sync fields that were actually updated
+            // Copy all fields from $updateData except 'pass' (users table uses 'passw')
             $usersUpdateData = [
-                'fname' => $fname,
-                'lname' => $lname,
-                'email' => $email,
-                'phone_number' => $phone_number,
-                'gender' => $gender,
-                'place' => $place,
                 'updated' => date('c')
             ];
+            
+            // Only sync fields that were in the update
+            if (isset($updateData['fname'])) {
+                $usersUpdateData['fname'] = $updateData['fname'];
+            }
+            if (isset($updateData['lname'])) {
+                $usersUpdateData['lname'] = $updateData['lname'];
+            }
+            if (isset($updateData['email'])) {
+                $usersUpdateData['email'] = $updateData['email'];
+            }
+            if (isset($updateData['phone_number'])) {
+                $usersUpdateData['phone_number'] = $updateData['phone_number'];
+            }
+            if (isset($updateData['gender'])) {
+                $usersUpdateData['gender'] = $updateData['gender'];
+            }
+            if (isset($updateData['place'])) {
+                $usersUpdateData['place'] = $updateData['place'];
+            }
             
             // If password was changed, also update it in users table
             if (isset($updateData['pass']) && isset($updateData['salt'])) {
@@ -184,17 +224,66 @@ try {
             error_log("Skipping users table sync - user not found. userExistsInUsersTable: " . ($userExistsInUsersTable ? 'true' : 'false') . ", userUserId: " . ($userUserId ?? 'null'));
         }
         
-        // Update session data
-        $_SESSION['fname'] = $fname;
-        $_SESSION['lname'] = $lname;
-        $_SESSION['email'] = $email;
-        $_SESSION['phone_number'] = $phone_number;
+        // Update session data - only update fields that were actually changed
+        if (isset($updateData['fname'])) {
+            $_SESSION['fname'] = $updateData['fname'];
+        }
+        if (isset($updateData['lname'])) {
+            $_SESSION['lname'] = $updateData['lname'];
+        }
+        if (isset($updateData['email'])) {
+            $_SESSION['email'] = $updateData['email'];
+        }
+        if (isset($updateData['phone_number'])) {
+            $_SESSION['phone_number'] = $updateData['phone_number'];
+        }
         
-        // Prepare response with debug info
+        // Determine success message based on what was updated
+        $updateMessage = 'Profile updated successfully';
+        if (!empty($current_password) && !empty($new_password)) {
+            $updateMessage = 'Password changed successfully';
+        } elseif (!empty($fname) || !empty($lname)) {
+            $updateMessage = 'Name updated successfully';
+        } elseif (!empty($email)) {
+            $updateMessage = 'Email updated successfully';
+        } elseif (!empty($phone_number)) {
+            $updateMessage = 'Phone number updated successfully';
+        } elseif (!empty($gender)) {
+            $updateMessage = 'Gender updated successfully';
+        } elseif (!empty($place)) {
+            $updateMessage = 'Place updated successfully';
+        }
+        
+        // Prepare response - only include fields that were actually updated
+        $responseData = [];
+        if (isset($updateData['fname'])) {
+            $responseData['fname'] = $updateData['fname'];
+        }
+        if (isset($updateData['lname'])) {
+            $responseData['lname'] = $updateData['lname'];
+        }
+        if (isset($updateData['email'])) {
+            $responseData['email'] = $updateData['email'];
+        }
+        if (isset($updateData['phone_number'])) {
+            $responseData['phone_number'] = $updateData['phone_number'];
+        }
+        if (isset($updateData['gender'])) {
+            $responseData['gender'] = $updateData['gender'];
+        }
+        if (isset($updateData['place'])) {
+            $responseData['place'] = $updateData['place'];
+        }
+        
         $response = [
             'status' => 'success',
-            'message' => 'Profile updated successfully',
-            'debug' => [
+            'message' => $updateMessage,
+            'data' => $responseData
+        ];
+        
+        // Only include debug info in development (optional)
+        if (isset($_GET['debug']) && $_GET['debug'] === '1') {
+            $response['debug'] = [
                 'user_exists_in_users_table' => $userExistsInUsersTable,
                 'user_user_id' => $userUserId,
                 'old_email' => $oldEmail,
@@ -206,16 +295,23 @@ try {
                 'sync_success' => isset($usersUpdateResult) ? ($usersUpdateResult !== false) : false,
                 'user_type' => $user_type,
                 'user_id' => $user_id
-            ]
-        ];
+            ];
+        }
         
         echo json_encode($response);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to update profile']);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Failed to update profile. Please try again or contact support if the problem persists.'
+        ]);
     }
     
 } catch (Exception $e) {
     error_log("Profile update error: " . $e->getMessage());
-    echo json_encode(['status' => 'error', 'message' => 'Failed to update profile']);
+    error_log("Stack trace: " . $e->getTraceAsString());
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'An error occurred while updating your profile. Please try again.'
+    ]);
 }
 ?>
