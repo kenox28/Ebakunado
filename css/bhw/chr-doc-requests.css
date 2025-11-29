@@ -1,6 +1,12 @@
 main {
   max-height: 100vh;
   overflow-y: auto;
+  background-color: #ebf2ed;
+}
+
+.page-header {
+  padding: 1.6rem 1.6rem 2.8rem 1.6rem !important;
+  margin-bottom: 1.4rem !important;
 }
 
 .content {
@@ -13,7 +19,7 @@ main {
 /* Pager uses global styles from main.css */
 
 /* Match immunization page: center the Action column */
-.table th:last-child,
+/* .table th:last-child,
 .table td:last-child {
   text-align: center;
 }
@@ -49,18 +55,18 @@ main {
 }
 .btn-primary:active {
   background: #005129;
-}
+} */
 
 /* Harmonize small buttons inside table actions with spacing */
-.table td.actions .btn {
+/* .table td.actions .btn {
   margin-right: 6px;
 }
 .table td.actions .btn:last-child {
   margin-right: 0;
-}
+} */
 
 /* Disabled state (inherit global but ensure contrast) */
-.table td.actions .btn:disabled {
+/* .table td.actions .btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
-}
+} */

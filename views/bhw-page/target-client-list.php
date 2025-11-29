@@ -44,7 +44,7 @@ if ($user_id) {
         <section class="target-client-list-section">
             <div class="page-header">
                 <h1 class="page-title">Target Client List (TCL)</h1>
-                <p class="page-subtitle">Manage and review child vaccination information.</p>
+                <p class="page-subtitle">View and track each child's completed and upcoming vaccinations.</p>
             </div>
 
             <h2 class="section-title">
@@ -246,6 +246,23 @@ if ($user_id) {
                 year: 'numeric'
             });
         }
+                // Escape HTML to avoid injection in inserted table cells
+                function escapeHtml(unsafe) {
+                    if (unsafe === null || unsafe === undefined) return '';
+                    return String(unsafe)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/\"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+                }
+
+                // Display a value or a hyphen when empty; always escape HTML
+                function displayCell(val) {
+                    if (val === null || val === undefined) return '-';
+                    const s = String(val).trim();
+                    return s === '' ? '-' : escapeHtml(s);
+                }
         let tclRecords = [];
         let tclPage = 1;
         const tclLimit = 10;
@@ -351,21 +368,21 @@ if ($user_id) {
                 const vaccinesJson = encodeURIComponent(JSON.stringify(vaccines));
                 rows += `
                 <tr class="tcl-row" data-vaccines='${vaccinesJson}'>
-                    <td class="tcl-name-cell"><button type="button" class="vaccine-toggle" aria-label="Toggle vaccines" title="View vaccine details"><span class="material-symbols-rounded">expand_more</span></button>${item.child_name || ''}</td>
-                    <td>${item.sex || ''}</td>
-                    <td>${formatDate(item.date_of_birth) || ''}</td>
-                    <td>${item.mother_name || ''}</td>
-                    <td>${item.address || ''}</td>
-                    <td>${item.weight || ''}</td>
-                    <td>${item.height || ''}</td>
-                    <td>${item.remarks || ''}</td>
+                    <td class="tcl-name-cell"><button type="button" class="vaccine-toggle" aria-label="Toggle vaccines" title="View vaccine details"><span class="material-symbols-rounded">expand_more</span></button>${displayCell(item.child_name)}</td>
+                    <td>${displayCell(item.sex)}</td>
+                    <td>${displayCell(formatDate(item.date_of_birth))}</td>
+                    <td>${displayCell(item.mother_name)}</td>
+                    <td>${displayCell(item.address)}</td>
+                    <td>${displayCell(item.weight)}</td>
+                    <td>${displayCell(item.height)}</td>
+                    <td>${displayCell(item.remarks)}</td>
                 </tr>`;
             });
             body.innerHTML = rows;
         }
 
         function getVaccineCell(status) {
-            if (!status) return '';
+            if (!status) return '<span class="vaccine-empty">-</span>';
 
             let className = '';
             if (status.includes('✓')) {
@@ -378,7 +395,7 @@ if ($user_id) {
 
             const cleanStatus = String(status).replace(/✓|✗/g, '').trim();
 
-            return `<span class="${className}">${cleanStatus}</span>`;
+            return `<span class="${className}">${escapeHtml(cleanStatus || '-')}</span>`;
         }
 
         function formatVaccineExportValue(value) {

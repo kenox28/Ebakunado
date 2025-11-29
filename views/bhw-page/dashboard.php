@@ -25,7 +25,6 @@ if ($user_id) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BHW Dashboard</title>
-<<<<<<< HEAD
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
     <link rel="stylesheet" href="css/main.css?v=1.0.1" />
     <link rel="stylesheet" href="css/header.css?v=1.0.1" />
@@ -34,16 +33,6 @@ if ($user_id) {
     <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
     <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
     <link rel="stylesheet" href="css/bhw/dashboard.css?v=1.0.4" />
-=======
-    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="../../css/main.css?v=1.0.1" />
-    <link rel="stylesheet" href="../../css/header.css?v=1.0.1" />
-    <link rel="stylesheet" href="../../css/sidebar.css?v=1.0.1" />
-
-    <link rel="stylesheet" href="../../css/notification-style.css" />
-    <link rel="stylesheet" href="../../css/skeleton-loading.css" />
-    <link rel="stylesheet" href="../../css/bhw/dashboard.css?v=1.0.2" />
->>>>>>> 389023935fcd7fafa2460b85769cdfa79846258e
 
 </head>
 
@@ -70,7 +59,7 @@ if ($user_id) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <a class="card-link" href="#">
+                        <a class="card-link" href="pending-approvals.php">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -88,7 +77,7 @@ if ($user_id) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <a class="card-link" href="#">
+                        <a class="card-link" href="immunization.php">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -106,7 +95,7 @@ if ($user_id) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <a class="card-link" href="#">
+                        <a class="card-link" href="immunization.php">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -124,7 +113,7 @@ if ($user_id) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <a class="card-link" href="#">
+                        <a class="card-link" href="pending-approvals.php">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -165,44 +154,6 @@ if ($user_id) {
                     </div>
                 </div>
             </div>
-<<<<<<< HEAD
-
-            <!-- <div class="activity-task-container" >
-                <div class="activity-section">
-                    <h2 class="dashboard-heading">Recent Activities</h2>
-                    <div class="activity-list" id="activityList">
-                        <div class="loading">
-                            <p>Loading recent activity...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tasks-section">
-                    <h2 class="dashboard-heading">Task Overview</h2>
-                    <div class="task-wrapper">
-                        <div class="task-card urgent" id="overdueCard">
-                            <div class="task-header">
-                                <h4>🚨 Overdue Tasks</h4>
-                                <span class="task-count" id="overdueCount">0</span>
-                            </div>
-                            <p>Vaccinations that are past due date</p>
-                            <a href="health-immunizations" class="task-action">View Details</a>
-                        </div>
-                        <div class="task-card">
-                            <div class="task-card warning" id="tomorrowCard">
-                                <div class="task-header">
-                                    <h4>📅 Tomorrow's Tasks</h4>
-                                    <span class="task-count" id="tomorrowCount">0</span>
-                                </div>
-                                <p>Vaccinations scheduled for tomorrow</p>
-                                <a href="health-immunizations" class="task-action">View Details</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-=======
->>>>>>> 389023935fcd7fafa2460b85769cdfa79846258e
         </section>
     </main>
 

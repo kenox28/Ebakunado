@@ -142,8 +142,18 @@ try {
         }
     }
     
+    // Get Supabase instance to verify connection
+    $supabase = getSupabase();
+    if (!$supabase) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Database connection failed'
+        ]);
+        exit();
+    }
+
     // Update user data in BHW/Midwife table
-    if ($user_type === 'midwife') {
+    if ($user_type === 'midwife' || $user_type === 'midwifes' || strtolower($user_type) === 'midwives') {
         $result = supabaseUpdate('midwives', $updateData, ['midwife_id' => $user_id]);
     } else {
         $result = supabaseUpdate('bhw', $updateData, ['bhw_id' => $user_id]);
@@ -190,11 +200,39 @@ try {
         $_SESSION['email'] = $email;
         $_SESSION['phone_number'] = $phone_number;
         
-        // Prepare response with debug info
+        // Determine success message based on what was updated
+        $updateMessage = 'Profile updated successfully';
+        if (!empty($current_password) && !empty($new_password)) {
+            $updateMessage = 'Password changed successfully';
+        } elseif (!empty($fname) || !empty($lname)) {
+            $updateMessage = 'Name updated successfully';
+        } elseif (!empty($email)) {
+            $updateMessage = 'Email updated successfully';
+        } elseif (!empty($phone_number)) {
+            $updateMessage = 'Phone number updated successfully';
+        } elseif (!empty($gender)) {
+            $updateMessage = 'Gender updated successfully';
+        } elseif (!empty($place)) {
+            $updateMessage = 'Place updated successfully';
+        }
+        
+        // Prepare response
         $response = [
             'status' => 'success',
-            'message' => 'Profile updated successfully',
-            'debug' => [
+            'message' => $updateMessage,
+            'data' => [
+                'fname' => $fname,
+                'lname' => $lname,
+                'email' => $email,
+                'phone_number' => $phone_number,
+                'gender' => $gender,
+                'place' => $place
+            ]
+        ];
+        
+        // Only include debug info in development (optional)
+        if (isset($_GET['debug']) && $_GET['debug'] === '1') {
+            $response['debug'] = [
                 'user_exists_in_users_table' => $userExistsInUsersTable,
                 'user_user_id' => $userUserId,
                 'old_email' => $oldEmail,
@@ -206,16 +244,23 @@ try {
                 'sync_success' => isset($usersUpdateResult) ? ($usersUpdateResult !== false) : false,
                 'user_type' => $user_type,
                 'user_id' => $user_id
-            ]
-        ];
+            ];
+        }
         
         echo json_encode($response);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to update profile']);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Failed to update profile. Please try again or contact support if the problem persists.'
+        ]);
     }
     
 } catch (Exception $e) {
     error_log("Profile update error: " . $e->getMessage());
-    echo json_encode(['status' => 'error', 'message' => 'Failed to update profile']);
+    error_log("Stack trace: " . $e->getTraceAsString());
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'An error occurred while updating your profile. Please try again.'
+    ]);
 }
 ?>
