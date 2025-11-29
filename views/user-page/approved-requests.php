@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+// Restore session from JWT token if session expired
+require_once __DIR__ . '/../../php/supabase/shared/restore_session_from_jwt.php';
+restore_session_from_jwt();
+
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header("Location: login");
     exit();
@@ -37,12 +41,13 @@ $user_fname = $_SESSION['fname'] ?? '';
         transition: opacity 0.2s;
     }
     </style>
+    <link rel="stylesheet" href="css/main.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/user/table-style.css?v=1.0.0" />
     <link rel="stylesheet" href="css/header.css?v=1.0.3" />
-    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.2" />
     <link rel="stylesheet" href="css/notification-style.css" />
     <link rel="stylesheet" href="css/skeleton-loading.css" />
-    <link rel="stylesheet" href="css/user/approved-requests.css" />
-
+    <link rel="stylesheet" href="css/user/approved-requests.css?v=1.0.3 " />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
@@ -60,20 +65,22 @@ $user_fname = $_SESSION['fname'] ?? '';
 
         <section class="approved-requests-section">
             <div class="content">
-                <div id="approvedContainer" class="table-container">
-                    <table id="approvedTable" class="table" aria-busy="true">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Baby ID</th>
-                                <th>Child Name</th>
-                                <th>Type</th>
-                                <th>Approved At</th>
-                                <th>Download</th>
-                            </tr>
-                        </thead>
-                        <tbody id="approvedBody"></tbody>
-                    </table>
+                <div id="approvedContainer" class="table-container data-table-card">
+                    <div class="data-table-wrap">
+                        <table id="approvedTable" class="data-table" aria-busy="true">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Baby ID</th>
+                                    <th>Child Name</th>
+                                    <th>Type</th>
+                                    <th>Approved At</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="approvedBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
@@ -160,21 +167,19 @@ async function loadApprovedRequests(){
                 const safeName = String(r.child_name||'').replace(/[^A-Za-z0-9]+/g,'');
                 const docUrl = r.doc_url || ''; // Server-generated Baby Card PDF URL
                 html += `
-                <div class="request-item">
-                    <div class="request-details">
-                        <div class="request-row"><strong>ID:</strong> ${r.id}</div>
-                        <div class="request-row"><strong>Baby ID:</strong> ${r.baby_id || ''}</div>
-                        <div class="request-row"><strong>Child Name:</strong> ${r.child_name || ''}</div>
-                        <div class="request-row"><strong>Type:</strong> ${type}</div>
-                        <div class="request-row"><strong>Approved At:</strong> ${approvedAt}</div>
-                        <div class="request-actions">
-                            <a href="#" class="download-btn dl-babycard" data-baby="${r.baby_id||''}" data-name="${safeName}" data-doc-url="${docUrl}">
-                                <span class="material-symbols-rounded" aria-hidden="true">download</span>
-                                Download Baby Card
-                            </a>
-                        </div>
-                    </div>
-                </div>`;
+                <tr>
+                    <td>${r.id}</td>
+                    <td>${r.baby_id || ''}</td>
+                    <td>${r.child_name || ''}</td>
+                    <td>${type}</td>
+                    <td>${approvedAt}</td>
+                    <td class="actions-cell">
+                        <a href="#" class="download-btn dl-babycard" data-baby="${r.baby_id||''}" data-name="${safeName}" data-doc-url="${docUrl}">
+                            <span class="material-symbols-rounded" aria-hidden="true">download</span>
+                            Download
+                        </a>
+                    </td>
+                </tr>`;
             });
             tbody.innerHTML = html;
         }

@@ -45,12 +45,12 @@ class Router {
         $r->addRoute('GET', '/logout', 'views/logout.php');
         
         // Admin routes (simplified - no /admin prefix)
-        $r->addRoute('GET', '/admin-dashboard', 'views/admin/dashboard.php');
-        $r->addRoute('GET', '/admin-users', 'views/admin/user-management.php');
-        $r->addRoute('GET', '/admin-bhw', 'views/admin/bhw-management.php');
-        $r->addRoute('GET', '/admin-midwives', 'views/admin/midwife-management.php');
-        $r->addRoute('GET', '/admin-locations', 'views/admin/location-management.php');
-        $r->addRoute('GET', '/admin-activity-logs', 'views/admin/activity-logs.php');
+        // $r->addRoute('GET', '/admin-dashboard', 'views/admin/dashboard.php');
+        // $r->addRoute('GET', '/admin-users', 'views/admin/user-management.php');
+        // $r->addRoute('GET', '/admin-bhw', 'views/admin/bhw-management.php');
+        // $r->addRoute('GET', '/admin-midwives', 'views/admin/midwife-management.php');
+        // $r->addRoute('GET', '/admin-locations', 'views/admin/location-management.php');
+        // $r->addRoute('GET', '/admin-activity-logs', 'views/admin/activity-logs.php');
         
         // Health Worker routes (BHW and Midwife share the same bhw-page directory)
         // Using /health- prefix to differentiate from user routes
@@ -87,13 +87,26 @@ class Router {
         $r->addRoute('GET', '/child/{id}', 'views/users/view_child.php');
         
         // Super Admin routes (using superadmin-page directory)
-        $r->addRoute('GET', '/superadmin-dashboard', 'views/superadmin-page/dashboard.php');
-        $r->addRoute('GET', '/superadmin-admins', 'views/superadmin-page/admin-management.php');
-        $r->addRoute('GET', '/superadmin-bhw', 'views/superadmin-page/bhw-management.php');
-        $r->addRoute('GET', '/superadmin-midwives', 'views/superadmin-page/midwife-management.php');
-        $r->addRoute('GET', '/superadmin-locations', 'views/superadmin-page/location-management.php');
-        $r->addRoute('GET', '/superadmin-users', 'views/superadmin-page/user-management.php');
-        $r->addRoute('GET', '/superadmin-activity-logs', 'views/superadmin-page/activity-logs.php');
+        // Kept for backward compatibility
+        // $r->addRoute('GET', '/superadmin-dashboard', 'views/superadmin-page/dashboard.php');
+        // $r->addRoute('GET', '/superadmin-admins', 'views/superadmin-page/admin-management.php');
+        // $r->addRoute('GET', '/superadmin-bhw', 'views/superadmin-page/bhw-management.php');
+        // $r->addRoute('GET', '/superadmin-midwives', 'views/superadmin-page/midwife-management.php');
+        // $r->addRoute('GET', '/superadmin-locations', 'views/superadmin-page/location-management.php');
+        // $r->addRoute('GET', '/superadmin-users', 'views/superadmin-page/user-management.php');
+        // $r->addRoute('GET', '/superadmin-activity-logs', 'views/superadmin-page/activity-logs.php');
+        // $r->addRoute('GET', '/superadmin-privacy-consents', 'views/superadmin-page/privacy-consents.php');
+        // $r->addRoute('GET', '/superadmin-system-settings', 'views/superadmin-page/system-settings.php');
+
+        // Admin routes (alias to superadmin-page, but shorter URLs)
+        $r->addRoute('GET', '/admin-dashboard', 'views/superadmin-page/dashboard.php');
+        $r->addRoute('GET', '/admin-users', 'views/superadmin-page/user-management.php');
+        $r->addRoute('GET', '/admin-bhw', 'views/superadmin-page/bhw-management.php');
+        $r->addRoute('GET', '/admin-midwives', 'views/superadmin-page/midwife-management.php');
+        $r->addRoute('GET', '/admin-locations', 'views/superadmin-page/location-management.php');
+        $r->addRoute('GET', '/admin-activity-logs', 'views/superadmin-page/activity-logs.php');
+        $r->addRoute('GET', '/admin-privacy-consents', 'views/superadmin-page/privacy-consents.php');
+        $r->addRoute('GET', '/admin-system-settings', 'views/superadmin-page/system-settings.php');
         
         // API routes (if needed for AJAX calls)
         $r->addRoute('GET', '/api/dashboard-stats', 'php/supabase/bhw/get_dashboard_stats.php');

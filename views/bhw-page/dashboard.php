@@ -1,5 +1,9 @@
 <?php session_start(); ?>
 <?php
+// Restore session from JWT token if session expired
+require_once __DIR__ . '/../../php/supabase/shared/restore_session_from_jwt.php';
+restore_session_from_jwt();
+
 // Handle both BHW and Midwife sessions (but BHW should only see BHW features)
 $user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
 $user_types = $_SESSION['user_type']; // Default to bhw for BHW pages
@@ -59,7 +63,7 @@ if ($user_id) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <a class="card-link" href="pending-approvals.php">
+                        <a class="card-link" href="health-pending">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -77,7 +81,7 @@ if ($user_id) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <a class="card-link" href="immunization.php">
+                        <a class="card-link" href="health-immunizations?date=<?php echo date('Y-m-d'); ?>">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -95,7 +99,7 @@ if ($user_id) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <a class="card-link" href="immunization.php">
+                        <a class="card-link" href="health-immunizations?status=missed">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -113,7 +117,7 @@ if ($user_id) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <a class="card-link" href="pending-approvals.php">
+                        <a class="card-link" href="health-children">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -122,39 +126,77 @@ if ($user_id) {
             </div>
         </section>
 
-        <!-- Monthly Vaccine Schedule Chart -->
-        <section class="monthly-vaccine-section">
-            <div class="monthly-vaccine-card">
-                <div class="monthly-vaccine-header">
-                    <h3 class="monthly-vaccine-title">
-                        Monthly Vaccine Schedule
-                    </h3>
-                    <div class="month-nav-controls">
-                        <button class="month-nav-btn" id="prevMonthBtn" title="Previous Month">
-                            <span class="material-symbols-rounded">chevron_left</span>
-                        </button>
-                        <div class="month-display" id="monthDisplay">November 2025</div>
-                        <button class="month-nav-btn" id="nextMonthBtn" title="Next Month">
-                            <span class="material-symbols-rounded">chevron_right</span>
-                        </button>
+            <!-- Monthly Vaccine Schedule Chart -->
+            <div class="monthly-vaccine-section">
+                <div class="monthly-vaccine-card">
+                    <div class="monthly-vaccine-header">
+                        <h3 class="monthly-vaccine-title">
+                            <span class="material-symbols-rounded">calendar_month</span>
+                            Monthly Vaccine Schedule
+                        </h3>
+                        <div class="month-nav-controls">
+                            <button class="month-nav-btn" id="prevMonthBtn" title="Previous Month">
+                                <span class="material-symbols-rounded">chevron_left</span>
+                            </button>
+                            <div class="month-display" id="monthDisplay">November 2025</div>
+                            <button class="month-nav-btn" id="nextMonthBtn" title="Next Month">
+                                <span class="material-symbols-rounded">chevron_right</span>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="monthly-vaccine-quick-switch">
-                    <button class="quick-switch-btn active" data-month="current" id="currentMonthBtn">Current Month</button>
-                    <button class="quick-switch-btn" data-month="next" id="nextMonthQuickBtn">Next Month</button>
-                </div>
-                <div class="charts-wrapper">
-                    <div class="chart-container chart-bar">
-                        <h4 class="chart-title">All Vaccines</h4>
-                        <canvas id="vaccineChart"></canvas>
+                    <div class="monthly-vaccine-quick-switch">
+                        <button class="quick-switch-btn active" data-month="current" id="currentMonthBtn">Current Month</button>
+                        <button class="quick-switch-btn" data-month="next" id="nextMonthQuickBtn">Next Month</button>
                     </div>
-                    <div class="chart-container chart-donut">
-                        <h4 class="chart-title">Top 5 Vaccines Distribution</h4>
-                        <canvas id="vaccineDonutChart"></canvas>
+                    <div class="charts-wrapper">
+                        <div class="chart-container chart-bar">
+                            <h4 class="chart-title">All Vaccines</h4>
+                            <canvas id="vaccineChart"></canvas>
+                        </div>
+                        <div class="chart-container chart-donut">
+                            <h4 class="chart-title">Top 5 Vaccines Distribution</h4>
+                            <canvas id="vaccineDonutChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
+
+            <!-- <div class="activity-task-container" >
+                <div class="activity-section">
+                    <h2 class="dashboard-heading">Recent Activities</h2>
+                    <div class="activity-list" id="activityList">
+                        <div class="loading">
+                            <p>Loading recent activity...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tasks-section">
+                    <h2 class="dashboard-heading">Task Overview</h2>
+                    <div class="task-wrapper">
+                        <div class="task-card urgent" id="overdueCard">
+                            <div class="task-header">
+                                <h4>🚨 Overdue Tasks</h4>
+                                <span class="task-count" id="overdueCount">0</span>
+                            </div>
+                            <p>Vaccinations that are past due date</p>
+                            <a href="health-immunizations" class="task-action">View Details</a>
+                        </div>
+                        <div class="task-card">
+                            <div class="task-card warning" id="tomorrowCard">
+                                <div class="task-header">
+                                    <h4>📅 Tomorrow's Tasks</h4>
+                                    <span class="task-count" id="tomorrowCount">0</span>
+                                </div>
+                                <p>Vaccinations scheduled for tomorrow</p>
+                                <a href="health-immunizations" class="task-action">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        <!-- Monthly Vaccine Schedule Chart -->
+        
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -190,26 +232,43 @@ if ($user_id) {
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
                 showError('Network error: ' + error.message);
-                // Ensure card numbers are reset on error
-                const ids = ['pendingCount', 'todayCount', 'missedCount', 'totalCount'];
-                ids.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.textContent = '0';
-                });
+                // Ensure card numbers don't stay in perpetual skeleton state on error
+                if (typeof setDashboardCardNumbers === 'function') {
+                    setDashboardCardNumbers({
+                        pendingCount: 0,
+                        todayCount: 0,
+                        missedCount: 0,
+                        totalCount: 0
+                    });
+                } else {
+                    const ids = ['pendingCount', 'todayCount', 'missedCount', 'totalCount'];
+                    ids.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.textContent = '0';
+                    });
+                }
             }
         }
 
         function updateStats(stats) {
-            // Update card numbers directly (no skeleton transition)
-            const p = document.getElementById('pendingCount');
-            const t = document.getElementById('todayCount');
-            const m = document.getElementById('missedCount');
-            const tc = document.getElementById('totalCount');
-            if (p) p.textContent = stats.pending_approvals;
-            if (t) t.textContent = stats.today_vaccinations;
-            if (m) m.textContent = stats.missed_vaccinations;
-            if (tc) tc.textContent = stats.total_children;
-
+            // If skeleton API is available, replace numbers via helper for smooth cross-fade
+            if (typeof setDashboardCardNumbers === 'function') {
+                setDashboardCardNumbers({
+                    pendingCount: stats.pending_approvals,
+                    todayCount: stats.today_vaccinations,
+                    missedCount: stats.missed_vaccinations,
+                    totalCount: stats.total_children
+                });
+            } else {
+                const p = document.getElementById('pendingCount');
+                const t = document.getElementById('todayCount');
+                const m = document.getElementById('missedCount');
+                const tc = document.getElementById('totalCount');
+                if (p) p.textContent = stats.pending_approvals;
+                if (t) t.textContent = stats.today_vaccinations;
+                if (m) m.textContent = stats.missed_vaccinations;
+                if (tc) tc.textContent = stats.total_children;
+            }
             // Safely update any action counters if present (currently not in markup)
             const pa = document.getElementById('pendingActionCount');
             const ta = document.getElementById('todayActionCount');
@@ -742,6 +801,10 @@ if ($user_id) {
 
         // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            // Apply skeleton shimmer to card numbers immediately
+            if (typeof applyDashboardCardNumbersSkeleton === 'function') {
+                applyDashboardCardNumbersSkeleton();
+            }
             // Fetch and populate real data
             loadDashboardData();
         });

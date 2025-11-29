@@ -1,5 +1,9 @@
 <?php session_start(); ?>
 <?php
+// Restore session from JWT token if session expired
+require_once __DIR__ . '/../../php/supabase/shared/restore_session_from_jwt.php';
+restore_session_from_jwt();
+
 // Handle both BHW and Midwife sessions (but BHW should only see BHW features)
 $user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
 $user_types = $_SESSION['user_type']; // Default to bhw for BHW pages
@@ -74,10 +78,7 @@ if ($user_id) {
                                 <span class="material-symbols-rounded" aria-hidden="true">file_download</span>
                                 Export CSV
                             </button>
-                            <button id="openScannerBtn" class="btn qr-btn btn-icon" onclick="openScanner()">
-                                <span class="material-symbols-rounded" aria-hidden="true">qr_code_scanner</span>
-                                Scan QR
-                            </button>
+
                         </div>
                     </div>
 

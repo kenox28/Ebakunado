@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+// Restore session from JWT token if session expired
+require_once __DIR__ . '/../../php/supabase/shared/restore_session_from_jwt.php';
+restore_session_from_jwt();
+
 if (!isset($_SESSION['super_admin_id'])) {
     header("Location: login");
     exit();
@@ -50,8 +54,8 @@ if (!isset($_SESSION['super_admin_id'])) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <span class="trend up" id="usersTrend">Loading...</span>
-                        <a class="card-link" href="superadmin-users">
+                            <span class="trend up" id="usersTrend">Loading...</span>
+                            <a class="card-link" href="admin-users">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -69,8 +73,8 @@ if (!isset($_SESSION['super_admin_id'])) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <span class="trend up" id="bhwTrend">Loading...</span>
-                        <a class="card-link" href="superadmin-bhw">
+                            <span class="trend up" id="bhwTrend">Loading...</span>
+                            <a class="card-link" href="admin-bhw">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -88,8 +92,8 @@ if (!isset($_SESSION['super_admin_id'])) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <span class="trend up" id="midwivesTrend">Loading...</span>
-                        <a class="card-link" href="superadmin-midwives">
+                            <span class="trend up" id="midwivesTrend">Loading...</span>
+                            <a class="card-link" href="admin-midwives">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -97,25 +101,6 @@ if (!isset($_SESSION['super_admin_id'])) {
                 </div>
 
                 <div class="card card-4">
-                    <div class="card-top">
-                        <div class="card-info">
-                            <h3 class="card-title">Total Locations</h3>
-                            <p class="card-number" id="totalLocations">0</p>
-                        </div>
-                        <div class="card-icon">
-                            <span class="material-symbols-rounded">location_on</span>
-                        </div>
-                    </div>
-                    <div class="card-bottom">
-                        <span class="trend up" id="locationsTrend">Loading...</span>
-                        <a class="card-link" href="superadmin-locations">
-                            <span class="material-symbols-rounded">visibility</span>
-                            View Details
-                        </a>
-                    </div>
-                </div>
-
-                <div class="card card-5">
                     <div class="card-top">
                         <div class="card-info">
                             <h3 class="card-title">Activity Logs</h3>
@@ -126,8 +111,8 @@ if (!isset($_SESSION['super_admin_id'])) {
                         </div>
                     </div>
                     <div class="card-bottom">
-                        <span class="trend up" id="logsTrend">Loading...</span>
-                        <a class="card-link" href="superadmin-activity-logs">
+                            <span class="trend up" id="logsTrend">Loading...</span>
+                            <a class="card-link" href="admin-activity-logs">
                             <span class="material-symbols-rounded">visibility</span>
                             View Details
                         </a>
@@ -141,7 +126,7 @@ if (!isset($_SESSION['super_admin_id'])) {
             <div class="data-table-card">
                 <div class="data-table-toolbar">
                     <h3 class="data-table-title">Recent Activity</h3>
-                    <p class="data-count-label">Showing 10 recent entries</p>
+                    <p class="data-count-label" id="activityPageInfo">Showing 0-0 of 0</p>
                 </div>
                 <div class="data-table-wrap">
                     <table class="data-table">
@@ -159,6 +144,16 @@ if (!isset($_SESSION['super_admin_id'])) {
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <div class="pager">
+                    <button type="button" class="pager-btn" id="activityPrevBtn" data-page="1" disabled>
+                        <span class="material-symbols-rounded">chevron_left</span>
+                        Prev
+                    </button>
+                    <button type="button" class="pager-btn" id="activityNextBtn" data-page="1" disabled>
+                        Next
+                        <span class="material-symbols-rounded">chevron_right</span>
+                    </button>
                 </div>
             </div>
         </section>

@@ -1,5 +1,9 @@
 <?php session_start(); ?>
-<?php 
+<?php
+// Restore session from JWT token if session expired
+require_once __DIR__ . '/../../php/supabase/shared/restore_session_from_jwt.php';
+restore_session_from_jwt();
+
 $user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
 $user_types = $_SESSION['user_type'];
 $user_name = $_SESSION['fname'] ?? 'User';
@@ -12,8 +16,8 @@ if($user_types != 'midwifes') { $user_type = 'Barangay Health Worker'; } else { 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>System Settings</title>
-    <link rel="stylesheet" href="css/main.css" />
-    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.1" />
     <link rel="stylesheet" href="css/sidebar.css" />
 </head>
 <body>

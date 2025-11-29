@@ -3,7 +3,7 @@
             <div class="sidebar-header">
                 <div class="logo">
                     <h2>EBAKUNADO</h2>
-                    <span>Super Admin</span>
+                    <span>Admin</span>
                 </div>
             </div>
             
@@ -41,13 +41,6 @@
                         <a href="midwife-management.php" class="nav-link <?php echo ($current_page == 'midwife-management') ? 'active' : ''; ?>">
                             <span class="nav-icon">👩‍⚕️</span>
                             <span class="nav-text">Midwife Management</span>
-                        </a>
-                    </li>
-                    
-                    <li class="nav-item">
-                        <a href="location-management.php" class="nav-link <?php echo ($current_page == 'location-management') ? 'active' : ''; ?>">
-                            <span class="nav-icon">📍</span>
-                            <span class="nav-text">Location Management</span>
                         </a>
                     </li>
                     

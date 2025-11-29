@@ -35,8 +35,9 @@ try {
 	$statusSel = isset($_GET['status']) ? trim($_GET['status']) : 'all';
 	$vaccineSel = isset($_GET['vaccine']) ? trim($_GET['vaccine']) : 'all';
 	$purokQ = isset($_GET['purok']) ? strtolower(trim($_GET['purok'])) : '';
+$nameQ = isset($_GET['name']) ? strtolower(trim($_GET['name'])) : '';
 	$todayStr = date('Y-m-d');
-	$isFilterActive = ($dateSel !== '' || $statusSel !== 'all' || $vaccineSel !== 'all' || $purokQ !== '');
+$isFilterActive = ($dateSel !== '' || $statusSel !== 'all' || $vaccineSel !== 'all' || $purokQ !== '' || $nameQ !== '');
 
 	// Pagination params
 	$limit = isset($_GET['limit']) ? max(1, (int)$_GET['limit']) : 10;
@@ -193,6 +194,18 @@ try {
         $rows = array_values(array_filter($rows, function($r) use ($purokQ){
             $addr = strtolower((string)($r['address'] ?? ''));
             return strpos($addr, $purokQ) !== false;
+        }));
+    }
+
+    // Optional: apply name search (first, last, or full)
+    if ($nameQ !== '') {
+        $rows = array_values(array_filter($rows, function($r) use ($nameQ) {
+            $first = strtolower((string)($r['child_fname'] ?? ''));
+            $last = strtolower((string)($r['child_lname'] ?? ''));
+            $full = trim($first . ' ' . $last);
+            return strpos($first, $nameQ) !== false
+                || strpos($last, $nameQ) !== false
+                || strpos($full, $nameQ) !== false;
         }));
     }
 

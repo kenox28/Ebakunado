@@ -4,48 +4,53 @@
  * Handles midwife logout and session cleanup
  */
 
-session_start();
+// Start output buffering to prevent any output before JSON
+ob_start();
+
+// Set JSON header first
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Start session with error suppression to handle permission issues
+@session_start();
+
 require_once '../../../database/SupabaseConfig.php';
 require_once '../../../database/DatabaseHelper.php';
 
-header('Content-Type: application/json');
+// Get user info before clearing session
+$midwife_id = $_SESSION['midwife_id'] ?? null;
+$midwife_name = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
+$ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
-// Check if midwife is logged in
-if (!isset($_SESSION['midwife_id'])) {
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'No active session found'
-    ]);
-    exit();
-}
-
+// Log the logout activity
 try {
-    $midwife_id = $_SESSION['midwife_id'];
-    $midwife_name = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
-    
-    // Log the logout activity
-    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-    supabaseLogActivity($midwife_id, 'midwife', 'logout', 'Midwife logged out successfully: ' . $midwife_name, $ip);
-    
-    // Clear session data
-    session_unset();
-    session_destroy();
-    
-    // Clean output buffer
-    ob_clean();
-    
-    echo json_encode([
-        'status' => 'success',
-        'message' => 'Midwife logged out successfully',
-        'debug' => [
-            'had_session' => ($midwife_id !== null)
-        ]
-    ]);
-    
-} catch (Exception $e) {
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Logout failed: ' . $e->getMessage()
-    ]);
+    if ($midwife_id) {
+        supabaseLogActivity($midwife_id, 'midwife', 'logout', 'Midwife logged out successfully: ' . $midwife_name, $ip);
+    }
+} catch (Exception $log_error) {
+    error_log("Logout logging error: " . $log_error->getMessage());
+    // Continue with logout even if logging fails
 }
+
+// Clear JWT token cookie
+if (isset($_COOKIE['jwt_token'])) {
+    setcookie('jwt_token', '', time() - 3600, '/');
+    setcookie('jwt_token', '', time() - 3600, '/', '', false, true); // Also clear with secure flag
+}
+
+// Clear and destroy session
+session_unset();
+session_destroy();
+
+// Clear output buffer and return success response
+ob_clean();
+
+echo json_encode([
+    'status' => 'success',
+    'message' => 'Midwife logged out successfully',
+    'clear_token' => true // Signal to frontend to clear localStorage
+]);
+exit();
 ?>

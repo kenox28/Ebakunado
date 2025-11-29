@@ -1,20 +1,20 @@
 main {
-  max-height: 100vh;
-  overflow-y: auto;
-  background-color: #ebf2ed;
+	max-height: 100vh;
+	overflow-y: auto;
+	background-color: #ebf2ed;
 }
 
 .immunization-section {
-  height: 110vh;
+	height: 110vh;
 }
 
 .childinformation-container {
-  display: none;
+	display: none;
 }
 
 .page-header {
-  padding: 1.6rem 1.6rem 2.8rem 1.6rem !important;
-  margin-bottom: 1.4rem !important;
+	padding: 1.6rem 1.6rem 2.8rem 1.6rem !important;
+	margin-bottom: 1.4rem !important;
 }
 
 /* Filters */
@@ -98,57 +98,62 @@ main {
 
 /* Chromium/Edge/Safari */
 .immunization-section
-  .filters
-  input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 0;
-  position: absolute;
-  right: 8px;
-  width: 1.8em;
-  height: 1.8em;
-  margin: 0;
-  cursor: pointer;
+	.filters
+	input[type="date"]::-webkit-calendar-picker-indicator {
+	opacity: 0;
+	position: absolute;
+	right: 8px;
+	width: 1.8em;
+	height: 1.8em;
+	margin: 0;
+	cursor: pointer;
+}
+
+.immunization-section .filters .filter-item.filter-search {
+	flex: 1 1 260px;
+	min-width: 220px;
 }
 
 /* Firefox */
 @-moz-document url-prefix() {
-  .immunization-section .filters .select-with-icon {
-    position: relative;
-  }
-  .immunization-section .filters .select-with-icon::after {
-    content: "";
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 1.8em;
-    height: 1.8em;
-    background: #fff;
-    border-radius: 4px;
-    pointer-events: none;
-    z-index: 1;
-  }
+	.immunization-section .filters .select-with-icon {
+		position: relative;
+	}
+	.immunization-section .filters .select-with-icon::after {
+		content: "";
+		position: absolute;
+		right: 8px;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 1.8em;
+		height: 1.8em;
+		background: #fff;
+		border-radius: 4px;
+		pointer-events: none;
+		z-index: 1;
+	}
 }
 
 /* Responsive: allow filters to wrap on smaller screens for better usability */
 @media (max-width: 780px) {
-  .immunization-section .filters {
-    flex-wrap: wrap;
-    overflow-x: visible;
-  }
-  .immunization-section .filters .select-with-icon {
-    flex: 1 1 200px;
-    min-width: 140px;
-  }
+	.immunization-section .filters {
+		flex-wrap: wrap;
+		overflow-x: visible;
+	}
+	.immunization-section .filters .select-with-icon {
+		flex: 1 1 200px;
+		min-width: 140px;
+	}
 }
 
 /* Uppercase date text */
 .immunization-section .filters input[type="date"],
 .form-group input[type="date"] {
-  text-transform: uppercase;
+	text-transform: uppercase;
 }
 .immunization-section .filters input[type="date"]::-webkit-datetime-edit,
 .form-group input[type="date"]::-webkit-datetime-edit {
-  text-transform: uppercase;
+	text-transform: uppercase;
 }
 
 /* Focus */
@@ -162,13 +167,13 @@ main {
 
 .immunization-section .filters .select-with-icon:focus-within select,
 .immunization-section .filters .select-with-icon:focus-within input {
-  color: #1a1a1a;
+	color: #1a1a1a;
 }
 .immunization-section
-  .filters
-  .select-with-icon:focus-within
-  .material-symbols-rounded {
-  color: var(--primary-color);
+	.filters
+	.select-with-icon:focus-within
+	.material-symbols-rounded {
+	color: var(--primary-color);
 }
 
 /* Hover */
@@ -176,201 +181,201 @@ main {
 .immunization-section .filters .select-with-icon select:not(:focus):hover,
 .immunization-section .filters input[type="text"]:not(:focus):hover,
 .immunization-section .filters input[type="date"]:not(:focus):hover {
-  border-color: #76a582;
-  background-color: #fff;
-  box-shadow: none;
-  outline: none;
+	border-color: #76a582;
+	background-color: #fff;
+	box-shadow: none;
+	outline: none;
 }
 
 .table th:last-child,
 .table td:last-child {
-  text-align: center;
+	text-align: center;
 }
 
 /* Loading state (keep page-specific) */
 .loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem;
-  color: var(--text-secondary);
-  font-size: 1.4rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 3rem;
+	color: var(--text-secondary);
+	font-size: 1.4rem;
 }
 .loading i {
-  font-size: 2.4rem;
-  margin-bottom: 1rem;
-  color: var(--primary-color);
+	font-size: 2.4rem;
+	margin-bottom: 1rem;
+	color: var(--primary-color);
 }
 
 .immunization-section .view-btn {
-  background-color: var(--primary-color);
-  color: #ffffff;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
+	background-color: var(--primary-color);
+	color: #ffffff;
+	border: none;
+	padding: 0.6rem 1.2rem;
+	border-radius: 6px;
+	font-size: 1.2rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
 }
 .immunization-section .view-btn:hover {
-  background-color: #005529;
-  transform: translateY(-1px);
+	background-color: #005529;
+	transform: translateY(-1px);
 }
 .immunization-section .view-btn .material-symbols-rounded {
-  font-size: 1.6rem;
+	font-size: 1.6rem;
 }
 
 /* Immunization Record Modal Popup */
 .immunization-record {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.45);
-  padding: 4.8rem 1.6rem 3.2rem;
-  z-index: 9999;
-  backdrop-filter: blur(2px);
+	position: fixed;
+	inset: 0;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.45);
+	padding: 4.8rem 1.6rem 3.2rem;
+	z-index: 9999;
+	backdrop-filter: blur(2px);
 }
 
 .immunization-modal {
-  background: #fff;
-  width: 760px;
-  max-width: 95vw;
-  max-height: 90vh;
-  overflow-y: auto;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  padding: 0; 
-  animation: modalIn 0.18s ease-out;
+	background: #fff;
+	width: 760px;
+	max-width: 95vw;
+	max-height: 90vh;
+	overflow-y: auto;
+	border-radius: 10px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+	padding: 0;
+	animation: modalIn 0.18s ease-out;
 }
 
 .immunization-modal > :not(.immunization-header) {
-  padding: 1.2rem 1.6rem;
+	padding: 1.2rem 1.6rem;
 }
 
 @keyframes modalIn {
-  from {
-    transform: translateY(4px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+	from {
+		transform: translateY(4px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
 }
 
 .qr-overlay {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.45);
-  padding: 4.8rem 1.6rem 3.2rem;
-  z-index: 10000;
-  backdrop-filter: blur(2px);
-  transition: opacity 0.18s ease, transform 0.18s ease;
-  overflow: auto;
+	position: fixed;
+	inset: 0;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.45);
+	padding: 4.8rem 1.6rem 3.2rem;
+	z-index: 10000;
+	backdrop-filter: blur(2px);
+	transition: opacity 0.18s ease, transform 0.18s ease;
+	overflow: auto;
 }
 
 .qr-modal {
-  background: #fff;
-  width: 100%;
-  max-width: 640px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  animation: modalIn 0.18s ease-out;
-  padding: 0;
-  overflow: hidden;
+	background: #fff;
+	width: 100%;
+	max-width: 640px;
+	border-radius: 12px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+	animation: modalIn 0.18s ease-out;
+	padding: 0;
+	overflow: hidden;
 }
 
 .qr-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #d0d0d0;
-  padding: 1.2rem 1.6rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid #d0d0d0;
+	padding: 1.2rem 1.6rem;
 }
 .qr-title {
-  margin: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #1a1a1a;
+	margin: 0;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 16px;
+	font-weight: 600;
+	color: #1a1a1a;
 }
 .qr-title .material-symbols-rounded {
-  font-size: 20px;
-  color: #1a1a1a;
+	font-size: 20px;
+	color: #1a1a1a;
 }
 
 .qr-body {
-  padding: 1.2rem 1.6rem;
+	padding: 1.2rem 1.6rem;
 }
 
 .qr-field {
-  margin-bottom: 12px;
+	margin-bottom: 12px;
 }
 .qr-label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 1.4rem;
-  font-weight: 500;
-  color: #374151;
+	display: block;
+	margin-bottom: 6px;
+	font-size: 1.4rem;
+	font-weight: 500;
+	color: #374151;
 }
 
 .qr-select {
-  display: none;
-  padding: 8px 10px;
-  width: 100%;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  font: inherit;
-  font-size: 1.2rem;
+	display: none;
+	padding: 8px 10px;
+	width: 100%;
+	border-radius: 8px;
+	border: 1px solid #d1d5db;
+	font: inherit;
+	font-size: 1.2rem;
 }
 .qr-select:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
+	outline: none;
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
 }
 
 .qr-reader {
-  width: 100%;
-  min-height: 320px;
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.12);
+	width: 100%;
+	min-height: 320px;
+	border: 2px solid #e5e7eb;
+	border-radius: 10px;
+	overflow: hidden;
+	box-shadow: 0 1px 3px rgba(16, 24, 40, 0.12);
 }
 
 .qr-help {
-  margin-top: 12px;
-  color: #666;
-  font-size: 1.2rem;
-  text-align: center;
+	margin-top: 12px;
+	color: #666;
+	font-size: 1.2rem;
+	text-align: center;
 }
 
 .immunization-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #d0d0d0;
-  padding: 1.2rem 1.6rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid #d0d0d0;
+	padding: 1.2rem 1.6rem;
 }
 
 .immunization-title {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #1F2937;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	font-size: 1.6rem;
+	font-weight: 600;
+	color: #1f2937;
 }
 
 /* .close-btn {
@@ -395,45 +400,46 @@ main {
 
 /* Form: base layout */
 .immunization-form .form-container {
-  display: grid;
-  gap: 1.4rem;
-  border: none;
-  border-radius: 10px;
+	display: grid;
+	gap: 1.4rem;
+	border: none;
+	border-radius: 10px;
 }
 
 /* Default two-column for form-group */
 .immunization-form .form-group {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px; /* slightly tighter spacing inside groups */
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px; /* slightly tighter spacing inside groups */
 }
 
 /* Row-specific layouts (pruned) */
 .immunization-form .form-group.row-1,
 .immunization-form .form-group.row-3 {
-  /* two-column groups */
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+	/* two-column groups */
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .immunization-form .form-group.row-2 {
-  /* three-column measurements */
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+	/* three-column measurements */
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 /* Panels row now uses row-4 class with flex layout and tighter gap */
 .immunization-form .form-group.row-4 {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 8px 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 8px 0;
 }
 
 /* Labels and fields */
 .immunization-form .form-group > label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 13px;
-  color: #1a1a1a;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	font-size: 1.35rem;
+	color: #0f172a;
+	font-weight: 500;
 }
 
 /* Inputs styling */
@@ -442,14 +448,20 @@ main {
 .immunization-form .form-group input[type="number"],
 .immunization-form .form-group textarea,
 .immunization-form .form-group select {
-  width: 100%;
-  padding: 8px 10px; /* reduced height */
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 13px; /* slightly smaller text to match reduced height */
-  font-family: inherit; /* inherit font family */
-  background: #fff;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	width: 100%;
+	padding: 10px 14px;
+	border: 1px solid #d6dce5;
+	border-radius: 10px;
+	font-size: 1.35rem;
+	font-family: inherit; /* inherit font family */
+	background: #fcfdff;
+	color: #0f172a;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.immunization-form .form-group input::placeholder,
+.immunization-form .form-group textarea::placeholder {
+	color: #9ba8c1;
 }
 
 /* Focus state for inputs (no outline/offset) */
@@ -458,185 +470,215 @@ main {
 .immunization-form .form-group input[type="number"]:focus,
 .immunization-form .form-group textarea:focus,
 .immunization-form .form-group select:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
+	outline: none;
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
 }
 
 .immunization-modal .form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.8rem;
-  padding: 1.2rem 1.6rem 1.8rem;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.8rem;
+	padding: 1.2rem 1.6rem 1.8rem;
+	border-top: 1px solid #e5e7eb;
+	background: #f9fafb;
 }
 
 .immunization-modal .form-actions .btn {
-  font-size: 1.4rem;
-  line-height: 20px;
-  padding: 0.8rem 1.8rem;
+	font-size: 1.4rem;
+	line-height: 20px;
+	padding: 0.8rem 1.8rem;
 }
-
 
 /* Section headings inside the form (exclude panels) */
 .immunization-form .im-group-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #1a1a1a;
+	font-size: 1.4rem;
+	font-weight: 600;
+	color: #1a1a1a;
 }
 /* When inside a grid row, make the title span full width and add spacing */
 .immunization-form .form-group .im-group-title {
-  grid-column: 1 / -1;
+	grid-column: 1 / -1;
 }
 
 /* =========================
    Read/Write Panel Layout (scoped)
 ========================= */
 .im-panel-row.im-panels-two-col {
-  display: flex;
-  /* gap: 16px; */
-  margin: 12px 0;
-  flex-wrap: wrap;
+	display: flex;
+	/* gap: 16px; */
+	margin: 12px 0;
+	flex-wrap: wrap;
 }
 .im-panel {
-  flex: 1 1 300px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px; /* improve spacing in panels */
-  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+	flex: 1 1 300px;
+	background: #f9fafb;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	padding: 14px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px; /* improve spacing in panels */
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 .im-panel-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: var(--primary-color);
-  display: flex;
-  align-items: center;
-  gap: 6px;
+	font-size: 1.4rem;
+	font-weight: 600;
+	color: var(--primary-color);
+	display: flex;
+	align-items: center;
+	gap: 6px;
 }
 .im-panel-body {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 }
 .im-field-row {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* a bit more spacing between label and field */
-  font-size: 1.2rem;
-  flex-wrap: wrap;
+	display: flex;
+	align-items: center;
+	gap: 10px; /* a bit more spacing between label and field */
+	font-size: 1.2rem;
+	flex-wrap: wrap;
 }
 .im-field-row .field-label {
-  font-weight: 500;
-  color: #1a1a1a;
-  min-width: 160px;
+	font-weight: 500;
+	color: #1a1a1a;
+	min-width: 160px;
 }
 .im-inline-checkbox {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 1.2rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 1.2rem;
 }
 .im-inline-checkbox input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
+	width: 16px;
+	height: 16px;
 }
 .im-panel input[type="text"],
 .im-panel input[type="date"],
 .im-panel input[type="number"],
 .im-panel textarea {
-  padding: 8px 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font: inherit; /* includes font-family */
-  font-size: 1.2rem;
-  background: #fff;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	padding: 10px 12px;
+	border: 1px solid #d6dce5;
+	border-radius: 10px;
+	font: inherit; /* includes font-family */
+	font-size: 1.3rem;
+	background: #fcfdff;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .im-panel input[type="date"] {
-  text-transform: uppercase;
+	text-transform: uppercase;
 }
 .im-panel input[type="date"]::-webkit-datetime-edit {
-  text-transform: uppercase;
+	text-transform: uppercase;
 }
 .im-panel input[type="text"]:focus,
 .im-panel input[type="date"]:focus,
 .im-panel input[type="number"]:focus,
 .im-panel textarea:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
+	outline: none;
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.1);
 }
 
 .im-mark-completed-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 8px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 8px;
 }
 .im-mark-completed-row .im-inline-checkbox span {
-  font-weight: 500;
+	font-weight: 500;
 }
 
 /* Remove borders and primary title color for specific panels */
 .im-panel.im-panel-feeding,
 .im-panel.im-panel-td {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0; /* rely on inner field spacing */
+	background: transparent;
+	border: none;
+	box-shadow: none;
+	padding: 0; /* rely on inner field spacing */
 }
 .im-panel.im-panel-feeding .im-panel-title,
 .im-panel.im-panel-td .im-panel-title {
-  color: #1a1a1a; /* neutral text color instead of primary */
+	color: #1a1a1a; /* neutral text color instead of primary */
 }
 
 /* Make TD dose date input full width inside Mother's TD panel */
 .im-panel-td input#update_td_dose,
 .im-panel-td .im-field-row input[type="date"] {
-  width: 100%;
-  flex: 1 1 100%;
+	width: 100%;
+	flex: 1 1 100%;
+}
+
+.schedule-summary {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-bottom: 4px;
+}
+
+.schedule-chip {
+	padding: 10px 14px;
+	border: 1px solid #e2e8f0;
+	border-radius: 999px;
+	font-size: 1.2rem;
+	background: #f8fafc;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: #0f172a;
+}
+
+.schedule-chip strong {
+	font-size: 1.3rem;
+	color: var(--primary-color);
+}
+
+.chip-label {
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	font-size: 1rem;
+	color: #64748b;
 }
 
 @media (max-width: 780px) {
-  .im-panel-row.im-panels-two-col {
-    flex-direction: column;
-  }
-  .im-panel {
-    flex: 1 1 100%;
-  }
-  .im-field-row .field-label {
-    min-width: 120px;
-  }
+	.im-panel-row.im-panels-two-col {
+		flex-direction: column;
+	}
+	.im-panel {
+		flex: 1 1 100%;
+	}
+	.im-field-row .field-label {
+		min-width: 120px;
+	}
 }
 
 .immunization-section .filters-header {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 1.3rem;
-  font-weight: 500;
-  color: #1a1a1a;
-  margin-top: 1rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 1.3rem;
+	font-weight: 500;
+	color: #1a1a1a;
+	margin-top: 1rem;
 }
 .immunization-section .filters-header .material-symbols-rounded {
-  font-size: 18px;
-  color: #1a1a1a;
+	font-size: 18px;
+	color: #1a1a1a;
 }
 
 .immunization-section .table .message-row td {
-  text-align: center;
-  padding: 2.4rem 1.2rem;
-  font-size: 1.3rem;
-  color: #6b7280;
-  font-weight: 400;
-  text-transform: none;
+	text-align: center;
+	padding: 2.4rem 1.2rem;
+	font-size: 1.3rem;
+	color: #6b7280;
+	font-weight: 400;
+	text-transform: none;
 }
 .immunization-section .table .message-row.error td {
-  color: #b91c1c;
-  font-weight: 500;
+	color: #b91c1c;
+	font-weight: 500;
 }

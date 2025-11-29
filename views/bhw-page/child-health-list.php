@@ -1,5 +1,9 @@
 <?php session_start(); ?>
 <?php
+// Restore session from JWT token if session expired
+require_once __DIR__ . '/../../php/supabase/shared/restore_session_from_jwt.php';
+restore_session_from_jwt();
+
 // Handle both BHW and Midwife sessions (but BHW should only see BHW features)
 $user_id = $_SESSION['bhw_id'] ?? $_SESSION['midwife_id'] ?? null;
 $user_types = $_SESSION['user_type']; // Default to bhw for BHW pages
@@ -32,7 +36,7 @@ if ($user_id) {
     <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
     <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
     <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.3" />
-    <link rel="stylesheet" href="css/bhw/child-health-list.css?v=1.0.5" />
+    <link rel="stylesheet" href="css/bhw/child-health-list.css?v=1.0.6" />
 </head>
 
 <body>

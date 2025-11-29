@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+// Restore session from JWT token if session expired
+require_once __DIR__ . '/../../php/supabase/shared/restore_session_from_jwt.php';
+restore_session_from_jwt();
+
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header("Location: login");
     exit();
@@ -27,12 +31,12 @@ $user_fname = $_SESSION['fname'] ?? '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.3" />
     <link rel="stylesheet" href="css/header.css?v=1.0.2" />
-    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.5" />
 
-    <link rel="stylesheet" href="css/notification-style.css" />
-    <link rel="stylesheet" href="css/skeleton-loading.css" />
+    <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
     <link rel="stylesheet" href="css/user/dashboard.css?v=1.0.1" />
 </head>
 
@@ -153,7 +157,7 @@ $user_fname = $_SESSION['fname'] ?? '';
     </main>
 
     <script src="js/header-handler/profile-menu.js?v=1.0.4" defer></script>
-    <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
+    <script src="js/sidebar-handler/sidebar-menu.js?v1.0.2" defer></script>
     <script src="js/utils/skeleton-loading.js" defer></script>
     <script>
         let currentFilter = 'upcoming';

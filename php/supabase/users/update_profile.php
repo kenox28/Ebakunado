@@ -26,18 +26,38 @@ try {
     $new_password = $_POST['new_password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     
-    // Prepare update data
+    // Prepare update data - only include fields that are provided (not empty)
+    // This prevents empty strings from overwriting existing values
     $updateData = [
-        'fname' => $fname,
-        'lname' => $lname,
-        'email' => $email,
-        'phone_number' => $phone_number,
-        'gender' => $gender,
-        'place' => $place,
-        'philhealth_no' => $philhealth_no !== '' ? $philhealth_no : null,
-        'nhts' => $nhts !== '' ? $nhts : null,
         'updated' => date('c')
     ];
+    
+    // Only add fields to update if they are provided and not empty
+    if (!empty($fname)) {
+        $updateData['fname'] = $fname;
+    }
+    if (!empty($lname)) {
+        $updateData['lname'] = $lname;
+    }
+    if (!empty($email)) {
+        $updateData['email'] = $email;
+    }
+    if (!empty($phone_number)) {
+        $updateData['phone_number'] = $phone_number;
+    }
+    if (!empty($gender)) {
+        $updateData['gender'] = $gender;
+    }
+    if (!empty($place)) {
+        $updateData['place'] = $place;
+    }
+    // PhilHealth and NHTS can be explicitly set to empty/null, so check if they were provided
+    if (isset($_POST['philhealth_no'])) {
+        $updateData['philhealth_no'] = $philhealth_no !== '' ? $philhealth_no : null;
+    }
+    if (isset($_POST['nhts'])) {
+        $updateData['nhts'] = $nhts !== '' ? $nhts : null;
+    }
     
     // Handle password change if provided
     if (!empty($current_password) && !empty($new_password) && !empty($confirm_password)) {
@@ -82,15 +102,47 @@ try {
     }
     
     if ($result !== false) {
-        // Update session data
-        $_SESSION['fname'] = $fname;
-        $_SESSION['lname'] = $lname;
-        $_SESSION['email'] = $email;
-        $_SESSION['phone_number'] = $phone_number;
-        if (isset($updateData['philhealth_no'])) { $_SESSION['philhealth_no'] = $philhealth_no; }
-        if (isset($updateData['nhts'])) { $_SESSION['nhts'] = $nhts; }
+        // Update session data - only update fields that were actually changed
+        if (isset($updateData['fname'])) {
+            $_SESSION['fname'] = $updateData['fname'];
+        }
+        if (isset($updateData['lname'])) {
+            $_SESSION['lname'] = $updateData['lname'];
+        }
+        if (isset($updateData['email'])) {
+            $_SESSION['email'] = $updateData['email'];
+        }
+        if (isset($updateData['phone_number'])) {
+            $_SESSION['phone_number'] = $updateData['phone_number'];
+        }
+        if (isset($updateData['philhealth_no'])) {
+            $_SESSION['philhealth_no'] = $philhealth_no;
+        }
+        if (isset($updateData['nhts'])) {
+            $_SESSION['nhts'] = $nhts;
+        }
         
-        echo json_encode(['status' => 'success', 'message' => 'Profile updated successfully']);
+        // Determine success message based on what was updated
+        $updateMessage = 'Profile updated successfully';
+        if (!empty($current_password) && !empty($new_password)) {
+            $updateMessage = 'Password changed successfully';
+        } elseif (!empty($fname) || !empty($lname)) {
+            $updateMessage = 'Name updated successfully';
+        } elseif (!empty($email)) {
+            $updateMessage = 'Email updated successfully';
+        } elseif (!empty($phone_number)) {
+            $updateMessage = 'Phone number updated successfully';
+        } elseif (!empty($gender)) {
+            $updateMessage = 'Gender updated successfully';
+        } elseif (!empty($place)) {
+            $updateMessage = 'Place updated successfully';
+        } elseif (isset($_POST['philhealth_no'])) {
+            $updateMessage = 'PhilHealth number updated successfully';
+        } elseif (isset($_POST['nhts'])) {
+            $updateMessage = 'NHTS updated successfully';
+        }
+        
+        echo json_encode(['status' => 'success', 'message' => $updateMessage]);
     } else {
         $err = isset($supabase) && method_exists($supabase, 'getLastError') ? $supabase->getLastError() : null;
         echo json_encode(['status' => 'error', 'message' => 'Failed to update profile', 'debug' => $err]);

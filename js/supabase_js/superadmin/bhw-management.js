@@ -1,43 +1,147 @@
-// Superadmin 	BHW Management JavaScript
+const BHW_LIMIT = 10;
+let currentBhwPage = 1;
 
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", function () {
-	getBhw();
+	initBhwPager();
+	setupBhwSearchHandlers();
+	getBhw(1);
 });
 
-// Fetch and display BHW (reusing from home.js)
-async function getBhw() {
+// Fetch and display BHW records
+async function getBhw(page = 1) {
 	try {
-		const response = await fetch("php/supabase/admin/show_bhw.php");
-		// const response = await fetch("php/mysql/admin/show_bhw.php");
-		const data = await response.json();
-
 		const tbody = document.querySelector("#bhwTableBody");
-		tbody.innerHTML = "";
+		if (tbody) {
+			tbody.innerHTML =
+				'<tr class="data-table__message-row loading"><td colspan="11">Loading BHW...</td></tr>';
+		}
 
-		for (const bhw of data) {
-			tbody.innerHTML += `<tr>
-                <td class="checkbox-cell"><input type="checkbox" class="bhw-checkbox" value="${
-									bhw.bhw_id
-								}"></td>
+		const searchInput = document.getElementById("searchBhw");
+		const searchTerm = searchInput ? searchInput.value.trim() : "";
+		const params = new URLSearchParams({
+			page,
+			limit: BHW_LIMIT,
+		});
+		if (searchTerm) params.append("search", searchTerm);
+
+		const response = await fetch(
+			`php/supabase/superadmin/list_bhw.php?${params.toString()}`
+		);
+		const result = await response.json();
+
+		if (result.status !== "success") {
+			throw new Error(result.message || "Failed to load BHW");
+		}
+
+		const data = Array.isArray(result.data) ? result.data : [];
+		const total = result.total || 0;
+
+		if (total > 0 && data.length === 0 && page > 1) {
+			getBhw(page - 1);
+			return;
+		}
+
+		tbody.innerHTML = "";
+		if (!data.length) {
+			tbody.innerHTML =
+				'<tr class="data-table__message-row"><td colspan="11">No BHW found.</td></tr>';
+		} else {
+			for (const bhw of data) {
+				tbody.innerHTML += `<tr>
+                <td class="checkbox-cell"><input type="checkbox" class="bhw-checkbox" value="${bhw.bhw_id}"></td>
                 <td>${bhw.bhw_id}</td>
                 <td>${bhw.fname}</td>
                 <td>${bhw.lname}</td>
                 <td>${bhw.email}</td>
-                <td>${bhw.phone_number}</td>
+                <td>${bhw.phone_number || ""}</td>
                 <td>${bhw.gender || ""}</td>
                 <td>${bhw.place || ""}</td>
-                <td>${bhw.permissions}</td>
-                <td>${bhw.created_at}</td>
+                <td>${bhw.permissions || ""}</td>
+                <td>${formatDateShort(bhw.created_at)}</td>
                 <td class="actions-cell">
                     <button onclick="editBhw('${bhw.bhw_id}')" class="action-icon-btn" aria-label="Edit user ${bhw.bhw_id}"><span class="material-symbols-rounded">edit</span></button>
                     <button onclick="deleteBhw('${bhw.bhw_id}')" class="action-icon-btn" aria-label="Delete user ${bhw.bhw_id}"><span class="material-symbols-rounded">delete</span></button>
                 </td>
             </tr>`;
+			}
 		}
+
+		currentBhwPage = result.page || page;
+		updateBhwPager({
+			page: currentBhwPage,
+			limit: result.limit || BHW_LIMIT,
+			total,
+			hasMore: result.has_more || false,
+		});
 	} catch (error) {
 		console.error("Error fetching BHW:", error);
+		const tbody = document.querySelector("#bhwTableBody");
+		if (tbody) {
+			tbody.innerHTML =
+				'<tr class="data-table__message-row error"><td colspan="11">Failed to load BHW records.</td></tr>';
+		}
+		updateBhwPager({ page: 1, limit: BHW_LIMIT, total: 0, hasMore: false });
 	}
+}
+
+function initBhwPager() {
+	const prevBtn = document.getElementById("bhwPrevBtn");
+	const nextBtn = document.getElementById("bhwNextBtn");
+	if (prevBtn) {
+		prevBtn.addEventListener("click", () => {
+			const page = parseInt(prevBtn.dataset.page || "1", 10);
+			if (page > 1) getBhw(page - 1);
+		});
+	}
+	if (nextBtn) {
+		nextBtn.addEventListener("click", () => {
+			const page = parseInt(nextBtn.dataset.page || "1", 10);
+			getBhw(page + 1);
+		});
+	}
+}
+
+function updateBhwPager({ page, limit, total, hasMore }) {
+	const prevBtn = document.getElementById("bhwPrevBtn");
+	const nextBtn = document.getElementById("bhwNextBtn");
+	const info = document.getElementById("bhwPageInfo");
+	if (!prevBtn || !nextBtn || !info) return;
+
+	const start = total === 0 ? 0 : (page - 1) * limit + 1;
+	const end = total === 0 ? 0 : Math.min(page * limit, total);
+	info.textContent = `Showing ${start}-${end} of ${total}`;
+	prevBtn.disabled = page <= 1;
+	nextBtn.disabled = !hasMore;
+	prevBtn.dataset.page = String(page);
+	nextBtn.dataset.page = String(page);
+}
+
+function setupBhwSearchHandlers() {
+	const input = document.getElementById("searchBhw");
+	if (!input) return;
+	input.addEventListener("keydown", (e) => {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			getBhw(1);
+		}
+	});
+	input.addEventListener("input", () => {
+		if (!input.value.trim()) {
+			getBhw(1);
+		}
+	});
+}
+
+function formatDateShort(dateStr) {
+	if (!dateStr) return "";
+	const date = new Date(dateStr);
+	if (isNaN(date.getTime())) return dateStr;
+	return date.toLocaleDateString("en-PH", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	});
 }
 
 // Toggle all BHW checkboxes
@@ -208,7 +312,7 @@ async function updateBhw() {
 		if (data.status === "success") {
 			Swal.fire("Success!", "BHW updated successfully", "success");
 			cancelEditBhw();
-			getBhw();
+			getBhw(currentBhwPage);
 		} else {
 			Swal.fire("Error!", data.message, "error");
 		}
@@ -251,7 +355,7 @@ async function deleteBhw(bhw_id) {
 			const data = await response.json();
 			if (data.status === "success") {
 				Swal.fire("Deleted!", "BHW has been deleted.", "success");
-				getBhw();
+				getBhw(currentBhwPage);
 			} else {
 				Swal.fire("Error!", data.message, "error");
 			}
@@ -302,7 +406,7 @@ async function deleteSelectedBhw() {
 				`${selectedBoxes.length} BHW(s) deleted successfully`,
 				"success"
 			);
-			getBhw();
+			getBhw(currentBhwPage);
 		} catch (error) {
 			console.error("Error deleting BHW:", error);
 			Swal.fire("Error!", "Failed to delete BHW", "error");

@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+// Restore session from JWT token if session expired
+require_once __DIR__ . '/../../php/supabase/shared/restore_session_from_jwt.php';
+restore_session_from_jwt();
+
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header("Location: login");
     exit();
@@ -27,12 +31,12 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Child Request</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/header.css" />
-    <link rel="stylesheet" href="css/sidebar.css" />
-    <link rel="stylesheet" href="css/notification-style.css" />
-    <link rel="stylesheet" href="css/modals.css" />
-    <link rel="stylesheet" href="css/user/add-child-request.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.6" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.6" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.6" />
+    <link rel="stylesheet" href="css/notification-style.css?v=1.0.6" />
+    <link rel="stylesheet" href="css/modals.css?v=1.0.5" />
+    <link rel="stylesheet" href="css/user/add-child-request.css?v=1.0.6" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;700" />
@@ -62,7 +66,7 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
 
                 <div>
                     <input type="text" id="familyCode" placeholder="Enter family code (e.g., FAM-ABC123)">
-                    <button onclick="claimChildWithCode()">Claim Child</button>
+                    <button onclick="claimChildWithCode()">Link Child</button>
                 </div>
 
                 <div id="familyCodeResult"></div>
@@ -646,19 +650,34 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                     })();
                 } else {
                     // Show detailed error message
-                    let errorMsg = 'Error: ' + data.message;
+                    let errorMsg = data.message || 'An error occurred';
                     if (data.debug) {
-                        errorMsg += '\n\nDebug Info:\n' + JSON.stringify(data.debug, null, 2);
                         console.error('Error Debug:', data.debug);
                     }
-                    alert(errorMsg);
+                    if (window.UIFeedback) {
+                        UIFeedback.showToast({
+                            title: "Error",
+                            message: errorMsg,
+                            variant: "error"
+                        });
+                    } else {
+                        alert('Error: ' + errorMsg);
+                    }
                 }
             } catch (error) {
                 console.error('=== EXCEPTION ===');
                 console.error('Error:', error);
                 console.error('Stack:', error.stack);
                 console.error('===================');
-                alert('Upload failed: ' + error.message + '\n\nCheck console for details.');
+                if (window.UIFeedback) {
+                    UIFeedback.showToast({
+                        title: "Upload Failed",
+                        message: error.message || "Please check your connection and try again.",
+                        variant: "error"
+                    });
+                } else {
+                    alert('Upload failed: ' + error.message + '\n\nCheck console for details.');
+                }
             } finally {
                 // End loading
                 fileGroup.classList.remove('file-upload-loading');
@@ -672,11 +691,28 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
             const resultDiv = document.getElementById('familyCodeResult');
 
             if (!familyCode) {
-                resultDiv.innerHTML = '<div class="alert alert-error">Please enter a family code</div>';
+                if (window.UIFeedback) {
+                    UIFeedback.showToast({
+                        title: "Family Code Required",
+                        message: "Please enter a family code",
+                        variant: "error"
+                    });
+                } else {
+                    resultDiv.innerHTML = '<div class="alert alert-error">Please enter a family code</div>';
+                }
                 return;
             }
 
-            resultDiv.innerHTML = '<div class="alert alert-info">Checking code...</div>';
+            if (window.UIFeedback) {
+                UIFeedback.showToast({
+                    title: "Checking Code",
+                    message: "Please wait while we verify the family code...",
+                    variant: "info",
+                    duration: 2000
+                });
+            } else {
+                resultDiv.innerHTML = '<div class="alert alert-info">Checking code...</div>';
+            }
 
             try {
                 const formData = new FormData();
@@ -689,15 +725,52 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                 const previewData = await previewRes.json();
 
                 if (previewData.status !== 'success') {
-                    resultDiv.innerHTML = `<div class="alert alert-error">${previewData.message}</div>`;
+                    if (window.UIFeedback) {
+                        UIFeedback.showToast({
+                            title: "Error",
+                            message: previewData.message || "Failed to verify family code",
+                            variant: "error"
+                        });
+                    } else {
+                        resultDiv.innerHTML = `<div class="alert alert-error">${previewData.message}</div>`;
+                    }
                     return;
                 }
 
-                const confirmMsg = `Claim this child?\n\nChild: ${previewData.child_name || 'Unknown'}\nBaby ID: ${previewData.baby_id || 'N/A'}`;
-                const confirmed = window.confirm(confirmMsg);
-                if (!confirmed) {
-                    resultDiv.innerHTML = '<div class="alert alert-info">Claim cancelled.</div>';
-                    return;
+                // Use UIFeedback modal for confirmation (like logout)
+                if (!window.UIFeedback) {
+                    const confirmMsg = `Claim this child?\n\nChild: ${previewData.child_name || 'Unknown'}\nBaby ID: ${previewData.baby_id || 'N/A'}`;
+                    const confirmed = window.confirm(confirmMsg);
+                    if (!confirmed) {
+                        resultDiv.innerHTML = '<div class="alert alert-info">Claim cancelled.</div>';
+                        return;
+                    }
+                } else {
+                    const confirmResult = await UIFeedback.showModal({
+                        title: "Claim Child",
+                        message: "Is this the name of your child?",
+                        html: `<div style="margin-top: 1rem; padding: 1rem; background: rgba(241, 245, 249, 0.85); border-radius: 10px;">
+                            <div style="font-size: 1.6rem; font-weight: 600; color: #0f172a; margin-bottom: 0.4rem;">${previewData.child_name || 'Unknown'}</div>
+                            <div style="font-size: 1.3rem; color: #64748b;">Baby ID: ${previewData.baby_id || 'N/A'}</div>
+                        </div>`,
+                        icon: null,
+                        confirmText: "Yes, this is my child",
+                        cancelText: "Cancel",
+                        showCancel: true
+                    });
+
+                    if (confirmResult?.action !== "confirm") {
+                        if (window.UIFeedback) {
+                            UIFeedback.showToast({
+                                title: "Claim Cancelled",
+                                message: "Child claim was cancelled",
+                                variant: "info"
+                            });
+                        } else {
+                            resultDiv.innerHTML = '<div class="alert alert-info">Claim cancelled.</div>';
+                        }
+                        return;
+                    }
                 }
 
                 const response = await fetch('php/supabase/users/claim_child_with_code.php', {
@@ -708,24 +781,49 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    resultDiv.innerHTML = `
-                <div class="alert alert-success">
-                    <h4 class="alert-title">Child claimed successfully</h4>
-                    <p><strong>Child:</strong> ${data.child_name}</p>
-                    <p><strong>Baby ID:</strong> ${data.baby_id}</p>
-                    <p>The child has been added to your account. You can now view their records in your dashboard.</p>
-                </div>
-            `;
+                    if (window.UIFeedback) {
+                        UIFeedback.showToast({
+                            title: "Child Claimed Successfully",
+                            message: `${data.child_name} (Baby ID: ${data.baby_id}) has been added to your account.`,
+                            variant: "success",
+                            duration: 4000
+                        });
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="alert alert-success">
+                                <h4 class="alert-title">Child claimed successfully</h4>
+                                <p><strong>Child:</strong> ${data.child_name}</p>
+                                <p><strong>Baby ID:</strong> ${data.baby_id}</p>
+                                <p>The child has been added to your account. You can now view their records in your dashboard.</p>
+                            </div>
+                        `;
+                    }
                     document.getElementById('familyCode').value = '';
 
                     setTimeout(() => {
                         window.location.href = 'children';
                     }, 3000);
                 } else {
-                    resultDiv.innerHTML = `<div class="alert alert-error">${data.message}</div>`;
+                    if (window.UIFeedback) {
+                        UIFeedback.showToast({
+                            title: "Claim Failed",
+                            message: data.message || "Failed to claim child. Please try again.",
+                            variant: "error"
+                        });
+                    } else {
+                        resultDiv.innerHTML = `<div class="alert alert-error">${data.message}</div>`;
+                    }
                 }
             } catch (error) {
-                resultDiv.innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
+                if (window.UIFeedback) {
+                    UIFeedback.showToast({
+                        title: "Error",
+                        message: error.message || "An error occurred while claiming the child.",
+                        variant: "error"
+                    });
+                } else {
+                    resultDiv.innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
+                }
             }
         }
     </script>

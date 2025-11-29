@@ -1,4 +1,8 @@
 <?php
+// Restore session from JWT token if session expired
+require_once __DIR__ . '/../../../php/supabase/shared/restore_session_from_jwt.php';
+restore_session_from_jwt();
+
 if (!isset($_SESSION['super_admin_id'])) {
     header("Location: login");
     exit();
@@ -41,7 +45,7 @@ $user_fullname = trim((($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ??
                 <img class="user-avatar" alt="User avatar" src="<?php echo htmlspecialchars($headerProfileImg); ?>" />
                 <span class="user-meta">
                     <span class="user-name"><?php echo htmlspecialchars($user_fullname); ?></span>
-                    <span class="user-role">Super Admin</span>
+                    <span class="user-role">Admin</span>
                 </span>
                 <span class="icon-dropdown material-symbols-rounded" aria-hidden="true">expand_more</span>
             </button>
@@ -52,7 +56,7 @@ $user_fullname = trim((($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ??
                     </div>
                     <div class="info">
                         <h3 class="name"><?php echo htmlspecialchars($user_fullname); ?></h3>
-                        <p class="role">Super Admin</p>
+                        <p class="role">Admin</p>
                         <p class="email"><?php echo $emailDisplay; ?></p>
 
                     </div>

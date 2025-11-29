@@ -1,56 +1,158 @@
-// Midwife Management JavaScript
+const MIDWIFE_LIMIT = 10;
+let currentMidwifePage = 1;
 
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", function () {
-  getMidwives();
+	initMidwifePager();
+	setupMidwifeSearchHandlers();
+	getMidwives(1);
 });
 
 // Fetch and display Midwives (reusing from home.js)
-async function getMidwives() {
-  try {
-    // const response = await fetch("php/mysql/admin/show_midwives.php");
-    const response = await fetch("php/supabase/admin/show_midwives.php");
-    const data = await response.json();
+async function getMidwives(page = 1) {
+	try {
+		const tbody = document.querySelector("#midwivesTableBody");
+		if (tbody) {
+			tbody.innerHTML =
+				'<tr class="data-table__message-row loading"><td colspan="12">Loading midwives...</td></tr>';
+		}
 
-    const tbody = document.querySelector("#midwivesTableBody");
-    tbody.innerHTML = "";
+		const searchInput = document.getElementById("searchMidwives");
+		const searchTerm = searchInput ? searchInput.value.trim() : "";
+		const params = new URLSearchParams({
+			page,
+			limit: MIDWIFE_LIMIT,
+		});
+		if (searchTerm) params.append("search", searchTerm);
 
-    for (const midwife of data) {
-      tbody.innerHTML += `<tr>
-				<td class="checkbox-cell"><input type="checkbox" class="midwife-checkbox" value="${
-          midwife.midwife_id
-        }"></td>
+		const response = await fetch(
+			`php/supabase/superadmin/list_midwives.php?${params.toString()}`
+		);
+		const result = await response.json();
+
+		if (result.status !== "success") {
+			throw new Error(result.message || "Failed to load midwives");
+		}
+
+		const data = Array.isArray(result.data) ? result.data : [];
+		const total = result.total || 0;
+
+		if (total > 0 && data.length === 0 && page > 1) {
+			getMidwives(page - 1);
+			return;
+		}
+
+		tbody.innerHTML = "";
+
+		if (!data.length) {
+			tbody.innerHTML =
+				'<tr class="data-table__message-row"><td colspan="12">No midwives found.</td></tr>';
+		} else {
+			for (const midwife of data) {
+				tbody.innerHTML += `<tr>
+				<td class="checkbox-cell"><input type="checkbox" class="midwife-checkbox" value="${midwife.midwife_id}"></td>
 				<td>${midwife.midwife_id}</td>
 				<td>${midwife.fname}</td>
 				<td>${midwife.lname}</td>
 				<td>${midwife.email}</td>
-				<td>${midwife.phone_number}</td>
+				<td>${midwife.phone_number || ""}</td>
 				<td>${midwife.gender || ""}</td>
 				<td>${midwife.place || ""}</td>
-				<td>${midwife.permissions}</td>
+				<td>${midwife.permissions || ""}</td>
 				<td>${midwife.Approve ? "Yes" : "No"}</td>
-				<td>${midwife.created_at}</td>
+				<td>${formatDateShort(midwife.created_at)}</td>
 				<td class="actions-cell">
-					<button onclick="editMidwife('${
-            midwife.midwife_id
-          }')" class="action-icon-btn" title="Edit" aria-label="Edit user ${
-        midwife.midwife_id
-      }">
+					<button onclick="editMidwife('${midwife.midwife_id}')" class="action-icon-btn" title="Edit" aria-label="Edit user ${midwife.midwife_id}">
 						<span class="material-symbols-rounded">edit</span>
 					</button>
-					<button onclick="deleteMidwife('${
-            midwife.midwife_id
-          }')" class="action-icon-btn" title="Delete" aria-label="Delete user ${
-        midwife.midwife_id
-      }">
+					<button onclick="deleteMidwife('${midwife.midwife_id}')" class="action-icon-btn" title="Delete" aria-label="Delete user ${midwife.midwife_id}">
 						<span class="material-symbols-rounded">delete</span>
 					</button>
 				</td>
 			</tr>`;
-    }
-  } catch (error) {
-    console.error("Error fetching midwives:", error);
-  }
+			}
+		}
+
+		currentMidwifePage = result.page || page;
+		updateMidwifePager({
+			page: currentMidwifePage,
+			limit: result.limit || MIDWIFE_LIMIT,
+			total,
+			hasMore: result.has_more || false,
+		});
+	} catch (error) {
+		console.error("Error fetching midwives:", error);
+		const tbody = document.querySelector("#midwivesTableBody");
+		if (tbody) {
+			tbody.innerHTML =
+				'<tr class="data-table__message-row error"><td colspan="12">Failed to load midwives.</td></tr>';
+		}
+		updateMidwifePager({
+			page: 1,
+			limit: MIDWIFE_LIMIT,
+			total: 0,
+			hasMore: false,
+		});
+	}
+}
+
+function initMidwifePager() {
+	const prevBtn = document.getElementById("midwivesPrevBtn");
+	const nextBtn = document.getElementById("midwivesNextBtn");
+	if (prevBtn) {
+		prevBtn.addEventListener("click", () => {
+			const page = parseInt(prevBtn.dataset.page || "1", 10);
+			if (page > 1) getMidwives(page - 1);
+		});
+	}
+	if (nextBtn) {
+		nextBtn.addEventListener("click", () => {
+			const page = parseInt(nextBtn.dataset.page || "1", 10);
+			getMidwives(page + 1);
+		});
+	}
+}
+
+function updateMidwifePager({ page, limit, total, hasMore }) {
+	const prevBtn = document.getElementById("midwivesPrevBtn");
+	const nextBtn = document.getElementById("midwivesNextBtn");
+	const info = document.getElementById("midwivesPageInfo");
+	if (!prevBtn || !nextBtn || !info) return;
+
+	const start = total === 0 ? 0 : (page - 1) * limit + 1;
+	const end = total === 0 ? 0 : Math.min(page * limit, total);
+	info.textContent = `Showing ${start}-${end} of ${total}`;
+	prevBtn.disabled = page <= 1;
+	nextBtn.disabled = !hasMore;
+	prevBtn.dataset.page = String(page);
+	nextBtn.dataset.page = String(page);
+}
+
+function setupMidwifeSearchHandlers() {
+	const input = document.getElementById("searchMidwives");
+	if (!input) return;
+	input.addEventListener("keydown", (e) => {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			getMidwives(1);
+		}
+	});
+	input.addEventListener("input", () => {
+		if (!input.value.trim()) {
+			getMidwives(1);
+		}
+	});
+}
+
+function formatDateShort(dateStr) {
+	if (!dateStr) return "";
+	const date = new Date(dateStr);
+	if (isNaN(date.getTime())) return dateStr;
+	return date.toLocaleDateString("en-PH", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	});
 }
 
 // Toggle all Midwife checkboxes
@@ -246,7 +348,7 @@ async function updateMidwife() {
     if (data.status === "success") {
       Swal.fire("Success!", "Midwife updated successfully", "success");
       cancelEditMidwife();
-      getMidwives();
+      getMidwives(currentMidwifePage);
     } else {
       Swal.fire("Error!", data.message, "error");
     }
@@ -292,7 +394,7 @@ async function deleteMidwife(midwife_id) {
       const data = await response.json();
       if (data.status === "success") {
         Swal.fire("Deleted!", "Midwife has been deleted.", "success");
-        getMidwives();
+        getMidwives(currentMidwifePage);
       } else {
         Swal.fire("Error!", data.message, "error");
       }
@@ -343,7 +445,7 @@ async function deleteSelectedMidwives() {
         `${selectedBoxes.length} midwife(s) deleted successfully`,
         "success"
       );
-      getMidwives();
+      getMidwives(currentMidwifePage);
     } catch (error) {
       console.error("Error deleting midwives:", error);
       Swal.fire("Error!", "Failed to delete midwives", "error");

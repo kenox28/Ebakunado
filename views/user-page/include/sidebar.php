@@ -1,6 +1,18 @@
 <?php
 // Determine which page is currently loaded
 $currentPage = basename($_SERVER['PHP_SELF']);
+require_once __DIR__ . '/../../../php/supabase/shared/restore_session_from_jwt.php';
+restore_session_from_jwt();
+// Get user information from session
+$user_id = $_SESSION['user_id'] ?? '';
+$fname = $_SESSION['fname'] ?? 'User';
+$lname = $_SESSION['lname'] ?? '';
+$email = $_SESSION['email'] ?? '';
+$phone = $_SESSION['phone_number'] ?? '';
+$noprofile = $_SESSION['profileimg'] ?? '';
+$gender = $_SESSION['gender'] ?? '';
+$place = $_SESSION['place'] ?? '';
+$user_fname = $_SESSION['fname'] ?? '';
 ?>
 <aside class="sidebar" id="sideNav">
     <nav class="sidebar-nav">
@@ -13,7 +25,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </div>
             <div class="brand-text-block">
                 <h1 class="brand-name">eBakunado</h1>
-                <h2 class="brand-tagline">Immunization Data Management</h2>
             </div>
         </div>
 
@@ -58,7 +69,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <div class="profile-avatar-container">
                 <img
                     class="profile-avatar"
-                    src="<?php echo !empty($noprofile) ? htmlspecialchars($noprofile) : 'assets/images/user-profile.png'; ?>"
+                    src="<?php echo !empty($noprofile) ? htmlspecialchars($noprofile) : 'assets/images/user-profile.png?v=1.0.1'; ?>"
                     alt="User Profile" />
             </div>
             <div class="profile-text-block">

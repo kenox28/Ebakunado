@@ -1,10 +1,15 @@
 <?php
-session_start();
+// Start output buffering to prevent any output before JSON
+ob_start();
 
+// Set JSON header first
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
+
+// Start session with error suppression to handle permission issues
+@session_start();
 
 // Include database helper
 include "../../../database/DatabaseHelper.php";
@@ -33,10 +38,14 @@ if (isset($_COOKIE['jwt_token'])) {
 session_unset();
 session_destroy();
 
+// Clear output buffer and return success response
+ob_clean();
+
 echo json_encode([
     'status' => 'success', 
     'message' => 'Super Admin logged out successfully',
     'clear_token' => true // Signal to frontend to clear localStorage
 ]);
+exit();
 ?>
 

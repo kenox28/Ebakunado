@@ -96,16 +96,31 @@ try {
         error_log("ERROR: Could not retrieve current user data from " . $user_type . " table for ID: $user_id");
     }
     
-    // Prepare update data
+    // Prepare update data - only include fields that are provided (not empty)
+    // This prevents empty strings from overwriting existing values
     $updateData = [
-        'fname' => $fname,
-        'lname' => $lname,
-        'email' => $email,
-        'phone_number' => $phone_number,
-        'gender' => $gender,
-        'place' => $place,
         'updated' => date('c')
     ];
+    
+    // Only add fields to update if they are provided and not empty
+    if (!empty($fname)) {
+        $updateData['fname'] = $fname;
+    }
+    if (!empty($lname)) {
+        $updateData['lname'] = $lname;
+    }
+    if (!empty($email)) {
+        $updateData['email'] = $email;
+    }
+    if (!empty($phone_number)) {
+        $updateData['phone_number'] = $phone_number;
+    }
+    if (!empty($gender)) {
+        $updateData['gender'] = $gender;
+    }
+    if (!empty($place)) {
+        $updateData['place'] = $place;
+    }
     
     // Handle password change if provided
     if (!empty($current_password) && !empty($new_password) && !empty($confirm_password)) {
@@ -162,16 +177,31 @@ try {
     if ($result !== false) {
         // If user exists in users table, sync the update
         if ($userExistsInUsersTable && $userUserId) {
-            // Prepare update data for users table (same fields but different column names)
+            // Prepare update data for users table - only sync fields that were actually updated
+            // Copy all fields from $updateData except 'pass' (users table uses 'passw')
             $usersUpdateData = [
-                'fname' => $fname,
-                'lname' => $lname,
-                'email' => $email,
-                'phone_number' => $phone_number,
-                'gender' => $gender,
-                'place' => $place,
                 'updated' => date('c')
             ];
+            
+            // Only sync fields that were in the update
+            if (isset($updateData['fname'])) {
+                $usersUpdateData['fname'] = $updateData['fname'];
+            }
+            if (isset($updateData['lname'])) {
+                $usersUpdateData['lname'] = $updateData['lname'];
+            }
+            if (isset($updateData['email'])) {
+                $usersUpdateData['email'] = $updateData['email'];
+            }
+            if (isset($updateData['phone_number'])) {
+                $usersUpdateData['phone_number'] = $updateData['phone_number'];
+            }
+            if (isset($updateData['gender'])) {
+                $usersUpdateData['gender'] = $updateData['gender'];
+            }
+            if (isset($updateData['place'])) {
+                $usersUpdateData['place'] = $updateData['place'];
+            }
             
             // If password was changed, also update it in users table
             if (isset($updateData['pass']) && isset($updateData['salt'])) {
@@ -194,11 +224,19 @@ try {
             error_log("Skipping users table sync - user not found. userExistsInUsersTable: " . ($userExistsInUsersTable ? 'true' : 'false') . ", userUserId: " . ($userUserId ?? 'null'));
         }
         
-        // Update session data
-        $_SESSION['fname'] = $fname;
-        $_SESSION['lname'] = $lname;
-        $_SESSION['email'] = $email;
-        $_SESSION['phone_number'] = $phone_number;
+        // Update session data - only update fields that were actually changed
+        if (isset($updateData['fname'])) {
+            $_SESSION['fname'] = $updateData['fname'];
+        }
+        if (isset($updateData['lname'])) {
+            $_SESSION['lname'] = $updateData['lname'];
+        }
+        if (isset($updateData['email'])) {
+            $_SESSION['email'] = $updateData['email'];
+        }
+        if (isset($updateData['phone_number'])) {
+            $_SESSION['phone_number'] = $updateData['phone_number'];
+        }
         
         // Determine success message based on what was updated
         $updateMessage = 'Profile updated successfully';
@@ -216,18 +254,31 @@ try {
             $updateMessage = 'Place updated successfully';
         }
         
-        // Prepare response
+        // Prepare response - only include fields that were actually updated
+        $responseData = [];
+        if (isset($updateData['fname'])) {
+            $responseData['fname'] = $updateData['fname'];
+        }
+        if (isset($updateData['lname'])) {
+            $responseData['lname'] = $updateData['lname'];
+        }
+        if (isset($updateData['email'])) {
+            $responseData['email'] = $updateData['email'];
+        }
+        if (isset($updateData['phone_number'])) {
+            $responseData['phone_number'] = $updateData['phone_number'];
+        }
+        if (isset($updateData['gender'])) {
+            $responseData['gender'] = $updateData['gender'];
+        }
+        if (isset($updateData['place'])) {
+            $responseData['place'] = $updateData['place'];
+        }
+        
         $response = [
             'status' => 'success',
             'message' => $updateMessage,
-            'data' => [
-                'fname' => $fname,
-                'lname' => $lname,
-                'email' => $email,
-                'phone_number' => $phone_number,
-                'gender' => $gender,
-                'place' => $place
-            ]
+            'data' => $responseData
         ];
         
         // Only include debug info in development (optional)

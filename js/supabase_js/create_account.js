@@ -58,7 +58,7 @@ const Feedback = {
 // Fetch CSRF token from server
 async function generateCSRFToken() {
 	try {
-		const response = await fetch("../php/supabase/generate_csrf.php");
+		const response = await fetch("php/supabase/generate_csrf.php");
 		const data = await response.json();
 		document.getElementById("csrf_token").value = data.csrf_token;
 	} catch (error) {
@@ -93,7 +93,7 @@ async function sendOTPAutomatically(phoneNumber) {
 		const formData = new FormData();
 		formData.append("phone_number", phoneNumber);
 
-		const response = await fetch("../php/supabase/send_otp.php", {
+		const response = await fetch("php/supabase/send_otp.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -208,7 +208,7 @@ async function showOTPPopup() {
 				const formData = new FormData();
 				formData.append("otp", otpCode);
 
-				const response = await fetch("../php/supabase/verify_otp.php", {
+				const response = await fetch("php/supabase/verify_otp.php", {
 					method: "POST",
 					body: formData,
 				});
@@ -528,7 +528,7 @@ async function CreateFun(e) {
 	const formdata = new FormData(createForm);
 
 	try {
-		const res = await fetch("../php/supabase/create_account.php", {
+		const res = await fetch("php/supabase/create_account.php", {
 			method: "POST",
 			body: formdata,
 		});
@@ -558,7 +558,7 @@ async function CreateFun(e) {
 				confirmText: "Continue to Login",
 				showCancel: false,
 			});
-			window.location.href = "../views/auth/login.php";
+			window.location.href = "login";
 		} else {
 			if (data.debug) {
 				console.log("Create account debug:", data.debug);
@@ -580,4 +580,3 @@ async function CreateFun(e) {
 		});
 	}
 }
-

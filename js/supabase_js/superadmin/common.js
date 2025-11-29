@@ -73,6 +73,9 @@ function clearSearch(searchInputId, tableBodyId) {
 
 // Setup search listeners
 function setupSearchListeners() {
+	const isRemote = (input) =>
+		input && input.dataset && input.dataset.remoteSearch === "true";
+
 	// Admin search
 	const adminSearch = document.getElementById("searchAdmins");
 	if (adminSearch) {
@@ -83,7 +86,7 @@ function setupSearchListeners() {
 
 	// User search
 	const userSearch = document.getElementById("searchUsers");
-	if (userSearch) {
+	if (userSearch && !isRemote(userSearch)) {
 		userSearch.addEventListener("input", function () {
 			filterTable(this.value, "usersTableBody");
 		});
@@ -91,7 +94,7 @@ function setupSearchListeners() {
 
 	// BHW search
 	const bhwSearch = document.getElementById("searchBhw");
-	if (bhwSearch) {
+	if (bhwSearch && !isRemote(bhwSearch)) {
 		bhwSearch.addEventListener("input", function () {
 			filterTable(this.value, "bhwTableBody");
 		});
@@ -99,7 +102,7 @@ function setupSearchListeners() {
 
 	// Midwives search
 	const midwivesSearch = document.getElementById("searchMidwives");
-	if (midwivesSearch) {
+	if (midwivesSearch && !isRemote(midwivesSearch)) {
 		midwivesSearch.addEventListener("input", function () {
 			filterTable(this.value, "midwivesTableBody");
 		});
@@ -115,7 +118,7 @@ function setupSearchListeners() {
 
 	// Activity logs search
 	const logsSearch = document.getElementById("searchActivityLogs");
-	if (logsSearch) {
+	if (logsSearch && !isRemote(logsSearch)) {
 		logsSearch.addEventListener("input", function () {
 			filterTable(this.value, "activityLogsTableBody");
 		});

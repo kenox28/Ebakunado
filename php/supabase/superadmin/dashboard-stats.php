@@ -13,8 +13,8 @@ try {
     $stats['admins'] = supabaseCount('admin');
     $stats['bhw'] = supabaseCount('bhw');
     $stats['midwives'] = supabaseCount('midwives');
-    $stats['locations'] = supabaseCount('locations');
-    $stats['logs'] = supabaseCount('activity_logs');
+    $logRows = supabaseSelect('activity_logs', 'id', [], null, 1000);
+    $stats['logs'] = $logRows ? count($logRows) : 0;
 
     echo json_encode(['status' => 'success', 'stats' => $stats]);
 } catch (Exception $e) {
