@@ -46,69 +46,82 @@ $user_fname = $_SESSION['fname'] ?? '';
     <?php include 'include/sidebar.php'; ?>
 
     <main>
-        <section class="section-container">
-            <h2 class="dashboard section-title">
-                <span class="material-symbols-rounded">dashboard</span>
-                Dashboard Overview
-            </h2>
-        </section>
-        <section class="dashboard-section">
-            <div class="dashboard-overview">
-                <div class="card-wrapper">
-                    <div class="card card-1">
+        <section class="dashboard-overview">
+            <div class="page-header">
+                <h1 class="page-title">Dashboard Overview</h1>
+                <p class="page-subtitle">Welcome, <?php echo htmlspecialchars(trim($fname . ' ' . $lname)); ?>! Parent Dashboard – Track and monitor your child's immunization records with ease.</p>
+            </div>
+
+            <div class="card-wrapper">
+                <div class="card card-1">
+                    <div class="card-top">
+                        <div class="card-info">
+                            <p class="card-title">Total Children</p>
+                            <p class="card-number" id="totalChildren">0</p>
+                        </div>
                         <div class="card-icon">
                             <span class="material-symbols-rounded">child_care</span>
                         </div>
-                        <div class="card-info">
-                            <p class="card-number" id="totalChildren">0</p>
-                            <p class="card-title">Total Children</p>
-                            <a class="card-link" href="#">
-                                <span class="material-symbols-rounded">visibility</span>
-                                View Details
-                            </a>
-                        </div>
                     </div>
+                    <div class="card-bottom">
+                        <a class="card-link" href="#">
+                            <span class="material-symbols-rounded">visibility</span>
+                            View Details
+                        </a>
+                    </div>
+                </div>
 
-                    <div class="card card-2">
+                <div class="card card-2">
+                    <div class="card-top">
+                        <div class="card-info">
+                            <p class="card-title">Approved CHR Requests</p>
+                            <p class="card-number" id="approvedChr">0</p>
+                        </div>
                         <div class="card-icon">
                             <span class="material-symbols-rounded">hourglass_top</span>
                         </div>
-                        <div class="card-info">
-                            <p class="card-number" id="approvedChr">0</p>
-                            <p class="card-title">Approved CHR Requests</p>
-                            <a class="card-link" href="#">
-                                <span class="material-symbols-rounded">visibility</span>
-                                View Details
-                            </a>
-                        </div>
                     </div>
+                    <div class="card-bottom">
+                        <a class="card-link" href="#">
+                            <span class="material-symbols-rounded">visibility</span>
+                            View Details
+                        </a>
+                    </div>
+                </div>
 
-                    <div class="card card-3">
+                <div class="card card-3">
+                    <div class="card-top">
+                        <div class="card-info">
+                            <p class="card-title">Missed/Delayed Immunizations</p>
+                            <p class="card-number" id="missedCount">0</p>
+                        </div>
                         <div class="card-icon">
                             <span class="material-symbols-rounded">warning</span>
                         </div>
-                        <div class="card-info">
-                            <p class="card-number" id="missedCount">0</p>
-                            <p class="card-title">Missed/Delayed Immunizations</p>
-                            <a class="card-link" href="#">
-                                <span class="material-symbols-rounded">visibility</span>
-                                View Details
-                            </a>
-                        </div>
                     </div>
+                    <div class="card-bottom">
+                        <a class="card-link" href="#">
+                            <span class="material-symbols-rounded">visibility</span>
+                            View Details
+                        </a>
+                    </div>
+                </div>
 
-                    <div class="card card-4">
+                <div class="card card-4">
+                    <div class="card-top">
+                        <div class="card-info">
+                            <p class="card-title">Upcoming Schedule for Today</p>
+                            <p class="card-number" id="todaySchedule">0</p>
+                        </div>
                         <div class="card-icon">
                             <span class="material-symbols-rounded">vaccines</span>
                         </div>
-                        <div class="card-info">
-                            <p class="card-number" id="todaySchedule">0</p>
-                            <p class="card-title">Upcoming Schedule for Today</p>
-                            <a class="card-link" href="#">
-                                <span class="material-symbols-rounded">visibility</span>
-                                View Details
-                            </a>
-                        </div>
+                    </div>
+                    <div class="card-bottom">
+                        <a class="card-link" href="#">
+                            <span class="material-symbols-rounded">visibility</span>
+                            View Details
+                        </a>
                     </div>
                 </div>
             </div>
@@ -138,18 +151,18 @@ $user_fname = $_SESSION['fname'] ?? '';
             <!-- QR Modal Popup -->
             <div id="qrModal" class="qr-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
                 <div class="qr-modal-content" role="document">
-                        <div class="qr-modal-header">
-                            <h3 id="qrModalChildName" class="qr-modal-title">QR Code</h3>
-                            <button id="closeQrModal" type="button" aria-label="Close" class="qr-modal-close">
-                                <span class="material-symbols-rounded">close</span>
-                            </button>
+                    <div class="qr-modal-header">
+                        <h3 id="qrModalChildName" class="qr-modal-title">QR Code</h3>
+                        <button id="closeQrModal" type="button" aria-label="Close" class="qr-modal-close">
+                            <span class="material-symbols-rounded">close</span>
+                        </button>
+                    </div>
+                    <div class="qr-modal-body">
+                        <img id="qrModalImage" class="qr-modal-img" src="" alt="QR Code" />
+                        <div class="qr-modal-note">
+                            <span>Present this QR code at Vaccination appointments</span>
                         </div>
-                        <div class="qr-modal-body">
-                            <img id="qrModalImage" class="qr-modal-img" src="" alt="QR Code" />
-                            <div class="qr-modal-note">
-                                <span>Present this QR code at Vaccination appointments</span>
-                            </div>
-                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -382,14 +395,14 @@ $user_fname = $_SESSION['fname'] ?? '';
             });
 
             // Get approved CHR count from summary data (already loaded in parallel)
-            const approvedChr = (summaryData && summaryData.status === 'success') 
-                ? summaryData.data.approved_chr_documents || 0 
-                : 0;
+            const approvedChr = (summaryData && summaryData.status === 'success') ?
+                summaryData.data.approved_chr_documents || 0 :
+                0;
 
             // Use today's schedule count from summary if available (more accurate)
-            const todaySchedule = (summaryData && summaryData.status === 'success')
-                ? summaryData.data.upcoming_schedule_today || totalToday
-                : totalToday;
+            const todaySchedule = (summaryData && summaryData.status === 'success') ?
+                summaryData.data.upcoming_schedule_today || totalToday :
+                totalToday;
 
             // Update the stats display using skeleton helper if available
             if (typeof setDashboardCardNumbers === 'function') {

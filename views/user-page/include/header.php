@@ -79,25 +79,26 @@ $user_fname = $_SESSION['fname'] ?? '';
                 $switch_target_label = 'Midwife';
             }
         }
-        // Derive display role (append / Parent when base role is just User)
+        // Derive display role: show 'Parent' instead of generic 'User'
         if (!isset($user_role_display)) {
             $user_role_display = $user_type;
-            $lower = strtolower($user_type);
-            if ($lower === 'user' && stripos($user_type, 'parent') === false) {
-                $user_role_display = 'User / Parent';
-            } elseif ($lower === 'parent' && stripos($user_type, 'user') === false) {
-                $user_role_display = 'Parent / User';
-            } elseif (strpos($lower, 'parent') !== false && strpos($lower, 'user') !== false) {
-                // Already combined, keep as-is
-                $user_role_display = $user_type;
+            $lower = strtolower((string)$user_type);
+            // If the role is exactly 'user' or contains 'user' but not 'parent', show 'Parent'
+            if ($lower === 'user' || (strpos($lower, 'user') !== false && strpos($lower, 'parent') === false)) {
+                $user_role_display = 'Parent';
             }
+            // If the role is exactly 'parent' or already mentions parent, normalize to 'Parent'
+            elseif ($lower === 'parent' || strpos($lower, 'parent') !== false) {
+                $user_role_display = 'Parent';
+            }
+            // Otherwise leave as provided (e.g., 'BHW', 'Midwife', 'Admin')
         }
         ?>
         <div class="dropdown-root" id="profileRoot">
             <button id="profileBtn" class="profile-trigger" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="profileMenu">
                 <img class="user-avatar" alt="User avatar" src="<?php echo htmlspecialchars($headerProfileImg); ?>" />
                 <span class="user-meta">
-                    <span class="user-name"><?php echo htmlspecialchars($fname); ?></span>
+                    <span class="user-name"><?php echo htmlspecialchars($user_fullname); ?></span>
                     <span class="user-role"><?php echo htmlspecialchars($user_role_display); ?></span>
                 </span>
                 <span class="icon-dropdown material-symbols-rounded" aria-hidden="true">expand_more</span>

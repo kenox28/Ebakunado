@@ -9,7 +9,7 @@
 
 .data-table-card {
   background: var(--dt-bg);
-  /* border: 1px solid var(--dt-border); */
+/* border: 1px solid var(--dt-border); */
   border-radius: 14px;
   overflow: hidden;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
@@ -446,16 +446,13 @@ select:focus {
   border: none !important;
 } */
 
-/* Apply visible focus styles to the actual form control inside the wrapper
-   so the input itself shows the focus ring rather than the wrapper changing
-   background. This prevents the wrapper from showing a white block on focus. */
-.input-field input:focus,
+/* .input-field input:focus,
 .input-field select:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(0, 108, 53, 0.08);
   background: #ffffff;
   border-radius: 6px;
-}
+} */
 
 /* ----------------------------------------- */
 

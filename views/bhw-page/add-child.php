@@ -142,6 +142,16 @@ if ($user_types != 'midwifes') {
                     </h2>
                     <div class="form-grid">
                         <div class="form-group">
+                            <label for="date_newbornScreening">Date of Newborn Screening</label>
+                            <input type="date" id="date_newbornScreening" name="date_newbornScreening">
+                        </div>
+                        <div class="form-group">
+                            <label for="placeNewbornScreening">Place of Newborn Screening</label>
+                            <input type="text" id="placeNewbornScreening" name="placeNewbornScreening" placeholder="Enter place of newborn screening">
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
                             <label>Type of Delivery</label>
                             <div class="radio-group">
                                 <label class="radio-option"><input type="radio" name="delivery_type" value="Normal"> Normal</label>
@@ -171,17 +181,6 @@ if ($user_types != 'midwifes') {
                                     <input type="text" name="birth_attendant_others" placeholder="Specify">
                                 </label>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="date_newbornScreening">Date of Newborn Screening</label>
-                            <input type="date" id="date_newbornScreening" name="date_newbornScreening">
-                        </div>
-                        <div class="form-group">
-                            <label for="placeNewbornScreening">Place of Newborn Screening</label>
-                            <input type="text" id="placeNewbornScreening" name="placeNewbornScreening" placeholder="Enter place of newborn screening">
                         </div>
                     </div>
                 </div>

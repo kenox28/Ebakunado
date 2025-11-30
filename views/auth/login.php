@@ -82,12 +82,13 @@ if ($redirect_url) {
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Login Portal</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
 	<link rel="stylesheet" href="css/fonts.css" />
-	<link rel="stylesheet" href="css/modals.css" />
 	<link rel="stylesheet" href="css/variables.css" />
+	<link rel="stylesheet" href="css/modals.css?v=1.0.1" />
 	<link rel="stylesheet" href="css/login-style.css?v=1.0.3" />
-	<link rel="stylesheet" href="css/queries.css?v=1.0.1" />
+	<link rel="stylesheet" href="css/queries.css?v=1.0.2" />
 	<style>
 		/* Forgot Password Form Styling */
 		#forgotPasswordForm {
@@ -123,7 +124,6 @@ if ($redirect_url) {
 			to { opacity: 1; transform: translateY(0); }
 		}
 	</style>
-	<title>Health Worker Portal</title>
 </head>
 
 <body class="page-login">
@@ -155,20 +155,20 @@ if ($redirect_url) {
 			<!-- Right Side -->
 			<div class="auth-right">
 				<header class="login-header">
-					<h1 class="portal-title">Health Worker Portal</h1>
+					<h1 class="portal-title">Welcome to eBakunado</h1>
+					<h2 class="form-title">Login to your account</h2>
 				</header>
 				<form class="login-form" action="#" id="LoginForm">
-					<h2 class="form-title">Sign In</h2>
 					<div class="input-group">
 						<input type="hidden" name="csrf_token" id="csrf_token" value="" />
-						<label class="input-label" for="mobile_number">Mobile No.</label>
+						<label class="input-label" for="Email_number">Email or Phone Number</label>
 						<input
 							class="form-input"
 							type="text"
 							id="Email_number"
 							name="Email_number"
 							required
-							placeholder="+63 9XX XXX XXXX" />
+							placeholder="Enter your email or phone number" />
 					</div>
 					<div class="input-group password-group">
 						<label class="input-label" for="password">Password</label>
@@ -191,11 +191,13 @@ if ($redirect_url) {
 							Login
 						</button>
 					</div>
+					<div class="signup-wrapper">
+						<p class="signup-text">Don't have an account?<a href="register">Create an account</a></p>
+					</div>
 					<div class="terms-wrapper">
 						<p class="terms-text">
 							By logging in, you agree to the Linao Health Center's
-							<a class="terms-link" href="#">Terms of Service</a> and
-							<a class="terms-link" href="#">Privacy Policy</a>.
+							<a class="terms-link" href="privacy-terms-linao">Privacy Policy & Terms of Service</a>.
 						</p>
 					</div>
 				</form>

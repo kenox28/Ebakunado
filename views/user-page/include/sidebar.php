@@ -1,6 +1,32 @@
 <?php
-// Determine which page is currently loaded
-$currentPage = basename($_SERVER['PHP_SELF']);
+// Determine which page/route is currently loaded (supports routed URLs)
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+// Remove query string
+if (($pos = strpos($requestUri, '?')) !== false) {
+    $requestUri = substr($requestUri, 0, $pos);
+}
+// Normalize and strip base path if app is hosted in a subdirectory
+$basePath = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
+if ($basePath !== '/' && $basePath !== '\\' && $basePath !== '.' && !empty($basePath)) {
+    $basePath = '/' . trim($basePath, '/');
+    if (!empty($basePath) && strpos($requestUri, $basePath) === 0) {
+        $requestUri = substr($requestUri, strlen($basePath));
+    }
+}
+$requestUri = trim($requestUri, '/');
+
+// Map the route to a page name used by the template. Fall back to PHP_SELF when not routed.
+$currentPage = basename($_SERVER['PHP_SELF']); // fallback
+if ($requestUri === '' || strpos($requestUri, 'dashboard') === 0) {
+    $currentPage = 'dashboard.php';
+} elseif (strpos($requestUri, 'children') === 0 || strpos($requestUri, 'children-list') === 0) {
+    $currentPage = 'children-list.php';
+} elseif (strpos($requestUri, 'approved-requests') === 0) {
+    $currentPage = 'approved-requests.php';
+} elseif (strpos($requestUri, 'add-child') === 0) {
+    $currentPage = 'add-child.php';
+}
+
 require_once __DIR__ . '/../../../php/supabase/shared/restore_session_from_jwt.php';
 restore_session_from_jwt();
 // Get user information from session
@@ -29,13 +55,20 @@ $user_fname = $_SESSION['fname'] ?? '';
         </div>
 
         <div class="sidebar-section">
-            <h2 class="sidebar-section-title">Main Menu</h2>
             <ul class="sidebar-menu">
                 <!-- Dashboard -->
                 <li class="sidebar-menu-item<?php echo $currentPage === 'dashboard.php' ? ' active' : ''; ?>">
                     <a href="dashboard" class="menu-link">
                         <span class="menu-icon material-symbols-rounded">dashboard</span>
                         <span class="menu-label">Dashboard</span>
+                    </a>
+                </li>
+
+                <!-- Add Child -->
+                <li class="sidebar-menu-item<?php echo $currentPage === 'add-child.php' ? ' active' : ''; ?>">
+                    <a href="add-child" class="menu-link">
+                        <span class="menu-icon material-symbols-rounded">add_circle</span>
+                        <span class="menu-label">Add Child</span>
                     </a>
                 </li>
 
@@ -54,28 +87,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                         <span class="menu-label">Approved Requests</span>
                     </a>
                 </li>
-                
-                <!-- Add Child -->
-                <li class="sidebar-menu-item<?php echo $currentPage === 'add-child.php' ? ' active' : ''; ?>">
-                    <a href="add-child" class="menu-link">
-                        <span class="menu-icon material-symbols-rounded">add_circle</span>
-                        <span class="menu-label">Add Child</span>
-                    </a>
-                </li>
             </ul>
-        </div>
-
-        <div class="sidebar-profile">
-            <div class="profile-avatar-container">
-                <img
-                    class="profile-avatar"
-                    src="<?php echo !empty($noprofile) ? htmlspecialchars($noprofile) : 'assets/images/user-profile.png?v=1.0.1'; ?>"
-                    alt="User Profile" />
-            </div>
-            <div class="profile-text-block">
-                <h2 class="profile-name"><?php echo htmlspecialchars($fname . ' ' . $lname); ?></h2>
-                <h3 class="profile-role">Parent</h3>
-            </div>
         </div>
     </nav>
 </aside>
