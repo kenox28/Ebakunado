@@ -22,12 +22,12 @@ if ($user_types != 'midwifes') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Child</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.2" />
     <link rel="stylesheet" href="css/header.css?v=1.0.1" />
     <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
 
     <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/modals.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/modals.css?v=1.0.2" />
     <link rel="stylesheet" href="css/bhw/add-child.css?v=1.0.4" />
 </head>
 

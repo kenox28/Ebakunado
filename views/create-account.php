@@ -160,7 +160,7 @@ session_start();
             <div class="input-group">
               <label class="input-label" for="gender">Gender</label>
               <select class="form-input" id="gender" name="gender">
-                <option value="" disabled selected hidden>Select gender</option>
+                <option value="" disabled selected>Select gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
@@ -311,7 +311,7 @@ session_start();
               </div>
               <label class="checkbox">
                 <input type="checkbox" id="agree_terms" name="agree_terms" value="yes" required />
-                <span>I agree to the Privacy Policy and Terms of Service of Linao Health Center</span>
+                <span>I agree to the Privacy Policy & Terms of Service of Linao Health Center</span>
               </label>
             </div>
 

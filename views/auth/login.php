@@ -87,7 +87,7 @@ if ($redirect_url) {
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/variables.css" />
 	<link rel="stylesheet" href="css/modals.css?v=1.0.1" />
-	<link rel="stylesheet" href="css/login-style.css?v=1.0.3" />
+	<link rel="stylesheet" href="css/login-style.css?v=1.0.4" />
 	<link rel="stylesheet" href="css/queries.css?v=1.0.2" />
 	<style>
 		/* Forgot Password Form Styling */

@@ -359,7 +359,7 @@ $user_fname = $_SESSION['fname'] ?? '';
 
         const confirmResult = await UIFeedback.showModal({
             title: "Logout",
-            message: "are you sure you want to logout?",
+            message: "Are you sure you want to logout?",
             icon: "warning",
             confirmText: "Yes, logout",
             cancelText: "Cancel",
