@@ -41,6 +41,7 @@ if ($user_id) {
 
         <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
         <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
+        <link rel="stylesheet" href="css/modals.css?v=1.0.5" />
         <link rel="stylesheet" href="css/bhw/immunization-style.css?v=1.0.2">
         <link rel="stylesheet" href="css/bhw/growth-assessment.css?v=1.0.1">
         <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.4">
@@ -307,6 +308,9 @@ if ($user_id) {
     <script src="js/header-handler/profile-menu.js" defer></script>
     <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="js/utils/skeleton-loading.js" defer></script>
+    <script src="js/utils/ui-feedback.js?v=1.0.2" defer></script>
+
+    
     <script>
         // spinner CSS (scoped)
         const style = document.createElement('style');
@@ -737,6 +741,14 @@ if ($user_id) {
                 formData.append('update_td_dose_date', tdDoseInput.value);
             }
 
+            // Show loading indicator
+            const confirmBtn = document.querySelector('.save-btn');
+            const originalBtnText = confirmBtn ? confirmBtn.textContent : '';
+            if (confirmBtn) {
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = 'Saving...';
+            }
+
             try {
                 const res = await fetch('php/supabase/bhw/save_immunization.php', {
                     method: 'POST',
@@ -744,26 +756,158 @@ if ($user_id) {
                 });
 
                 const responseText = await res.text();
+                console.log('Server response:', responseText); // Debug log
                 let data;
                 try {
                     data = JSON.parse(responseText);
                 } catch (parseErr) {
-                    data = {
-                        status: 'error',
-                        message: 'Invalid server response'
-                    };
+                    console.error('JSON parse error:', parseErr, 'Response:', responseText); // Debug log
+                    if (confirmBtn) {
+                        confirmBtn.disabled = false;
+                        confirmBtn.textContent = originalBtnText;
+                    }
+                    // Show error toast for invalid response
+                    if (window.UIFeedback && window.UIFeedback.showToast) {
+                        window.UIFeedback.showToast({
+                            title: 'Error',
+                            message: 'Invalid server response. Please try again or contact support.',
+                            variant: 'error',
+                            duration: 5000
+                        });
+                    } else {
+                        alert('Invalid server response. Please check console for details.');
+                    }
+                    console.error('Full response:', responseText);
+                    return;
                 }
 
                 if (data.status === 'success') {
                     closeImmunizationForm();
                     await fetchChildHealthRecord();
                     applyFilters();
-                    alert('Immunization saved successfully');
+                    
+                    // Show success toast
+                    if (window.UIFeedback && window.UIFeedback.showToast) {
+                        window.UIFeedback.showToast({
+                            title: 'Success',
+                            message: 'Immunization recorded successfully',
+                            variant: 'success',
+                            duration: 3000
+                        });
+                    } else {
+                        alert('Immunization saved successfully');
+                    }
                 } else {
-                    alert('Save failed: ' + (data.message || 'Unknown error'));
+                    if (confirmBtn) {
+                        confirmBtn.disabled = false;
+                        confirmBtn.textContent = originalBtnText;
+                    }
+                    
+                    // Show error modal for validation errors
+                    if (window.UIFeedback && window.UIFeedback.showModal) {
+                        const errorMessage = data.message || 'Unknown error';
+                        const isPrerequisiteError = errorMessage.includes('Missing prerequisite') || 
+                                                   errorMessage.includes('Missed vaccines') ||
+                                                   errorMessage.includes('Cannot record');
+                        
+                        if (isPrerequisiteError) {
+                            // Extract missing vaccines from message - handle both formats
+                            let missingVaccinesList = [];
+                            
+                            // Try to extract from "Missing or incomplete prerequisites: ..."
+                            const missingMatch = errorMessage.match(/Missing or incomplete prerequisites[^:]+:\s*([^.]+)/i);
+                            if (missingMatch) {
+                                const vaccinesStr = missingMatch[1].trim();
+                                // Split by comma and clean up each vaccine name
+                                missingVaccinesList = vaccinesStr.split(',').map(v => {
+                                    // Remove "(Status: ...)" part if present
+                                    const cleaned = v.trim().replace(/\s*\(Status:\s*[^)]+\)/gi, '').trim();
+                                    return cleaned;
+                                }).filter(v => v.length > 0);
+                            }
+                            
+                            // Try to extract from "Missed vaccines: ..."
+                            const missedMatch = errorMessage.match(/Missed vaccines[^:]+:\s*([^.]+)/i);
+                            if (missedMatch && missingVaccinesList.length === 0) {
+                                const vaccinesStr = missedMatch[1].trim();
+                                missingVaccinesList = vaccinesStr.split(',').map(v => v.trim()).filter(v => v.length > 0);
+                            }
+                            
+                            // Try to extract from "Missing prerequisite vaccines: ..."
+                            const prereqMatch = errorMessage.match(/Missing prerequisite vaccines[^:]+:\s*([^.]+)/i);
+                            if (prereqMatch && missingVaccinesList.length === 0) {
+                                const vaccinesStr = prereqMatch[1].trim();
+                                missingVaccinesList = vaccinesStr.split(',').map(v => v.trim()).filter(v => v.length > 0);
+                            }
+                            
+                            // Temporarily hide immunization form overlay so error modal appears on top
+                            const immunizationOverlay = document.getElementById('immunizationOverlay');
+                            const wasVisible = immunizationOverlay && (immunizationOverlay.style.display === 'flex' || window.getComputedStyle(immunizationOverlay).display === 'flex');
+                            
+                            // Hide the form overlay temporarily so error modal appears clearly
+                            if (immunizationOverlay && wasVisible) {
+                                immunizationOverlay.style.display = 'none';
+                            }
+                            
+                            // Show detailed error modal
+                            window.UIFeedback.showModal({
+                                title: 'Cannot Record Vaccine',
+                                message: 'The following prerequisite vaccines must be completed first:',
+                                html: missingVaccinesList.length > 0 ? `<div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin-top: 16px; border-left: 4px solid #ffc107;">
+                                    <div style="display: flex; flex-direction: column; gap: 0;">
+                                        ${missingVaccinesList.map((v, index) => `
+                                            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 12px; background: rgba(255,255,255,0.7); border-bottom: ${index < missingVaccinesList.length - 1 ? '1px solid rgba(212, 175, 55, 0.3)' : 'none'};">
+                                                <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #ffc107; color: #856404; border-radius: 50%; font-weight: 700; font-size: 1.4rem; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${index + 1}</span>
+                                                <span style="color: #856404; font-weight: 500; flex: 1; line-height: 1.5; font-size: 1.3rem;">${v}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                                <p style="margin-top: 18px; color: #6c757d; font-size: 0.95em; text-align: center;">
+                                    Please record all previous vaccines in order before proceeding.
+                                </p>` : `<p style="color: #856404; padding: 12px; background: #fff3cd; border-radius: 6px;">${errorMessage}</p>`,
+                                icon: 'error',
+                                confirmText: 'OK',
+                                showCancel: false,
+                                showConfirm: true,
+                                onClose: () => {
+                                    // Show the form overlay again when error modal closes
+                                    if (immunizationOverlay && wasVisible) {
+                                        immunizationOverlay.style.display = 'flex';
+                                    }
+                                }
+                            });
+                        } else {
+                            // Show simple error toast
+                            window.UIFeedback.showToast({
+                                title: 'Error',
+                                message: errorMessage,
+                                variant: 'error',
+                                duration: 5000
+                            });
+                        }
+                    } else {
+                        alert('Save failed: ' + (data.message || 'Unknown error'));
+                    }
                 }
             } catch (err) {
-                alert('Network error saving immunization: ' + err.message);
+                console.error('Network error:', err); // Debug log
+                if (confirmBtn) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = originalBtnText;
+                }
+                
+                // Show network error toast
+                if (window.UIFeedback && window.UIFeedback.showToast) {
+                    window.UIFeedback.showToast({
+                        title: 'Network Error',
+                        message: 'Failed to save immunization. Please check your connection and try again.',
+                        variant: 'error',
+                        duration: 5000
+                    });
+                } else {
+                    alert('Network error saving immunization: ' + err.message);
+                }
             }
         }
 

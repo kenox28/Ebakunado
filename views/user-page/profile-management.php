@@ -36,6 +36,7 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
     <link rel="stylesheet" href="css/notification-style.css?v=1.0.2" />
     <link rel="stylesheet" href="css/bhw/profile-management.css?v=1.0.5" />
     <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/user/responsive/profile-management.css?v=1.0.1" />
     <style>
         .password-requirements .requirement-item.met {
             color: #28a745;
@@ -99,7 +100,7 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
             <div class="profile-panels">
                 <div class="panel">
                     <div class="panel-header">
-                        <span class="material-symbols-rounded">person</span>
+                    <span class="material-symbols-rounded">person</span>
                         <span>Personal information</span>
                     </div>
                     <div class="panel-body">
@@ -138,7 +139,7 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
                                     chevron_forward
                                 </span>
                             </div>
-                        </div>
+                </div>
                         <div class="panel-row" data-field="philhealth_no" tabindex="0" role="button" aria-label="Edit PhilHealth number">
                             <div class="row-label">PhilHealth No.</div>
                             <div class="row-value" id="row-philhealth">Loading...</div>
@@ -146,8 +147,8 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
                                 <span class="material-symbols-rounded">
                                     chevron_forward
                                 </span>
-                            </div>
                         </div>
+                    </div>
                         <div class="panel-row" data-field="nhts" tabindex="0" role="button" aria-label="Edit NHTS">
                             <div class="row-label">National Household Targeting System</div>
                             <div class="row-value" id="row-nhts">Loading...</div>
@@ -182,11 +183,11 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
                                 <span class="material-symbols-rounded">
                                     chevron_forward
                                 </span>
-                            </div>
+                        </div>
+                    </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
             <!-- Modal for editing a single row -->
             <div id="editModal" class="modal-overlay" hidden>
@@ -234,11 +235,11 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
                                     <label for="modal_gender">Gender</label>
                                     <select id="modal_gender" class="form-control" data-field="gender">
                                         <option value="" disabled selected>Select gender</option>
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
                                 <div class="form-group" id="group-philhealth_no" style="display: none;">
                                     <label for="modal_philhealth_no">PhilHealth No.</label>
                                     <input type="text" id="modal_philhealth_no" class="form-control" data-field="philhealth_no" placeholder="Optional">
@@ -250,12 +251,12 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
                                         <option value="Yes">Yes</option>
                                         <option value="No">No</option>
                                     </select>
-                                </div>
+                    </div>
                                 <div id="password-fields">
                                     <div class="form-group" id="group-current_password" style="display: none;">
                                         <label for="modal_current_password">Current password</label>
                                         <input type="password" id="modal_current_password" class="form-control" data-field="current_password">
-                                    </div>
+                        </div>
                                     <div class="form-group" id="group-new_password" style="display: none;">
                                         <label for="modal_new_password">New password</label>
                                         <input type="password" id="modal_new_password" class="form-control" data-field="new_password">
@@ -264,39 +265,39 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
                                             <div class="requirement-item" id="req-length" style="display: flex; align-items: center; gap: 0.8rem; font-size: 1.2rem; color: #666; margin-bottom: 0.6rem; transition: all 0.3s ease;">
                                                 <span class="requirement-icon" style="font-size: 1.4rem; color: #999; transition: all 0.3s ease; width: 1.6rem; text-align: center;"></span>
                                                 <span class="requirement-text" style="flex: 1;">At least 8 characters</span>
-                                            </div>
+                    </div>
                                             <div class="requirement-item" id="req-uppercase" style="display: flex; align-items: center; gap: 0.8rem; font-size: 1.2rem; color: #666; margin-bottom: 0.6rem; transition: all 0.3s ease;">
                                                 <span class="requirement-icon" style="font-size: 1.4rem; color: #999; transition: all 0.3s ease; width: 1.6rem; text-align: center;"></span>
                                                 <span class="requirement-text" style="flex: 1;">1 uppercase letter</span>
-                                            </div>
+                </div>
                                             <div class="requirement-item" id="req-lowercase" style="display: flex; align-items: center; gap: 0.8rem; font-size: 1.2rem; color: #666; margin-bottom: 0.6rem; transition: all 0.3s ease;">
                                                 <span class="requirement-icon" style="font-size: 1.4rem; color: #999; transition: all 0.3s ease; width: 1.6rem; text-align: center;"></span>
                                                 <span class="requirement-text" style="flex: 1;">1 lowercase letter</span>
-                                            </div>
+                        </div>
                                             <div class="requirement-item" id="req-number" style="display: flex; align-items: center; gap: 0.8rem; font-size: 1.2rem; color: #666; margin-bottom: 0.6rem; transition: all 0.3s ease;">
                                                 <span class="requirement-icon" style="font-size: 1.4rem; color: #999; transition: all 0.3s ease; width: 1.6rem; text-align: center;"></span>
                                                 <span class="requirement-text" style="flex: 1;">1 number</span>
-                                            </div>
+                    </div>
                                             <div class="requirement-item" id="req-special" style="display: flex; align-items: center; gap: 0.8rem; font-size: 1.2rem; color: #666; margin-bottom: 0; transition: all 0.3s ease;">
                                                 <span class="requirement-icon" style="font-size: 1.4rem; color: #999; transition: all 0.3s ease; width: 1.6rem; text-align: center;"></span>
                                                 <span class="requirement-text" style="flex: 1;">1 special character</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                        </div>
+                    </div>
+                </div>
                                     <div class="form-group" id="group-confirm_password" style="display: none;">
                                         <label for="modal_confirm_password">Confirm new password</label>
                                         <input type="password" id="modal_confirm_password" class="form-control" data-field="confirm_password">
-                                    </div>
-                                </div>
                             </div>
+                        </div>
+                    </div>
                         </form>
                     </div>
                     <div class="modal-actions">
                         <button type="button" class="btn btn-secondary btn-icon" id="modalCancel">Cancel</button>
                         <button type="button" class="btn btn-primary btn-icon" id="modalSave">Save</button>
+                        </div>
                     </div>
                 </div>
-            </div>
         </section>
     </main>
 
@@ -780,7 +781,7 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
         const modalFormEl = document.getElementById('modalForm');
         if (modalFormEl) {
             modalFormEl.addEventListener('submit', async function(e) {
-                e.preventDefault();
+            e.preventDefault();
                 e.stopPropagation();
                 
                 const field = this.dataset.field;
@@ -901,7 +902,7 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
 
                 try {
                     const res = await fetch('php/supabase/users/update_profile.php', {
-                        method: 'POST',
+                    method: 'POST',
                         body: fd
                     });
 
@@ -912,13 +913,13 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
                     const data = await res.json();
                     console.log('Update response:', data);
 
-                    if (data.status === 'success') {
+                if (data.status === 'success') {
                         if (typeof UIFeedback !== 'undefined' && UIFeedback.showToast) {
-                            UIFeedback.showToast({
+                    UIFeedback.showToast({
                                 title: 'Profile Updated',
                                 message: data.message || 'Your profile has been updated successfully',
-                                variant: 'success'
-                            });
+                        variant: 'success'
+                    });
                         }
 
                         if (field === 'name') {
@@ -977,29 +978,29 @@ $user_fullname = trim(($fname ?? '') . ' ' . ($lname ?? ''));
                         }
 
                         setTimeout(() => {
-                            loadProfileData();
+                    loadProfileData();
                         }, 500);
                         
                         setTimeout(() => {
                             closeModal();
                         }, 300);
-                    } else {
+                } else {
                         if (typeof UIFeedback !== 'undefined' && UIFeedback.showToast) {
-                            UIFeedback.showToast({
+                    UIFeedback.showToast({
                                 title: 'Update Failed',
                                 message: data.message || 'Unable to update profile. Please try again.',
-                                variant: 'error'
-                            });
-                        }
+                        variant: 'error'
+                    });
+                }
                     }
                 } catch (err) {
                     console.error('Update error:', err);
                     if (typeof UIFeedback !== 'undefined' && UIFeedback.showToast) {
-                        UIFeedback.showToast({
+                UIFeedback.showToast({
                             title: 'Update Failed',
                             message: 'Network error. Please check your connection and try again.',
-                            variant: 'error'
-                        });
+                    variant: 'error'
+                });
                     }
                 } finally {
                     if (saveBtn) {

@@ -10,6 +10,369 @@ include "../../database/SupabaseConfig.php";
 include "../../database/DatabaseHelper.php";
 require_once __DIR__ . '/JWT.php';
 
+// Load PHPMailer for email notifications
+require_once __DIR__ . '/../../vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+/**
+ * Get client IP address
+ */
+function getClientIP() {
+    $ip_keys = ['HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR'];
+    foreach ($ip_keys as $key) {
+        if (array_key_exists($key, $_SERVER) === true) {
+            foreach (explode(',', $_SERVER[$key]) as $ip) {
+                $ip = trim($ip);
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
+                    return $ip;
+                }
+            }
+        }
+    }
+    return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+}
+
+/**
+ * Check if account is locked and calculate remaining lockout time
+ * Returns: ['locked' => bool, 'remaining_minutes' => int, 'lockout_duration' => int, 'expired' => bool]
+ * If lockout expired, also clears it from database
+ */
+function checkAccountLockout($user_data, $user_type) {
+    $failed_attempts = (int)($user_data['failed_attempts'] ?? 0);
+    $lockout_time = $user_data['lockout_time'] ?? null;
+    
+    // If no lockout time set, account is not locked
+    if (empty($lockout_time)) {
+        return ['locked' => false, 'remaining_minutes' => 0, 'lockout_duration' => 0, 'expired' => false];
+    }
+    
+    // Parse lockout time (handle both string and DateTime)
+    $lockout_timestamp = is_string($lockout_time) ? strtotime($lockout_time) : (is_object($lockout_time) ? $lockout_time->getTimestamp() : 0);
+    $current_timestamp = time();
+    
+    // Calculate lockout duration based on failed attempts
+    $lockout_duration = 0;
+    if ($failed_attempts >= 1 && $failed_attempts <= 5) {
+        $lockout_duration = 5 * 60; // 5 minutes in seconds
+    } elseif ($failed_attempts >= 6) {
+        $lockout_duration = 10 * 60; // 10 minutes in seconds
+    }
+    
+    // Check if lockout period has expired
+    $elapsed = $current_timestamp - $lockout_timestamp;
+    if ($elapsed >= $lockout_duration) {
+        // Lockout expired - clear it from database but keep failed_attempts count
+        $table_map = [
+            'super_admin' => 'super_admin',
+            'admin' => 'admin',
+            'bhw' => 'bhw',
+            'midwife' => 'midwives',
+            'user' => 'users'
+        ];
+        $table = $table_map[$user_type] ?? null;
+        if ($table) {
+            $id_column = null;
+            switch ($user_type) {
+                case 'super_admin':
+                    $id_column = 'super_admin_id';
+                    break;
+                case 'admin':
+                    $id_column = 'admin_id';
+                    break;
+                case 'bhw':
+                    $id_column = 'bhw_id';
+                    break;
+                case 'midwife':
+                    $id_column = 'midwife_id';
+                    break;
+                case 'user':
+                    $id_column = 'user_id';
+                    break;
+            }
+            if ($id_column && isset($user_data[$id_column])) {
+                try {
+                    supabaseUpdate($table, ['lockout_time' => null], [$id_column => $user_data[$id_column]]);
+                } catch (Exception $e) {
+                    error_log("Failed to clear expired lockout: " . $e->getMessage());
+                }
+            }
+        }
+        return ['locked' => false, 'remaining_minutes' => 0, 'lockout_duration' => 0, 'expired' => true];
+    }
+    
+    // Account is still locked
+    $remaining_seconds = $lockout_duration - $elapsed;
+    $remaining_minutes = (int)ceil($remaining_seconds / 60);
+    
+    return [
+        'locked' => true,
+        'remaining_minutes' => $remaining_minutes,
+        'lockout_duration' => $lockout_duration / 60, // in minutes
+        'expired' => false
+    ];
+}
+
+/**
+ * Calculate lockout duration in seconds based on failed attempts
+ */
+function getLockoutDuration($failed_attempts) {
+    if ($failed_attempts >= 1 && $failed_attempts <= 5) {
+        return 5 * 60; // 5 minutes
+    } elseif ($failed_attempts >= 6) {
+        return 10 * 60; // 10 minutes
+    }
+    return 0;
+}
+
+/**
+ * Update failed attempts and lockout time in database
+ */
+function updateFailedAttempts($user_data, $user_type, $ip_address) {
+    $table_map = [
+        'super_admin' => 'super_admin',
+        'admin' => 'admin',
+        'bhw' => 'bhw',
+        'midwife' => 'midwives',
+        'user' => 'users'
+    ];
+    
+    $table = $table_map[$user_type] ?? null;
+    if (!$table) {
+        return false;
+    }
+    
+    // Get ID column name
+    $id_column = null;
+    switch ($user_type) {
+        case 'super_admin':
+            $id_column = 'super_admin_id';
+            break;
+        case 'admin':
+            $id_column = 'admin_id';
+            break;
+        case 'bhw':
+            $id_column = 'bhw_id';
+            break;
+        case 'midwife':
+            $id_column = 'midwife_id';
+            break;
+        case 'user':
+            $id_column = 'user_id';
+            break;
+    }
+    
+    if (!$id_column || !isset($user_data[$id_column])) {
+        return false;
+    }
+    
+    $user_id = $user_data[$id_column];
+    $current_attempts = (int)($user_data['failed_attempts'] ?? 0);
+    $new_attempts = $current_attempts + 1;
+    
+    // Calculate lockout duration
+    $lockout_duration = getLockoutDuration($new_attempts);
+    $lockout_time = null;
+    
+    // Set lockout time if threshold reached (5th, 10th, 15th, etc.)
+    if ($new_attempts % 5 == 0 && $lockout_duration > 0) {
+        $lockout_time = date('Y-m-d H:i:s');
+    } else {
+        // Keep existing lockout time if still within lockout period
+        $existing_lockout = $user_data['lockout_time'] ?? null;
+        if (!empty($existing_lockout)) {
+            $lockout_check = checkAccountLockout($user_data, $user_type);
+            if ($lockout_check['locked']) {
+                $lockout_time = $existing_lockout; // Keep existing lockout
+            }
+        }
+    }
+    
+    // Prepare update data
+    $update_data = [
+        'failed_attempts' => $new_attempts
+    ];
+    
+    if ($lockout_time !== null) {
+        $update_data['lockout_time'] = $lockout_time;
+    }
+    
+    // Update database
+    try {
+        supabaseUpdate($table, $update_data, [$id_column => $user_id]);
+        return true;
+    } catch (Exception $e) {
+        error_log("Failed to update failed attempts: " . $e->getMessage());
+        return false;
+    }
+}
+
+/**
+ * Reset failed attempts and lockout time on successful login
+ */
+function resetFailedAttempts($user_data, $user_type) {
+    $table_map = [
+        'super_admin' => 'super_admin',
+        'admin' => 'admin',
+        'bhw' => 'bhw',
+        'midwife' => 'midwives',
+        'user' => 'users'
+    ];
+    
+    $table = $table_map[$user_type] ?? null;
+    if (!$table) {
+        return false;
+    }
+    
+    // Get ID column name
+    $id_column = null;
+    switch ($user_type) {
+        case 'super_admin':
+            $id_column = 'super_admin_id';
+            break;
+        case 'admin':
+            $id_column = 'admin_id';
+            break;
+        case 'bhw':
+            $id_column = 'bhw_id';
+            break;
+        case 'midwife':
+            $id_column = 'midwife_id';
+            break;
+        case 'user':
+            $id_column = 'user_id';
+            break;
+    }
+    
+    if (!$id_column || !isset($user_data[$id_column])) {
+        return false;
+    }
+    
+    $user_id = $user_data[$id_column];
+    
+    // Reset failed attempts and lockout time
+    $update_data = [
+        'failed_attempts' => 0,
+        'lockout_time' => null
+    ];
+    
+    try {
+        supabaseUpdate($table, $update_data, [$id_column => $user_id]);
+        return true;
+    } catch (Exception $e) {
+        error_log("Failed to reset failed attempts: " . $e->getMessage());
+        return false;
+    }
+}
+
+/**
+ * Send lockout notification email
+ */
+function sendLockoutEmail($user_data, $user_type, $failed_attempts, $lockout_duration_minutes, $ip_address) {
+    $email = $user_data['email'] ?? null;
+    if (empty($email)) {
+        return false; // No email to send to
+    }
+    
+    $fname = $user_data['fname'] ?? 'User';
+    $lname = $user_data['lname'] ?? '';
+    $full_name = trim($fname . ' ' . $lname);
+    if (empty($full_name)) {
+        $full_name = 'User';
+    }
+    
+    try {
+        $mail = new PHPMailer(true);
+        
+        // SMTP configuration
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'iquenxzx@gmail.com';
+        $mail->Password   = 'lews hdga hdvb glym';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port       = 465;
+        
+        // Recipients
+        $mail->setFrom('iquenxzx@gmail.com', 'Ebakunado System');
+        $mail->addAddress($email, $full_name);
+        
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = 'Account Locked - Security Alert | Ebakunado';
+        
+        $current_time = date('F j, Y, g:i a');
+        $user_type_label = ucfirst(str_replace('_', ' ', $user_type));
+        
+        $mail->Body = "
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background-color: #dc3545; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                .content { background-color: #f8f9fa; padding: 20px; border: 1px solid #dee2e6; border-top: none; }
+                .alert-box { background-color: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 5px; margin: 15px 0; }
+                .info-box { background-color: #e7f3ff; border: 1px solid #0d6efd; padding: 15px; border-radius: 5px; margin: 15px 0; }
+                .footer { text-align: center; padding: 20px; color: #6c757d; font-size: 12px; }
+                .highlight { color: #dc3545; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h2>🔒 Account Locked - Security Alert</h2>
+                </div>
+                <div class='content'>
+                    <p>Hello <strong>$full_name</strong>,</p>
+                    
+                    <div class='alert-box'>
+                        <p><strong>⚠️ Your account has been temporarily locked due to multiple failed login attempts.</strong></p>
+                    </div>
+                    
+                    <p>We detected <span class='highlight'>$failed_attempts failed login attempts</span> on your account. For your security, your account has been locked for <strong>$lockout_duration_minutes minutes</strong>.</p>
+                    
+                    <div class='info-box'>
+                        <h3>Login Attempt Details:</h3>
+                        <ul>
+                            <li><strong>Account Type:</strong> $user_type_label</li>
+                            <li><strong>Email:</strong> $email</li>
+                            <li><strong>Failed Attempts:</strong> $failed_attempts</li>
+                            <li><strong>Lockout Duration:</strong> $lockout_duration_minutes minutes</li>
+                            <li><strong>IP Address:</strong> $ip_address</li>
+                            <li><strong>Time:</strong> $current_time</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>What to do:</h3>
+                    <ul>
+                        <li>Wait for the lockout period to expire ($lockout_duration_minutes minutes)</li>
+                        <li>Make sure you're using the correct password</li>
+                        <li>If you forgot your password, use the 'Forgot Password' feature</li>
+                        <li>If you did not attempt to log in, please contact support immediately</li>
+                    </ul>
+                    
+                    <p><strong>Security Recommendation:</strong> If you did not attempt these logins, please change your password immediately after regaining access to your account.</p>
+                    
+                    <p>This is an automated security notification from the Ebakunado System.</p>
+                </div>
+                <div class='footer'>
+                    <p>&copy; " . date('Y') . " Linao Health Center | eBakunado System</p>
+                    <p>This is an automated message. Please do not reply to this email.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+        
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        error_log("Failed to send lockout email: " . $e->getMessage());
+        return false;
+    }
+}
+
 // Robust function to detect Flutter/mobile app requests
 function isFlutterRequest() {
     // Method 1: Check explicit source parameter
@@ -431,6 +794,22 @@ try {
         exit();
     }
 
+    // Get IP address for tracking
+    $ip_address = getClientIP();
+
+    // Check if account is locked BEFORE password verification
+    $lockout_check = checkAccountLockout($user_data, $user_type);
+    if ($lockout_check['locked']) {
+        $remaining_minutes = $lockout_check['remaining_minutes'];
+        echo json_encode([
+            "status" => "failed",
+            "message" => "Account is temporarily locked due to multiple failed login attempts. Please try again after {$remaining_minutes} minute(s).",
+            "locked" => true,
+            "remaining_minutes" => $remaining_minutes
+        ]);
+        exit();
+    }
+
     // Password verification matching your logic
     $password_valid = false;
 
@@ -466,12 +845,72 @@ try {
     }
 
     if (!$password_valid) {
+        // Increment failed attempts and set lockout if needed
+        $current_attempts = (int)($user_data['failed_attempts'] ?? 0);
+        $new_attempts = $current_attempts + 1;
+        
+        // Update failed attempts in database
+        updateFailedAttempts($user_data, $user_type, $ip_address);
+        
+        // Reload user data to get updated failed_attempts and lockout_time
+        $table_map = [
+            'super_admin' => 'super_admin',
+            'admin' => 'admin',
+            'bhw' => 'bhw',
+            'midwife' => 'midwives',
+            'user' => 'users'
+        ];
+        $table = $table_map[$user_type] ?? null;
+        if ($table) {
+            $id_column = null;
+            switch ($user_type) {
+                case 'super_admin':
+                    $id_column = 'super_admin_id';
+                    break;
+                case 'admin':
+                    $id_column = 'admin_id';
+                    break;
+                case 'bhw':
+                    $id_column = 'bhw_id';
+                    break;
+                case 'midwife':
+                    $id_column = 'midwife_id';
+                    break;
+                case 'user':
+                    $id_column = 'user_id';
+                    break;
+            }
+            if ($id_column && isset($user_data[$id_column])) {
+                $updated_user = supabaseSelect($table, '*', [$id_column => $user_data[$id_column]], null, 1);
+                if ($updated_user && count($updated_user) > 0) {
+                    $user_data = $updated_user[0];
+                }
+            }
+        }
+        
+        // Check if we just hit a lockout threshold (5th, 10th, 15th, etc.)
+        $should_send_email = ($new_attempts % 5 == 0);
+        $lockout_duration = getLockoutDuration($new_attempts);
+        
+        // Send email notification if threshold reached
+        if ($should_send_email && $lockout_duration > 0) {
+            $lockout_duration_minutes = $lockout_duration / 60;
+            sendLockoutEmail($user_data, $user_type, $new_attempts, $lockout_duration_minutes, $ip_address);
+        }
+        
+        // Prepare error message
+        $error_message = "Incorrect password. Please try again.";
+        
         echo json_encode([
             "status" => "failed",
-            "message" => "Incorrect password. Please try again."
+            "message" => $error_message,
+            "failed_attempts" => $new_attempts
         ]);
         exit();
     }
+
+    // Reset failed attempts on successful login
+    resetFailedAttempts($user_data, $user_type);
 
     // Sessions matching your original code style
     session_unset();

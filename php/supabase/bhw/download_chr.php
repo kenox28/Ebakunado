@@ -48,18 +48,46 @@ try {
     }
     $child = $childRows[0];
 
-    // Fetch immunization records (scheduled + taken)
+    // Fetch family_number, philhealth_no, and nhts from users table
+    $family_number = '';
+    $philhealth_no = '';
+    $nhts = '';
+    if (!empty($child['user_id'])) {
+        $userRows = supabaseSelect('users', 'family_number,philhealth_no,nhts', ['user_id' => $child['user_id']], null, 1);
+        if ($userRows && count($userRows) > 0) {
+            $family_number = $userRows[0]['family_number'] ?? '';
+            $philhealth_no = $userRows[0]['philhealth_no'] ?? '';
+            $nhts = $userRows[0]['nhts'] ?? '';
+        }
+    }
+    $child['family_number'] = $family_number;
+    $child['philhealth_no'] = $philhealth_no;
+    $child['nhts'] = $nhts;
+
+    // Fetch immunization records (scheduled + taken) - include all relevant fields
     $immRows = supabaseSelect('immunization_records', '*', ['baby_id' => $babyId], 'schedule_date.asc');
     $immRows = $immRows ?: [];
 
-    // Build TD (mother) data from child record
+    // Fetch Mother's TD doses from mother_tetanus_doses table using user_id
     $tdData = [
-        'dose1_date' => $child['mother_td_dose1_date'] ?? '',
-        'dose2_date' => $child['teensr2'] ?? ($child['mother_td_dose2_date'] ?? ''),
-        'dose3_date' => $child['mother_td_dose3_date'] ?? '',
-        'dose4_date' => $child['mother_td_dose4_date'] ?? '',
-        'dose5_date' => $child['mother_td_dose5_date'] ?? '',
+        'dose1_date' => '',
+        'dose2_date' => '',
+        'dose3_date' => '',
+        'dose4_date' => '',
+        'dose5_date' => '',
     ];
+    if (!empty($child['user_id'])) {
+        $tdRows = supabaseSelect('mother_tetanus_doses', 'dose1_date,dose2_date,dose3_date,dose4_date,dose5_date', ['user_id' => $child['user_id']], null, 1);
+        if ($tdRows && count($tdRows) > 0) {
+            $tdData = [
+                'dose1_date' => $tdRows[0]['dose1_date'] ?? '',
+                'dose2_date' => $tdRows[0]['dose2_date'] ?? '',
+                'dose3_date' => $tdRows[0]['dose3_date'] ?? '',
+                'dose4_date' => $tdRows[0]['dose4_date'] ?? '',
+                'dose5_date' => $tdRows[0]['dose5_date'] ?? '',
+            ];
+        }
+    }
 
     // Prepare child summary for CHR header (align with CHRTemplateGenerator usage)
     $childSummary = $child;

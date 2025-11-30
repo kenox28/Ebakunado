@@ -47,7 +47,8 @@ $user_fname = $_SESSION['fname'] ?? '';
     <link rel="stylesheet" href="css/sidebar.css?v=1.0.2" />
     <link rel="stylesheet" href="css/notification-style.css" />
     <link rel="stylesheet" href="css/skeleton-loading.css" />
-    <link rel="stylesheet" href="css/user/approved-requests.css?v=1.0.3 " />
+    <link rel="stylesheet" href="css/user/approved-requests.css?v=1.0.3" />
+    <link rel="stylesheet" href="css/user/responsive/approved-requests.css?v=1.0.1" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 

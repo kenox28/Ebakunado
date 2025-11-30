@@ -1,0 +1,204 @@
+/* =========================
+   Child Health Record - Responsive Styles
+   ========================= */
+
+/* =========================
+   Mobile (≤ 30rem / 480px)
+   ========================= */
+@media (max-width: 30rem) {
+	/* =========================
+       Header
+       ========================= */
+	.chr-header {
+		padding: 1.2rem 1rem;
+		margin-bottom: 1rem;
+	}
+
+	.child-health-record-section .chr-header h2 {
+		font-size: 1.6rem;
+		letter-spacing: 0.5px;
+	}
+
+	.child-health-record-section .chr-header p {
+		font-size: 1.1rem;
+		margin-top: 0.4rem;
+	}
+
+	/* =========================
+       Sections
+       ========================= */
+	.chr-section {
+		border-radius: 10px;
+	}
+
+	.chr-subheader {
+		padding: 1rem;
+	}
+
+	.chr-subheader h2 {
+		font-size: 1.4rem;
+		gap: 0.6rem;
+	}
+
+	.chr-subheader h2 .material-symbols-rounded {
+		font-size: 1.8rem;
+	}
+
+	/* =========================
+       Grids - Stack on Mobile
+       ========================= */
+	.profile-section .chr-grid,
+	.history-section .chr-grid {
+		grid-template-columns: 1fr;
+		padding: 1rem;
+		gap: 0.8rem;
+	}
+
+	.feeding-grid {
+		grid-template-columns: 1fr;
+		padding: 1rem;
+		gap: 1rem;
+	}
+
+	.td-grid {
+		grid-template-columns: 1fr;
+		padding: 1rem;
+		gap: 0.8rem;
+	}
+
+	/* =========================
+       Info Labels
+       ========================= */
+	.childinfo-column label,
+	.eb-grid label,
+	.cf-grid label,
+	.td-grid label {
+		padding: 0.8rem;
+		font-size: 1.2rem;
+	}
+
+	.childinfo-column label > span:first-child,
+	.eb-grid label > span:first-child,
+	.cf-grid label > span:first-child,
+	.td-grid label > span:first-child {
+		font-size: 1.1rem;
+	}
+
+	.childinfo-column label span:last-child,
+	.eb-grid label span:last-child,
+	.cf-grid label span:last-child,
+	.td-grid label span:last-child {
+		font-size: 1.2rem;
+	}
+
+	/* =========================
+       Feeding Section
+       ========================= */
+	#feedingSection h4 {
+		font-size: 1.2rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.eb-grid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 0.6rem;
+	}
+
+	.cf-grid {
+		gap: 0.5rem;
+	}
+
+	/* =========================
+       Table - Horizontal Scroll
+       ========================= */
+	.immunization-record {
+		border-radius: 10px;
+	}
+
+	.table-container {
+		padding: 0.8rem;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	/* =========================
+       Actions
+       ========================= */
+	.chr-actions {
+		margin-top: 1rem;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		gap: 0.8rem;
+	}
+
+	.chr-actions .btn {
+		width: 100%;
+		padding: 1rem;
+		font-size: 1.3rem;
+		justify-content: center;
+	}
+
+	.chr-actions .btn + .btn {
+		margin-left: 0;
+	}
+}
+
+/* =========================
+   Tablet (30.0625rem - 48rem / 481px - 768px)
+   ========================= */
+@media (min-width: 30.0625rem) and (max-width: 48rem) {
+	/* =========================
+       Header
+       ========================= */
+	.chr-header {
+		padding: 1.5rem 1.2rem;
+	}
+
+	.child-health-record-section .chr-header h2 {
+		font-size: 1.9rem;
+	}
+
+	.child-health-record-section .chr-header p {
+		font-size: 1.2rem;
+	}
+
+	/* =========================
+       Grids - 2 Columns
+       ========================= */
+	.profile-section .chr-grid,
+	.history-section .chr-grid {
+		grid-template-columns: repeat(2, 1fr);
+		padding: 1.2rem;
+	}
+
+	.feeding-grid {
+		grid-template-columns: repeat(2, 1fr);
+		padding: 1.2rem;
+	}
+
+	.td-grid {
+		grid-template-columns: repeat(3, 1fr);
+		padding: 1.2rem;
+	}
+
+	/* =========================
+       Actions
+       ========================= */
+	.chr-actions {
+		text-align: center;
+	}
+
+	.chr-actions .btn {
+		padding: 0.9rem 1.5rem;
+		font-size: 1.35rem;
+	}
+}
+
+/* =========================
+   Desktop (≥ 48.0625rem / 769px)
+   ========================= */
+@media (min-width: 48.0625rem) {
+	/* Desktop styles are in base CSS file */
+	/* This media query ensures proper scaling */
+}

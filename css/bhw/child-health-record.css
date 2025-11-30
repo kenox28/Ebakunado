@@ -1,111 +1,111 @@
 main {
-  max-height: 100vh;
-  overflow-y: auto;
-  background-color: #ebf2ed;
+	max-height: 100vh;
+	overflow-y: auto;
+	background-color: #ebf2ed;
 }
 
 .page-header {
-  padding: 1.6rem 1.6rem 2.8rem 1.6rem !important;
-  margin-bottom: 1.4rem !important;
+	padding: 1.6rem 1.6rem 2.8rem 1.6rem !important;
+	margin-bottom: 1.4rem !important;
 }
 
 .chr-top-actions {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 1rem;
+	display: flex;
+	justify-content: flex-start;
+	margin-bottom: 1rem;
 }
 
 .chr-top-actions .back-btn {
-  border: 1px solid #d1d5db;
-  background-color: #ffffff;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.2s ease;
+	border: 1px solid #d1d5db;
+	background-color: #ffffff;
+	color: #374151;
+	cursor: pointer;
+	transition: all 0.2s ease;
 }
 
 .chr-top-actions .back-btn:hover {
-  background-color: #f3f4f6;
-  border-color: #9ca3af;
+	background-color: #f3f4f6;
+	border-color: #9ca3af;
 }
 
 .chr-top-actions .back-btn:active {
-  background: #f3f4f6;
+	background: #f3f4f6;
 }
 
 .child-health-record-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
 }
 
 .chr-section {
-  border-radius: 12px;
-  overflow: hidden;
-  background: #ffffff;
-  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
-    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-  transition: box-shadow 0.2s ease;
+	border-radius: 12px;
+	overflow: hidden;
+	background: #ffffff;
+	box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+		rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+	transition: box-shadow 0.2s ease;
 }
 
 /* Also style the Immunization wrapper as a container */
 .immunization-record {
-  background: #ffffff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
-    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-  transition: box-shadow 0.2s ease;
+	background: #ffffff;
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+		rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+	transition: box-shadow 0.2s ease;
 }
 
 /* =========================
    2) Section header (center)
    ========================= */
 .chr-header {
-  padding: 1.8rem 1.5rem;
-  /* background: linear-gradient(135deg, var(--primary-color) 0%, #005529 100%); */
-  background-color: #47895b;
-  border-radius: 12px;
-  border: none;
-  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
-    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-  margin-bottom: 1.5rem;
+	padding: 1.8rem 1.5rem;
+	/* background: linear-gradient(135deg, var(--primary-color) 0%, #005529 100%); */
+	background-color: #47895b;
+	border-radius: 12px;
+	border: none;
+	box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+		rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+	margin-bottom: 1.5rem;
 }
 
 .chr-header-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  max-width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 1rem;
+	max-width: 100%;
 }
 
 .chr-header-text {
-  text-align: center;
-  flex: 1;
+	text-align: center;
+	flex: 1;
 }
 
 .chr-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
 }
 
 .child-health-record-section .chr-header h2 {
-  margin: 0;
-  font-size: 2.2rem;
-  letter-spacing: 1px;
-  color: #ffffff;
-  text-transform: uppercase;
-  font-weight: 700;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	margin: 0;
+	font-size: 2.2rem;
+	letter-spacing: 1px;
+	color: #ffffff;
+	text-transform: uppercase;
+	font-weight: 700;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .child-health-record-section .chr-header p {
-  margin: 0.6rem 0 0;
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 1.3rem;
-  font-weight: 500;
-  letter-spacing: 0.5px;
+	margin: 0.6rem 0 0;
+	color: rgba(255, 255, 255, 0.95);
+	font-size: 1.3rem;
+	font-weight: 500;
+	letter-spacing: 0.5px;
 }
 
 .child-health-record-section,
@@ -125,46 +125,46 @@ main {
 .child-health-record-section .btn-delete,
 .child-health-record-section .section-btn button,
 .child-health-record-section .loading-cell {
-  font-size: 1.2rem;
+	font-size: 1.2rem;
 }
 
 .chr-subheader {
-  text-align: left;
-  padding: 1.2rem 1.6rem;
-  /* background: linear-gradient(
+	text-align: left;
+	padding: 1.2rem 1.6rem;
+	/* background: linear-gradient(
     135deg,
     rgba(0, 150, 57, 0.08) 0%,
     rgba(0, 150, 57, 0.03) 100%
   ); */
-  border-bottom: 1px solid #dee2e6;
+	border-bottom: 1px solid #dee2e6;
 }
 
 .chr-subheader h2 {
-  font-size: 1.6rem;
-  color: #1a1a1a;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  margin: 0;
+	font-size: 1.6rem;
+	color: #1a1a1a;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+	gap: 0.8rem;
+	margin: 0;
 }
 
 .chr-subheader h2 .material-symbols-rounded {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  vertical-align: middle;
-  font-size: 2.2rem;
-  color: #1a1a1a;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	vertical-align: middle;
+	font-size: 2.2rem;
+	color: #1a1a1a;
 }
 
 /* baseline grid spacing (overridden per section where needed) */
 .chr-grid,
 .feeding-grid,
 .td-grid {
-  display: grid;
-  gap: 1rem;
-  padding: 1.5rem 1.25rem 1.5rem;
+	display: grid;
+	gap: 1rem;
+	padding: 1.5rem 1.25rem 1.5rem;
 }
 
 /* =========================
@@ -173,204 +173,251 @@ main {
    - childinfo-column uses grid with good spacing
    ========================= */
 .profile-section .chr-grid {
-  grid-template-columns: repeat(2, minmax(280px, 1fr));
-  align-items: start;
+	grid-template-columns: repeat(2, minmax(280px, 1fr));
+	align-items: start;
 }
 
 .childinfo-column {
-  display: grid;
-  gap: 0.6rem;
+	display: grid;
+	gap: 0.6rem;
 }
 
 .childinfo-column label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  color: var(--text);
-  font-size: 1.3rem;
-  transition: all 0.2s ease;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 1rem;
+	background: #f8f9fa;
+	border: 1px solid #dee2e6;
+	border-radius: 8px;
+	color: var(--text);
+	font-size: 1.3rem;
+	transition: all 0.2s ease;
 }
 
 .childinfo-column label:hover {
-  border-color: #adb5bd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	border-color: #adb5bd;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .childinfo-column label > span:first-child {
-  color: #6c757d;
-  font-size: 1.2rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+	color: #6c757d;
+	font-size: 1.2rem;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.3px;
 }
 
 .childinfo-column label span:last-child {
-  color: #1a1a1a;
-  font-weight: 600;
-  font-size: 1.3rem;
-  text-transform: capitalize;
+	color: #1a1a1a;
+	font-weight: 600;
+	font-size: 1.3rem;
+	text-transform: capitalize;
+}
+
+/* Style inputs in profile section to match complementary feeding */
+.profile-section .childinfo-column label:has(input) {
+	display: grid;
+	gap: 0.5rem;
+	background: transparent;
+	border: none;
+	padding: 0.75rem 0;
+	color: var(--text);
+	font-size: 1.3rem;
+	font-weight: 500;
+}
+
+.profile-section .childinfo-column label:has(input) > span:first-child {
+	color: #6c757d;
+	font-size: 1.2rem;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.3px;
+}
+
+.profile-section .childinfo-column input[type="text"],
+.profile-section .childinfo-column input[type="number"] {
+	border: 1px solid #dee2e6;
+	border-radius: 6px;
+	padding: 0.8rem 1rem;
+	font-size: 1.3rem;
+	font-family: inherit;
+	text-transform: capitalize;
+	transition: all 0.2s ease;
+	width: 100%;
+	box-sizing: border-box;
+	background: #ffffff;
+	color: var(--text);
+}
+
+.profile-section .childinfo-column input[type="text"]:hover,
+.profile-section .childinfo-column input[type="number"]:hover {
+	border-color: #adb5bd;
+}
+
+.profile-section .childinfo-column input[type="text"]:focus,
+.profile-section .childinfo-column input[type="number"]:focus {
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 3px rgba(0, 150, 57, 0.1);
+	outline: none;
 }
 
 /* =========================
    4) History section - uses same style as profile-section
    ========================= */
 .history-section .chr-grid {
-  grid-template-columns: repeat(2, minmax(280px, 1fr));
-  align-items: start;
+	grid-template-columns: repeat(2, minmax(280px, 1fr));
+	align-items: start;
 }
 
 .feeding-grid {
-  grid-template-columns: repeat(2, minmax(280px, 1fr));
-  align-items: start;
-  gap: 1.2rem 2.5rem;
+	grid-template-columns: repeat(2, minmax(280px, 1fr));
+	align-items: start;
+	gap: 1.2rem 2.5rem;
 }
 
 .exclusive-breastfeeding h4,
 .complementary-feeding h4 {
-  margin: 0 0 1rem;
-  color: #2c3e50;
-  font-size: 1.5rem;
-  font-weight: 600;
-  text-transform: capitalize;
+	margin: 0 0 1rem;
+	color: #2c3e50;
+	font-size: 1.5rem;
+	font-weight: 600;
+	text-transform: capitalize;
 }
 
 .exclusive-breastfeeding .checkbox-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(100px, 1fr));
-  gap: 0.8rem;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(100px, 1fr));
+	gap: 0.8rem;
 }
 
 .exclusive-breastfeeding .checkbox-grid label {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.75rem 0.85rem;
-  background: #f8f9fa;
-  border: 1.5px solid #dee2e6;
-  border-radius: 8px;
-  font-size: 1.3rem;
-  color: var(--text);
-  cursor: pointer;
-  transition: all 0.2s ease;
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	padding: 0.75rem 0.85rem;
+	background: #f8f9fa;
+	border: 1.5px solid #dee2e6;
+	border-radius: 8px;
+	font-size: 1.3rem;
+	color: var(--text);
+	cursor: pointer;
+	transition: all 0.2s ease;
 }
 
 .exclusive-breastfeeding .checkbox-grid label:hover {
-  background: #f1f3f5;
-  border-color: var(--primary-color);
+	background: #f1f3f5;
+	border-color: var(--primary-color);
 }
 
 .exclusive-breastfeeding .checkbox-grid label input:checked + *,
 .exclusive-breastfeeding .checkbox-grid label:has(input:checked) {
-  border-color: var(--primary-color);
-  background: #e6f4ea;
+	border-color: var(--primary-color);
+	background: #e6f4ea;
 }
 
 .complementary-feeding .food-inputs {
-  display: grid;
-  grid-template-columns: 1fr; /* stacked in a column */
-  gap: 0.6rem;
+	display: grid;
+	grid-template-columns: 1fr; /* stacked in a column */
+	gap: 0.6rem;
 }
 
 .complementary-feeding .food-inputs label {
-  display: grid;
-  gap: 0.5rem;
-  background: transparent;
-  border: none;
-  padding: 0.75rem 0;
-  color: var(--text);
-  font-size: 1.3rem;
-  text-transform: capitalize;
-  font-weight: 500;
+	display: grid;
+	gap: 0.5rem;
+	background: transparent;
+	border: none;
+	padding: 0.75rem 0;
+	color: var(--text);
+	font-size: 1.3rem;
+	text-transform: capitalize;
+	font-weight: 500;
 }
 
 .complementary-feeding .food-inputs input[type="text"] {
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
-  padding: 0.8rem 1rem;
-  font-size: 1.3rem;
-  font-family: inherit;
-  text-transform: capitalize;
-  transition: all 0.2s ease;
+	border: 1px solid #dee2e6;
+	border-radius: 6px;
+	padding: 0.8rem 1rem;
+	font-size: 1.3rem;
+	font-family: inherit;
+	text-transform: capitalize;
+	transition: all 0.2s ease;
 }
 
 .complementary-feeding .food-inputs input[type="text"]:hover {
-  border-color: #adb5bd;
+	border-color: #adb5bd;
 }
 
 .complementary-feeding .food-inputs input[type="text"]:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 150, 57, 0.1);
-  outline: none;
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 3px rgba(0, 150, 57, 0.1);
+	outline: none;
 }
 
 .section-btn {
-  grid-column: 1 / -1;
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  padding: 1.2rem 1.6rem;
-  border-top: 1px solid #dee2e6;
+	grid-column: 1 / -1;
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.5rem;
+	margin-top: 1rem;
+	padding: 1.2rem 1.6rem;
+	border-top: 1px solid #dee2e6;
 }
 
 .section-btn button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
-  background: var(--primary-color);
-  color: #fff;
-  font-family: inherit;
-  font-weight: 500;
-  font-size: 11px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 8px 16px;
+	border-radius: 6px;
+	border: none;
+	background: var(--primary-color);
+	color: #fff;
+	font-family: inherit;
+	font-weight: 500;
+	font-size: 11px;
+	cursor: pointer;
+	transition: all 0.15s ease;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .section-btn button:hover {
-  background: #005d2d;
-  /* transform: translateY(-1px); */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+	background: #005d2d;
+	/* transform: translateY(-1px); */
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
 .section-btn button:active {
-  background: #005129;
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	background: #005129;
+	transform: translateY(0);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .section-btn button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+	opacity: 0.6;
+	cursor: not-allowed;
 }
 
 .section-btn button .material-symbols-rounded {
-  font-size: 16px;
+	font-size: 16px;
 }
 
 /* normalize inputs in feeding section */
 .feeding-section input[type="text"] {
-  width: 100%;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  border-radius: 6px;
-  padding: 0.5rem 0.6rem;
-  font-size: 1rem;
-  font-family: inherit;
-  outline: none;
+	width: 100%;
+	border: 1px solid var(--border);
+	background: var(--surface);
+	color: var(--text);
+	border-radius: 6px;
+	padding: 0.5rem 0.6rem;
+	font-size: 1rem;
+	font-family: inherit;
+	outline: none;
 }
 .feeding-section input[type="text"]:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+	border-color: var(--primary);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
 }
 
 /* =========================
@@ -378,85 +425,85 @@ main {
    - 5 in a row
    ========================= */
 .td-grid {
-  display: grid;
-  gap: 1rem;
-  padding: 1.5rem 1.25rem 1.5rem;
+	display: grid;
+	gap: 1rem;
+	padding: 1.5rem 1.25rem 1.5rem;
 }
 
 .td-grid-item {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(160px, 1fr));
-  gap: 1rem;
+	display: grid;
+	grid-template-columns: repeat(5, minmax(160px, 1fr));
+	gap: 1rem;
 }
 
 .td-grid label {
-  display: grid;
-  gap: 0.5rem;
-  background: transparent;
-  border: none;
-  padding: 0.75rem 0;
-  color: var(--text);
-  font-size: 1.3rem;
-  text-transform: capitalize;
-  font-weight: 500;
+	display: grid;
+	gap: 0.5rem;
+	background: transparent;
+	border: none;
+	padding: 0.75rem 0;
+	color: var(--text);
+	font-size: 1.3rem;
+	text-transform: capitalize;
+	font-weight: 500;
 }
 
 .td-grid input[type="date"] {
-  border: 1px solid #dee2e6;
-  background: #ffffff;
-  color: var(--text);
-  border-radius: 6px;
-  padding: 0.55rem 0.75rem;
-  font-size: 1.3rem;
-  font-family: inherit;
-  text-transform: uppercase;
-  outline: none;
-  transition: all 0.2s ease;
+	border: 1px solid #dee2e6;
+	background: #ffffff;
+	color: var(--text);
+	border-radius: 6px;
+	padding: 0.55rem 0.75rem;
+	font-size: 1.3rem;
+	font-family: inherit;
+	text-transform: uppercase;
+	outline: none;
+	transition: all 0.2s ease;
 }
 
 .td-grid input[type="date"]:hover {
-  border-color: #adb5bd;
+	border-color: #adb5bd;
 }
 
 .td-grid input[type="date"]:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 150, 57, 0.1);
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 3px rgba(0, 150, 57, 0.1);
 }
 
 /* Child History inputs: date and text fields (match TD / feeding styles) */
 .history-section input[type="date"],
 .history-section input[type="text"] {
-  border: 1px solid #dee2e6;
-  background: #ffffff;
-  color: var(--text);
-  border-radius: 6px;
-  padding: 0.55rem 0.75rem;
-  font-size: 1.3rem;
-  font-family: inherit;
-  outline: none;
-  transition: all 0.2s ease;
-  width: 100%;
-  box-sizing: border-box;
+	border: 1px solid #dee2e6;
+	background: #ffffff;
+	color: var(--text);
+	border-radius: 6px;
+	padding: 0.55rem 0.75rem;
+	font-size: 1.3rem;
+	font-family: inherit;
+	outline: none;
+	transition: all 0.2s ease;
+	width: 100%;
+	box-sizing: border-box;
 }
 .history-section input[type="date"] {
-  text-transform: uppercase;
-  cursor: pointer;
+	text-transform: uppercase;
+	cursor: pointer;
 }
 
 /* Hide native calendar indicator (we use our icon/label) */
 .history-section input[type="date"]::-webkit-calendar-picker-indicator {
-  display: none;
+	display: none;
 }
 
 .history-section input[type="date"]:hover,
 .history-section input[type="text"]:hover {
-  border-color: #adb5bd;
+	border-color: #adb5bd;
 }
 
 .history-section input[type="date"]:focus,
 .history-section input[type="text"]:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 150, 57, 0.1);
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 3px rgba(0, 150, 57, 0.1);
 }
 
 /* =====================================
@@ -464,11 +511,11 @@ main {
    ===================================== */
 
 .table-container {
-  overflow-x: auto;
-  overflow-y: hidden;
-  max-height: none;
-  width: 100%;
-  padding: 1.25rem;
+	overflow-x: auto;
+	overflow-y: hidden;
+	max-height: none;
+	width: 100%;
+	padding: 1.25rem;
 }
 
 /* Immunization table inherits styles from main.css .table class */
@@ -478,35 +525,35 @@ main {
 .immunization-table td:nth-child(4),
 .immunization-table td:nth-child(5),
 .immunization-table td:nth-child(9) {
-  white-space: nowrap;
+	white-space: nowrap;
 }
 
 /* =========================
    9) Utilities
    ========================= */
 .loading-cell {
-  text-align: center;
-  color: var(--muted);
-  padding: 1rem;
-  font-size: 1rem;
+	text-align: center;
+	color: var(--muted);
+	padding: 1rem;
+	font-size: 1rem;
 }
 
 /* Standardized message row styling (empty/error states) */
 .child-health-record-section .immunization-table .message-row td,
 .child-health-record-section .immunization-table tr.message-row td {
-  text-align: center;
-  padding: 1.25rem 1rem;
-  font-size: 1.15rem;
-  color: #555;
-  background: #fafafa;
-  border: 1px solid #eee;
+	text-align: center;
+	padding: 1.25rem 1rem;
+	font-size: 1.15rem;
+	color: #555;
+	background: #fafafa;
+	border: 1px solid #eee;
 }
 .child-health-record-section .immunization-table .message-row.error td,
 .child-health-record-section .immunization-table tr.message-row.error td {
-  color: #b00020;
-  background: #fff5f5;
-  border-color: #ffc9c9;
-  font-weight: 500;
+	color: #b00020;
+	background: #fff5f5;
+	border-color: #ffc9c9;
+	font-weight: 500;
 }
 
 /* =========================================================
@@ -515,45 +562,45 @@ main {
 
 /* Remove the color override so header stays primary */
 .chr-header h2 {
-  /* color: var(--text); */ /* removed */
-  text-transform: capitalize;
+	/* color: var(--text); */ /* removed */
+	text-transform: capitalize;
 }
 
 /* Stronger borders for better contrast on light displays */
 :root {
-  --border-strong: #9ca3af;
+	--border-strong: #9ca3af;
 }
 
 /* Headers remain centered; ensure readable contrast */
 .chr-header h2 {
-  color: var(--text);
-  text-transform: capitalize;
+	color: var(--text);
+	text-transform: capitalize;
 }
 .chr-header p {
-  color: var(--muted);
+	color: var(--muted);
 }
 
 /* Profile section: improved card-style with better spacing */
 .profile-section .chr-grid {
-  grid-template-columns: repeat(2, minmax(320px, 1fr));
-  gap: 1rem;
+	grid-template-columns: repeat(2, minmax(320px, 1fr));
+	gap: 1rem;
 }
 .childinfo-column {
-  gap: 1rem;
+	gap: 1rem;
 }
 
 /* Checkbox styling */
 .exclusive-breastfeeding input[type="checkbox"] {
-  accent-color: var(--primary-color);
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
+	accent-color: var(--primary-color);
+	width: 18px;
+	height: 18px;
+	cursor: pointer;
 }
 
 /* Sidebar - Only apply to Child Health Record menu item when it has active class */
 /* This ensures it only highlights when PHP sets the active class, not on other pages */
 .sidebar-menu-item.active:nth-child(5) {
-  border-left-color: var(--primary-color);
-  background-color: #d8e6db;
-  color: var(--primary-color);
+	border-left-color: var(--primary-color);
+	background-color: #d8e6db;
+	color: var(--primary-color);
 }

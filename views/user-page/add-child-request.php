@@ -37,6 +37,7 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
     <link rel="stylesheet" href="css/notification-style.css?v=1.0.6" />
     <link rel="stylesheet" href="css/modals.css?v=1.0.5" />
     <link rel="stylesheet" href="css/user/add-child-request.css?v=1.0.6" />
+    <link rel="stylesheet" href="css/user/responsive/add-child-request.css?v=1.0.1" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;700" />

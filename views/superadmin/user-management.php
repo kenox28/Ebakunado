@@ -2,7 +2,7 @@
 session_start();
 $current_page = 'user-management';
 $page_title = 'User Management';
-$page_js = 'user-management.js?v=1.0.5';
+$page_js = 'user-management.js?v=1.0.6';
 
 include 'includes/header.php';
 ?>
@@ -106,27 +106,19 @@ include 'includes/header.php';
         <div class="form-row">
             <div class="form-group">
                 <label for="add_user_province">Province</label>
-                <select id="add_user_province" name="province" onchange="loadAddUserCities()" required>
-                    <option value="">Select Province</option>
-                </select>
+                <input type="text" id="add_user_province" name="province" placeholder="Enter province" required>
             </div>
             <div class="form-group">
                 <label for="add_user_city_municipality">City/Municipality</label>
-                <select id="add_user_city_municipality" name="city_municipality" onchange="loadAddUserBarangays()" required>
-                    <option value="">Select City/Municipality</option>
-                </select>
+                <input type="text" id="add_user_city_municipality" name="city_municipality" placeholder="Enter city/municipality" required>
             </div>
             <div class="form-group">
                 <label for="add_user_barangay">Barangay</label>
-                <select id="add_user_barangay" name="barangay" onchange="loadAddUserPuroks()" required>
-                    <option value="">Select Barangay</option>
-                </select>
+                <input type="text" id="add_user_barangay" name="barangay" placeholder="Enter barangay" required>
             </div>
             <div class="form-group">
                 <label for="add_user_purok">Purok</label>
-                <select id="add_user_purok" name="purok" required>
-                    <option value="">Select Purok</option>
-                </select>
+                <input type="text" id="add_user_purok" name="purok" placeholder="Enter purok" required>
             </div>
         </div>
         <div class="action-buttons">

@@ -72,14 +72,13 @@ if (!isset($_SESSION['super_admin_id'])) {
                                 <th scope="col">Phone</th>
                                 <th scope="col">Gender</th>
                                 <th scope="col">Place</th>
-                                <th scope="col">Permissions</th>
                                 <th scope="col">Created</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="bhwTableBody">
                             <tr class="data-table__message-row loading">
-                                <td colspan="11">Loading BHW...</td>
+                                <td colspan="10">Loading BHW...</td>
                             </tr>
                         </tbody>
                     </table>
