@@ -86,8 +86,9 @@ if ($redirect_url) {
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/variables.css" />
+	<link rel="stylesheet" href="css/modals.css?v=1.0.1" />
 	<link rel="stylesheet" href="css/login-style.css?v=1.0.3" />
-	<link rel="stylesheet" href="css/queries.css?v=1.0.1" />
+	<link rel="stylesheet" href="css/queries.css?v=1.0.2" />
 	<style>
 		/* Forgot Password Form Styling */
 		#forgotPasswordForm {
@@ -190,11 +191,13 @@ if ($redirect_url) {
 							Login
 						</button>
 					</div>
+					<div class="signup-wrapper">
+						<p class="signup-text">Don't have an account?<a href="register">Create an account</a></p>
+					</div>
 					<div class="terms-wrapper">
 						<p class="terms-text">
 							By logging in, you agree to the Linao Health Center's
-							<a class="terms-link" href="#">Terms of Service</a> and
-							<a class="terms-link" href="#">Privacy Policy</a>.
+							<a class="terms-link" href="privacy-terms-linao">Privacy Policy & Terms of Service</a>.
 						</p>
 					</div>
 				</form>

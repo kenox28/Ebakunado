@@ -31,13 +31,13 @@ $user_fname = $_SESSION['fname'] ?? '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Child Immunization Schedule</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.1" />
     <link rel="stylesheet" href="css/header.css?v=1.0.2" />
-    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
 
-    <link rel="stylesheet" href="css/notification-style.css" />
-    <link rel="stylesheet" href="css/skeleton-loading.css" />
-    <link rel="stylesheet" href="css/user/child-upcoming-schedule.css" />
+    <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/user/child-upcoming-schedule.css?v=1.0.5" />
 </head>
 
 <body>
@@ -72,7 +72,16 @@ $user_fname = $_SESSION['fname'] ?? '';
                 </div>
                 <div class="child-qr">
                     <div class="qr-thumb" aria-hidden="false">
-                        <img id="childQrCode" src="" alt="QR Code" />
+                            <div id="qrPlaceholder" class="qr-placeholder" aria-hidden="false" title="QR not available">
+                                <span class="material-symbols-rounded" aria-hidden="true">qr_code</span>
+                            </div>
+                            <img id="childQrCode" src="" alt="QR Code" style="display:none;" />
+                        </div>
+                    <div class="qr-actions">
+                        <button id="downloadQrBtn" class="btn-download-qr" type="button" title="Download QR Code">
+                            <span class="material-symbols-rounded" aria-hidden="true">download</span>
+                            <span>Download QR</span>
+                        </button>
                     </div>
                 </div>
             </aside>
@@ -93,7 +102,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                 </div>
 
                 <div class="table-wrap">
-                    <table class="schedule-table" aria-describedby="scheduleDescription">
+                    <table class="schedule-table data-table" aria-describedby="scheduleDescription">
                         <caption id="scheduleDescription" class="sr-only">List of scheduled immunizations</caption>
                         <thead>
                             <tr>
@@ -120,6 +129,8 @@ $user_fname = $_SESSION['fname'] ?? '';
     <script src="js/sidebar-handler/sidebar-menu.js" defer></script>
     <script src="js/utils/skeleton-loading.js" defer></script>
     <script>
+        const DEFAULT_QR_PLACEHOLDER = 'data:image/svg+xml;utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220"%3E%3Crect width="100%25" height="100%25" fill="%23ffffff"/%3E%3Crect x="12" y="12" width="58" height="58" fill="%23e6e6e6"/%3E%3Crect x="150" y="12" width="58" height="58" fill="%23e6e6e6"/%3E%3Crect x="12" y="150" width="58" height="58" fill="%23e6e6e6"/%3E%3Crect x="84" y="84" width="20" height="20" fill="%23bdbdbd"/%3E%3Ctext x="50%25" y="88%25" font-size="12" text-anchor="middle" fill="%236b7280" font-family="Arial, Helvetica, sans-serif"%3ENo QR available%3C/text%3E%3C/svg%3E';
+
         let scheduleData = [];
         let currentTab = 'upcoming';
         let currentChild = null;
@@ -134,7 +145,6 @@ $user_fname = $_SESSION['fname'] ?? '';
 
                 if (data.status === 'success') {
                     scheduleData = Array.isArray(data.data) ? data.data : [];
-                    // If API returns all, filter by selectedBabyId
                     if (selectedBabyId) {
                         scheduleData = scheduleData.filter(r => String(r.baby_id || '') === String(selectedBabyId));
                     }
@@ -149,26 +159,56 @@ $user_fname = $_SESSION['fname'] ?? '';
             }
         }
 
+        function getScheduleColsConfig() {
+            return [
+                { type: 'text', widthClass: 'skeleton-col-2' }, // Vaccine
+                { type: 'text', widthClass: 'skeleton-col-3' }, // Dose
+                { type: 'text', widthClass: 'skeleton-col-4' }, // Guideline
+                { type: 'text', widthClass: 'skeleton-col-4' }, // Batch
+                { type: 'text', widthClass: 'skeleton-col-4' }, // Catch Up
+                { type: 'pill', widthClass: 'skeleton-col-6' }  // Status
+            ];
+        }
+
+        function setQrImageSrc(src) {
+            const img = document.getElementById('childQrCode');
+            const placeholder = document.getElementById('qrPlaceholder');
+            if (!img || !placeholder) return;
+            if (!src || src === DEFAULT_QR_PLACEHOLDER) {
+                img.removeAttribute('src');
+                img.style.display = 'none';
+                placeholder.style.display = 'flex';
+            } else {
+                img.src = src;
+                img.style.display = 'block';
+                placeholder.style.display = 'none';
+            }
+        }
+
         function loadChildData() {
             if (scheduleData.length === 0) {
-                document.getElementById('scheduleBody').innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No immunization records found</td></tr>';
+                document.getElementById('scheduleBody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">No immunization records found</td></tr>';
                 document.getElementById('childName').textContent = 'Unknown Child';
                 document.getElementById('childAge').textContent = 'Unknown age';
                 document.getElementById('childGender').textContent = 'Unknown';
+                const qrElEmpty = document.getElementById('childQrCode');
+                if (qrElEmpty) qrElEmpty.src = DEFAULT_QR_PLACEHOLDER;
                 return;
             }
             const firstRecord = scheduleData[0];
             currentChild = firstRecord;
             const childName = firstRecord.child_name || 'Unknown Child';
             document.getElementById('childName').textContent = childName;
-            // Update document title to selected child's name only
             try {
                 document.title = childName;
             } catch (e) {
-                // ignore if document.title cannot be set in some contexts
             }
-            document.getElementById('childAge').textContent = 'Loading age...';
             fetchChildAge(firstRecord.baby_id);
+            try {
+                const qrUrl = firstRecord.qr_code || firstRecord.qr || firstRecord.qr_url || firstRecord.qr_image || firstRecord.qrcode || null;
+                setQrImageSrc(qrUrl && qrUrl.length ? qrUrl : null);
+            } catch (e) {
+            }
         }
 
         async function fetchChildAge(baby_id) {
@@ -185,7 +225,6 @@ $user_fname = $_SESSION['fname'] ?? '';
                     const child = data.data[0];
                     const ageText = child.age == 0 ? child.weeks_old + ' weeks old' : child.age + ' years old';
                     document.getElementById('childAge').textContent = ageText;
-                    // Normalize gender from API (uses child_gender key)
                     const rawGender = child.child_gender || child.gender || '';
                     let prettyGender = 'Unknown';
                     if (rawGender) {
@@ -196,9 +235,8 @@ $user_fname = $_SESSION['fname'] ?? '';
                     }
                     document.getElementById('childGender').textContent = prettyGender;
 
-                    // Set QR code image
                     if (child.qr_code) {
-                        document.getElementById('childQrCode').src = child.qr_code;
+                        setQrImageSrc(child.qr_code);
                     }
                 }
             } catch (error) {
@@ -212,29 +250,25 @@ $user_fname = $_SESSION['fname'] ?? '';
             const tbody = document.getElementById('scheduleBody');
 
             if (scheduleData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No immunization records found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">No immunization records found</td></tr>';
                 return;
             }
 
-            // Filter data based on computed status (more reliable than raw record.status)
             let filteredData = scheduleData.filter(record => {
                 const status = getVaccineStatus(record);
                 if (currentTab === 'upcoming') {
-                    // show any non-completed items in Upcoming (upcoming/overdue/missing)
                     return status !== 'completed';
                 } else if (currentTab === 'taken') {
-                    // only show completed items in Taken
                     return status === 'completed';
                 }
                 return true;
             });
 
             if (filteredData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px;">No ${currentTab} vaccines found</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 20px;">No ${currentTab} vaccines found</td></tr>`;
                 return;
             }
 
-            // Group by vaccine name and dose
             const groupedVaccines = {};
             filteredData.forEach(record => {
                 const key = `${record.vaccine_name}_${record.dose_number}`;
@@ -248,10 +282,24 @@ $user_fname = $_SESSION['fname'] ?? '';
                 const status = getVaccineStatus(record);
                 const statusText = getStatusText(record, status);
 
-                // Format dates - prioritize batch date
                 const guidelineDate = record.schedule_date ? formatDate(record.schedule_date) : 'Not scheduled';
                 const batchDate = record.batch_schedule_date ? formatDate(record.batch_schedule_date) : '-';
                 const catchUpDate = record.catch_up_date ? formatDate(record.catch_up_date) : '-';
+
+                let statusChipClass = 'chip--default';
+                switch (status) {
+                    case 'completed':
+                        statusChipClass = 'chip--completed';
+                        break;
+                    case 'overdue':
+                        statusChipClass = 'chip--missed';
+                        break;
+                    case 'upcoming':
+                        statusChipClass = 'chip--scheduled';
+                        break;
+                    default:
+                        statusChipClass = 'chip--default';
+                }
 
                 rowsHTML += `
                 <tr>
@@ -260,7 +308,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                     <td>${guidelineDate}</td>
                     <td>${batchDate}</td>
                     <td>${catchUpDate}</td>
-                    <td style="color: ${getStatusColor(status)}">${statusText}</td>
+                    <td><span class="chip ${statusChipClass}">${statusText}</span></td>
                 </tr>
                     `;
             });
@@ -270,7 +318,6 @@ $user_fname = $_SESSION['fname'] ?? '';
 
         function getVaccineStatus(record) {
             const today = new Date().toISOString().split('T')[0];
-            // Prioritize batch_schedule_date over schedule_date
             const targetDate = record.batch_schedule_date || record.schedule_date || record.catch_up_date || '';
 
             if (record.status === 'completed' || record.status === 'taken') {
@@ -284,49 +331,9 @@ $user_fname = $_SESSION['fname'] ?? '';
             }
         }
 
-        function getStatusClass(status) {
-            switch (status) {
-                case 'completed':
-                    return 'completed';
-                case 'overdue':
-                    return 'overdue';
-                case 'upcoming':
-                    return 'upcoming';
-                default:
-                    return 'missing';
-            }
-        }
-
-        function getStatusColor(status) {
-            switch (status) {
-                case 'completed':
-                    return '#28a745';
-                case 'overdue':
-                    return '#dc3545';
-                case 'upcoming':
-                    return '#ffc107';
-                default:
-                    return '#6c757d';
-            }
-        }
-
-        function getStatusIcon(status) {
-            switch (status) {
-                case 'completed':
-                    return '✓';
-                case 'overdue':
-                    return '!';
-                case 'upcoming':
-                    return '↑';
-                default:
-                    return '?';
-            }
-        }
-
         function getStatusText(record, status) {
             const guidelineDate = record.schedule_date ? formatDate(record.schedule_date) : null;
             const batchDate = record.batch_schedule_date ? formatDate(record.batch_schedule_date) : null;
-            // Prioritize batch date for display
             const targetDisplay = batchDate || guidelineDate || '';
             switch (status) {
                 case 'completed':
@@ -363,25 +370,27 @@ $user_fname = $_SESSION['fname'] ?? '';
         function switchTab(tab) {
             currentTab = tab;
 
-            // Update tab buttons styling
             const upcomingBtn = document.getElementById('upcomingTab');
             const takenBtn = document.getElementById('takenTab');
 
-            // Use segmented control active class and aria attributes
             upcomingBtn.classList.toggle('is-active', tab === 'upcoming');
             takenBtn.classList.toggle('is-active', tab === 'taken');
             upcomingBtn.setAttribute('aria-selected', String(tab === 'upcoming'));
             takenBtn.setAttribute('aria-selected', String(tab === 'taken'));
 
-            // Re-render table
             renderVaccineCards();
         }
 
-        // Load data when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            if (typeof applyTableSkeleton === 'function') {
+                try {
+                    applyTableSkeleton('#scheduleBody', getScheduleColsConfig(), 8);
+                } catch (e) {
+                    console.warn('Failed to apply table skeleton:', e);
+                }
+            }
             loadImmunizationSchedule();
 
-            // Add tab button event listeners
             document.getElementById('upcomingTab').addEventListener('click', function() {
                 switchTab('upcoming');
             });
@@ -390,7 +399,122 @@ $user_fname = $_SESSION['fname'] ?? '';
                 switchTab('taken');
             });
 
-            // QR is now a fixed image (non-clickable). The QR src is set in `fetchChildAge()`
+            const downloadBtn = document.getElementById('downloadQrBtn');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', async function () {
+                    const img = document.getElementById('childQrCode');
+                    const src = img && img.src && img.style.display !== 'none' ? img.src : '';
+                    if (!src) {
+                        alert('QR code not available');
+                        return;
+                    }
+                    downloadBtn.disabled = true;
+                    const originalText = downloadBtn.innerHTML;
+                    try {
+                        const res = await fetch(src, { credentials: 'same-origin' });
+                        if (!res.ok) throw new Error('Failed to fetch image');
+                        const blob = await res.blob();
+
+                        const qrImg = await new Promise((resolve, reject) => {
+                            const i = new Image();
+                            i.onload = () => resolve(i);
+                            i.onerror = reject;
+                            i.src = URL.createObjectURL(blob);
+                        });
+
+                        const logoSrc = 'assets/images/ebakunado-logo-without-label.png';
+                        let logoImg = null;
+                        try {
+                            logoImg = await new Promise((resolve, reject) => {
+                                const li = new Image();
+                                li.onload = () => resolve(li);
+                                li.onerror = () => resolve(null); // not fatal
+                                li.src = logoSrc;
+                            });
+                        } catch (_) { logoImg = null; }
+
+                        const qrWidth = qrImg.width;
+                        const headerHeight = Math.max(72, Math.round(qrWidth * 0.18));
+                        const footerHeight = Math.max(48, Math.round(qrWidth * 0.12));
+                        const spacing = 16;
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = qrWidth;
+                        canvas.height = headerHeight + qrImg.height + footerHeight;
+                        const ctx = canvas.getContext('2d');
+
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                        const headerY = Math.round(headerHeight / 2);
+                        const paddingX = 16;
+                        if (logoImg && logoImg.naturalWidth) {
+                            const logoH = Math.min(headerHeight - 20, logoImg.naturalHeight);
+                            const logoW = Math.round((logoH / logoImg.naturalHeight) * logoImg.naturalWidth);
+                            const logoY = Math.round((headerHeight - logoH) / 2);
+                            const logoLeftX = paddingX;
+                            ctx.drawImage(logoImg, logoLeftX, logoY, logoW, logoH);
+                            const logoRightX = Math.max(paddingX, canvas.width - paddingX - logoW);
+                            ctx.drawImage(logoImg, logoRightX, logoY, logoW, logoH);
+                        }
+
+                        const hc = (doc => doc)();
+                        const healthCenterText = 'Linao Health Center';
+                        const barangayText = 'Barangay Linao, Ormoc City';
+                        const titleText = 'QR Code for Child Immunization Record';
+
+                        const mainFontSize = Math.max(16, Math.round(canvas.width * 0.045));
+                        const subFontSize = Math.max(12, Math.round(canvas.width * 0.03));
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        const centerX = canvas.width / 2;
+                        ctx.fillStyle = '#006c35';
+                        ctx.font = `bold ${mainFontSize}px sans-serif`;
+                        const healthY = headerY - (subFontSize * 0.9);
+                        ctx.fillText(healthCenterText, centerX, healthY);
+                        ctx.fillStyle = '#0f172a';
+                        ctx.font = `${subFontSize}px sans-serif`;
+                        const barangayY = headerY + (subFontSize * 0.9);
+                        ctx.fillText(barangayText, centerX, barangayY);
+                        ctx.font = `600 ${Math.max(13, Math.round(canvas.width * 0.028))}px sans-serif`;
+                        const titleY = headerY + (subFontSize * 2.6);
+                        ctx.fillText(titleText, centerX, titleY);
+
+                        const qrX = 0;
+                        const qrY = headerHeight;
+                        ctx.drawImage(qrImg, qrX, qrY, qrImg.width, qrImg.height);
+
+                        const childNameText = (document.getElementById('childName')?.textContent || 'Child').trim();
+                        const footerYCenter = headerHeight + qrImg.height + (footerHeight / 2);
+                        ctx.fillStyle = '#111827';
+                        ctx.font = `bold ${Math.max(14, Math.round(canvas.width * 0.032))}px sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(`Name: ${childNameText}`, centerX, footerYCenter - 8);
+                        ctx.font = `${Math.max(12, Math.round(canvas.width * 0.028))}px sans-serif`;
+                        const dateText = new Date().toLocaleDateString();
+                        ctx.fillText(`Downloaded: ${dateText}`, centerX, footerYCenter + 16);
+
+                        const composedBlob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+                        const url = URL.createObjectURL(composedBlob);
+                        const a = document.createElement('a');
+                        const childFileName = childNameText.replace(/\s+/g, '_') || 'child';
+                        a.href = url;
+                        a.download = `QR_${childFileName}.png`;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        URL.revokeObjectURL(url);
+                        try { URL.revokeObjectURL(qrImg.src); } catch (_) {}
+                    } catch (err) {
+                        console.error('QR download composition failed:', err);
+                        window.open(src, '_blank');
+                    } finally {
+                        downloadBtn.disabled = false;
+                        downloadBtn.innerHTML = originalText;
+                    }
+                });
+            }
         });
     </script>
 </body>

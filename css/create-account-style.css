@@ -15,7 +15,7 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-image: url("../assets/images/linao-health-center-bg.jpg");
+	background-image: url("../assets/images/linao-health-center.jpg");
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -73,7 +73,7 @@ body::before {
 	width: 50%;
 	height: 100%;
 	position: relative;
-	background-image: url("../assets/images/parent-baby-immunization.jpg");
+	background-image: url("../assets/images/baby-immunization.jpg");
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -112,16 +112,21 @@ body::before {
 	margin-top: 1rem;
 }
 
-.brand-title,
-.brand-subtitle {
+.brand-title {
 	font-size: 2.4rem;
 	font-weight: 600;
 	margin: 0.5rem 0;
 }
 
+.brand-subtitle {
+	font-size: 1.8rem;
+	font-weight: 400;
+	color: #ffffff;
+}
+
 .brand-desc {
 	margin-top: 0.8rem;
-	font-size: 1.4rem;
+	font-size: 1.45rem;
 	font-weight: 400;
 	color: #ffffff;
 	opacity: 0.95;

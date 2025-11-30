@@ -32,45 +32,54 @@ $user_fname = $_SESSION['fname'] ?? '';
     <title>My Children</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
     <link rel="stylesheet" href="css/main.css?v=1.0.2" />
-    <link rel="stylesheet" href="css/user/table-style.css?v=1.0.1" />
     <link rel="stylesheet" href="css/header.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/sidebar.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
+
     <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
     <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/user/children-list.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/user/children-list.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/user/table-style.css?v=1.0.4">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
-    <?php include 'include/header.php'; ?>
+    <?php include 'include/header.php'; ?>pap
     <?php include 'include/sidebar.php'; ?>
 
     <main>
-        <section class="section-container">
-            <h2 class="dashboard section-title">
-                <span class="material-symbols-rounded">dashboard</span>
-                My Children
-            </h2>
-        </section>
-
         <section class="children-list-section">
-            <div class="filters-header">
-                <span class="material-symbols-rounded" aria-hidden="true">tune</span>
-                <span>Filters:</span>
+            <div class="page-header">
+                <h1 class="page-title">My Children</h1>
+                <p class="page-subtitle">Manage and review child vaccination information.</p>
             </div>
+
             <div class="content">
-                <div class="filters">
-                    <div class="select-with-icon">
-                        <select id="chrFilter" aria-label="CHR Status">
-                            <option value="all">All Children</option>
-                            <option value="pending">Pending Registration</option>
-                            <option value="approved" selected>Approved Children</option>
-                        </select>
-                        <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
-                    </div>
-                </div>
                 <div id="childrenContainer" class="table-container data-table-card">
+                    <div class="data-table-toolbar data-table-toolbar--stack">
+                        <div class="data-table-toolbar__top">
+                            <div class="data-table-toolbar__titles">
+                                <h2 class="data-table-title">Children List</h2>
+                            </div>
+                        </div>
+
+                        <div class="data-table-actions">
+                            <div class="filters">
+                                <div class="filter-item">
+                                    <label class="filter-label" for="chrFilter">Status</label>
+                                    <div class="input-field">
+                                        <span class="material-symbols-rounded" aria-hidden="true">filter_list</span>
+                                        <select id="chrFilter" aria-label="CHR Status">
+                                            <option value="all">All Children</option>
+                                            <option value="pending">Pending Registration</option>
+                                            <option value="approved" selected>Approved Children</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="data-table-wrap">
                         <table class="data-table" aria-busy="true">
                             <thead>
@@ -86,22 +95,119 @@ $user_fname = $_SESSION['fname'] ?? '';
                             </thead>
                             <tbody id="childrenTbody">
                                 <tr class="skeleton-row">
-                                    <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                                    <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                    <td><div class="skeleton skeleton-pill skeleton-col-3"></div></td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-pill skeleton-col-3"></div>
+                                    </td>
                                 </tr>
                                 <tr class="skeleton-row">
-                                    <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                                    <td><div class="skeleton skeleton-text skeleton-col-2"></div></td>
-                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                    <td><div class="skeleton skeleton-text skeleton-col-1"></div></td>
-                                    <td><div class="skeleton skeleton-pill skeleton-col-3"></div></td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-pill skeleton-col-3"></div>
+                                    </td>
+                                </tr>
+                                <tr class="skeleton-row">
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-pill skeleton-col-3"></div>
+                                    </td>
+                                </tr>
+                                <tr class="skeleton-row">
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-pill skeleton-col-3"></div>
+                                    </td>
+                                </tr>
+                                <tr class="skeleton-row">
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-2"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-text skeleton-col-1"></div>
+                                    </td>
+                                    <td>
+                                        <div class="skeleton skeleton-pill skeleton-col-3"></div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -118,7 +224,10 @@ $user_fname = $_SESSION['fname'] ?? '';
         let allChildrenData = [];
         let allChrStatusData = [];
         let loadError = false;
-        let currentSort = { key: 'name', dir: 'asc' };
+        let currentSort = {
+            key: 'name',
+            dir: 'asc'
+        };
 
         document.addEventListener('DOMContentLoaded', async function() {
             const container = document.getElementById('childrenContainer');
@@ -126,15 +235,36 @@ $user_fname = $_SESSION['fname'] ?? '';
 
             // Prepare skeleton on initial load
             const tbody = document.getElementById('childrenTbody');
-            function getChildrenColsConfig(){
-                return [
-                    { type:'text', widthClass:'skeleton-col-2' }, // Name
-                    { type:'text', widthClass:'skeleton-col-2' }, // Age
-                    { type:'text', widthClass:'skeleton-col-1' }, // Gender
-                    { type:'text', widthClass:'skeleton-col-1' }, // Upcoming
-                    { type:'text', widthClass:'skeleton-col-1' }, // Missed
-                    { type:'text', widthClass:'skeleton-col-1' }, // Taken
-                    { type:'pill', widthClass:'skeleton-col-3' }  // Action
+
+            function getChildrenColsConfig() {
+                return [{
+                        type: 'text',
+                        widthClass: 'skeleton-col-2'
+                    }, // Name
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-2'
+                    }, // Age
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-1'
+                    }, // Gender
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-1'
+                    }, // Upcoming
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-1'
+                    }, // Missed
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-1'
+                    }, // Taken
+                    {
+                        type: 'pill',
+                        widthClass: 'skeleton-col-3'
+                    } // Action
                 ];
             }
             if (typeof applyTableSkeleton === 'function' && tbody) {
@@ -144,7 +274,7 @@ $user_fname = $_SESSION['fname'] ?? '';
             // Load children data and CHR status data
             await Promise.all([loadChildrenData(), loadChrStatusData()]).catch(() => {});
             // await Promise.all([loadChildrenData()]).catch(() => {});
-    
+
 
             // Render the table
             renderChildrenTable();
@@ -171,7 +301,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                 } else {
                     allChildrenData = Array.isArray(data.data) ? data.data : [];
                 }
-                
+
             } catch (err) {
                 console.error('Error loading children data:', err);
                 allChildrenData = [];
@@ -194,7 +324,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                 } else {
                     allChrStatusData = Array.isArray(data.data) ? data.data : [];
                 }
-                
+
             } catch (err) {
                 console.error('Error loading CHR status data:', err);
                 allChrStatusData = [];
@@ -214,8 +344,12 @@ $user_fname = $_SESSION['fname'] ?? '';
                 if (typeof renderTableMessage === 'function' && tbody) {
                     renderTableMessage(
                         tbody,
-                        loadError ? 'Failed to load data. Please try again.' : 'No records found',
-                        { colspan: 7, ...(loadError ? { kind: 'error' } : {}) }
+                        loadError ? 'Failed to load data. Please try again.' : 'No records found', {
+                            colspan: 7,
+                            ...(loadError ? {
+                                kind: 'error'
+                            } : {})
+                        }
                     );
                 } else if (tbody) {
                     tbody.innerHTML = `<tr class="message-row${loadError ? ' error' : ''}"><td colspan="7">${loadError ? 'Failed to load data. Please try again.' : 'No records found'}</td></tr>`;
@@ -253,7 +387,9 @@ $user_fname = $_SESSION['fname'] ?? '';
 
             if (filteredChildren.length === 0) {
                 if (typeof renderTableMessage === 'function' && tbody) {
-                    renderTableMessage(tbody, 'No records found', { colspan: 7 });
+                    renderTableMessage(tbody, 'No records found', {
+                        colspan: 7
+                    });
                 } else if (tbody) {
                     tbody.innerHTML = '<tr class="message-row"><td colspan="7">No records found</td></tr>';
                 }
@@ -315,15 +451,20 @@ $user_fname = $_SESSION['fname'] ?? '';
             }
         }
 
-        function updateHeaderSortState(table){
+        function updateHeaderSortState(table) {
             const headers = table.querySelectorAll('th.sortable');
             headers.forEach(th => {
                 const key = th.getAttribute('data-sort-key');
-                th.classList.remove('sort-asc','sort-desc');
+                th.classList.remove('sort-asc', 'sort-desc');
                 let aria = 'none';
-                if (currentSort.key === key){
-                    if (currentSort.dir === 'asc') { th.classList.add('sort-asc'); aria = 'ascending'; }
-                    else { th.classList.add('sort-desc'); aria = 'descending'; }
+                if (currentSort.key === key) {
+                    if (currentSort.dir === 'asc') {
+                        th.classList.add('sort-asc');
+                        aria = 'ascending';
+                    } else {
+                        th.classList.add('sort-desc');
+                        aria = 'descending';
+                    }
                 }
                 th.setAttribute('aria-sort', aria);
             });

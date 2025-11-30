@@ -12,8 +12,8 @@ session_start();
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
   <link rel="stylesheet" href="css/fonts.css" />
   <link rel="stylesheet" href="css/variables.css" />
-  <link rel="stylesheet" href="css/create-account-style.css?v=1.0.3" />
-  <link rel="stylesheet" href="css/queries.css" />
+  <link rel="stylesheet" href="css/create-account-style.css?v=1.0.4" />
+  <link rel="stylesheet" href="css/queries.css?v=1.0.3" />
   <link rel="stylesheet" href="css/modals.css?v=1.0.1" />
   <style>
     .policy-card {
@@ -65,7 +65,7 @@ session_start();
             src="assets/images/white-ebakunado-logo-with-label.png"
             alt="Ebakunado Logo" />
           <div class="brand-text">
-            <h2 class="brand-title">Create Your Parent Account</h2>
+            <h2 class="brand-title">Create Parent Account</h2>
             <h2 class="brand-subtitle">It’s quick, easy, and secure</h2>
             <p class="brand-desc">
               Set up an account to manage your child’s immunization schedule and receive timely reminders from Linao Health Center.
@@ -323,7 +323,7 @@ session_start();
         </form>
 
         <footer class="footer-note">
-          <p>Note: This setup account is for parents only.</p>
+          <p>Note: This create account setup is for parents only.</p>
         </footer>
       </div>
     </section>

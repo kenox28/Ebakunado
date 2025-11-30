@@ -31,12 +31,13 @@ $user_fname = $_SESSION['fname'] ?? '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Child Health Record</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css" />
-    <link rel="stylesheet" href="css/header.css" />
-    <link rel="stylesheet" href="css/sidebar.css" />
-    <link rel="stylesheet" href="css/notification-style.css" />
-    <link rel="stylesheet" href="css/skeleton-loading.css" />
-    <link rel="stylesheet" href="css/user/child-health-record.css" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/notification-style.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/user/child-health-record.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.4" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -47,6 +48,13 @@ $user_fname = $_SESSION['fname'] ?? '';
 
     <main>
         <section class="child-health-record-section" id="chrRoot">
+            <div class="chr-top-actions">
+                <a href="health-children" class="btn back-btn">
+                    <span class="material-symbols-rounded">arrow_back</span>
+                    Back
+                </a>
+            </div>
+
             <div class="chr-header">
                 <div class="chr-header-content">
                     <div class="chr-header-text">
@@ -168,25 +176,27 @@ $user_fname = $_SESSION['fname'] ?? '';
                         Immunization Record
                     </h2>
                 </div>
-                <div class="table-container">
-                    <table class="table immunization-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Purpose</th>
-                                <th>HT</th>
-                                <th>WT</th>
-                                <th>ME/AC</th>
-                                <th>STATUS</th>
-                                <th>Condition of Baby</th>
-                                <th>Advice Given</th>
-                                <th>Next Sched Date</th>
-                                <th>Batch Date</th>
-                                <th>Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ledgerBody"></tbody>
-                    </table>
+                <div class="data-table-card">
+                    <div class="data-table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Purpose</th>
+                                    <th>HT</th>
+                                    <th>WT</th>
+                                    <th>ME/AC</th>
+                                    <th>STATUS</th>
+                                    <th>Condition of Baby</th>
+                                    <th>Advice Given</th>
+                                    <th>Next Sched Date</th>
+                                    <th>Batch Date</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ledgerBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="chr-actions">
@@ -251,28 +261,62 @@ $user_fname = $_SESSION['fname'] ?? '';
             } else if (typeof applyFieldsSkeleton === 'function') {
                 // Fallback: apply combined map manually if helper not available
                 const combined = Object.assign({},
-                  window.CHR_SKELETON?.CHILD_INFO_FIELDS || {},
-                  window.CHR_SKELETON?.CHILD_HISTORY_FIELDS || {},
-                  window.CHR_SKELETON?.FEEDING_FIELDS || {},
-                  window.CHR_SKELETON?.TD_STATUS_FIELDS || {}
+                    window.CHR_SKELETON?.CHILD_INFO_FIELDS || {},
+                    window.CHR_SKELETON?.CHILD_HISTORY_FIELDS || {},
+                    window.CHR_SKELETON?.FEEDING_FIELDS || {},
+                    window.CHR_SKELETON?.TD_STATUS_FIELDS || {}
                 );
                 applyFieldsSkeleton(combined);
             }
 
             // Show ledger skeleton immediately (before any network calls)
             const ledgerBody = document.getElementById('ledgerBody');
-            function getLedgerColsConfig(){
-                return [
-                    { type: 'text', widthClass: 'skeleton-col-1' }, // Date
-                    { type: 'text', widthClass: 'skeleton-col-2' }, // Purpose
-                    { type: 'text', widthClass: 'skeleton-col-3' }, // HT
-                    { type: 'text', widthClass: 'skeleton-col-4' }, // WT
-                    { type: 'text', widthClass: 'skeleton-col-5' }, // ME/AC
-                    { type: 'pill', widthClass: 'skeleton-col-5' }, // STATUS
-                    { type: 'text', widthClass: 'skeleton-col-3' }, // Condition of Baby
-                    { type: 'text', widthClass: 'skeleton-col-4' }, // Advice Given
-                    { type: 'text', widthClass: 'skeleton-col-2' }, // Next Sched Date
-                    { type: 'text', widthClass: 'skeleton-col-6' }  // Remarks
+
+            function getLedgerColsConfig() {
+                return [{
+                        type: 'text',
+                        widthClass: 'skeleton-col-1'
+                    }, // Date
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-2'
+                    }, // Purpose
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-3'
+                    }, // HT
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-4'
+                    }, // WT
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-5'
+                    }, // ME/AC
+                    {
+                        type: 'pill',
+                        widthClass: 'skeleton-col-5'
+                    }, // STATUS
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-3'
+                    }, // Condition of Baby
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-4'
+                    }, // Advice Given
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-2'
+                    }, // Next Sched Date
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-6'
+                    }, // Batch Date
+                    {
+                        type: 'text',
+                        widthClass: 'skeleton-col-6'
+                    } // Remarks
                 ];
             }
             if (typeof applyTableSkeleton === 'function' && ledgerBody) {
@@ -359,10 +403,14 @@ $user_fname = $_SESSION['fname'] ?? '';
                         const j = await res2.json();
                         if (j.status === 'success') {
                             if (type === 'transfer') {
-                                reqTransferBtn.textContent = 'Transfer: Requested (pendingCHR)';
+                                reqTransferBtn.textContent = 'Transfer CHR Request Pending...';
+                                reqTransferBtn && reqTransferBtn.setAttribute('disabled', 'disabled');
+                                reqTransferBtn && reqTransferBtn.setAttribute('aria-disabled', 'true');
                             }
                             if (type === 'school') {
-                                reqSchoolBtn.textContent = 'School: Requested (pendingCHR)';
+                                reqSchoolBtn.textContent = 'School CHR Request Pending...';
+                                reqSchoolBtn && reqSchoolBtn.setAttribute('disabled', 'disabled');
+                                reqSchoolBtn && reqSchoolBtn.setAttribute('aria-disabled', 'true');
                             }
                         } else {
                             alert('Request failed: ' + (j.message || 'Unknown error'));
@@ -393,23 +441,48 @@ $user_fname = $_SESSION['fname'] ?? '';
                             if (type === 'transfer') {
                                 if (st === 'approved' && url && !hasNewerRecords) {
                                     reqTransferBtn && (reqTransferBtn.textContent = 'Transfer: Approved — see Approved Requests');
+                                    reqTransferBtn && reqTransferBtn.setAttribute('disabled', 'disabled');
+                                    reqTransferBtn && reqTransferBtn.setAttribute('aria-disabled', 'true');
                                 } else if (st === 'approved' && url && hasNewerRecords) {
                                     reqTransferBtn && (reqTransferBtn.textContent = 'Transfer: New Records Available - Request Updated Copy');
+                                    reqTransferBtn && reqTransferBtn.setAttribute('disabled', 'disabled');
+                                    reqTransferBtn && reqTransferBtn.setAttribute('aria-disabled', 'true');
                                 } else if (st === 'pendingCHR') {
-                                    reqTransferBtn && (reqTransferBtn.textContent = 'Transfer: Requested (pendingCHR)');
+                                    reqTransferBtn && (reqTransferBtn.textContent = 'Transfer CHR Request Pending...');
+                                    reqTransferBtn && reqTransferBtn.setAttribute('disabled', 'disabled');
+                                    reqTransferBtn && reqTransferBtn.setAttribute('aria-disabled', 'true');
+                                } else if (st === 'rejected' || st === 'denied' || st === 'failed') {
+                                    // Re-enable the button when request was rejected/denied
+                                    reqTransferBtn && (reqTransferBtn.textContent = 'Request Transfer Copy');
+                                    reqTransferBtn && reqTransferBtn.removeAttribute('disabled');
+                                    reqTransferBtn && reqTransferBtn.removeAttribute('aria-disabled');
                                 } else {
                                     reqTransferBtn && (reqTransferBtn.textContent = 'Request Transfer Copy');
+                                    reqTransferBtn && reqTransferBtn.removeAttribute('disabled');
+                                    reqTransferBtn && reqTransferBtn.removeAttribute('aria-disabled');
                                 }
                             }
                             if (type === 'school') {
                                 if (st === 'approved' && url && !hasNewerRecords) {
                                     reqSchoolBtn && (reqSchoolBtn.textContent = 'School: Approved — see Approved Requests');
+                                    reqSchoolBtn && reqSchoolBtn.setAttribute('disabled', 'disabled');
+                                    reqSchoolBtn && reqSchoolBtn.setAttribute('aria-disabled', 'true');
                                 } else if (st === 'approved' && url && hasNewerRecords) {
                                     reqSchoolBtn && (reqSchoolBtn.textContent = 'School: New Records Available - Request Updated Copy');
+                                    reqSchoolBtn && reqSchoolBtn.setAttribute('disabled', 'disabled');
+                                    reqSchoolBtn && reqSchoolBtn.setAttribute('aria-disabled', 'true');
                                 } else if (st === 'pendingCHR') {
-                                    reqSchoolBtn && (reqSchoolBtn.textContent = 'School: Requested (pendingCHR)');
+                                    reqSchoolBtn && (reqSchoolBtn.textContent = 'School CHR Request Pending...');
+                                    reqSchoolBtn && reqSchoolBtn.setAttribute('disabled', 'disabled');
+                                    reqSchoolBtn && reqSchoolBtn.setAttribute('aria-disabled', 'true');
+                                } else if (st === 'rejected' || st === 'denied' || st === 'failed') {
+                                    reqSchoolBtn && (reqSchoolBtn.textContent = 'Request School Copy');
+                                    reqSchoolBtn && reqSchoolBtn.removeAttribute('disabled');
+                                    reqSchoolBtn && reqSchoolBtn.removeAttribute('aria-disabled');
                                 } else {
                                     reqSchoolBtn && (reqSchoolBtn.textContent = 'Request School Copy');
+                                    reqSchoolBtn && reqSchoolBtn.removeAttribute('disabled');
+                                    reqSchoolBtn && reqSchoolBtn.removeAttribute('aria-disabled');
                                 }
                             }
                         }
@@ -422,7 +495,10 @@ $user_fname = $_SESSION['fname'] ?? '';
                 const schedRes = await fetch(`php/supabase/users/get_immunization_schedule.php?baby_id=${encodeURIComponent(babyId)}`);
                 if (!schedRes.ok) {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', { colspan: 11, kind: 'error' });
+                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', {
+                            colspan: 11,
+                            kind: 'error'
+                        });
                     } else {
                         ledgerBody.innerHTML = '<tr class="message-row error"><td colspan="11">Failed to load data. Please try again.</td></tr>';
                     }
@@ -431,7 +507,10 @@ $user_fname = $_SESSION['fname'] ?? '';
                 const schedJson = await schedRes.json();
                 if (!schedJson || schedJson.status !== 'success') {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', { colspan: 11, kind: 'error' });
+                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', {
+                            colspan: 11,
+                            kind: 'error'
+                        });
                     } else {
                         ledgerBody.innerHTML = '<tr class="message-row error"><td colspan="11">Failed to load data. Please try again.</td></tr>';
                     }
@@ -440,22 +519,81 @@ $user_fname = $_SESSION['fname'] ?? '';
                 const allRows = Array.isArray(schedJson.data) ? schedJson.data : [];
 
                 // Canonical vaccine order with normalization to match Supabase labels
-                const canonical = [
-                    { key: 'bcg', label: 'BCG', aliases: ['bcg'] },
-                    { key: 'hepb_birth', label: 'Hepatitis B (Birth Dose)', aliases: ['hepatitis b', 'hepab1 (w/in 24 hrs)', 'hepab1 (more than 24hrs)'] },
-                    { key: 'penta1', label: 'Pentavalent (DPT-HepB-Hib) - 1st', aliases: ['pentavalent (dpt-hepb-hib) - 1st', 'pentavalent 1'] },
-                    { key: 'opv1', label: 'OPV - 1st', aliases: ['opv - 1st', 'opv 1'] },
-                    { key: 'pcv1', label: 'PCV - 1st', aliases: ['pcv - 1st', 'pcv 1'] },
-                    { key: 'rota1', label: 'Rota Virus Vaccine - 1st', aliases: ['rota virus vaccine - 1st', 'rota 1'] },
-                    { key: 'penta2', label: 'Pentavalent (DPT-HepB-Hib) - 2nd', aliases: ['pentavalent (dpt-hepb-hib) - 2nd', 'pentavalent 2'] },
-                    { key: 'opv2', label: 'OPV - 2nd', aliases: ['opv - 2nd', 'opv 2'] },
-                    { key: 'pcv2', label: 'PCV - 2nd', aliases: ['pcv - 2nd', 'pcv 2'] },
-                    { key: 'rota2', label: 'Rota Virus Vaccine - 2nd', aliases: ['rota virus vaccine - 2nd', 'rota 2'] },
-                    { key: 'penta3', label: 'Pentavalent (DPT-HepB-Hib) - 3rd', aliases: ['pentavalent (dpt-hepb-hib) - 3rd', 'pentavalent 3'] },
-                    { key: 'opv3', label: 'OPV - 3rd', aliases: ['opv - 3rd', 'opv 3'] },
-                    { key: 'pcv3', label: 'PCV - 3rd', aliases: ['pcv - 3rd', 'pcv 3'] },
-                    { key: 'mcv1', label: 'MCV1 (AMV)', aliases: ['mcv1 (amv)', 'mcv1'] },
-                    { key: 'mcv2', label: 'MCV2 (MMR)', aliases: ['mcv2 (mmr)', 'mcv2'] }
+                const canonical = [{
+                        key: 'bcg',
+                        label: 'BCG',
+                        aliases: ['bcg']
+                    },
+                    {
+                        key: 'hepb_birth',
+                        label: 'Hepatitis B (Birth Dose)',
+                        aliases: ['hepatitis b', 'hepab1 (w/in 24 hrs)', 'hepab1 (more than 24hrs)']
+                    },
+                    {
+                        key: 'penta1',
+                        label: 'Pentavalent (DPT-HepB-Hib) - 1st',
+                        aliases: ['pentavalent (dpt-hepb-hib) - 1st', 'pentavalent 1']
+                    },
+                    {
+                        key: 'opv1',
+                        label: 'OPV - 1st',
+                        aliases: ['opv - 1st', 'opv 1']
+                    },
+                    {
+                        key: 'pcv1',
+                        label: 'PCV - 1st',
+                        aliases: ['pcv - 1st', 'pcv 1']
+                    },
+                    {
+                        key: 'rota1',
+                        label: 'Rota Virus Vaccine - 1st',
+                        aliases: ['rota virus vaccine - 1st', 'rota 1']
+                    },
+                    {
+                        key: 'penta2',
+                        label: 'Pentavalent (DPT-HepB-Hib) - 2nd',
+                        aliases: ['pentavalent (dpt-hepb-hib) - 2nd', 'pentavalent 2']
+                    },
+                    {
+                        key: 'opv2',
+                        label: 'OPV - 2nd',
+                        aliases: ['opv - 2nd', 'opv 2']
+                    },
+                    {
+                        key: 'pcv2',
+                        label: 'PCV - 2nd',
+                        aliases: ['pcv - 2nd', 'pcv 2']
+                    },
+                    {
+                        key: 'rota2',
+                        label: 'Rota Virus Vaccine - 2nd',
+                        aliases: ['rota virus vaccine - 2nd', 'rota 2']
+                    },
+                    {
+                        key: 'penta3',
+                        label: 'Pentavalent (DPT-HepB-Hib) - 3rd',
+                        aliases: ['pentavalent (dpt-hepb-hib) - 3rd', 'pentavalent 3']
+                    },
+                    {
+                        key: 'opv3',
+                        label: 'OPV - 3rd',
+                        aliases: ['opv - 3rd', 'opv 3']
+                    },
+                    {
+                        key: 'pcv3',
+                        label: 'PCV - 3rd',
+                        aliases: ['pcv - 3rd', 'pcv 3']
+                    },
+                    {
+                        key: 'mcv1',
+                        label: 'MCV1 (AMV)',
+                        aliases: ['mcv1 (amv)', 'mcv1']
+                    },
+                    {
+                        key: 'mcv2',
+                        label: 'MCV2 (MMR)',
+                        aliases: ['mcv2 (mmr)', 'mcv2']
+                    }
                 ];
 
                 const aliasLookup = {};
@@ -526,6 +664,7 @@ $user_fname = $_SESSION['fname'] ?? '';
                     const bucket = recordsByKey[entry.key];
                     const rec = bucket?.taken;
                     if (!rec) return; // show only taken vaccines
+
                     const date = rec.date_given || rec.batch_schedule_date || rec.schedule_date || '';
                     const ht = rec.height || rec.height_cm || '';
                     const wt = rec.weight || rec.weight_kg || '';
@@ -533,6 +672,27 @@ $user_fname = $_SESSION['fname'] ?? '';
                     const nextRecord = getNextReferenceRecord(index);
                     const nextDateRaw = dueDateOf(nextRecord);
                     const nextBatchDate = nextRecord?.batch_schedule_date ? formatDate(nextRecord.batch_schedule_date) : '-';
+
+                    // Build status chip based on record's status fields
+                    const rawStatus = (rec.status || rec.record_status || '').toString().trim();
+                    const s = rawStatus.toLowerCase();
+                    let statusHtml = '';
+                    if (!s) {
+                        statusHtml = `<span class="chip">-</span>`;
+                    } else if (s === 'taken' || s === 'completed') {
+                        statusHtml = `<span class="chip chip--taken">Taken</span>`;
+                    } else if (s === 'missed') {
+                        statusHtml = `<span class="chip chip--missed">Missed</span>`;
+                    } else if (s === 'scheduled' || s === 'due' || s === 'pending') {
+                        statusHtml = `<span class="chip chip--scheduled">Due</span>`;
+                    } else {
+                        statusHtml = `<span class="chip">${getValue(rawStatus)}</span>`;
+                    }
+
+                    const conditionText = rec.condition || rec.condition_of_baby || rec.condition_of_child || '';
+                    const adviceText = rec.advice || rec.advice_given || rec.recommendation || '';
+                    const remarksText = rec.remarks || rec.notes || '';
+
                     ledgerHtml += `
                 <tr>
                     <td>${getValue(formatDate(date))}</td>
@@ -540,18 +700,20 @@ $user_fname = $_SESSION['fname'] ?? '';
                     <td>${getValue(ht)}</td>
                     <td>${getValue(wt)}</td>
                     <td>${getValue(muac)}</td>
-                    <td>Taken</td>
-                    <td>-</td>
-                    <td>-</td>
+                    <td class="no-capitalize">${statusHtml}</td>
+                    <td class="no-capitalize">${getValue(conditionText)}</td>
+                    <td class="no-capitalize">${getValue(adviceText)}</td>
                     <td>${getValue(formatDate(nextDateRaw))}</td>
                     <td>${getValue(nextBatchDate)}</td>
-                    <td>-</td>
+                    <td>${getValue(remarksText)}</td>
                 </tr>`;
                 });
 
                 if (!ledgerHtml) {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(ledgerBody, 'No records found', { colspan: 11 });
+                        renderTableMessage(ledgerBody, 'No records found', {
+                            colspan: 11
+                        });
                     } else {
                         ledgerBody.innerHTML = '<tr class="message-row"><td colspan="11">No records found</td></tr>';
                     }
@@ -564,7 +726,10 @@ $user_fname = $_SESSION['fname'] ?? '';
                 const ledgerBody = document.getElementById('ledgerBody');
                 if (ledgerBody) {
                     if (typeof renderTableMessage === 'function') {
-                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', { colspan: 11, kind: 'error' });
+                        renderTableMessage(ledgerBody, 'Failed to load data. Please try again.', {
+                            colspan: 11,
+                            kind: 'error'
+                        });
                     } else {
                         ledgerBody.innerHTML = '<tr class="message-row error"><td colspan="11">Failed to load data. Please try again.</td></tr>';
                     }

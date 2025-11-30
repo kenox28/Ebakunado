@@ -398,6 +398,69 @@
   .footer-title {
     bottom: 0;
   }
+
+/* Login page specific responsive tweaks */
+@media (max-width: 900px) {
+  /* Tablet and small laptops: stack the auth frame and hide left branding */
+  .auth-frame {
+    width: 92%;
+    flex-direction: column;
+    height: auto;
+    border-radius: 10px;
+  }
+  .auth-left {
+    display: none;
+  }
+  .auth-right {
+    width: 100%;
+    padding: 2.4rem 2.4rem;
+  }
+  .portal-title {
+    font-size: 2.6rem;
+  }
+  .form-title {
+    font-size: 1.8rem;
+  }
+  .form-input {
+    font-size: 1.5rem;
+    padding: 1rem 1.2rem;
+  }
+  .btn-primary {
+    font-size: 1.6rem;
+    padding: 1.1rem 1.6rem;
+  }
+  .signup-text {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  /* Mobile phones: full width auth-right */
+  .auth-frame {
+    width: 100%;
+    border-radius: 0;
+  }
+  .auth-left {
+    display: none;
+  }
+  .auth-right {
+    width: 100%;
+    padding: 1.6rem 1.6rem;
+  }
+  .portal-title {
+    font-size: 2.2rem;
+  }
+  .form-title {
+    font-size: 1.6rem;
+  }
+  .form-input {
+    font-size: 1.4rem;
+    padding: 0.9rem 1rem;
+  }
+  .signup-text {
+    font-size: 1.6rem;
+  }
+}
   .footer-branding p {
     width: 100%;
     position: static;
@@ -951,6 +1014,7 @@
     display: grid;
     place-items: center;
     gap: 1.2rem;
+    background-color: #ebf2ed;
   }
 
   /* Frame fits screen and stacks vertically */
@@ -1018,22 +1082,22 @@
     text-align: center;
   }
   body.page-login .portal-title {
-    font-size: 2.8rem;
+    font-size: 2.4rem;
   }
   body.page-login .form-title {
-    font-size: 2.4rem;
-    margin-bottom: 1.2rem;
+    font-size: 2rem;
+    margin-bottom: 1.4rem;
   }
 
   body.page-login .input-group {
     margin-bottom: 1.2rem;
   }
   body.page-login .input-label {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     margin-bottom: 0.8rem;
   }
   body.page-login .form-input {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     padding: 1.4rem 1.4rem;
     border-radius: 10px;
   }
@@ -1049,11 +1113,11 @@
     text-align: right;
   }
   body.page-login .forgot-password-link {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
 
   body.page-login .btn-primary {
-    font-size: 2rem;
+    font-size: 1.6rem;
     padding: 1.2rem;
     border-radius: 10px;
   }
@@ -1112,6 +1176,7 @@
     display: grid;
     place-items: center;
     gap: 1.6rem;
+    background-color: #ebf2ed;
   }
 
   body.page-login .auth-frame {
@@ -1275,6 +1340,7 @@
     display: grid;
     place-items: center;
     gap: 1.2rem;
+    background-color: #ebf2ed;
   }
 
   body.page-create-account .auth-frame {
@@ -1313,18 +1379,18 @@
   }
 
   body.page-create-account .brand-logo {
-    width: 6.2rem;
+    width: 10.6rem;
     height: auto;
     margin: 0 auto 0.6rem;
   }
   body.page-create-account .brand-title {
-    font-size: 1.6rem;
+    font-size: 2rem;
   }
   body.page-create-account .brand-subtitle {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
   body.page-create-account .brand-desc {
-    font-size: 1.3rem;
+    font-size: 1.35rem;
   }
   body.page-create-account .auth-footer {
     display: none;
@@ -1457,6 +1523,7 @@
     display: grid;
     place-items: center;
     gap: 1.6rem;
+    background-color: #ebf2ed;
   }
 
   body.page-create-account .auth-frame {
@@ -1492,18 +1559,19 @@
   }
 
   body.page-create-account .brand-logo {
-    width: 7.2rem;
+    width: 10.6rem;
     height: auto;
     margin: 0 auto 0.8rem;
   }
   body.page-create-account .brand-title {
-    font-size: 1.8rem;
-  }
-  body.page-create-account .brand-subtitle {
     font-size: 2.2rem;
   }
+  body.page-create-account .brand-subtitle {
+    font-size: 1.8rem;
+  }
   body.page-create-account .brand-desc {
-    font-size: 1.4rem;
+    width: 550px;
+    font-size: 1.6rem;
   }
   body.page-create-account .auth-footer {
     display: none;

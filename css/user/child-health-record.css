@@ -1,12 +1,30 @@
 main {
   max-height: 100vh;
   overflow-y: auto;
+  background-color: #ebf2ed;
 }
 
 .chr-top-actions {
   display: flex;
   justify-content: flex-start;
   margin-bottom: 1rem;
+}
+
+.chr-top-actions .back-btn {
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chr-top-actions .back-btn:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.chr-top-actions .back-btn:active {
+  background: #f3f4f6;
 }
 
 .child-health-record-section {
@@ -75,17 +93,17 @@ main {
 /* Subheaders to match BHW look */
 .chr-subheader {
   text-align: left;
-  padding: 1.25rem 1.5rem;
-  background: linear-gradient(
+  padding: 1.2rem 1.6rem;
+  /* background: linear-gradient(
     135deg,
     rgba(0, 150, 57, 0.08) 0%,
     rgba(0, 150, 57, 0.03) 100%
-  );
-  border-bottom: 1px solid rgba(0, 150, 57, 0.15);
+  ); */
+  border-bottom: 1px solid #dee2e6;
 }
 .chr-subheader h2 {
-  font-size: 1.8rem;
-  color: #2c3e50;
+  font-size: 1.6rem;
+  color: #1a1a1a;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -98,7 +116,7 @@ main {
   justify-content: center;
   vertical-align: middle;
   font-size: 2.2rem;
-  color: var(--primary-color);
+  color: #1a1a1a;
 }
 
 /* Section title block */
@@ -120,7 +138,7 @@ main {
 .chr-grid {
   display: grid;
   gap: 1rem;
-  padding: 1.25rem 1.5rem;
+  padding: 1.4rem 1.6rem 1.4rem;
 }
 .profile-section .chr-grid {
   grid-template-columns: repeat(2, minmax(280px, 1fr));
@@ -184,7 +202,9 @@ main {
 .child-health-record-section,
 .child-health-record-section p,
 .child-health-record-section .immunization-table thead th,
-.child-health-record-section .immunization-table tbody td {
+.child-health-record-section .immunization-table tbody td,
+.child-health-record-section .data-table thead th,
+.child-health-record-section .data-table tbody td {
   font-size: 1.2rem;
 }
 
@@ -292,7 +312,9 @@ main {
 
 /* Standardized message rows for ledger table */
 .child-health-record-section .immunization-table .message-row td,
-.child-health-record-section .immunization-table tr.message-row td {
+.child-health-record-section .immunization-table tr.message-row td,
+.child-health-record-section .data-table .message-row td,
+.child-health-record-section .data-table tr.message-row td {
   text-align: center;
   padding: 1.25rem 1rem;
   font-size: 1.15rem;
@@ -301,7 +323,9 @@ main {
   border: 1px solid #eee;
 }
 .child-health-record-section .immunization-table .message-row.error td,
-.child-health-record-section .immunization-table tr.message-row.error td {
+.child-health-record-section .immunization-table tr.message-row.error td,
+.child-health-record-section .data-table .message-row.error td,
+.child-health-record-section .data-table tr.message-row.error td {
   color: #b00020;
   background: #fff5f5;
   border-color: #ffc9c9;

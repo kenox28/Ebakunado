@@ -36,7 +36,7 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
     <link rel="stylesheet" href="css/sidebar.css?v=1.0.6" />
     <link rel="stylesheet" href="css/notification-style.css?v=1.0.6" />
     <link rel="stylesheet" href="css/modals.css?v=1.0.5" />
-    <link rel="stylesheet" href="css/user/add-child-request.css?v=1.0.6" />
+    <link rel="stylesheet" href="css/user/add-child-request.css?v=1.0.4" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400;700" />
@@ -62,9 +62,9 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                     <span class="material-symbols-rounded">qr_code_2</span>
                     <span>Have a Family Code?</span>
                 </h2>
-                <p>Enter the code given by your BHW/Midwife to add your child</p>
+                <p class="family-code-inner">Enter the code given by your BHW/Midwife to add your child</p>
 
-                <div>
+                <div class="family-code-inner">
                     <input type="text" id="familyCode" placeholder="Enter family code (e.g., FAM-ABC123)">
                     <button onclick="claimChildWithCode()">Link Child</button>
                 </div>
@@ -106,28 +106,24 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                             <input type="text" name="place_of_birth" placeholder="Enter place of birth">
                         </div>
 
-                        <div class="form-group" style="grid-column: 1 / -1;">
-                            <label>Address Details *</label>
-                            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-                                <div class="form-group">
-                                    <label for="child_province">Province</label>
-                                    <input type="text" id="child_province" placeholder="Enter province" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="child_city">City/Municipality</label>
-                                    <input type="text" id="child_city" placeholder="Enter city or municipality" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="child_barangay">Barangay</label>
-                                    <input type="text" id="child_barangay" placeholder="Enter barangay" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="child_purok">Purok</label>
-                                    <input type="text" id="child_purok" placeholder="Enter purok or zone" required>
-                                </div>
-                            </div>
-                            <input type="hidden" id="child_address" name="child_address">
+                        <!-- <label>Address Details *</label> -->
+                        <div class="form-group">
+                            <label for="child_province">Province</label>
+                            <input type="text" id="child_province" placeholder="Enter province" required>
                         </div>
+                        <div class="form-group">
+                            <label for="child_city">City/Municipality</label>
+                            <input type="text" id="child_city" placeholder="Enter city or municipality" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="child_barangay">Barangay</label>
+                            <input type="text" id="child_barangay" placeholder="Enter barangay" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="child_purok">Purok</label>
+                            <input type="text" id="child_purok" placeholder="Enter purok or zone" required>
+                        </div>
+                        <input type="hidden" id="child_address" name="child_address">
 
                         <div class="form-group">
                             <label for="birth_weight">Birth Weight (kg)</label>
@@ -146,25 +142,21 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                             <label for="allergies">Allergies</label>
                             <input type="text" name="allergies" placeholder="e.g., None">
                         </div>
-                    </div>
-
-                    <!-- Gender Selection -->
-                    <div class="form-group">
-                        <label>Baby Gender *</label>
-                        <div class="radio-group">
-                            <label class="radio-option">
-                                <input type="radio" name="child_gender" value="Male" required>
-                                Male
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="child_gender" value="Female" required>
-                                Female
-                            </label>
+                        <!-- Gender Selection -->
+                        <div class="form-group">
+                            <label>Baby Gender (Sex)*</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="child_gender" value="Male" required>
+                                    Male
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="child_gender" value="Female" required>
+                                    Female
+                                </label>
+                            </div>
                         </div>
-                    </div>
-
-                    <!-- Parent Information -->
-                    <div class="form-grid">
+                        <!-- Parent Information -->
                         <?php if ($gender == 'Male'): ?>
                             <div class="form-group">
                                 <label for="father_name">Father Name</label>
@@ -184,9 +176,8 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                                 <input value="example" type="text" name="father_name" placeholder="Enter father's name">
                             </div>
                         <?php endif; ?>
-                    </div>
 
-                    <div class="form-grid">
+                        <!-- Maternal Health Information -->
                         <div class="form-group">
                             <label for="lpm">LMP (Last Menstrual Period)</label>
                             <input type="date" name="lpm">
@@ -196,7 +187,31 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                             <input type="text" name="family_planning" placeholder="e.g., Natural, Pills, IUD">
                         </div>
                     </div>
+                </div>
+            </form>
 
+            <form class="form-container" id="requestform" method="post" enctype="multipart/form-data">
+                <!-- Basic Information Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <span class="material-symbols-rounded">history</span>
+                        <span>Child History</span>
+                    </h2>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="date_newbornScreening">Date of Newborn Screening</label>
+                        <input type="date" id="date_newbornScreening" name="date_newbornScreening">
+                    </div>
+                    <div class="form-group">
+                        <label for="placeNewbornScreening">Place of Newborn Screening</label>
+                        <input type="text" id="placeNewbornScreening" name="placeNewbornScreening" placeholder="Enter place of newborn screening">
+                    </div>
+
+                </div>
+
+                <div class="form-grid">
                     <!-- Birth Details -->
                     <div class="form-group">
                         <label class="radio-label">Type of Delivery</label>
@@ -224,38 +239,63 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                                 Twin
                             </label>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="form-group">
-                            <label>Birth Attendant</label>
-                            <div class="radio-group">
-                                <label class="radio-option"><input type="radio" name="birth_attendant" value="Doctor"> Doctor</label>
-                                <label class="radio-option"><input type="radio" name="birth_attendant" value="Midwife"> Midwife</label>
-                                <label class="radio-option"><input type="radio" name="birth_attendant" value="Nurse"> Nurse</label>
-                                <label class="radio-option"><input type="radio" name="birth_attendant" value="Hilot"> Hilot</label>
-                                <label class="radio-option">
-                                    <span>Other:</span>
-                                    <input type="text" name="birth_attendant_others" placeholder="Specify">
-                                </label>
-                            </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Birth Attendant</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="birth_attendant" value="Doctor"> Doctor</label>
+                            <label class="radio-option"><input type="radio" name="birth_attendant" value="Midwife"> Midwife</label>
+                            <label class="radio-option"><input type="radio" name="birth_attendant" value="Nurse"> Nurse</label>
+                            <label class="radio-option"><input type="radio" name="birth_attendant" value="Hilot"> Hilot</label>
+                            <label class="radio-option">
+                                <span>Other:</span>
+                                <input type="text" name="birth_attendant_others" placeholder="Specify">
+                            </label>
                         </div>
+                    </div>
+                </div>
+            </form>
 
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="date_newbornScreening">Date of Newborn Screening</label>
-                                <input type="date" id="date_newbornScreening" name="date_newbornScreening">
-                            </div>
-                            <div class="form-group">
-                                <label for="placeNewbornScreening">Place of Newborn Screening</label>
-                                <input type="text" id="placeNewbornScreening" name="placeNewbornScreening" placeholder="Enter place of newborn screening">
-                            </div>
+            <form class="form-container" id="requestform" method="post" enctype="multipart/form-data">
+                <!-- Vaccines Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <span class="material-symbols-rounded">vaccines</span>
+                        <span>Vaccines Already Received</span>
+                    </h2>
+                    <div class="form-group">
+                        <p class="form-note">Check all vaccines that your child has already received:</p>
+
+                        <div class="checkbox-grid">
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="BCG"> BCG (Tuberculosis)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Hepatitis B"> Hepatitis B (Birth dose)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 1st"> Pentavalent (DPT-HepB-Hib) - 1st</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 1st"> OPV - 1st (Oral Polio)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 1st"> PCV - 1st (Pneumococcal)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 2nd"> Pentavalent (DPT-HepB-Hib) - 2nd</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 2nd"> OPV - 2nd (Oral Polio)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 2nd"> PCV - 2nd (Pneumococcal)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 3rd"> Pentavalent (DPT-HepB-Hib) - 3rd</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 3rd"> OPV - 3rd (Oral Polio)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="IPV"> IPV (Inactivated Polio Vaccine)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 3rd"> PCV - 3rd (Pneumococcal)</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="MCV1 (AMV)"> MCV1 (AMV) - Anti-Measles Vaccine</label>
+                            <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="MCV2 (MMR)"> MCV2 (MMR) - Measles-Mumps-Rubella</label>
                         </div>
+                    </div>
 
+                    <p class="form-note">Please upload your child's Baby Book/Card. This will serve as verification for the vaccines you have selected above.</p>
+
+                    <div class="form-grid">
                         <!-- File Upload -->
                         <div class="form-group" id="fileUploadGroup">
                             <label>Upload Baby's Card *</label>
                             <div class="upload-card">
                                 <div class="upload-dropzone" id="uploadDropzone" role="region" aria-label="Drag & Drop or Click to Upload a file; accepted formats JPG, PNG, PDF">
-                                     <span class="material-symbols-rounded">cloud_upload</span>
+                                    <span class="material-symbols-rounded">cloud_upload</span>
                                     <div class="upload-text">
                                         <strong>Drag & Drop or Click to Upload</strong>
                                         <span>or press Enter/Space to browse from your device</span>
@@ -285,43 +325,16 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Vaccines Section -->
-                        <div class="form-section">
-                            <h2 class="section-title">
-                                <span class="material-symbols-rounded">vaccines</span>
-                                <span>Vaccines Already Received</span>
-                            </h2>
-                            <p>Check all vaccines that your child has already received:</p>
-
-                            <div class="checkbox-grid">
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="BCG"> BCG (Tuberculosis)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Hepatitis B"> Hepatitis B (Birth dose)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 1st"> Pentavalent (DPT-HepB-Hib) - 1st</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 1st"> OPV - 1st (Oral Polio)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 1st"> PCV - 1st (Pneumococcal)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 2nd"> Pentavalent (DPT-HepB-Hib) - 2nd</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 2nd"> OPV - 2nd (Oral Polio)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 2nd"> PCV - 2nd (Pneumococcal)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="Pentavalent (DPT-HepB-Hib) - 3rd"> Pentavalent (DPT-HepB-Hib) - 3rd</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="OPV - 3rd"> OPV - 3rd (Oral Polio)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="IPV"> IPV (Inactivated Polio Vaccine)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="PCV - 3rd"> PCV - 3rd (Pneumococcal)</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="MCV1 (AMV)"> MCV1 (AMV) - Anti-Measles Vaccine</label>
-                                <label class="checkbox-option"><input type="checkbox" name="vaccines_received[]" value="MCV2 (MMR)"> MCV2 (MMR) - Measles-Mumps-Rubella</label>
-                            </div>
-                        </div>
-
-                        <!-- Submit Section -->
-                        <div class="submit-section">
-                            <button type="submit" class="submit-btn">
-                                Submit Child Health Record Request
-                            </button>
-                            <p>By submitting this form, you agree to provide accurate information for your child's health record.</p>
-                        </div>
-
-                        <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
                     </div>
+
+                    <!-- Submit Section -->
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">
+                            Submit Child Health Record Request
+                        </button>
+                        <p>By submitting this form, you agree to provide accurate information for your child's health record.</p>
+                    </div>
+                    <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
                 </div>
             </form>
         </section>
@@ -577,7 +590,7 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                     xhr.onload = function() {
                         try {
                             const json = JSON.parse(xhr.responseText || '{}');
-                            
+
                             // Log full response for debugging
                             if (json.status === 'error') {
                                 console.error('=== ERROR RESPONSE ===');
@@ -591,7 +604,7 @@ $user_fname = ($_SESSION['fname'] ?? '') . ' ' . ($_SESSION['lname'] ?? '');
                                 console.error('Status Code:', xhr.status);
                                 console.error('===================');
                             }
-                            
+
                             resolve(json);
                         } catch (err) {
                             console.error('=== PARSE ERROR ===');

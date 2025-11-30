@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Privacy & Terms — Linao Health Center</title>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/assets/icons/favicon_io/favicon-32x32.png"
+    />
+    <!-- Use absolute paths so CSS/JS load correctly regardless of route -->
+    <link rel="stylesheet" href="/css/fonts.css?v=1.0.1" />
+    <link rel="stylesheet" href="/css/variables.css?v=1.0.2" />
+    <link rel="stylesheet" href="/css/styles.css?v=1.0.5" />
+    <!-- <link rel="stylesheet" href="/css/queries.css?v=1.0.1" /> -->
+    <link rel="stylesheet" href="/css/privacy-terms.css?v=1.0.3" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="header">
+        <a class="logo" href="#hero">
+          <img
+            class="logo-image"
+            src="/assets/images/ebakunado-logo-without-label.png"
+            alt="eBakunado Logo"
+          />
+          <h1 class="logo-label">eBakunado</h1>
+        </a>
+
+        <span
+          class="menu-icon material-symbols-rounded"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="primary-navigation"
+        >
+          menu
+        </span>
+
+        <nav id="primary-navigation" class="navbar">
+          <ul class="nav-links">
+            <li class="nav-item">
+              <a class="nav-button" data-nav="home" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-button" data-nav="about" href="about">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-button" data-nav="features" href="features"
+                >Features</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-button" data-nav="contact" href="contact"
+                >Contact</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-button" data-nav="login" href="login">Login</a>
+            </li>
+          </ul>
+        </nav>
+      </header>
+
+      <section class="grid" aria-labelledby="page-title">
+        <!-- left: summary / quick consent card -->
+        <aside class="card" aria-label="Quick policy summary">
+          <div class="policy-card">
+            <div class="policy-card-title">
+              Privacy Policy & Terms of Service
+            </div>
+            <div class="policy-content">
+              <ul class="policy-list">
+                <li>
+                  You confirm you are the parent or legal guardian of the child
+                  whose information will be entered.
+                </li>
+                <li>
+                  Consent is given for collection, storage and processing of the
+                  child’s personal and immunization data under RA 10173.
+                </li>
+                <li>
+                  Data is used only for immunization services: scheduling,
+                  tracking and verification.
+                </li>
+                <li>
+                  Data may be shared only with authorized Linao Health Center
+                  staff, the LGU, or the DOH for health purposes.
+                </li>
+                <li>
+                  Data will NOT be shared with unauthorized parties or used for
+                  commercial purposes.
+                </li>
+                <li>
+                  Rights include: Access, Correction, Withdrawal of consent
+                  (withdrawal may limit services).
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <form id="consentForm" class="input-group" onsubmit="return false;">
+            <label class="checkbox" for="agree_terms">
+              <input
+                type="checkbox"
+                id="agree_terms"
+                name="agree_terms"
+                value="yes"
+                required
+              />
+              <span
+                >I agree to the Privacy Policy and Terms of Service of Linao
+                Health Center</span
+              >
+            </label>
+
+            <div class="actions">
+              <button id="openPolicy" class="btn ghost" type="button">
+                Read full policy
+              </button>
+              <button id="agreeBtn" class="btn" type="submit" disabled>
+                Agree & Continue
+              </button>
+            </div>
+
+            <div class="legal-footer">
+              By agreeing you consent to the collection and processing of data
+              for immunization services.
+              <span class="muted">(You may withdraw consent at any time.)</span>
+            </div>
+          </form>
+        </aside>
+
+        <!-- right: full content -->
+        <article class="card">
+          <h1 id="page-title">Privacy & Terms</h1>
+          <p class="muted">
+            This combined document explains how we collect, use, share and
+            protect immunization and personal data for children registered with
+            Linao Health Center — in compliance with the Data Privacy Act of
+            2012 (RA 10173).
+          </p>
+
+          <h2>1. Privacy Policy</h2>
+          <h3>1.1 Information We Collect</h3>
+          <ul>
+            <li>Personal identification details (child and parent/guardian)</li>
+            <li>Immunization and health-related records</li>
+            <li>Appointment scheduling and tracking data</li>
+          </ul>
+
+          <h3>1.2 How We Use Information</h3>
+          <p>We use collected information only to:</p>
+          <ul>
+            <li>Provide immunization services and schedule appointments</li>
+            <li>Verify and track vaccination status and history</li>
+            <li>Report required public health data to authorized agencies</li>
+          </ul>
+
+          <h3>1.3 Data Sharing</h3>
+          <p>We may share data with:</p>
+          <ul>
+            <li>Authorized Linao Health Center health workers</li>
+            <li>Local Government Unit (LGU)</li>
+            <li>Department of Health (DOH)</li>
+          </ul>
+          <p>
+            We will not share information with unauthorized third parties, or
+            use it for commercial or unrelated purposes.
+          </p>
+
+          <h3>1.4 Your Rights</h3>
+          <ul>
+            <li>Access your child’s records</li>
+            <li>Request correction of inaccurate information</li>
+            <li>Withdraw consent (note: withdrawal may limit services)</li>
+          </ul>
+
+          <h3>1.5 Data Security</h3>
+          <p>
+            We implement administrative, technical, and organizational measures
+            to protect data against unauthorized access, alteration, loss, or
+            disclosure.
+          </p>
+
+          <h2>2. Terms of Service</h2>
+          <h3>2.1 Responsibilities</h3>
+          <p>
+            By using this system you confirm that you are the parent or legal
+            guardian and that the information you provide is accurate.
+          </p>
+
+          <h3>2.2 Authorized Use</h3>
+          <p>
+            This system is only for registering, updating and accessing
+            immunization data, and for communication with authorized health
+            personnel.
+          </p>
+
+          <h3>2.3 Limitation of Services</h3>
+          <p>
+            Service availability may be limited when consent is withdrawn,
+            information is incomplete, or access is misused.
+          </p>
+
+          <h3>2.4 Changes to this Policy</h3>
+          <p>
+            We may update this policy. Significant changes will be communicated
+            and continued use implies acceptance of updates.
+          </p>
+
+          <h3>2.5 Contact</h3>
+          <p>
+            If you have questions or requests regarding data, contact Linao
+            Health Center — Data Protection Officer (add phone/email here).
+          </p>
+        </article>
+      </section>
+
+      <!-- Modal: full policy for signup flow -->
+      <div
+        id="policyModal"
+        class="modal-backdrop"
+        role="dialog"
+        aria-modal="true"
+        aria-hidden="true"
+      >
+        <div class="modal card" role="document">
+          <div class="modal-header">
+            <strong>Privacy Policy & Terms of Service</strong>
+            <button class="close" id="closeModal" aria-label="Close">✕</button>
+          </div>
+
+          <div style="margin-top: 12px">
+            <!-- Repeat the full policy inside modal for easy reading during signup -->
+            <h2>Privacy Policy</h2>
+            <p><strong>Information We Collect</strong></p>
+            <ul>
+              <li>
+                Personal identification details (child and parent/guardian)
+              </li>
+              <li>Immunization and health-related records</li>
+              <li>Appointment scheduling and tracking data</li>
+            </ul>
+
+            <h3>How We Use Information</h3>
+            <ul>
+              <li>Provide immunization services and schedule appointments</li>
+              <li>Verify and track vaccination status and history</li>
+              <li>Report required public health data to authorized agencies</li>
+            </ul>
+
+            <h3>Data Sharing</h3>
+            <p>
+              We may share data with authorized Linao Health Center staff, the
+              LGU, and the DOH. We do not share data with unauthorized third
+              parties or use it for commercial purposes.
+            </p>
+
+            <h3>Your Rights</h3>
+            <ul>
+              <li>Access child’s records</li>
+              <li>Request correction of inaccurate information</li>
+              <li>Withdraw consent</li>
+            </ul>
+
+            <h2>Terms of Service</h2>
+            <p>
+              By using this system you confirm you are the parent or legal
+              guardian and agree to provide accurate information. This system is
+              for immunization data only. Withdrawal of consent may limit
+              services. We may update the policy and will communicate
+              significant changes.
+            </p>
+
+            <div class="modal-actions">
+              <div class="checkbox-group">
+                <label class="checkbox" style="margin: 0">
+                  <input type="checkbox" id="modalAgree" />
+                  <span>I agree to the Privacy Policy & Terms of Service</span>
+                </label>
+              </div>
+              <div class="actions">
+                <button id="modalAgreeBtn" class="btn" disabled>Agree</button>
+                <button id="modalCloseBtn" class="btn ghost">Close</button>
+              </div>
+            </div>
+            <p class="muted" style="margin-top: 12px">
+              Note: Agreeing will record your consent. You can withdraw consent
+              later by contacting the health center.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Basic UI behavior: enable agree button when checkbox checked
+      const agreeCheckbox = document.getElementById("agree_terms");
+      const agreeBtn = document.getElementById("agreeBtn");
+      const openPolicy = document.getElementById("openPolicy");
+      const modal = document.getElementById("policyModal");
+      const closeModal = document.getElementById("closeModal");
+      const modalCloseBtn = document.getElementById("modalCloseBtn");
+      const modalAgree = document.getElementById("modalAgree");
+      const modalAgreeBtn = document.getElementById("modalAgreeBtn");
+
+      agreeCheckbox.addEventListener("change", (e) => {
+        agreeBtn.disabled = !e.target.checked;
+      });
+
+      openPolicy.addEventListener("click", () => {
+        modal.style.display = "flex";
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      });
+      closeModal.addEventListener("click", closeM);
+      modalCloseBtn.addEventListener("click", closeM);
+      function closeM() {
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }
+
+      modalAgree.addEventListener("change", (e) => {
+        modalAgreeBtn.disabled = !e.target.checked;
+      });
+
+      // When modal agree pressed, check main checkbox and close modal
+      modalAgreeBtn.addEventListener("click", () => {
+        agreeCheckbox.checked = true;
+        agreeBtn.disabled = false;
+        // Optionally record acceptance here (AJAX)
+        closeM();
+        // For illustrative purposes: show a toast or focus the Agree button
+        agreeBtn.focus();
+      });
+
+      // Form submit: simulate a POST to backend to store acceptance
+      document
+        .getElementById("consentForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          if (!agreeCheckbox.checked) return;
+
+          // Prepare payload
+          const payload = {
+            accepted_terms: true,
+            accepted_terms_at: new Date().toISOString(),
+            accepted_terms_version: "v1.0",
+          };
+
+          try {
+            // Example: POST to your server endpoint. Replace URL with your real endpoint.
+            // const res = await fetch('/api/consent', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
+            // if(!res.ok) throw new Error('Network response was not ok');
+
+            // For demo: show a simple success state
+            agreeBtn.textContent = "Accepted";
+            agreeBtn.disabled = true;
+            agreeBtn.style.opacity = "0.9";
+            // Optionally redirect after acceptance
+            // window.location.href = '/dashboard';
+
+            alert(
+              "Consent recorded (demo). In production, this should POST to your server to store acceptance in your database."
+            );
+          } catch (err) {
+            console.error(err);
+            alert("Failed to record consent. Please try again.");
+          }
+        });
+    </script>
+    <script src="/js/landing-page-handler/nav.js?v=1.0.2"></script>
+  </body>
+</html>

@@ -36,7 +36,7 @@ if ($user_id) {
 
     <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
     <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
-    <link rel="stylesheet" href="css/bhw/dashboard.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/bhw/dashboard.css?v=1.0.3" />
 
 </head>
 
