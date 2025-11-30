@@ -404,27 +404,137 @@ class CHRTemplateGenerator {
     }
     
     private function getVaccinationRecords() {
+        // Canonical vaccine order (same as frontend)
+        $canonical = [
+            ['key' => 'bcg', 'aliases' => ['bcg']],
+            ['key' => 'hepb_birth', 'aliases' => ['hepatitis b', 'hepab1 (w/in 24 hrs)', 'hepab1 (more than 24hrs)']],
+            ['key' => 'penta1', 'aliases' => ['pentavalent (dpt-hepb-hib) - 1st', 'pentavalent 1']],
+            ['key' => 'opv1', 'aliases' => ['opv - 1st', 'opv 1']],
+            ['key' => 'pcv1', 'aliases' => ['pcv - 1st', 'pcv 1']],
+            ['key' => 'rota1', 'aliases' => ['rota virus vaccine - 1st', 'rota 1']],
+            ['key' => 'penta2', 'aliases' => ['pentavalent (dpt-hepb-hib) - 2nd', 'pentavalent 2']],
+            ['key' => 'opv2', 'aliases' => ['opv - 2nd', 'opv 2']],
+            ['key' => 'pcv2', 'aliases' => ['pcv - 2nd', 'pcv 2']],
+            ['key' => 'rota2', 'aliases' => ['rota virus vaccine - 2nd', 'rota 2']],
+            ['key' => 'penta3', 'aliases' => ['pentavalent (dpt-hepb-hib) - 3rd', 'pentavalent 3']],
+            ['key' => 'opv3', 'aliases' => ['opv - 3rd', 'opv 3']],
+            ['key' => 'pcv3', 'aliases' => ['pcv - 3rd', 'pcv 3']],
+            ['key' => 'mcv1', 'aliases' => ['mcv1 (amv)', 'mcv1']],
+            ['key' => 'mcv2', 'aliases' => ['mcv2 (mmr)', 'mcv2']]
+        ];
+
+        // Build alias lookup
+        $aliasLookup = [];
+        foreach ($canonical as $entry) {
+            foreach ($entry['aliases'] as $alias) {
+                $aliasLookup[strtolower(trim($alias))] = $entry;
+            }
+        }
+
+        // Normalize vaccine name
+        $normalizeVaccine = function($name) use ($aliasLookup) {
+            if (empty($name)) return null;
+            $key = strtolower(trim($name));
+            return $aliasLookup[$key] ?? null;
+        };
+
+        // Group records by vaccine key
+        $recordsByKey = [];
+        foreach ($this->immunizationData as $r) {
+            $normalized = $normalizeVaccine($r['vaccine_name'] ?? '');
+            if (!$normalized) continue;
+            $key = $normalized['key'];
+            if (!isset($recordsByKey[$key])) {
+                $recordsByKey[$key] = [];
+            }
+            $recordsByKey[$key][] = $r;
+        }
+
+        // Function to get next vaccine record in canonical sequence
+        $getNextReferenceRecord = function($currentKey) use ($canonical, $recordsByKey) {
+            $currentIndex = -1;
+            foreach ($canonical as $idx => $entry) {
+                if ($entry['key'] === $currentKey) {
+                    $currentIndex = $idx;
+                    break;
+                }
+            }
+            if ($currentIndex === -1) return null;
+
+            // Get the next vaccine in sequence
+            for ($i = $currentIndex + 1; $i < count($canonical); $i++) {
+                $entry = $canonical[$i];
+                $records = $recordsByKey[$entry['key']] ?? [];
+                if (empty($records)) continue;
+
+                // Priority: upcoming (if exists) > taken (if exists) > any
+                $upcoming = null;
+                $taken = null;
+                foreach ($records as $r) {
+                    $status = strtolower($r['status'] ?? '');
+                    if (($status === 'scheduled' || $status === 'upcoming') && !$upcoming) {
+                        $upcoming = $r;
+                    }
+                    if (($status === 'taken' || $status === 'completed') && !$taken) {
+                        $taken = $r;
+                    }
+                }
+                return $upcoming ?? $taken ?? $records[0];
+            }
+            return null;
+        };
+
+        // Function to calculate next schedule date with priority
+        $getNextScheduleDate = function($nextRecord) {
+            if (!$nextRecord) return '';
+            
+            $dateValue = '';
+            // Priority: batch_schedule_date > catch_up_date > schedule_date
+            if (!empty($nextRecord['batch_schedule_date']) && trim($nextRecord['batch_schedule_date']) !== '') {
+                $dateValue = trim($nextRecord['batch_schedule_date']);
+            } elseif (!empty($nextRecord['catch_up_date']) && trim($nextRecord['catch_up_date']) !== '') {
+                $dateValue = trim($nextRecord['catch_up_date']);
+            } elseif (!empty($nextRecord['schedule_date']) && trim($nextRecord['schedule_date']) !== '') {
+                $dateValue = trim($nextRecord['schedule_date']);
+            }
+            
+            if ($dateValue) {
+                $formattedDate = $this->formatDate($dateValue);
+                return $formattedDate ? $formattedDate : '';
+            }
+            return '';
+        };
+
         $records = [];
         foreach ($this->immunizationData as $record) {
-            if ($record['status'] === 'taken') {
+            if (($record['status'] ?? '') === 'taken' || ($record['status'] ?? '') === 'completed') {
+                // Find next vaccine's schedule date
+                $normalized = $normalizeVaccine($record['vaccine_name'] ?? '');
+                $nextRecord = $normalized ? $getNextReferenceRecord($normalized['key']) : null;
+                $nextSchedule = $getNextScheduleDate($nextRecord);
+
                 $records[] = [
                     'date' => $this->formatDate($record['date_given'] ?? ''),
                     'purpose' => $record['vaccine_name'] ?? '',
                     'height' => $record['height'] ?? '',
                     'weight' => $record['weight'] ?? '',
-                    'muac' => '',
+                    'muac' => $record['muac'] ?? '',
                     'status' => 'Taken',
-                    'condition' => '',
-                    'advice' => '',
-                    'next_schedule' => '',
-                    'remarks' => ''
+                    'condition' => $record['condition_of_baby'] ?? '',
+                    'advice' => $record['advice_given'] ?? '',
+                    'next_schedule' => $nextSchedule,
+                    'remarks' => $record['remarks'] ?? ''
                 ];
             }
         }
         
         // Sort by date
         usort($records, function($a, $b) {
-            return strtotime($a['date']) - strtotime($b['date']);
+            $dateA = strtotime($a['date']);
+            $dateB = strtotime($b['date']);
+            if ($dateA === false) $dateA = 0;
+            if ($dateB === false) $dateB = 0;
+            return $dateA - $dateB;
         });
         
         return $records;

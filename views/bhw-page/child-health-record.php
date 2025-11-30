@@ -43,7 +43,7 @@ if ($user_id) {
 
     <link rel="stylesheet" href="css/notification-style.css" />
     <link rel="stylesheet" href="css/skeleton-loading.css" />
-    <link rel="stylesheet" href="css/bhw/child-health-record.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/bhw/child-health-record.css?v=1.0.5" />
     <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.4" />
 </head>
 
@@ -82,25 +82,53 @@ if ($user_id) {
                         <label><span>Name of Child</span><span id="f_name">-</span></label>
                         <label><span>Gender</span><span id="f_gender">-</span></label>
                         <label><span>Date of Birth</span><span id="f_birth_date">-</span></label>
-                        <label><span>Place of Birth</span><span id="f_birth_place">-</span></label>
-                        <label><span>Birth Weight</span><span id="f_birth_weight">-</span></label>
-                        <label><span>Birth Length</span><span id="f_birth_height">-</span></label>
-                        <label><span>Address</span><span id="f_address">-</span></label>
-                        <label><span>Allergies</span><span id="f_allergies">-</span></label>
-                        <label><span>Blood Type</span><span id="f_blood_type">-</span></label>
+                        <?php if (isset($_SESSION['midwife_id'])): ?>
+                            <label><span>Place of Birth</span><input type="text" id="cp_place_of_birth"></label>
+                            <label><span>Birth Weight</span><input type="number" step="0.01" id="cp_birth_weight" placeholder="kg"></label>
+                            <label><span>Birth Length</span><input type="number" step="0.01" id="cp_birth_height" placeholder="cm"></label>
+                            <label><span>Address</span><input type="text" id="cp_address"></label>
+                            <label><span>Allergies</span><input type="text" id="cp_allergies"></label>
+                            <label><span>Blood Type</span><input type="text" id="cp_blood_type"></label>
+                        <?php else: ?>
+                            <label><span>Place of Birth</span><span id="f_birth_place">-</span></label>
+                            <label><span>Birth Weight</span><span id="f_birth_weight">-</span></label>
+                            <label><span>Birth Length</span><span id="f_birth_height">-</span></label>
+                            <label><span>Address</span><span id="f_address">-</span></label>
+                            <label><span>Allergies</span><span id="f_allergies">-</span></label>
+                            <label><span>Blood Type</span><span id="f_blood_type">-</span></label>
+                        <?php endif; ?>
                     </div>
 
                     <div class="childinfo-column">
-                        <label><span>Family Number</span><span id="f_family_no">-</span></label>
-                        <label><span>PhilHealth No.</span><span id="f_philhealth">-</span></label>
-                        <label><span>NHTS</span><span id="f_nhts">-</span></label>
-                        <label><span>Non-NHTS</span><span id="f_non_nhts">-</span></label>
-                        <label><span>Father's Name</span><span id="f_father">-</span></label>
-                        <label><span>Mother's Name</span><span id="f_mother">-</span></label>
-                        <label><span>NB Screening</span><span id="f_nb_screen">-</span></label>
-                        <label><span>Family Planning</span><span id="f_fp">-</span></label>
+                        <?php if (isset($_SESSION['midwife_id'])): ?>
+                            <label><span>Family Number</span><input type="text" id="cp_family_number"></label>
+                            <label><span>PhilHealth No.</span><input type="text" id="cp_philhealth_no"></label>
+                            <label><span>NHTS</span><input type="text" id="cp_nhts"></label>
+                            <label><span>Non-NHTS</span><input type="text" id="cp_non_nhts"></label>
+                            <label><span>Father's Name</span><input type="text" id="cp_father_name"></label>
+                            <label><span>Mother's Name</span><input type="text" id="cp_mother_name"></label>
+                            <label><span>NB Screening</span><input type="text" id="cp_nb_screen"></label>
+                            <label><span>Family Planning</span><input type="text" id="cp_family_planning"></label>
+                        <?php else: ?>
+                            <label><span>Family Number</span><span id="f_family_no">-</span></label>
+                            <label><span>PhilHealth No.</span><span id="f_philhealth">-</span></label>
+                            <label><span>NHTS</span><span id="f_nhts">-</span></label>
+                            <label><span>Non-NHTS</span><span id="f_non_nhts">-</span></label>
+                            <label><span>Father's Name</span><span id="f_father">-</span></label>
+                            <label><span>Mother's Name</span><span id="f_mother">-</span></label>
+                            <label><span>NB Screening</span><span id="f_nb_screen">-</span></label>
+                            <label><span>Family Planning</span><span id="f_fp">-</span></label>
+                        <?php endif; ?>
                     </div>
                 </div>
+                <?php if (isset($_SESSION['midwife_id'])): ?>
+                <div class="section-btn">
+                    <button class="btn edit-btn" onclick="updateChildProfile()">
+                        <span class="material-symbols-rounded">edit</span>
+                        Update Child Profile
+                    </button>
+                </div>
+                <?php endif; ?>
             </div>
 
             <!-- Child History -->
@@ -350,8 +378,8 @@ if ($user_id) {
                     f_allergies: getValue(''),
                     f_blood_type: getValue(''),
                     f_family_no: getValue(child.family_number),
-                    f_philhealth: getValue(''),
-                    f_nhts: getValue(''),
+                    f_philhealth: getValue(child.philhealth_no),
+                    f_nhts: getValue(child.nhts),
                     f_non_nhts: getValue(''),
                     f_father: getValue(child.father_name),
                     f_mother: getValue(child.mother_name),
@@ -371,6 +399,24 @@ if ($user_id) {
                         if (el) el.textContent = values[id];
                     });
                 }
+
+                // Populate input fields for midwives (if editable)
+                <?php if (isset($_SESSION['midwife_id'])): ?>
+                document.getElementById('cp_place_of_birth').value = child.place_of_birth || '';
+                document.getElementById('cp_birth_weight').value = child.birth_weight || '';
+                document.getElementById('cp_birth_height').value = child.birth_height || '';
+                document.getElementById('cp_address').value = child.address || '';
+                document.getElementById('cp_allergies').value = child.allergies || '';
+                document.getElementById('cp_blood_type').value = child.blood_type || '';
+                document.getElementById('cp_family_number').value = child.family_number || '';
+                document.getElementById('cp_philhealth_no').value = child.philhealth_no || '';
+                document.getElementById('cp_nhts').value = child.nhts || '';
+                document.getElementById('cp_non_nhts').value = child.non_nhts || '';
+                document.getElementById('cp_father_name').value = child.father_name || '';
+                document.getElementById('cp_mother_name').value = child.mother_name || '';
+                document.getElementById('cp_nb_screen').value = child.placenewbornscreening || '';
+                document.getElementById('cp_family_planning').value = child.family_planning || '';
+                <?php endif; ?>
 
                 // Fill editable feeding data
                 document.getElementById('eb_1mo').checked = child.exclusive_breastfeeding_1mo || false;
@@ -417,6 +463,71 @@ if ($user_id) {
                     return;
                 }
 
+                // Canonical vaccine order (same as user-page)
+                const canonical = [
+                    { key: 'bcg', label: 'BCG', aliases: ['bcg'] },
+                    { key: 'hepb_birth', label: 'Hepatitis B (Birth Dose)', aliases: ['hepatitis b', 'hepab1 (w/in 24 hrs)', 'hepab1 (more than 24hrs)'] },
+                    { key: 'penta1', label: 'Pentavalent (DPT-HepB-Hib) - 1st', aliases: ['pentavalent (dpt-hepb-hib) - 1st', 'pentavalent 1'] },
+                    { key: 'opv1', label: 'OPV - 1st', aliases: ['opv - 1st', 'opv 1'] },
+                    { key: 'pcv1', label: 'PCV - 1st', aliases: ['pcv - 1st', 'pcv 1'] },
+                    { key: 'rota1', label: 'Rota Virus Vaccine - 1st', aliases: ['rota virus vaccine - 1st', 'rota 1'] },
+                    { key: 'penta2', label: 'Pentavalent (DPT-HepB-Hib) - 2nd', aliases: ['pentavalent (dpt-hepb-hib) - 2nd', 'pentavalent 2'] },
+                    { key: 'opv2', label: 'OPV - 2nd', aliases: ['opv - 2nd', 'opv 2'] },
+                    { key: 'pcv2', label: 'PCV - 2nd', aliases: ['pcv - 2nd', 'pcv 2'] },
+                    { key: 'rota2', label: 'Rota Virus Vaccine - 2nd', aliases: ['rota virus vaccine - 2nd', 'rota 2'] },
+                    { key: 'penta3', label: 'Pentavalent (DPT-HepB-Hib) - 3rd', aliases: ['pentavalent (dpt-hepb-hib) - 3rd', 'pentavalent 3'] },
+                    { key: 'opv3', label: 'OPV - 3rd', aliases: ['opv - 3rd', 'opv 3'] },
+                    { key: 'pcv3', label: 'PCV - 3rd', aliases: ['pcv - 3rd', 'pcv 3'] },
+                    { key: 'mcv1', label: 'MCV1 (AMV)', aliases: ['mcv1 (amv)', 'mcv1'] },
+                    { key: 'mcv2', label: 'MCV2 (MMR)', aliases: ['mcv2 (mmr)', 'mcv2'] }
+                ];
+
+                const aliasLookup = {};
+                canonical.forEach(entry => {
+                    entry.aliases.forEach(alias => {
+                        aliasLookup[alias.trim().toLowerCase()] = entry;
+                    });
+                });
+
+                const normalizeVaccine = (name) => {
+                    if (!name) return null;
+                    const key = String(name).trim().toLowerCase();
+                    return aliasLookup[key] || null;
+                };
+
+                // Group records by vaccine key
+                const recordsByKey = {};
+                allRows.forEach(r => {
+                    const normalized = normalizeVaccine(r.vaccine_name);
+                    if (!normalized) return;
+                    const key = normalized.key;
+                    if (!recordsByKey[key]) {
+                        recordsByKey[key] = [];
+                    }
+                    recordsByKey[key].push(r);
+                });
+
+                // Function to get next vaccine record in canonical sequence
+                function getNextReferenceRecord(currentKey) {
+                    const currentIndex = canonical.findIndex(entry => entry.key === currentKey);
+                    if (currentIndex === -1) return null;
+                    
+                    // Get the next vaccine in sequence (taken, upcoming, or missed)
+                    for (let i = currentIndex + 1; i < canonical.length; i++) {
+                        const entry = canonical[i];
+                        const records = recordsByKey[entry.key];
+                        if (!records || records.length === 0) continue;
+                        
+                        // Priority: upcoming (if exists) > taken (if exists) > any
+                        const upcoming = records.find(r => r.status === 'scheduled' || r.status === 'upcoming');
+                        const taken = records.find(r => r.status === 'taken' || r.status === 'completed');
+                        const any = records[0];
+                        
+                        return upcoming || taken || any;
+                    }
+                    return null;
+                }
+
                 let ledgerHtml = '';
                 // Helper to render a cell value or a hyphen when empty
                 function cellVal(v) {
@@ -429,13 +540,38 @@ if ($user_id) {
                 allRows.forEach(row => {
                     const rawDate = row.date_given || row.batch_schedule_date || row.schedule_date || '';
                     const date = formatDateLong(rawDate) || '-';
-                    const catchUpDate = formatDateLong(row.catch_up_date || '') || '-';
                     const ht = cellVal(row.height || row.height_cm || '');
                     const wt = cellVal(row.weight || row.weight_kg || '');
                     const muac = cellVal(row.muac || row.me_ac || '');
                     const status = (row.status || 'scheduled');
                     const statusText = status === 'taken' ? 'Taken' : (status === 'completed' ? 'Completed' : (status === 'missed' ? 'Missed' : 'Scheduled'));
                     const chipClass = status === 'scheduled' ? 'upcoming' : status;
+
+                    // Find next vaccine's schedule date
+                    const normalized = normalizeVaccine(row.vaccine_name);
+                    const nextRecord = normalized ? getNextReferenceRecord(normalized.key) : null;
+                    // Priority: batch_schedule_date (actual batch) > catch_up_date (rescheduled if missed) > schedule_date (guideline)
+                    // For missed vaccines, prioritize batch_schedule_date first, then catch_up_date
+                    let nextScheduleDate = '-';
+                    if (nextRecord) {
+                        let dateValue = '';
+                        let dateType = '';
+                        // Priority: batch_schedule_date > catch_up_date > schedule_date
+                        if (nextRecord.batch_schedule_date && String(nextRecord.batch_schedule_date).trim() !== '') {
+                            dateValue = String(nextRecord.batch_schedule_date).trim();
+                            dateType = 'Batch';
+                        } else if (nextRecord.catch_up_date && String(nextRecord.catch_up_date).trim() !== '') {
+                            dateValue = String(nextRecord.catch_up_date).trim();
+                            dateType = 'Catch-up';
+                        } else if (nextRecord.schedule_date && String(nextRecord.schedule_date).trim() !== '') {
+                            dateValue = String(nextRecord.schedule_date).trim();
+                            dateType = 'Schedule';
+                        }
+                        if (dateValue) {
+                            const formattedDate = formatDateLong(dateValue);
+                            nextScheduleDate = formattedDate ? `${formattedDate} (${dateType})` : '-';
+                        }
+                    }
 
                     ledgerHtml += `
                         <tr>
@@ -447,7 +583,7 @@ if ($user_id) {
                             <td><span class="chip chip--${chipClass}">${statusText}</span></td>
                             <td>${cellVal(row.condition_of_baby || '')}</td>
                             <td>${cellVal(row.advice_given || '')}</td>
-                            <td>${catchUpDate}</td>
+                            <td>${nextScheduleDate}</td>
                             <td>${cellVal(row.remarks || '')}</td>
                         </tr>`;
                 });
@@ -542,7 +678,45 @@ if ($user_id) {
                 alert('Error updating Newborn Screening: ' + e.message);
             }
         }
+
+        async function updateChildProfile() {
+            const babyId = getBabyId();
+            try {
+                const formData = new FormData();
+                formData.append('baby_id', babyId);
+                formData.append('place_of_birth', document.getElementById('cp_place_of_birth').value);
+                formData.append('birth_weight', document.getElementById('cp_birth_weight').value);
+                formData.append('birth_height', document.getElementById('cp_birth_height').value);
+                formData.append('address', document.getElementById('cp_address').value);
+                formData.append('allergies', document.getElementById('cp_allergies').value);
+                formData.append('blood_type', document.getElementById('cp_blood_type').value);
+                formData.append('family_number', document.getElementById('cp_family_number').value);
+                formData.append('philhealth_no', document.getElementById('cp_philhealth_no').value);
+                formData.append('nhts', document.getElementById('cp_nhts').value);
+                formData.append('non_nhts', document.getElementById('cp_non_nhts').value);
+                formData.append('father_name', document.getElementById('cp_father_name').value);
+                formData.append('mother_name', document.getElementById('cp_mother_name').value);
+                formData.append('nb_screening', document.getElementById('cp_nb_screen').value);
+                formData.append('family_planning', document.getElementById('cp_family_planning').value);
+
+                const res = await fetch('php/supabase/bhw/update_child_profile.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    alert('Child profile updated successfully!');
+                    // Reload page to show updated data
+                    location.reload();
+                } else {
+                    alert('Update failed: ' + data.message);
+                }
+            } catch (e) {
+                alert('Error updating child profile: ' + e.message);
+            }
+        }
     </script>
 </body>
 
+</html>
 </html>

@@ -105,6 +105,179 @@ try {
     }
 
     if ($mark_completed) {
+        // Validate prerequisites before allowing vaccine to be marked as taken
+        $vaccine_name = trim($record['vaccine_name'] ?? '');
+        $baby_id = $record['baby_id'] ?? '';
+        
+        // Official vaccine order (from request_immunization.php)
+        $vaccine_order = [
+            'BCG',
+            'Hepatitis B',
+            'Pentavalent (DPT-HepB-Hib) - 1st',
+            'OPV - 1st',
+            'PCV - 1st',
+            'Pentavalent (DPT-HepB-Hib) - 2nd',
+            'OPV - 2nd',
+            'PCV - 2nd',
+            'Pentavalent (DPT-HepB-Hib) - 3rd',
+            'OPV - 3rd',
+            'IPV',
+            'PCV - 3rd',
+            'MCV1 (AMV)',
+            'MCV2 (MMR)'
+        ];
+        
+        // Vaccine name matching function - handles variations
+        $matchesVaccine = function($db_name, $order_name) {
+            $db_lower = strtolower(trim($db_name));
+            $order_lower = strtolower(trim($order_name));
+            
+            // Exact match
+            if ($db_lower === $order_lower) {
+                return true;
+            }
+            
+            // Handle Hepatitis B variations
+            if ($order_lower === 'hepatitis b') {
+                return stripos($db_lower, 'hepatitis') !== false && stripos($db_lower, 'b') !== false ||
+                       stripos($db_lower, 'hepab') !== false;
+            }
+            
+            // Handle partial matches for vaccines with dose numbers
+            if (stripos($order_lower, 'pentavalent') !== false) {
+                return stripos($db_lower, 'pentavalent') !== false && 
+                       stripos($db_lower, substr($order_lower, strpos($order_lower, '-'), 10)) !== false;
+            }
+            if (stripos($order_lower, 'opv') !== false) {
+                return stripos($db_lower, 'opv') !== false && 
+                       stripos($db_lower, substr($order_lower, strpos($order_lower, '-'), 10)) !== false;
+            }
+            if (stripos($order_lower, 'pcv') !== false) {
+                return stripos($db_lower, 'pcv') !== false && 
+                       stripos($db_lower, substr($order_lower, strpos($order_lower, '-'), 10)) !== false;
+            }
+            if (stripos($order_lower, 'mcv1') !== false || stripos($order_lower, '(amv)') !== false) {
+                return stripos($db_lower, 'mcv1') !== false || stripos($db_lower, '(amv)') !== false;
+            }
+            if (stripos($order_lower, 'mcv2') !== false || stripos($order_lower, '(mmr)') !== false) {
+                return stripos($db_lower, 'mcv2') !== false || stripos($db_lower, '(mmr)') !== false;
+            }
+            
+            // BCG and IPV exact or partial
+            if ($order_lower === 'bcg') {
+                return $db_lower === 'bcg';
+            }
+            if ($order_lower === 'ipv') {
+                return $db_lower === 'ipv';
+            }
+            
+            return false;
+        };
+        
+        // Find current vaccine position in order
+        $current_index = -1;
+        foreach ($vaccine_order as $index => $ordered_vaccine) {
+            if ($matchesVaccine($vaccine_name, $ordered_vaccine)) {
+                $current_index = $index;
+                break;
+            }
+        }
+        
+        // Only validate vaccines that are in our official order list
+        if ($current_index >= 0 && $current_index > 0) {
+            $record_id = $record['id'] ?? '';
+            
+            // Get ALL immunization records for this baby
+            $all_records = supabaseSelect(
+                'immunization_records',
+                'id,vaccine_name,status',
+                ['baby_id' => $baby_id],
+                null,
+                null
+            );
+            
+            if (!$all_records || !is_array($all_records)) {
+                $all_records = [];
+            }
+            
+            // Build map of vaccine statuses (index => status)
+            $vaccine_status_map = [];
+            foreach ($all_records as $rec) {
+                $rec_vaccine_name = trim($rec['vaccine_name'] ?? '');
+                $rec_status = strtolower(trim($rec['status'] ?? ''));
+                $rec_id = $rec['id'] ?? null;
+                
+                // Skip current record being updated
+                if ($rec_id == $record_id) {
+                    continue;
+                }
+                
+                if (!empty($rec_vaccine_name)) {
+                    // For each vaccine in order, check what status it has
+                    foreach ($vaccine_order as $idx => $ordered_vaccine) {
+                        if ($matchesVaccine($rec_vaccine_name, $ordered_vaccine)) {
+                            // If we found this vaccine before, keep the most "taken" status
+                            if (!isset($vaccine_status_map[$idx])) {
+                                $vaccine_status_map[$idx] = $rec_status;
+                            } else {
+                                // Prefer 'taken' or 'completed' over other statuses
+                                if ($rec_status === 'taken' || $rec_status === 'completed') {
+                                    $vaccine_status_map[$idx] = $rec_status;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Check ALL prerequisites (all vaccines before current index)
+            $missing_or_not_taken = [];
+            $missed_vaccines = [];
+            
+            for ($i = 0; $i < $current_index; $i++) {
+                $prereq_vaccine = $vaccine_order[$i];
+                $prereq_status = $vaccine_status_map[$i] ?? 'missing';
+                
+                // Check if prerequisite exists and is taken/completed
+                if ($prereq_status === 'missing' || 
+                    ($prereq_status !== 'taken' && $prereq_status !== 'completed')) {
+                    
+                    // Check if it's missed or scheduled
+                    if ($prereq_status === 'missed') {
+                        $missed_vaccines[] = $prereq_vaccine;
+                    } else {
+                        $missing_or_not_taken[] = $prereq_vaccine . ' (Status: ' . ($prereq_status === 'missing' ? 'Not recorded' : ucfirst($prereq_status)) . ')';
+                    }
+                }
+            }
+            
+            // Block save if ANY prerequisite is missing, not taken, missed, or scheduled
+            if (!empty($missed_vaccines) || !empty($missing_or_not_taken)) {
+                $error_parts = [];
+                
+                if (!empty($missed_vaccines)) {
+                    $error_parts[] = 'Missed vaccines that must be caught up first: ' . implode(', ', $missed_vaccines);
+                }
+                
+                if (!empty($missing_or_not_taken)) {
+                    $error_parts[] = 'Missing or incomplete prerequisites: ' . implode(', ', $missing_or_not_taken);
+                }
+                
+                $error_message = 'Cannot record ' . htmlspecialchars($vaccine_name) . '. ';
+                $error_message .= implode('. ', $error_parts);
+                $error_message .= '. Please complete all previous vaccines before recording this one.';
+                
+                http_response_code(200);
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => $error_message
+                ]);
+                exit();
+            }
+        }
+        
         // Business rule: mark as 'taken' when BHW records immunization
         $update['status'] = 'taken';
         if ($date_taken === '' && !isset($update['date_given'])) {

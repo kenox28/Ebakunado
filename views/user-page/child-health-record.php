@@ -31,13 +31,15 @@ $user_fname = $_SESSION['fname'] ?? '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Child Health Record</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css?v=1.0.2" />
-    <link rel="stylesheet" href="css/header.css?v=1.0.2" />
-    <link rel="stylesheet" href="css/sidebar.css?v=1.0.2" />
-    <link rel="stylesheet" href="css/notification-style.css?v=1.0.2" />
-    <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.2" />
-    <link rel="stylesheet" href="css/user/child-health-record.css?v=1.0.2" />
-    <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/user/table-style.css?v=1.0.3" />
+
+    <link rel="stylesheet" href="css/notification-style.css?v=1.0.3" />
+    <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/user/child-health-record.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/user/responsive/child-health-record.css?v=1.0.1" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -186,11 +188,10 @@ $user_fname = $_SESSION['fname'] ?? '';
                                     <th>HT</th>
                                     <th>WT</th>
                                     <th>ME/AC</th>
-                                    <th>STATUS</th>
+                                    <th>Status</th>
                                     <th>Condition of Baby</th>
                                     <th>Advice Given</th>
                                     <th>Next Sched Date</th>
-                                    <th>Batch Date</th>
                                     <th>Remarks</th>
                                 </tr>
                             </thead>
@@ -609,9 +610,16 @@ $user_fname = $_SESSION['fname'] ?? '';
                     return aliasLookup[key] || null;
                 };
 
+                // For sorting/comparison: use schedule dates only (not date_given which is past)
                 const dueDateOf = (rec) => {
                     if (!rec) return '';
-                    return rec.catch_up_date || rec.batch_schedule_date || rec.schedule_date || rec.date_given || '';
+                    return rec.catch_up_date || rec.batch_schedule_date || rec.schedule_date || '';
+                };
+                
+                // For display: can include date_given (when vaccine was actually given)
+                const displayDateOf = (rec) => {
+                    if (!rec) return '';
+                    return rec.date_given || rec.batch_schedule_date || rec.schedule_date || rec.catch_up_date || '';
                 };
 
                 const recordsByKey = {};
@@ -650,10 +658,14 @@ $user_fname = $_SESSION['fname'] ?? '';
                 });
 
                 function getNextReferenceRecord(index) {
+                    // Get the next vaccine in sequence (taken, upcoming, or missed)
+                    // For example: if BCG is taken, get HEPA (even if HEPA is also taken)
                     for (let i = index + 1; i < canonical.length; i++) {
                         const entry = canonical[i];
                         const bucket = recordsByKey[entry.key];
                         if (!bucket) continue;
+                        // Return the next vaccine regardless of status (taken, upcoming, or missed)
+                        // Priority: upcoming (if exists) > taken (if exists) > any
                         return bucket.upcoming || bucket.taken || bucket.any;
                     }
                     return null;
@@ -664,35 +676,39 @@ $user_fname = $_SESSION['fname'] ?? '';
                     const bucket = recordsByKey[entry.key];
                     const rec = bucket?.taken;
                     if (!rec) return; // show only taken vaccines
-
-                    const date = rec.date_given || rec.batch_schedule_date || rec.schedule_date || '';
-                    const ht = rec.height || rec.height_cm || '';
-                    const wt = rec.weight || rec.weight_kg || '';
+                    // Display date: when vaccine was actually given, or schedule date if not given yet
+                    const date = displayDateOf(rec);
+                    // Format height and weight with units
+                    const ht = rec.height ? (parseFloat(rec.height) + ' cm') : '-';
+                    const wt = rec.weight ? (parseFloat(rec.weight) + ' kg') : '-';
                     const muac = rec.muac || '-';
+                    // Next Schedule Date: Next vaccine's schedule date (when it was supposed to be given)
+                    // This is the baby's next vaccination visit date, regardless of whether next vaccine is taken or not
+                    // Priority: batch_schedule_date (actual batch) > catch_up_date (rescheduled if missed) > schedule_date (guideline)
+                    // For missed vaccines, prioritize batch_schedule_date first, then catch_up_date
                     const nextRecord = getNextReferenceRecord(index);
-                    const nextDateRaw = dueDateOf(nextRecord);
-                    const nextBatchDate = nextRecord?.batch_schedule_date ? formatDate(nextRecord.batch_schedule_date) : '-';
-
-                    // Build status chip based on record's status fields
-                    const rawStatus = (rec.status || rec.record_status || '').toString().trim();
-                    const s = rawStatus.toLowerCase();
-                    let statusHtml = '';
-                    if (!s) {
-                        statusHtml = `<span class="chip">-</span>`;
-                    } else if (s === 'taken' || s === 'completed') {
-                        statusHtml = `<span class="chip chip--taken">Taken</span>`;
-                    } else if (s === 'missed') {
-                        statusHtml = `<span class="chip chip--missed">Missed</span>`;
-                    } else if (s === 'scheduled' || s === 'due' || s === 'pending') {
-                        statusHtml = `<span class="chip chip--scheduled">Due</span>`;
-                    } else {
-                        statusHtml = `<span class="chip">${getValue(rawStatus)}</span>`;
+                    let nextScheduleDate = '-';
+                    if (nextRecord) {
+                        let dateValue = '';
+                        let dateType = '';
+                        // Priority: batch_schedule_date > catch_up_date > schedule_date
+                        if (nextRecord.batch_schedule_date && String(nextRecord.batch_schedule_date).trim() !== '') {
+                            dateValue = String(nextRecord.batch_schedule_date).trim();
+                            dateType = 'Batch';
+                        } else if (nextRecord.catch_up_date && String(nextRecord.catch_up_date).trim() !== '') {
+                            dateValue = String(nextRecord.catch_up_date).trim();
+                            dateType = 'Catch-up';
+                        } else if (nextRecord.schedule_date && String(nextRecord.schedule_date).trim() !== '') {
+                            dateValue = String(nextRecord.schedule_date).trim();
+                            dateType = 'Schedule';
+                        }
+                        if (dateValue) {
+                            const formattedDate = formatDate(dateValue);
+                            nextScheduleDate = formattedDate ? `${formattedDate} (${dateType})` : '-';
+                        }
                     }
-
-                    const conditionText = rec.condition || rec.condition_of_baby || rec.condition_of_child || '';
-                    const adviceText = rec.advice || rec.advice_given || rec.recommendation || '';
-                    const remarksText = rec.remarks || rec.notes || '';
-
+                    // Remarks: Use current record's remarks
+                    const remarks = rec.remarks || '-';
                     ledgerHtml += `
                 <tr>
                     <td>${getValue(formatDate(date))}</td>
@@ -700,12 +716,11 @@ $user_fname = $_SESSION['fname'] ?? '';
                     <td>${getValue(ht)}</td>
                     <td>${getValue(wt)}</td>
                     <td>${getValue(muac)}</td>
-                    <td class="no-capitalize">${statusHtml}</td>
-                    <td class="no-capitalize">${getValue(conditionText)}</td>
-                    <td class="no-capitalize">${getValue(adviceText)}</td>
-                    <td>${getValue(formatDate(nextDateRaw))}</td>
-                    <td>${getValue(nextBatchDate)}</td>
-                    <td>${getValue(remarksText)}</td>
+                    <td>Taken</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>${getValue(nextScheduleDate)}</td>
+                    <td>${getValue(remarks)}</td>
                 </tr>`;
                 });
 

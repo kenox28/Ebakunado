@@ -1,0 +1,321 @@
+/* =========================
+   Responsive Media Queries for Dashboard
+   Following create-account/login patterns
+   ========================= */
+
+/* Mobile Phone Styles (max-width: 30rem (480px)) */
+@media (max-width: 30rem) {
+	html {
+		font-size: 56.25%;
+	}
+
+	/* Dashboard Section */
+	.dashboard-section {
+		padding: 1rem;
+		gap: 1rem;
+	}
+
+	/* Card Wrapper - Stack to single column on mobile */
+	.card-wrapper {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+
+	/* Cards - Full width, adjust padding */
+	.card {
+		padding: 1.5rem 1.2rem;
+		flex-direction: row;
+		gap: 1.2rem;
+	}
+
+	.card-icon {
+		padding: 0.5rem;
+	}
+
+	.card-icon .material-symbols-rounded {
+		font-size: 3.6rem;
+	}
+
+	.card-number {
+		font-size: 2.4rem;
+	}
+
+	.card-title {
+		font-size: 1.3rem;
+		text-align: right;
+	}
+
+	.card-link {
+		font-size: 1.3rem;
+		padding: 0.3rem 0.6rem;
+	}
+
+	.card-link .material-symbols-rounded {
+		font-size: 1.4rem;
+	}
+
+	/* Filter Buttons - Stack vertically on mobile */
+	.filter-buttons {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+
+	.children-panel .filter-buttons {
+		padding-bottom: 1.2rem;
+	}
+
+	.section-title {
+		font-size: 1.6rem;
+	}
+
+	/* Segmented Control - Full width on mobile */
+	.segmented-control {
+		width: 100%;
+		justify-content: stretch;
+	}
+
+	.segmented-btn {
+		flex: 1;
+		justify-content: center;
+		padding: 8px 12px;
+		font-size: 1.3rem;
+	}
+
+	.segmented-btn .material-symbols-rounded {
+		font-size: 1.8rem;
+	}
+
+	.seg-badge {
+		height: 20px;
+		padding: 0 8px;
+		font-size: 1.2rem;
+	}
+
+	/* Children List - Single column on mobile */
+	.children-list {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+
+	/* Child List Item - Adjust padding and spacing */
+	.child-list-item {
+		padding: 1rem;
+		gap: 12px;
+	}
+
+	.child-item-body {
+		gap: 10px;
+	}
+
+	.child-name {
+		font-size: 1.5rem;
+	}
+
+	.child-schedule {
+		font-size: 1.2rem;
+	}
+
+	.child-schedule--batch,
+	.child-schedule--guideline {
+		font-size: 1.1rem;
+	}
+
+	.child-vaccine {
+		font-size: 1.2rem;
+		padding: 5px 10px;
+	}
+
+	/* QR Area - Smaller on mobile */
+	.qr-img {
+		width: 40px;
+		height: 40px;
+	}
+
+	.qr-placeholder {
+		width: 40px;
+		height: 40px;
+	}
+
+	.qr-placeholder .material-symbols-rounded {
+		font-size: 20px;
+	}
+
+	/* Child Actions - Stack buttons vertically on mobile */
+	.child-actions {
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.child-actions button {
+		width: 100%;
+		justify-content: center;
+		padding: 10px 12px;
+		font-size: 1.3rem;
+	}
+
+	.child-actions button .material-symbols-rounded {
+		font-size: 2rem;
+	}
+
+	/* Missed Details */
+	.missed-detail {
+		margin-top: 10px;
+		padding-top: 10px;
+	}
+
+	.missed-meta {
+		font-size: 1.3rem;
+	}
+
+	.more-missed {
+		font-size: 1.2rem;
+	}
+
+	/* Children Panel */
+	.children-panel {
+		padding: 1rem;
+		gap: 0.8rem;
+	}
+
+	.children-list-label {
+		font-size: 1.4rem;
+		margin: 0.5rem 0 0.25rem 0.25rem;
+	}
+
+	/* QR Modal - Full width on mobile */
+	.qr-modal-content {
+		width: 95vw;
+		max-width: 95vw;
+		border-radius: 16px;
+	}
+
+	.qr-modal-header {
+		padding: 1rem 1.2rem;
+		border-top-left-radius: 16px;
+		border-top-right-radius: 16px;
+	}
+
+	.qr-modal-title {
+		font-size: 1.5rem;
+	}
+
+	.qr-modal-body {
+		padding: 2rem 1.5rem;
+	}
+
+	.qr-modal-img {
+		width: 180px;
+		height: 180px;
+	}
+
+	.qr-modal-note {
+		font-size: 1.2rem;
+	}
+
+	.qr-modal-close .material-symbols-rounded {
+		font-size: 2.4rem;
+	}
+
+	/* Section Container */
+	.section-container {
+		padding: 0 1rem;
+	}
+
+	.section-title {
+		font-size: 1.6rem;
+	}
+}
+
+/* Tablet Styles (min-width: 30.0625rem (481px) and max-width: 48rem (768px)) */
+@media (min-width: 30.0625rem) and (max-width: 48rem) {
+	html {
+		font-size: 62.5%;
+	}
+
+	/* Dashboard Section */
+	.dashboard-section {
+		padding: 1.2rem 1.5rem;
+		gap: 1.2rem;
+	}
+
+	/* Card Wrapper - 2 columns on tablet */
+	.card-wrapper {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1.2rem;
+	}
+
+	/* Cards */
+	.card {
+		padding: 1.8rem 1.4rem;
+	}
+
+	.card-icon .material-symbols-rounded {
+		font-size: 4.2rem;
+	}
+
+	.card-number {
+		font-size: 2.8rem;
+	}
+
+	.card-title {
+		font-size: 1.35rem;
+	}
+
+	/* Filter Buttons */
+	.filter-buttons {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.section-title {
+		font-size: 1.8rem;
+	}
+
+	/* Segmented Control */
+	.segmented-control {
+		width: auto;
+	}
+
+	.segmented-btn {
+		padding: 6px 14px;
+		font-size: 1.35rem;
+	}
+
+	/* Children List - 2 columns on tablet */
+	.children-list {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1.2rem;
+	}
+
+	/* Child List Item */
+	.child-list-item {
+		padding: 1.2rem;
+	}
+
+	.child-name {
+		font-size: 1.5rem;
+	}
+
+	.child-schedule {
+		font-size: 1.25rem;
+	}
+
+	/* QR Modal */
+	.qr-modal-content {
+		width: 85vw;
+		max-width: 500px;
+	}
+
+	.qr-modal-img {
+		width: 200px;
+		height: 200px;
+	}
+}
+
+/* Desktop Layout (≥769px) - Default styles already defined above */
+@media (min-width: 48.0625rem) {
+	/* Desktop uses default styles from main CSS */
+	/* Additional desktop-specific adjustments can go here if needed */
+}

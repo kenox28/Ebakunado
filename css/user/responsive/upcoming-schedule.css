@@ -1,0 +1,300 @@
+/* =========================
+   Upcoming Schedule - Responsive Styles
+   ========================= */
+
+/* =========================
+   Mobile (≤ 30rem / 480px)
+   ========================= */
+@media (max-width: 30rem) {
+	/* =========================
+       Main
+       ========================= */
+	main {
+		padding: 1rem;
+	}
+
+	/* =========================
+       Page Header
+       ========================= */
+	.page-header {
+		padding: 1.2rem 1rem 2rem 1rem;
+		margin-bottom: 1rem;
+		border-radius: 10px;
+	}
+
+	.page-title {
+		font-size: 1.6rem;
+	}
+
+	.page-subtitle {
+		font-size: 1.1rem;
+		margin-top: 0.4rem;
+	}
+
+	/* =========================
+       Content Grid - Stack on Mobile
+       ========================= */
+	.content-grid {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+
+	/* =========================
+       Child Card
+       ========================= */
+	.child-card {
+		padding: 1rem;
+		border-radius: 10px;
+		gap: 1rem;
+	}
+
+	.child-card-header {
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		gap: 0.8rem;
+	}
+
+	.child-avatar {
+		width: 48px;
+		height: 48px;
+	}
+
+	.child-avatar .material-symbols-rounded {
+		font-size: 3rem;
+	}
+
+	.child-meta {
+		width: 100%;
+	}
+
+	.meta-top {
+		flex-direction: column;
+		align-items: center;
+		gap: 0.8rem;
+	}
+
+	.child-name {
+		font-size: 1.3rem;
+		text-align: center;
+	}
+
+	.btn-switch {
+		width: 100%;
+		justify-content: center;
+		padding: 0.6rem 1rem;
+		font-size: 1.1rem;
+	}
+
+	.child-sub {
+		text-align: center;
+		gap: 0.3rem;
+		font-size: 1rem;
+	}
+
+	.child-row {
+		font-size: 1rem;
+	}
+
+	.child-qr {
+		margin-top: 1rem;
+	}
+
+	.qr-thumb {
+		padding: 6px;
+	}
+
+	.qr-thumb img {
+		width: 150px;
+		height: 150px;
+	}
+
+	/* =========================
+       Schedule Panel
+       ========================= */
+	.schedule-panel {
+		border-radius: 10px;
+	}
+
+	.schedule-panel-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+		padding: 1rem;
+	}
+
+	.schedule-title {
+		font-size: 1.3rem;
+		width: 100%;
+	}
+
+	.schedule-panel .segmented-control {
+		width: 100%;
+		margin-left: 0;
+		justify-content: stretch;
+	}
+
+	.segmented-btn {
+		flex: 1;
+		padding: 0.6rem 0.8rem;
+		font-size: 1.2rem;
+		justify-content: center;
+	}
+
+	.segmented-btn .material-symbols-rounded {
+		font-size: 1.4rem;
+	}
+
+	/* =========================
+       Table
+       ========================= */
+	.table-wrap {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.schedule-table {
+		min-width: 600px;
+		font-size: 1.2rem;
+	}
+
+	.schedule-table th {
+		padding: 0.8rem 0.6rem;
+		font-size: 0.95rem;
+		white-space: nowrap;
+	}
+
+	.schedule-table td {
+		padding: 0.8rem 0.6rem;
+		font-size: 1.2rem;
+	}
+
+	.schedule-table .empty {
+		padding: 20px 8px;
+		font-size: 1.1rem;
+	}
+}
+
+/* =========================
+   Tablet (30.0625rem - 48rem / 481px - 768px)
+   ========================= */
+@media (min-width: 30.0625rem) and (max-width: 48rem) {
+	/* =========================
+       Main
+       ========================= */
+	main {
+		padding: 1.5rem;
+	}
+
+	/* =========================
+       Page Header
+       ========================= */
+	.page-header {
+		padding: 1.4rem 1.2rem 2.4rem 1.2rem;
+	}
+
+	.page-title {
+		font-size: 1.8rem;
+	}
+
+	.page-subtitle {
+		font-size: 1.15rem;
+	}
+
+	/* =========================
+       Content Grid
+       ========================= */
+	.content-grid {
+		grid-template-columns: 280px 1fr;
+		gap: 1rem;
+	}
+
+	/* =========================
+       Child Card
+       ========================= */
+	.child-card {
+		padding: 1.2rem;
+	}
+
+	.child-card-header {
+		flex-direction: row;
+		align-items: flex-start;
+		text-align: left;
+	}
+
+	.meta-top {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	.child-name {
+		font-size: 1.35rem;
+		text-align: left;
+	}
+
+	.btn-switch {
+		width: auto;
+		padding: 0.4rem 0.7rem;
+	}
+
+	.child-sub {
+		text-align: left;
+	}
+
+	.qr-thumb img {
+		width: 180px;
+		height: 180px;
+	}
+
+	/* =========================
+       Schedule Panel
+       ========================= */
+	.schedule-panel-header {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.schedule-title {
+		font-size: 1.35rem;
+		width: auto;
+	}
+
+	.schedule-panel .segmented-control {
+		width: auto;
+		margin-left: auto;
+	}
+
+	.segmented-btn {
+		flex: none;
+		padding: 0.5rem 1rem;
+		font-size: 1.15rem;
+	}
+
+	/* =========================
+       Table
+       ========================= */
+	.schedule-table {
+		font-size: 1.2rem;
+	}
+
+	.schedule-table th {
+		padding: 1rem 0.8rem;
+		font-size: 1rem;
+	}
+
+	.schedule-table td {
+		padding: 1rem 0.8rem;
+		font-size: 1.2rem;
+	}
+}
+
+/* =========================
+   Desktop (≥ 48.0625rem / 769px)
+   ========================= */
+@media (min-width: 48.0625rem) {
+	/* Desktop styles are in base CSS file */
+	/* This media query ensures proper scaling */
+}

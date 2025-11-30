@@ -220,14 +220,14 @@ if ($rows && count($rows) > 0) {
 
     $age = $current_date->diff($birth_date)->y;
 
-    // Resolve parent's phone and fetch TD using string user_id
+    // Fetch family_number, philhealth_no, and nhts from users table using user_id
     $family_number = '';
     $philhealth_no = '';
     $nhts = '';
     if (!empty($child['user_id'])) {
-        $urows = supabaseSelect('users', 'phone_number,philhealth_no,nhts', ['user_id' => $child['user_id']], null, 1);
+        $urows = supabaseSelect('users', 'family_number,philhealth_no,nhts', ['user_id' => $child['user_id']], null, 1);
         if ($urows && count($urows) > 0) {
-            $family_number = $urows[0]['phone_number'] ?? '';
+            $family_number = $urows[0]['family_number'] ?? '';
             $philhealth_no = $urows[0]['philhealth_no'] ?? '';
             $nhts = $urows[0]['nhts'] ?? '';
         }

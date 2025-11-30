@@ -1,12 +1,12 @@
 main {
-  max-height: 100vh;
-  overflow-y: auto;
-  background-color: #ebf2ed;
+	max-height: 100vh;
+	overflow-y: auto;
+	background-color: #ebf2ed;
 }
 
 .page-header {
-  padding: 1.6rem 1.6rem 2.8rem 1.6rem !important;
-  margin-bottom: 1.4rem !important;
+	padding: 1.6rem 1.6rem 2.8rem 1.6rem !important;
+	margin-bottom: 1.4rem !important;
 }
 
 .children-list-section .table th:nth-child(4),
@@ -15,34 +15,34 @@ main {
 .children-list-section .table td:nth-child(4),
 .children-list-section .table td:nth-child(5),
 .children-list-section .table td:nth-child(6) {
-  text-align: center;
+	text-align: center;
 }
 
 .children-list-section .view-btn {
-  background-color: var(--primary-color);
-  color: #ffffff;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  text-decoration: none;
+	background-color: var(--primary-color);
+	color: #ffffff;
+	border: none;
+	padding: 0.6rem 1.2rem;
+	border-radius: 6px;
+	font-size: 1.2rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	text-decoration: none;
 }
 .children-list-section .view-btn:hover {
-  background-color: #005529;
-  transform: translateY(-1px);
+	background-color: #005529;
+	transform: translateY(-1px);
 }
 .children-list-section .view-btn .material-symbols-rounded {
-  font-size: 1.6rem;
+	font-size: 1.6rem;
 }
 
 /* Muted text */
 .children-list-section .text-muted {
-  color: #999;
+	color: #999;
 }
 
 /* .children-list-section .table .message-row td {

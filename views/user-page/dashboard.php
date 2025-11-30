@@ -31,13 +31,14 @@ $user_fname = $_SESSION['fname'] ?? '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_io/favicon-32x32.png">
-    <link rel="stylesheet" href="css/main.css?v=1.0.3" />
-    <link rel="stylesheet" href="css/header.css?v=1.0.2" />
-    <link rel="stylesheet" href="css/sidebar.css?v=1.0.5" />
+    <link rel="stylesheet" href="css/main.css?v=1.0.5" />
+    <link rel="stylesheet" href="css/header.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/sidebar.css?v=1.0.7" />
 
     <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
     <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
     <link rel="stylesheet" href="css/user/dashboard.css?v=1.0.2" />
+    <link rel="stylesheet" href="css/user/responsive/dashboard.css?v=1.0.1" />
 </head>
 
 <body>

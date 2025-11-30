@@ -45,7 +45,7 @@ foreach ($baby_ids as $baby_id) {
         // Fetch all records without ordering first to ensure we get all vaccines including IPV
         $vaccinations = supabaseSelect(
             'immunization_records',
-            'id,baby_id,vaccine_name,dose_number,schedule_date,batch_schedule_date,catch_up_date,date_given,status',
+            'id,baby_id,vaccine_name,dose_number,schedule_date,batch_schedule_date,catch_up_date,date_given,status,height,weight,muac,remarks',
             ['baby_id' => $baby_id]
         );
 
@@ -70,7 +70,11 @@ foreach ($baby_ids as $baby_id) {
                     'batch_schedule_date' => $vaccination['batch_schedule_date'],
                     'catch_up_date' => $vaccination['catch_up_date'],
                     'date_given' => $vaccination['date_given'],
-                    'status' => $vaccination['status']
+                    'status' => $vaccination['status'],
+                    'height' => $vaccination['height'] ?? null,
+                    'weight' => $vaccination['weight'] ?? null,
+                    'muac' => $vaccination['muac'] ?? null,
+                    'remarks' => $vaccination['remarks'] ?? null
                 ];
             }
         }

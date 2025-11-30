@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	initUserPager();
 	setupUserSearchHandlers();
 	getUsers(1);
-	loadAddUserProvinces();
 });
 
 // Fetch and display users (reusing from home.js)
@@ -55,21 +54,31 @@ async function getUsers(page = 1) {
 				'<tr class="data-table__message-row"><td colspan="11">No users found.</td></tr>';
 		} else {
 			for (const user of data) {
-			const formattedDate = formatDateShort(user.created_at);
-			tbody.innerHTML += `<tr>
-				<td class="checkbox-cell"><input type="checkbox" class="user-checkbox" value="${user.user_id}"></td>
+				const formattedDate = formatDateShort(user.created_at);
+				tbody.innerHTML += `<tr>
+				<td class="checkbox-cell"><input type="checkbox" class="user-checkbox" value="${
+					user.user_id
+				}"></td>
 				<td>${user.user_id}</td>
 				<td>${user.fname}</td>
 				<td>${user.lname}</td>
 				<td>${user.email}</td>
-				<td>${user.phone_number || ''}</td>
-				<td>${user.gender || ''}</td>
-				<td>${user.place || ''}</td>
+				<td>${user.phone_number || ""}</td>
+				<td>${user.gender || ""}</td>
+				<td>${user.place || ""}</td>
 				<td>${user.role}</td>
 				<td>${formattedDate}</td>
 				<td class="actions-cell">
-					<button onclick="editUser('${user.user_id}')" class="action-icon-btn" aria-label="Edit user ${user.user_id}"><span class="material-symbols-rounded">edit</span></button>
-					<button onclick="deleteUser('${user.user_id}')" class="action-icon-btn" aria-label="Delete user ${user.user_id}"><span class="material-symbols-rounded">delete</span></button>
+					<button onclick="editUser('${
+						user.user_id
+					}')" class="action-icon-btn" aria-label="Edit user ${
+					user.user_id
+				}"><span class="material-symbols-rounded">edit</span></button>
+					<button onclick="deleteUser('${
+						user.user_id
+					}')" class="action-icon-btn" aria-label="Delete user ${
+					user.user_id
+				}"><span class="material-symbols-rounded">delete</span></button>
 				</td>
 			</tr>`;
 			}
@@ -150,10 +159,23 @@ function setupUserSearchHandlers() {
 
 // Format date to short month name, numeric day, full year (e.g., Nov 23, 2025)
 function formatDateShort(dateStr) {
-	if (!dateStr) return '';
+	if (!dateStr) return "";
 	const date = new Date(dateStr);
 	if (isNaN(date.getTime())) return dateStr; // fallback if invalid
-	const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; 
+	const monthNames = [
+		"Jan",
+		"Feb",
+		"Mar",
+		"Apr",
+		"May",
+		"Jun",
+		"Jul",
+		"Aug",
+		"Sep",
+		"Oct",
+		"Nov",
+		"Dec",
+	];
 	const month = monthNames[date.getMonth()];
 	const day = date.getDate();
 	const year = date.getFullYear();
@@ -171,23 +193,31 @@ function toggleAllUsers() {
 
 // Show add user form
 function showAddUserForm() {
-    openModal('addUserModal');
+	openModal("addUserModal");
 }
 
 // Cancel add user
 function cancelAddUser() {
-    // Clear fields
-    const fields = [
-        'add_user_fname','add_user_lname','add_user_email','add_user_phone',
-        'add_user_gender','add_user_password','add_user_confirm_password',
-        'add_user_province','add_user_city_municipality','add_user_barangay','add_user_purok'
-    ];
-    fields.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-    // Reset dependent selects
-    document.getElementById('add_user_city_municipality').innerHTML = '<option value="">Select City/Municipality</option>';
-    document.getElementById('add_user_barangay').innerHTML = '<option value="">Select Barangay</option>';
-    document.getElementById('add_user_purok').innerHTML = '<option value="">Select Purok</option>';
-    closeModal('addUserModal');
+	// Clear fields
+	const fields = [
+		"add_user_fname",
+		"add_user_lname",
+		"add_user_email",
+		"add_user_phone",
+		"add_user_gender",
+		"add_user_password",
+		"add_user_confirm_password",
+		"add_user_province",
+		"add_user_city_municipality",
+		"add_user_barangay",
+		"add_user_purok",
+	];
+	fields.forEach((id) => {
+		const el = document.getElementById(id);
+		if (el) el.value = "";
+	});
+	// Clear input fields (no longer using dropdowns)
+	closeModal("addUserModal");
 }
 
 // Save user (create new) - No OTP verification
@@ -198,14 +228,30 @@ async function saveUser() {
 	const phone = document.getElementById("add_user_phone").value.trim();
 	const gender = document.getElementById("add_user_gender").value;
 	const password = document.getElementById("add_user_password").value;
-	const confirmPassword = document.getElementById("add_user_confirm_password").value;
-	const province = document.getElementById("add_user_province").value;
-	const city = document.getElementById("add_user_city_municipality").value;
-	const barangay = document.getElementById("add_user_barangay").value;
-	const purok = document.getElementById("add_user_purok").value;
+	const confirmPassword = document.getElementById(
+		"add_user_confirm_password"
+	).value;
+	const province = document.getElementById("add_user_province").value.trim();
+	const city = document
+		.getElementById("add_user_city_municipality")
+		.value.trim();
+	const barangay = document.getElementById("add_user_barangay").value.trim();
+	const purok = document.getElementById("add_user_purok").value.trim();
 
 	// Validation
-	if (!fname || !lname || !email || !phone || !gender || !password || !confirmPassword || !province || !city || !barangay || !purok) {
+	if (
+		!fname ||
+		!lname ||
+		!email ||
+		!phone ||
+		!gender ||
+		!password ||
+		!confirmPassword ||
+		!province ||
+		!city ||
+		!barangay ||
+		!purok
+	) {
 		Swal.fire("Error!", "Please fill in all fields", "error");
 		return;
 	}
@@ -246,7 +292,7 @@ async function saveUser() {
 
 		const text = await response.text();
 		console.log("Raw response text:", text);
-		
+
 		let data;
 		try {
 			data = JSON.parse(text);
@@ -254,7 +300,11 @@ async function saveUser() {
 		} catch (e) {
 			console.error("JSON Parse Error:", e);
 			console.error("Failed to parse response as JSON. Raw text:", text);
-			Swal.fire("Error!", "Server returned invalid response. Please check the console for details.", "error");
+			Swal.fire(
+				"Error!",
+				"Server returned invalid response. Please check the console for details.",
+				"error"
+			);
 			return;
 		}
 
@@ -351,33 +401,32 @@ async function editUser(user_id) {
                 <div class="form-row">
                     <div class="form-group">
                         <label for="edit_user_province">Province</label>
-                        <select id="edit_user_province" name="province" onchange="loadEditUserCities()" required>
-                            <option value="">Select Province</option>
-                        </select>
+                        <input type="text" id="edit_user_province" name="province" placeholder="Enter province" required>
                     </div>
                     <div class="form-group">
                         <label for="edit_user_city_municipality">City/Municipality</label>
-                        <select id="edit_user_city_municipality" name="city_municipality" onchange="loadEditUserBarangays()" required>
-                            <option value="">Select City/Municipality</option>
-                        </select>
+                        <input type="text" id="edit_user_city_municipality" name="city_municipality" placeholder="Enter city/municipality" required>
                     </div>
                     <div class="form-group">
                         <label for="edit_user_barangay">Barangay</label>
-                        <select id="edit_user_barangay" name="barangay" onchange="loadEditUserPuroks()" required>
-                            <option value="">Select Barangay</option>
-                        </select>
+                        <input type="text" id="edit_user_barangay" name="barangay" placeholder="Enter barangay" required>
                     </div>
                     <div class="form-group">
                         <label for="edit_user_purok">Purok</label>
-                        <select id="edit_user_purok" name="purok" required>
-                            <option value="">Select Purok</option>
-                        </select>
+                        <input type="text" id="edit_user_purok" name="purok" placeholder="Enter purok" required>
                     </div>
                 </div>
             `;
 
-			await loadEditUserProvinces(user.place || "");
-			openModal('editUserModal');
+			// Parse existing place value (comma-separated: province, city, barangay, purok)
+			const placeParts = (user.place || "").split(", ").map((p) => p.trim());
+			document.getElementById("edit_user_province").value = placeParts[0] || "";
+			document.getElementById("edit_user_city_municipality").value =
+				placeParts[1] || "";
+			document.getElementById("edit_user_barangay").value = placeParts[2] || "";
+			document.getElementById("edit_user_purok").value = placeParts[3] || "";
+
+			openModal("editUserModal");
 		} else {
 			Swal.fire("Error!", "Failed to load user data", "error");
 		}
@@ -403,11 +452,13 @@ async function updateUser() {
 	formData.append("role", document.getElementById("edit_user_role").value);
 
 	// Combine place data
-	const province = document.getElementById("edit_user_province").value;
-	const city = document.getElementById("edit_user_city_municipality").value;
-	const barangay = document.getElementById("edit_user_barangay").value;
-	const purok = document.getElementById("edit_user_purok").value;
-	const place = `${province}, ${city}, ${barangay}, ${purok}`;
+	const province = document.getElementById("edit_user_province").value.trim();
+	const city = document
+		.getElementById("edit_user_city_municipality")
+		.value.trim();
+	const barangay = document.getElementById("edit_user_barangay").value.trim();
+	const purok = document.getElementById("edit_user_purok").value.trim();
+	const place = [province, city, barangay, purok].filter((p) => p).join(", ");
 	formData.append("place", place);
 
 	try {
@@ -440,9 +491,9 @@ async function updateUser() {
 
 // Cancel edit user
 function cancelEditUser() {
-    const form = document.getElementById('editUserForm');
-    form.innerHTML = '';
-    closeModal('editUserModal');
+	const form = document.getElementById("editUserForm");
+	form.innerHTML = "";
+	closeModal("editUserModal");
 }
 
 // Delete user
@@ -530,245 +581,4 @@ async function deleteSelectedUsers() {
 	}
 }
 
-// Place editing functions (reusing from home.js)
-async function loadEditUserProvinces(currentPlace = "") {
-	try {
-		// Store current place globally for cascading
-		window.currentUserPlace = currentPlace;
-
-		const response = await fetch(
-			// "php/mysql/admin/get_places.php?type=provinces"
-			"php/supabase/admin/get_places.php?type=provinces"
-		);
-		const data = await response.json();
-
-		const provinceSelect = document.getElementById("edit_user_province");
-		provinceSelect.innerHTML = '<option value="">Select Province</option>';
-
-		const placeParts = currentPlace.split(", ");
-		const currentProvince = placeParts[0] || "";
-
-		for (const item of data) {
-			const selected = item.province === currentProvince ? "selected" : "";
-			provinceSelect.innerHTML += `<option value="${item.province}" ${selected}>${item.province}</option>`;
-		}
-
-		if (currentProvince) {
-			await loadEditUserCities();
-		}
-	} catch (error) {
-		console.error("Error loading provinces:", error);
-	}
-}
-
-async function loadEditUserCities() {
-	const province = document.getElementById("edit_user_province").value;
-	if (!province) return;
-
-	try {
-		const response = await fetch(
-			// `php/mysql/admin/get_places.php?type=cities&province=${encodeURIComponent(
-			`php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
-				province
-			)}`
-		);
-		const data = await response.json();
-
-		const citySelect = document.getElementById("edit_user_city_municipality");
-		citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
-
-		// Get current place parts to pre-select current city
-		const currentPlace = window.currentUserPlace || "";
-		const placeParts = currentPlace.split(", ");
-		const currentCity = placeParts[1] || "";
-
-		for (const item of data) {
-			const selected = item.city_municipality === currentCity ? "selected" : "";
-			citySelect.innerHTML += `<option value="${item.city_municipality}" ${selected}>${item.city_municipality}</option>`;
-		}
-
-		// If current city exists, load barangays
-		if (currentCity) {
-			await loadEditUserBarangays();
-		}
-	} catch (error) {
-		console.error("Error loading cities:", error);
-	}
-}
-
-async function loadEditUserBarangays() {
-	const province = document.getElementById("edit_user_province").value;
-	const city = document.getElementById("edit_user_city_municipality").value;
-	if (!province || !city) return;
-
-	try {
-		const response = await fetch(
-			// `php/mysql/admin/get_places.php?type=barangays&province=${encodeURIComponent(
-			`php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
-				province
-			)}&city_municipality=${encodeURIComponent(city)}`
-		);
-		const data = await response.json();
-
-		const barangaySelect = document.getElementById("edit_user_barangay");
-		barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-
-		// Get current place parts to pre-select current barangay
-		const currentPlace = window.currentUserPlace || "";
-		const placeParts = currentPlace.split(", ");
-		const currentBarangay = placeParts[2] || "";
-
-		for (const item of data) {
-			const selected = item.barangay === currentBarangay ? "selected" : "";
-			barangaySelect.innerHTML += `<option value="${item.barangay}" ${selected}>${item.barangay}</option>`;
-		}
-
-		// If current barangay exists, load puroks
-		if (currentBarangay) {
-			await loadEditUserPuroks();
-		}
-	} catch (error) {
-		console.error("Error loading barangays:", error);
-	}
-}
-
-async function loadEditUserPuroks() {
-	const province = document.getElementById("edit_user_province").value;
-	const city = document.getElementById("edit_user_city_municipality").value;
-	const barangay = document.getElementById("edit_user_barangay").value;
-	if (!province || !city || !barangay) return;
-
-	try {
-		const response = await fetch(
-			// `php/mysql/admin/get_places.php?type=puroks&province=${encodeURIComponent(
-			`php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
-				province
-			)}&city_municipality=${encodeURIComponent(
-				city
-			)}&barangay=${encodeURIComponent(barangay)}`
-		);
-		const data = await response.json();
-
-		const purokSelect = document.getElementById("edit_user_purok");
-		purokSelect.innerHTML = '<option value="">Select Purok</option>';
-
-		// Get current place parts to pre-select current purok
-		const currentPlace = window.currentUserPlace || "";
-		const placeParts = currentPlace.split(", ");
-		const currentPurok = placeParts[3] || "";
-
-		for (const item of data) {
-			const selected = item.purok === currentPurok ? "selected" : "";
-			purokSelect.innerHTML += `<option value="${item.purok}" ${selected}>${item.purok}</option>`;
-		}
-	} catch (error) {
-		console.error("Error loading puroks:", error);
-	}
-}
-
-// Place loading functions for Add User Form
-async function loadAddUserProvinces() {
-	try {
-		const response = await fetch(
-			"php/supabase/admin/get_places.php?type=provinces"
-		);
-		const data = await response.json();
-
-		const provinceSelect = document.getElementById("add_user_province");
-		if (!provinceSelect) return;
-		
-		provinceSelect.innerHTML = '<option value="">Select Province</option>';
-
-		for (const item of data) {
-			provinceSelect.innerHTML += `<option value="${item.province}">${item.province}</option>`;
-		}
-	} catch (error) {
-		console.error("Error loading provinces:", error);
-	}
-}
-
-async function loadAddUserCities() {
-	const province = document.getElementById("add_user_province").value;
-	const citySelect = document.getElementById("add_user_city_municipality");
-	const barangaySelect = document.getElementById("add_user_barangay");
-	const purokSelect = document.getElementById("add_user_purok");
-
-	// Reset dependent dropdowns
-	citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
-	barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-	purokSelect.innerHTML = '<option value="">Select Purok</option>';
-
-	if (!province) return;
-
-	try {
-		const response = await fetch(
-			`php/supabase/admin/get_places.php?type=cities&province=${encodeURIComponent(
-				province
-			)}`
-		);
-		const data = await response.json();
-
-		for (const item of data) {
-			citySelect.innerHTML += `<option value="${item.city_municipality}">${item.city_municipality}</option>`;
-		}
-	} catch (error) {
-		console.error("Error loading cities:", error);
-	}
-}
-
-async function loadAddUserBarangays() {
-	const province = document.getElementById("add_user_province").value;
-	const city = document.getElementById("add_user_city_municipality").value;
-	const barangaySelect = document.getElementById("add_user_barangay");
-	const purokSelect = document.getElementById("add_user_purok");
-
-	// Reset dependent dropdowns
-	barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-	purokSelect.innerHTML = '<option value="">Select Purok</option>';
-
-	if (!province || !city) return;
-
-	try {
-		const response = await fetch(
-			`php/supabase/admin/get_places.php?type=barangays&province=${encodeURIComponent(
-				province
-			)}&city_municipality=${encodeURIComponent(city)}`
-		);
-		const data = await response.json();
-
-		for (const item of data) {
-			barangaySelect.innerHTML += `<option value="${item.barangay}">${item.barangay}</option>`;
-		}
-	} catch (error) {
-		console.error("Error loading barangays:", error);
-	}
-}
-
-async function loadAddUserPuroks() {
-	const province = document.getElementById("add_user_province").value;
-	const city = document.getElementById("add_user_city_municipality").value;
-	const barangay = document.getElementById("add_user_barangay").value;
-	const purokSelect = document.getElementById("add_user_purok");
-
-	// Reset purok dropdown
-	purokSelect.innerHTML = '<option value="">Select Purok</option>';
-
-	if (!province || !city || !barangay) return;
-
-	try {
-		const response = await fetch(
-			`php/supabase/admin/get_places.php?type=puroks&province=${encodeURIComponent(
-				province
-			)}&city_municipality=${encodeURIComponent(
-				city
-			)}&barangay=${encodeURIComponent(barangay)}`
-		);
-		const data = await response.json();
-
-		for (const item of data) {
-			purokSelect.innerHTML += `<option value="${item.purok}">${item.purok}</option>`;
-		}
-	} catch (error) {
-		console.error("Error loading puroks:", error);
-	}
-}
+// Place editing functions removed - now using input fields instead of dropdowns
