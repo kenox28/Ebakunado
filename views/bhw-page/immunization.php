@@ -41,7 +41,7 @@ if ($user_id) {
 
         <link rel="stylesheet" href="css/notification-style.css?v=1.0.1" />
         <link rel="stylesheet" href="css/skeleton-loading.css?v=1.0.1" />
-        <link rel="stylesheet" href="css/bhw/immunization-style.css?v=1.0.2">
+        <link rel="stylesheet" href="css/bhw/immunization-style.css?v=1.0.3">
         <link rel="stylesheet" href="css/bhw/growth-assessment.css?v=1.0.1">
         <link rel="stylesheet" href="css/bhw/table-style.css?v=1.0.3">
     </head>
@@ -543,7 +543,7 @@ if ($user_id) {
             const html = `
                         <div class="form-container">
                             <div class="form-group row-1">
-                                <h4 class="im-group-title">Child &amp; Vaccine Details</h4>
+                                <h4 class="im-group-title">Child Info. &amp; Vaccine Details</h4>
                                 <label>
                                     Child Name:
                                     <input type="text" id="im_child_name" value="${childName}" readonly disabled />
